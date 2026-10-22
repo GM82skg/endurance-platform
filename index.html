@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Endurance Crew</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#12151a;--pn:#1b2028;--bd:#2a313c;--mu:#9aa3b2;--am:#ffb020;--g:#2f9e63;--y:#d4a017;--r:#b5483f;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#e8eaed;font:14px system-ui,sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:0 20px;min-height:56px;background:var(--pn);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+header b.brand{color:var(--am);letter-spacing:2px}.grow{flex:1}.mu{color:var(--mu);font-size:12px}.am{color:var(--am)}
+main{max-width:1200px;margin:0 auto;padding:20px}h2{margin:0 0 12px;font-size:24px}
+button,select,input{font:inherit;color:inherit;min-height:44px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);padding:6px 12px}
+button{cursor:pointer;font-weight:700;background:transparent}button.pri{background:var(--am);color:var(--bg);border:0}button.ghost{color:var(--mu)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--am);outline-offset:2px}
+label{display:flex;flex-direction:column;gap:4px;color:var(--mu);font-size:12px}
+.card{background:var(--pn);border:1px solid var(--bd);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.len{font-size:24px;color:var(--am);width:64px}
+.form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;margin:12px 0}.tabs button.on{background:var(--am);color:var(--bg);border:0}
+.chip{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:#1f4d8f;color:#fff}.chip.approved{background:#1f6b43}.chip.pending{background:#7a5a00}
+.scroll{overflow-x:auto}table{border-collapse:separate;border-spacing:3px;width:100%}th{font-size:11px;font-weight:400;color:var(--mu);text-align:center;min-width:38px}td{vertical-align:middle}td:first-child,th:first-child{text-align:left;min-width:120px;position:sticky;left:0;background:var(--bg)}
+tr.me td:first-child{color:var(--am)}.n{text-align:center;font-weight:700}
+.cell{display:block;width:100%;min-width:34px;height:34px;min-height:0;padding:0;border:0;border-radius:4px}.cell.A{background:var(--g)}.cell.M{background:var(--y)}.cell.N{background:var(--r)}.cell.u{background:#2a313c}
+.lane{display:flex;gap:10px;align-items:center;margin:4px 0}.who{width:170px}.track{position:relative;display:flex;height:40px;border-radius:6px;overflow:hidden;flex:1}
+.track i{flex:1;margin-right:1px;background:#252b35}.track i.A{background:#1d4a33}.track i.M{background:#5a4a0f}.track i.N{background:#4a2420}
+.bar{position:absolute;top:4px;bottom:4px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:700;color:#fff;background:#1f6b43;white-space:nowrap;overflow:hidden}.bar.pending{background:#7a5a00}
+.axis{display:flex;margin-left:180px}.axis div{flex:1;font-size:10px;color:var(--mu);overflow:hidden}
+.auth{max-width:380px;margin:12vh auto;padding:0 20px}.auth form{display:flex;flex-direction:column;gap:14px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#7a2f28;color:#fff;padding:10px 16px;border-radius:8px;max-width:90vw;z-index:9}
+.legend{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const CFG={url:'https://isuiksufkyishdowejob.supabase.co',key:'sb_publishable_DMqGCrW9YEmzEN2_cP67-w_ljr1JBo9'};
+const sb=supabase.createClient(CFG.url,CFG.key);
+const CARS={
+Hypercar:['Alpine A424','Aston Martin Valkyrie','BMW M Hybrid V8','Cadillac V-Series.R','Ferrari 499P','Genesis GMR-001','Glickenhaus SCG 007','Isotta Tipo 6','Lamborghini SC63','Peugeot 9x8','Peugeot 9x8 Evo','Porsche 963','Toyota GR010','Vanwall Vandervell 680'],
+LMP2:['Oreca 07 (ELMS)','Oreca 07 (WEC)'],
+LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
+GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
+GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
+const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
+const H=3600000,$=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const utcH=d=>d.toISOString().slice(11,13)+':00';
+const locH=(d,tz)=>new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',hour12:false}).format(d).replace(/^24/,'00')+':00';
+const locFull=(d,tz)=>new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
+const utcFull=d=>d.toISOString().slice(0,16).replace('T',' ')+' UTC';
+const toInput=d=>new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+const cl=c=>c==='-'?'u':c, name=id=>profiles.find(p=>p.id===id)?.name||'Unknown';
+let me=null,prof=null,races=[],profiles=[],view='cal',raceId=null,sub='avail',AV={},T={ts:[],ms:[],ss:[]},tt;
+
+function note(m){const t=$('#toast');if(t){t.textContent=m;t.hidden=!m;clearTimeout(tt);if(m)tt=setTimeout(()=>t.hidden=true,6000)}else if($('#msg'))$('#msg').textContent=m}
+async function q(p){const r=await p;if(r.error){note(r.error.message);throw r.error}return r.data}
+const hrs=(r,u)=>(AV[u]||'').padEnd(r.length_h,'-').slice(0,r.length_h);
+
+async function boot(){
+  const {data}=await sb.auth.getSession();me=data.session?.user||null;
+  sb.auth.onAuthStateChange((e,s)=>{const u=s?.user||null;if(u?.id!==me?.id){me=u;start()}});
+  start();
+}
+async function start(){
+  if(!me)return loginView();
+  const {data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data;
+  if(!prof||!prof.approved)return pendingView();
+  profiles=await q(sb.from('profiles').select('*').eq('approved',true).order('name'));
+  races=await q(sb.from('races').select('*').order('start_utc'));
+  $('#app').innerHTML=`<header><b class="brand">ENDURANCE CREW</b><button onclick="go('cal')">Calendar</button><button onclick="go('roster')">Roster</button><span class="grow"></span><span class="mu">${esc(prof.name)} · ${esc(prof.tz)}${prof.role==='admin'?' · admin':''}</span><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></header><div id="toast" role="status" hidden></div><main id="main"></main>`;
+  go('cal');
+}
+function loginView(){
+  $('#app').innerHTML=`<div class="auth"><h2>Sign in</h2><form onsubmit="return signin(event)"><label>Email<input id="em" type="email" required autocomplete="email"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="current-password"></label><div class="row"><button class="pri">Sign in</button><button type="button" onclick="signup()">Create account</button></div><p id="msg" class="mu" role="status"></p></form></div>`;
+}
+async function signin(e){e.preventDefault();const {error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)note(error.message);return false}
+async function signup(){const f=$('.auth form');if(!f.reportValidity())return;const {error}=await sb.auth.signUp({email:$('#em').value,password:$('#pw').value});note(error?error.message:'Account created. If email confirmation is on, confirm your email, then sign in. An admin must approve you before you see the schedule.')}
+function pendingView(){$('#app').innerHTML=`<div class="auth"><h2>Waiting for approval</h2><p class="mu">Your account is created. An admin needs to approve it before you can see the schedule.</p><div class="row"><button class="pri" onclick="start()">Check again</button><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></div></div>`}
+
+function go(v,id){view=v;raceId=id??null;render()}
+function render(){view==='cal'?calView():view==='race'?raceView():rosterView()}
+
+function calView(){
+  const adm=prof.role==='admin';
+  $('#main').innerHTML=`<h2>Season calendar</h2>${adm?`<form class="card form" onsubmit="addRace(event)"><label>Race name<input name="name" required></label><label>Track<input name="track" list="tr"></label><datalist id="tr">${TRACKS.map(t=>`<option>${t}</option>`).join('')}</datalist><label>Length<select name="len">${[4,6,8,12,24].map(h=>`<option value="${h}">${h}H</option>`).join('')}</select></label><label>Start (your local time)<input name="start" type="datetime-local" required></label><button class="pri">Add race</button></form>`:''}`+
+  (races.map(r=>{const d=new Date(r.start_utc);return `<div class="card row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')} · ${utcFull(d)} · ${locFull(d,prof.tz)} local</div></div><button onclick="go('race',${r.id})">Open</button>${adm?`<button class="ghost" onclick="delRace(${r.id})">Delete</button>`:''}</div>`}).join('')||'<p class="mu">No races yet. An admin can add the first one.</p>');
+}
+async function addRace(e){e.preventDefault();const f=new FormData(e.target);
+  await q(sb.from('races').insert({name:f.get('name'),track:f.get('track')||null,length_h:+f.get('len'),start_utc:new Date(f.get('start')).toISOString()}));
+  races=await q(sb.from('races').select('*').order('start_utc'));calView()}
+async function delRace(id){if(!confirm('Delete this race and its teams?'))return;await q(sb.from('races').delete().eq('id',id));races=races.filter(r=>r.id!==id);calView()}
+
+function raceView(){
+  const r=races.find(x=>x.id===raceId),d=new Date(r.start_utc);
+  $('#main').innerHTML=`<button class="ghost" onclick="go('cal')">Back to calendar</button><h2>${esc(r.name)} · ${r.length_h}H</h2><div class="mu">${utcFull(d)} · ${locFull(d,prof.tz)} local</div><div class="tabs"><button class="${sub=='avail'?'on':''}" onclick="sub='avail';render()">Availability</button><button class="${sub=='teams'?'on':''}" onclick="sub='teams';render()">Teams and stints</button></div><div id="sub">Loading…</div>`;
+  sub==='avail'?availView(r):teamsView(r);
+}
+async function loadAV(r){const a=await q(sb.from('availability').select('*').eq('race_id',r.id));AV={};a.forEach(x=>AV[x.user_id]=x.hours)}
+async function availView(r){await loadAV(r);drawAvail(r)}
+function drawAvail(r){
+  const d=new Date(r.start_utc),cols=[...Array(r.length_h).keys()];
+  const head='<tr><th></th>'+cols.map(i=>{const t=new Date(+d+i*H);return `<th>${utcH(t)}<br><span class="am">${locH(t,prof.tz)}</span></th>`}).join('')+'</tr>';
+  const body=profiles.map(p=>{const s=hrs(r,p.id),mine=p.id===me.id;return `<tr class="${mine?'me':''}"><td>${esc(p.name)}<div class="mu">${esc(p.tz)}</div></td>`+[...s].map((c,i)=>mine?`<td><button class="cell ${cl(c)}" onclick="cyc(${r.id},${i})" aria-label="Hour ${i+1}: ${c}"></button></td>`:`<td><span class="cell ${cl(c)}"></span></td>`).join('')+'</tr>'}).join('');
+  const cnt=cols.map(i=>profiles.filter(p=>hrs(r,p.id)[i]==='A').length);
+  $('#sub').innerHTML=`<div class="legend"><span class="chip approved">Available</span><span class="chip pending">Maybe</span><span class="chip" style="background:#8f2f28">No</span><span class="mu">UTC on top, your local time in amber. Click your cells to cycle.</span><span class="grow"></span><button onclick="fill(${r.id},'A')">All available</button><button onclick="fill(${r.id},'N')">All no</button></div><div class="scroll"><table><thead>${head}</thead><tbody>${body}<tr><td>Available</td>${cnt.map(n=>`<td class="n">${n}</td>`).join('')}</tr></tbody></table></div>`;
+}
+async function cyc(rid,i){const r=races.find(x=>x.id===rid),s=[...hrs(r,me.id)];s[i]={'-':'A',A:'M',M:'N',N:'A'}[s[i]];AV[me.id]=s.join('');drawAvail(r);await q(sb.from('availability').upsert({user_id:me.id,race_id:rid,hours:AV[me.id]}))}
+async function fill(rid,c){const r=races.find(x=>x.id===rid);AV[me.id]=c.repeat(r.length_h);drawAvail(r);await q(sb.from('availability').upsert({user_id:me.id,race_id:rid,hours:AV[me.id]}))}
+
+async function teamsView(r){
+  await loadAV(r);
+  const ts=await q(sb.from('teams').select('*').eq('race_id',r.id).order('id')),ids=ts.map(t=>t.id);
+  const ms=ids.length?await q(sb.from('team_members').select('*').in('team_id',ids)):[];
+  const ss=ids.length?await q(sb.from('stints').select('*').in('team_id',ids).order('start_utc')):[];
+  T={ts,ms,ss};drawTeams(r);
+}
+function drawTeams(r){
+  const form=`<form class="card form" onsubmit="mkTeam(event)"><label>Team name<input name="name" required placeholder="Team A"></label><label>Class<select name="cls">${Object.keys(CARS).map(c=>`<option>${c}</option>`).join('')}</select></label><label>Race start (your local time)<input name="start" type="datetime-local" required value="${toInput(new Date(r.start_utc))}"></label><button class="pri">Create team</button></form>`;
+  $('#sub').innerHTML=form+(T.ts.map(t=>teamCard(r,t)).join('')||'<p class="mu">No teams yet. Create one with its class and start time, then each driver picks a car and a stint.</p>');
+}
+function teamCard(r,t){
+  const lead=t.leader_id===me.id||prof.role==='admin',L=r.length_h,t0=new Date(t.start_utc);
+  const off=Math.round((t0-new Date(r.start_utc))/H),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
+  const axis=[...Array(L).keys()].map(i=>`<div>${utcH(new Date(+t0+i*H))}</div>`).join('');
+  const lanes=mem.map(m=>{
+    const cells=[...Array(L).keys()].map(i=>`<i class="${cl(hrs(r,m.user_id)[i+off]||'-')}"></i>`).join('');
+    const bars=st.filter(s=>s.user_id===m.user_id).map(s=>{const a=(new Date(s.start_utc)-t0)/H,b=(new Date(s.end_utc)-t0)/H;return `<div class="bar ${s.status}" style="left:${a/L*100}%;width:${(b-a)/L*100}%">${s.status==='pending'?'Pending · ':''}${b-a}h</div>`}).join('');
+    return `<div class="lane"><div class="who"><b>${esc(name(m.user_id))}</b><div class="mu">${esc(m.car)}</div></div><div class="track">${cells}${bars}</div></div>`}).join('');
+  const rows=st.map(s=>{const a=new Date(s.start_utc),b=new Date(s.end_utc),own=s.user_id===me.id;return `<tr><td>${esc(name(s.user_id))}</td><td>${utcH(a)}–${utcH(b)} UTC</td><td>${locH(a,prof.tz)}–${locH(b,prof.tz)} local</td><td><span class="chip ${s.status}">${s.status}</span></td><td>${lead&&s.status==='pending'?`<button onclick="appr(${s.id})">Approve</button> `:''}${lead||(own&&s.status==='pending')?`<button class="ghost" onclick="delStint(${s.id})">Remove</button>`:''}</td></tr>`}).join('');
+  const opts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return `<option value="${i}">${utcH(x)} UTC · ${locH(x,prof.tz)} local</option>`}).join('');
+  return `<div class="card"><div class="row"><b style="font-size:18px">${esc(t.name)}</b><span class="chip">${t.class}</span><span class="mu grow">Leader: ${esc(name(t.leader_id))} · starts ${utcFull(t0)} · ${locFull(t0,prof.tz)} local</span>${lead?`<button class="ghost" onclick="delTeam(${t.id})">Delete team</button>`:''}</div>
+  <div class="axis">${axis}</div>${lanes||'<p class="mu">No drivers yet.</p>'}
+  ${rows?`<div class="scroll"><table><tbody>${rows}</tbody></table></div>`:''}
+  <form class="form" onsubmit="join(event,${t.id})" style="margin-top:10px"><label>Car (${t.class})<select name="car">${CARS[t.class].map(c=>`<option>${esc(c)}</option>`).join('')}</select></label><label>Stint start<select name="s">${opts}</select></label><label>Length<select name="n">${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n}h</option>`).join('')}</select></label><button class="pri">${lead?'Add my stint':'Request stint'}</button></form></div>`;
+}
+async function mkTeam(e){e.preventDefault();const f=new FormData(e.target),r=races.find(x=>x.id===raceId);
+  await q(sb.from('teams').insert({race_id:r.id,name:f.get('name'),class:f.get('cls'),start_utc:new Date(f.get('start')).toISOString(),leader_id:me.id}));teamsView(r)}
+async function join(e,tid){e.preventDefault();const f=new FormData(e.target),t=T.ts.find(x=>x.id===tid),r=races.find(x=>x.id===raceId),n=+f.get('n'),s=+f.get('s');
+  if(n<prof.min_stint||n>prof.max_stint)return note(`Your stint limits are ${prof.min_stint}–${prof.max_stint}h. Change the length, or update your limits in Roster.`);
+  if(s+n>r.length_h)return note('That stint runs past the end of the race.');
+  const a=new Date(+new Date(t.start_utc)+s*H),b=new Date(+a+n*H),lead=t.leader_id===me.id||prof.role==='admin';
+  const clash=T.ss.find(x=>x.team_id===tid&&x.user_id!==me.id&&new Date(x.start_utc)<b&&new Date(x.end_utc)>a);
+  await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:f.get('car')}));
+  await q(sb.from('stints').insert({team_id:tid,user_id:me.id,start_utc:a.toISOString(),end_utc:b.toISOString(),status:lead?'approved':'pending'}));
+  await teamsView(r);note(clash?`Saved, but it overlaps ${name(clash.user_id)}. The team leader decides.`:'')}
+async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));teamsView(races.find(x=>x.id===raceId))}
+async function delStint(id){await q(sb.from('stints').delete().eq('id',id));teamsView(races.find(x=>x.id===raceId))}
+async function delTeam(id){if(!confirm('Delete this team?'))return;await q(sb.from('teams').delete().eq('id',id));teamsView(races.find(x=>x.id===raceId))}
+
+async function rosterView(){
+  const all=await q(sb.from('profiles').select('*').order('name')),adm=prof.role==='admin';
+  const tzs=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):['UTC'];
+  const rows=all.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.tz)}</td><td>${p.min_stint}–${p.max_stint}h</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td><td>${adm&&p.id!==me.id?(p.approved?`<button class="ghost" onclick="setUser('${p.id}',false,'driver')">Remove</button> <button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>`:`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`):''}</td></tr>`).join('');
+  $('#main').innerHTML=`<h2>Roster</h2><form class="card form" onsubmit="saveProf(event)"><label>Your name<input name="name" required value="${esc(prof.name)}"></label><label>Time zone<select name="tz">${tzs.map(z=>`<option${z===prof.tz?' selected':''}>${z}</option>`).join('')}</select></label><label>Min stint (h)<input name="min" type="number" min="1" max="12" value="${prof.min_stint}"></label><label>Max stint (h)<input name="max" type="number" min="1" max="12" value="${prof.max_stint}"></label><button class="pri">Save my profile</button></form><div class="card scroll"><table><tbody>${rows}</tbody></table></div>`;
+}
+async function saveProf(e){e.preventDefault();const f=new FormData(e.target);
+  await q(sb.from('profiles').update({name:f.get('name'),tz:f.get('tz'),min_stint:+f.get('min'),max_stint:+f.get('max')}).eq('id',me.id));
+  const {data}=await sb.from('profiles').select('*').eq('id',me.id).single();prof=data;profiles=await q(sb.from('profiles').select('*').eq('approved',true).order('name'));rosterView();note('')}
+async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));profiles=await q(sb.from('profiles').select('*').eq('approved',true).order('name'));rosterView()}
+boot();
+</script>
+</body>
+</html>
