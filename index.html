@@ -18,6 +18,7 @@
   --sep:rgba(60,60,67,.16);--label:#000;--label2:rgba(60,60,67,.62);--label3:rgba(60,60,67,.3);
   --green:#34C759;--yellow:#FFCC00;--red:#FF3B30;--blue:#007AFF;--warn-ink:#8A5A00;--red-ink:#D70015;--green-ink:#248A3D;
   --bar:rgba(249,249,251,.8);
+  --purple:#AF52DE;--purple-ink:#8E3CB8;
   --cA:#34C759;--cM:#FFCC00;--cN:#FF3B30;--cU:rgba(120,120,128,.14);
   --lA:rgba(52,199,89,.2);--lM:rgba(255,204,0,.24);--lN:rgba(255,59,48,.13);--lU:rgba(120,120,128,.09);
   --shadow:0 0 0 .5px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.04),0 6px 20px rgba(0,0,0,.04);
@@ -31,6 +32,7 @@
   --sep:rgba(84,84,88,.6);--label:#fff;--label2:rgba(235,235,245,.6);--label3:rgba(235,235,245,.28);
   --green:#30D158;--yellow:#FFD60A;--red:#FF453A;--blue:#0A84FF;--warn-ink:#FFD60A;--red-ink:#FF6961;--green-ink:#30D158;
   --bar:rgba(18,18,20,.72);
+  --purple:#BF5AF2;--purple-ink:#D18CF7;
   --cA:#30D158;--cM:#FFD60A;--cN:#FF453A;--cU:rgba(118,118,128,.26);
   --lA:rgba(48,209,88,.24);--lM:rgba(255,214,10,.2);--lN:rgba(255,69,58,.2);--lU:rgba(118,118,128,.16);
   --shadow:none;--pop:0 24px 64px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.08)}}
@@ -115,6 +117,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.approved,.chip.ok{background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--green-ink)}
 .chip.pending,.chip.warn{background:color-mix(in srgb,var(--yellow) 24%,transparent);color:var(--warn-ink)}
 .chip.bad{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-ink)}
+.chip.dev{background:color-mix(in srgb,var(--purple) 18%,transparent);color:var(--purple-ink)}
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
@@ -274,7 +277,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.4',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.5',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -725,7 +728,7 @@ async function rosterView(){
   const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
   const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
-    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div><span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>
+    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}
     ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
     ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
