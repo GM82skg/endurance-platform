@@ -160,6 +160,16 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .li{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 80px minmax(0,250px);gap:4px 16px;align-items:center;padding:12px 18px;border-bottom:.5px solid var(--sep)}
 .li:last-child{border-bottom:0}.li .stat{justify-self:start}.li .who2 b{display:block;font-size:15px;font-weight:600}.li .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
 .li .acts button{min-height:30px;padding:0 10px;font-size:14px}
+.grip{flex:none;width:22px;height:30px;margin:0 4px 0 -4px;display:grid;place-items:center;color:var(--label3);cursor:grab;touch-action:none;border-radius:6px}
+.grip:hover{color:var(--label2);background:var(--fill)}.grip svg{width:10px;height:16px}
+.tl .who.lane{flex-direction:row;align-items:center;justify-content:flex-start}.tl .who .nm{display:flex;flex-direction:column;min-width:0}
+.card.team{transition:box-shadow .15s,background-color .15s}
+.card.team.drop{box-shadow:0 0 0 2.5px var(--tint),0 12px 32px color-mix(in srgb,var(--tint) 22%,transparent)}
+.card.team.nodrop{box-shadow:0 0 0 2.5px var(--red)}
+.drag-ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;padding:8px 14px;border-radius:12px;background:var(--raised);color:var(--label);font-weight:600;font-size:14px;box-shadow:var(--pop);white-space:nowrap}
+.drag-ghost small{display:block;font-weight:400;color:var(--label2);font-size:12px}
+body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+.lane-empty{grid-column:1 / -1;padding:14px 0 6px;color:var(--label2);font-size:14px}
 .add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-top:14px}
 
 /* ---------- team swimlanes ---------- */
@@ -251,7 +261,7 @@ LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
 GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
 GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
-const VERSION='3.0',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='3.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -306,6 +316,7 @@ const ICON={
   my:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="10.5"/><path d="M14 8v6l4 2.5"/></svg>',
   cal:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="4"/><path d="M4 11.5h20M9.5 3.5v5M18.5 3.5v5"/></svg>',
   roster:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="10" r="4"/><path d="M3.5 23c.8-4.2 3.8-6.5 7.5-6.5s6.7 2.3 7.5 6.5"/><circle cx="20" cy="10.5" r="3.2"/><path d="M19.5 16.6c2.7.2 4.6 2.2 5.1 5.4"/></svg>',
+  grip:'<svg viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="3" r="1.5"/><circle cx="7.5" cy="3" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><circle cx="7.5" cy="8" r="1.5"/><circle cx="2.5" cy="13" r="1.5"/><circle cx="7.5" cy="13" r="1.5"/></svg>',
   back:'<svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 2 10l8 8"/></svg>'};
 const mark=()=>`<span class="mark" aria-hidden="true">${ICON.mark}</span>`;
 const initials=n=>String(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
@@ -496,37 +507,69 @@ async function fill(rid,c){const r=races.find(x=>x.id===rid);AV[me.id]=c.repeat(
 function coverage(t,L,t0){const c=Array.from({length:L},()=>[]);T.ss.filter(s=>s.team_id===t.id).forEach(s=>{const {a,n}=stIdx(s,t0);for(let k=Math.max(0,a);k<Math.min(L,a+n);k++)c[k].push(s)});return c}
 function gapRuns(c,t0,tz){const out=[];let i=0;while(i<c.length){if(!c[i].length){let j=i;while(j<c.length&&!c[j].length)j++;out.push(span(new Date(+t0+i*H),j-i,tz));i=j}else i++}return out}
 function drawTeams(r){
-  $('#sub').innerHTML=`<div class="row" style="margin:14px 0"><span class="mu grow">Tap an hour in your lane to request a stint. Tap a stint to change it.</span><button class="pri" onclick="teamDlg()">New team</button></div>`+
+  $('#sub').innerHTML=`<div class="row" style="margin:14px 0"><span class="mu grow">Join a team, then tap an hour in your lane to request a stint. Leaders can drag drivers between teams with the ⋮⋮ handle.</span><button class="pri" onclick="teamDlg()">New team</button></div>`+
     (T.ts.map(t=>teamCard(r,t)).join('')||'<div class="card"><p class="empty" style="margin:0">No teams yet. Each team gets its own swimlane with one lane per driver. Create a team, add drivers, then tap a lane to place stints.</p></div>');
 }
 function teamCard(r,t){
   const tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
   const cov=coverage(t,L,t0),mk=clockMarks(t0,L,tz),lanes=mem.map(m=>({...m}));
   st.forEach(s=>{if(!lanes.some(l=>l.user_id===s.user_id))lanes.push({user_id:s.user_id,car:null,left:true})});
-  if(!lanes.some(l=>l.user_id===me.id))lanes.push({user_id:me.id,car:null,ghost:true});
   let h=`<div class="who" style="grid-row:1;grid-column:1"></div>`+[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);
     return `<div class="ax ${mk[i]?'dst':''}" style="grid-row:1;grid-column:${i+2}" title="${range(x,1,tz)} your time">${locH(x,tz)}${mk[i]?`<span class="dstl">${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</span>`:''}</div>`}).join('');
   h+=`<div class="who" style="grid-row:2;grid-column:1;min-height:0"><span class="mu">Coverage</span></div>`+cov.map((c,i)=>{const k=c.length>1?'x':c.length?(c.some(s=>s.status==='approved')?'ok':'p'):'gap';
     return `<div class="cov ${k}" style="grid-row:2;grid-column:${i+2}" title="${range(new Date(+t0+i*H),1,tz)}: ${COVW[k]}"></div>`}).join('');
+  if(!lanes.length)h+=`<div class="lane-empty" style="grid-row:3">No drivers yet. ${lead?'Add one below, or drag a driver here from another team.':'Join the team to request stints.'}</div>`;
   lanes.forEach((m,li)=>{const R=li+3,mine=m.user_id===me.id,click=mine||lead;
-    const sub2=m.ghost?'Tap an hour to join':m.left?'Not in team':esc(m.car);
-    h+=`<div class="who" style="grid-row:${R};grid-column:1">${m.ghost?`<b class="am">You</b>`:click?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${m.user_id}')" title="Car and team options">${esc(name(m.user_id))}</button>`:`<b>${esc(name(m.user_id))}</b>`}<span class="mu">${sub2}</span></div>`;
+    const sub2=m.left?'Not in team':esc(m.car),drag=!m.left&&canMoveFrom(m.user_id,t);
+    h+=`<div class="who lane" style="grid-row:${R};grid-column:1">${drag?`<span class="grip" data-uid="${m.user_id}" data-tid="${t.id}" onpointerdown="dragStart(event)" title="Drag to another team" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm">${click?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${m.user_id}')" title="Car and team options">${esc(name(m.user_id))}</button>`:`<b>${esc(name(m.user_id))}</b>`}<span class="mu">${sub2}</span></span></div>`;
     for(let i=0;i<L;i++){const c=avAt(r,m.user_id,off,i),tl=`${range(new Date(+t0+i*H),1,tz)}: ${WORD[c]}`;
       h+=click?`<button class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" onclick="stintDlg(${t.id},0,'${m.user_id}',${i})" title="${tl}" aria-label="${esc(name(m.user_id))}, ${tl}"></button>`:`<div class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" title="${tl}"></div>`}
     st.filter(x=>x.user_id===m.user_id).forEach(x=>{const {a,n}=stIdx(x,t0),a2=Math.max(0,a),n2=Math.min(L,a+n)-a2;if(n2<=0)return;
       h+=`<button class="bar ${x.status}" style="grid-row:${R};grid-column:${a2+2}/span ${n2}" onclick="stintDlg(${t.id},${x.id})" title="${esc(name(x.user_id))} · ${range(new Date(x.start_utc),n,tz)} · ${stL(x.status)}" aria-label="${esc(name(x.user_id))} ${range(new Date(x.start_utc),n,tz)} ${stL(x.status)}">${range(new Date(x.start_utc),n,tz)}</button>`})});
   const gaps=gapRuns(cov,t0,tz),over=cov.some(c=>c.length>1);
   const list=st.map(x=>{const n=stIdx(x,t0).n;return `<tr><td>${esc(name(x.user_id))}</td><td>${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${n}h</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`}).join('');
-  const free=profiles.filter(p=>!mem.some(m=>m.user_id===p.id));
-  return `<div class="card"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span></div>
+  const free=profiles.filter(p=>!T.ms.some(m=>m.user_id===p.id));
+  const isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==t.id);
+  const joinBtn=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="memberDlg(${t.id},'${me.id}')">Join team</button>`;
+  return `<div class="card team" data-tid="${t.id}"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span></div>
     <div class="mu" style="margin-top:2px">Leader ${t.leader_id?esc(name(t.leader_id)):'none (admins manage it)'} · starts ${locFull(t0,tz)}</div></div>
-    ${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}</div>
+    ${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${joinBtn}</div>
     ${gaps.length?`<div class="banner warn"><span>No driver: ${gaps.join(', ')}</span></div>`:`<div class="banner ok"><span>Every hour has a driver.</span></div>`}${over?'<div class="banner warn"><span>Some stints overlap (striped on the coverage line).</span></div>':''}
     <div class="scroll"><div class="tl" style="--L:${L}">${h}</div></div>
     <div class="legend"><span class="chip approved">Approved stint</span><span class="chip pending">Pending stint</span><span class="mu">Lane shading shows availability. Top line shows coverage.</span></div>
     ${lead&&free.length?`<div class="add-row"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><label>Car<select id="ac${t.id}">${CARS[t.class].map(c=>opt(c,c)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
     ${list?`<details><summary>Stint list (${st.length})</summary><div class="scroll"><table class="list"><tbody>${list}</tbody></table></div></details>`:''}</div>`;
 }
+/* ---------- moving drivers between teams (drag the ⋮⋮ handle, or use the driver's window) ---------- */
+const canMoveFrom=(uid,t)=>isAdm()||uid===me.id||canLead(t);
+function canMove(uid,from,to){const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);return !!(a&&b)&&(isAdm()||uid===me.id||(canLead(a)&&canLead(b)))}
+async function moveMember(uid,from,to){
+  const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);if(!a||!b||from===to)return;
+  if(!canMove(uid,from,to))return note(`Only an admin, ${name(uid)}, or the leader of both teams can move ${name(uid)} to ${b.name}.`);
+  const st=T.ss.filter(s=>s.team_id===from&&s.user_id===uid),own=!(isAdm()||canLead(a));
+  if(own&&st.some(s=>s.status==='approved'))return note(`${name(uid)} has approved stints in ${a.name}. Ask its leader to make the move.`);
+  if(!confirm(`Move ${name(uid)} from ${a.name} to ${b.name}?${st.length?`\n\nTheir ${st.length} stint${st.length>1?'s':''} in ${a.name} will be removed.`:''}`))return;
+  const m=T.ms.find(x=>x.team_id===from&&x.user_id===uid),car=m&&a.class===b.class?m.car:CARS[b.class][0];
+  if(st.length)await q(sb.from('stints').delete().in('id',st.map(s=>s.id)));
+  const r=await q(sb.from('team_members').update({team_id:to,car}).eq('team_id',from).eq('user_id',uid).select());
+  if(!r||!r.length)return note('The move wasn’t allowed. Ask an admin or the leader of both teams.');
+  if($('#dlg').open)closeDlg();render();note(`${name(uid)} moved to ${b.name}.${a.class!==b.class?` Car set to ${car}; tap their name to change it.`:''}`,1)}
+let DRAG=null;
+function dragStart(e){
+  if(e.button>0)return;e.preventDefault();const g=e.currentTarget,uid=g.dataset.uid,tid=+g.dataset.tid,m=T.ms.find(x=>x.team_id===tid&&x.user_id===uid);
+  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.innerHTML=`${esc(name(uid))}<small>${esc(m?.car||'')}</small>`;document.body.appendChild(ghost);
+  DRAG={uid,tid,over:null};busy++;document.body.classList.add('dragging');try{g.setPointerCapture(e.pointerId)}catch{}
+  const clear=()=>$$('.card.team.drop,.card.team.nodrop').forEach(c=>c.classList.remove('drop','nodrop'));
+  const move=ev=>{ghost.style.transform=`translate(${ev.clientX+14}px,${ev.clientY+10}px)`;
+    const el=document.elementFromPoint(ev.clientX,ev.clientY),card=el&&el.closest('.card.team[data-tid]'),to=card?+card.dataset.tid:null;
+    if(DRAG.over!==to){clear();if(card&&to!==tid)card.classList.add(canMove(uid,tid,to)?'drop':'nodrop');DRAG.over=to}
+    DRAG.y=ev.clientY;DRAG.x=ev.clientX};
+  const up=async()=>{['pointermove','pointerup','pointercancel'].forEach((n,i)=>g.removeEventListener(n,i?up:move));
+    ghost.remove();clear();document.body.classList.remove('dragging');busy--;const to=DRAG.over;DRAG=null;
+    if(to&&to!==tid)await moveMember(uid,tid,to)};
+  const tick=()=>{if(!DRAG)return;const y=DRAG.y,edge=y<100?-1:y>innerHeight-120?1:0;
+    if(edge){window.scrollBy(0,edge*12);move({clientX:DRAG.x,clientY:y})}requestAnimationFrame(tick)};
+  g.addEventListener('pointermove',move);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);move(e);requestAnimationFrame(tick)}
 async function addMember(tid){await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:$('#ac'+tid).value}));render()}
 
 function teamDlg(id){
@@ -545,9 +588,12 @@ async function delTeam(id){if(!confirm('Delete this team and all its stints?'))r
 function memberDlg(tid,uid){
   const t=T.ts.find(x=>x.id===tid),m=T.ms.find(x=>x.team_id===tid&&x.user_id===uid),lead=canLead(t),mine=uid===me.id;
   if(!lead&&!mine)return;
-  openDlg(`<form onsubmit="saveMember(event,${tid},'${uid}')"><h3>${esc(name(uid))} in ${esc(t.name)}</h3>
+  const dest=m?T.ts.filter(x=>x.id!==tid&&canMove(uid,tid,x.id)):[];
+  openDlg(`<form onsubmit="saveMember(event,${tid},'${uid}')"><h3>${m?`${esc(name(uid))} in ${esc(t.name)}`:`Join ${esc(t.name)}`}</h3>
+    ${m?'':'<p class="mu" style="margin:0">You’ll get a lane in this team’s swimlane, then tap an hour to request a stint.</p>'}
     <label>Car (${esc(t.class)})<select name="car">${CARS[t.class].map(c=>opt(c,c,m?.car===c)).join('')}</select></label>
-    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${m?`<button type="button" class="danger" onclick="leaveTeam(${tid},'${uid}')">${mine?'Leave team':'Remove from team'}</button>`:''}</div></form>`)}
+    ${dest.length?`<div class="add-row" style="grid-template-columns:1fr auto;margin-top:0"><label>Move to another team<select id="mvto">${dest.map(x=>opt(x.id,`${x.name} (${x.class})`)).join('')}</select></label><button type="button" onclick="moveMember('${uid}',${tid},+$('#mvto').value)">Move</button></div>`:''}
+    <div class="row"><button class="pri">${m?'Save':'Join team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${m?`<button type="button" class="danger" onclick="leaveTeam(${tid},'${uid}')">${mine?'Leave team':'Remove from team'}</button>`:''}</div></form>`)}
 async function saveMember(e,tid,uid){e.preventDefault();await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:new FormData(e.target).get('car')}));closeDlg();render()}
 async function leaveTeam(tid,uid){
   const t=T.ts.find(x=>x.id===tid),lead=canLead(t),st=T.ss.filter(s=>s.team_id===tid&&s.user_id===uid),gone=st.filter(s=>lead||s.status==='pending');
@@ -562,7 +608,7 @@ function stintDlg(tid,sid,uid,start){
   const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{};
   const cur=s?stIdx(s,t0):{a:start||0,n:3},mem=T.ms.find(m=>m.team_id===tid&&m.user_id===uid);
   const starts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)}`,i===cur.a)}).join('');
-  const who=lead&&!s?`<label>Driver<select name="uid">${profiles.map(x=>opt(x.id,x.name,x.id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
+  const who=lead&&!s&&T.ms.filter(m=>m.team_id===tid).length>1?`<label>Driver<select name="uid">${T.ms.filter(m=>m.team_id===tid).map(m=>opt(m.user_id,name(m.user_id),m.user_id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
   openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
     <label>Car (${esc(t.class)})<select name="car" ${edit?'':'disabled'}>${CARS[t.class].map(c=>opt(c,c,(mem?.car||CARS[t.class][0])===c)).join('')}</select></label>
     <div class="form"><label>Start (your time)<select name="a" ${edit?'':'disabled'}>${starts}</select></label><label>Length<select name="n" ${edit?'':'disabled'}>${STINTS.map(n=>opt(n,n+'h',n===cur.n)).join('')}</select></label></div>
