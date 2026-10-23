@@ -163,6 +163,7 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .li:last-child{border-bottom:0}.li .stat{justify-self:start}.li .who2 b{display:block;font-size:15px;font-weight:600}.li .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
 .li .acts button{min-height:30px;padding:0 10px;font-size:14px}
 .car{font-size:15px;font-weight:500;color:var(--label2)}
+.pwbox{margin-top:22px;padding-top:18px;border-top:.5px solid var(--sep)}
 .grip{flex:none;width:22px;height:30px;margin:0 4px 0 -4px;display:grid;place-items:center;color:var(--label3);cursor:grab;touch-action:none;border-radius:6px}
 .grip:hover{color:var(--label2);background:var(--fill)}.grip svg{width:10px;height:16px}
 .tl .who.lane{flex-direction:row;align-items:center;justify-content:flex-start}.tl .who .nm{display:flex;flex-direction:column;min-width:0}
@@ -246,7 +247,7 @@ dialog .form{grid-template-columns:1fr 1fr}
   .av .lim{display:none}
   .team-head>.grow{flex-basis:100%}
   .li{grid-template-columns:1fr auto;padding:12px 16px}.li .meta{grid-column:1}.li .stat{grid-row:1;grid-column:2;justify-self:end}.li .acts{grid-column:1 / -1;justify-content:flex-start;margin-left:-10px}
-  .add-row{grid-template-columns:1fr 1fr}.add-row button{grid-column:1 / -1}
+  .add-row{grid-template-columns:1fr 1fr}.add-row>button:only-of-type{grid-column:1 / -1}
   .legend button{min-height:34px;padding:0 12px;font-size:14px}
   #toast{bottom:calc(72px + env(safe-area-inset-bottom))}
   dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:18px 18px 0 0;padding:8px 18px calc(22px + env(safe-area-inset-bottom));max-height:92vh}
@@ -273,7 +274,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.3',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -356,6 +357,7 @@ async function start(){
   // First login: take the time zone from this device instead of the UTC default.
   if(prof&&prof.tz==='UTC'&&DEV_TZ!=='UTC'){const r=await sb.from('profiles').update({tz:DEV_TZ}).eq('id',me.id).select().maybeSingle();if(!r.error&&r.data)prof=r.data}
   if(prof&&needsName())return nameView();
+  if(prof&&prof.must_change_pw)return pwView();
   if(!prof||!prof.approved)return pendingView();
   await loadBase();
   const navs=[['my','My races'],['cal','Calendar'],['roster','Roster']];
@@ -383,6 +385,13 @@ async function signup(){const f=$('.auth form');if(!f.reportValidity())return;co
 // Names that are still the email's first part (the old default) must be replaced once.
 const needsName=()=>{const n=(prof.name||'').trim();return !n||(n===String(me.email||'').split('@')[0]&&store.get('nameok:'+me.id)!==n)};
 function nameView(){$('#app').innerHTML=`<div class="auth">${mark()}<h1>Pick your name</h1><p class="sub">This is the name your teammates see on the schedule. Your email isn’t shown.</p><form onsubmit="return saveName(event)"><label>Your name<input id="nm2" required maxlength="40" value="" placeholder="e.g. George M." autocomplete="nickname"></label><button class="pri">Continue</button><p id="msg" class="mu" role="status"></p></form></div>`}
+function pwFields(){return `<label>New password<input id="pw1" type="password" minlength="6" required autocomplete="new-password"></label><label>Repeat new password<input id="pw2" type="password" minlength="6" required autocomplete="new-password"></label>`}
+function pwView(){$('#app').innerHTML=`<div class="auth">${mark()}<h1>Choose your password</h1><p class="sub">An admin gave you a temporary password. Pick your own to continue.</p><form onsubmit="return savePw(event,true)">${pwFields()}<button class="pri">Save password</button><button type="button" class="ghost" onclick="sb.auth.signOut()">Sign out</button><p id="msg" class="mu" role="status"></p></form></div>`}
+function pwDlg(){openDlg(`<form onsubmit="return savePw(event,false)"><h3>Change your password</h3>${pwFields()}<div class="row"><button class="pri">Save password</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+async function savePw(e,forced){e.preventDefault();const a=$('#pw1').value,b=$('#pw2').value;
+  if(a!==b){note('The two passwords don’t match.');return false}
+  const {error}=await sb.auth.updateUser({password:a});if(error){note(error.message);return false}
+  await sb.rpc('clear_pw_flag');if(forced)start();else{closeDlg();note('Password changed.',1)}return false}
 async function saveName(e){e.preventDefault();const n=$('#nm2').value.trim();if(!n)return false;const r=await sb.from('profiles').update({name:n}).eq('id',me.id);if(r.error){note(r.error.message);return false}store.set('nameok:'+me.id,n);start();return false}
 function pendingView(){$('#app').innerHTML=`<div class="auth">${mark()}<h1>Waiting for approval</h1><p class="sub">Your account is created. An admin needs to approve it before you can see the schedule.</p><div class="row"><button class="pri" onclick="start()">Check again</button><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></div></div>`}
 
@@ -722,16 +731,29 @@ async function rosterView(){
     ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
     <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and the Edit buttons.</p>':''}
-    <div style="margin-top:28px"><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
+    <div class="row" style="margin-top:28px"><button onclick="pwDlg()">Change password</button><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
 async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.target));
   await q(sb.from('profiles').update(row).eq('id',me.id));store.set('nameok:'+me.id,row.name);
   delete e.target.dataset.changed;await start();note('Profile saved.',1)}
-function profDlg(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;
-  openDlg(`<form onsubmit="saveProfOf(event,'${p.id}')"><h3>Edit ${esc(p.name)}</h3>${EMAILS[p.id]?`<p class="mu" style="margin:0">${esc(EMAILS[p.id])}</p>`:''}${profFields(p)}
-    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
-async function saveProfOf(e,id){e.preventDefault();const row=profRow(new FormData(e.target));
+function profDlg(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const self=id===me.id;
+  openDlg(`<form onsubmit="saveProfOf(event,'${p.id}')"><h3>Edit ${esc(p.name)}</h3>${profFields(p)}
+    <label>Email<input name="email" type="email" required value="${esc(EMAILS[p.id]||'')}" autocomplete="off"></label>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>
+    ${self?'':`<div class="pwbox"><h3 style="font-size:17px">Reset password</h3>
+    <p class="mu" style="margin:0">Set a simple temporary password and send it to ${esc(p.name)}. They sign in with it and must pick their own straight away.</p>
+    <div class="add-row" style="grid-template-columns:1fr 1fr;margin-top:10px"><label style="grid-column:1 / -1">Temporary password<input id="tmppw" minlength="6" autocomplete="off" spellcheck="false"></label>
+    <button type="button" onclick="$('#tmppw').value=tempPw()">Generate</button><button type="button" class="pri" onclick="setTempPw('${p.id}')">Set password</button></div></div>`}`)}
+// Easy to read out or type: word-word-4 digits, no look-alike characters.
+function tempPw(){const w=['spa','monza','fuji','sebring','imola','lemans','qatar','bahrain','pitlane','apex','hypercar','podium'],r=n=>crypto.getRandomValues(new Uint32Array(1))[0]%n;
+  return `${w[r(w.length)]}-${w[r(w.length)]}-${1000+r(9000)}`}
+async function setTempPw(id){const pw=$('#tmppw').value.trim(),p=ROSTER.find(x=>x.id===id);
+  if(pw.length<6)return note('Use at least 6 characters.');
+  const {error}=await sb.rpc('admin_set_password',{uid:id,pw});if(error)return note(error.message);
+  closeDlg();note(`Temporary password set for ${p.name}. Send it to them; they’ll choose their own at next sign-in.`,1)}
+async function saveProfOf(e,id){e.preventDefault();const f=new FormData(e.target),row=profRow(f),em=String(f.get('email')||'').trim().toLowerCase();
+  if(em&&em!==(EMAILS[id]||'').toLowerCase()){const {error}=await sb.rpc('admin_set_email',{uid:id,new_email:em});if(error)return note(error.message)}
   const r=await q(sb.from('profiles').update(row).eq('id',id).select());
-  if(!r||!r.length)return note('Not saved. Run the latest database update (migration4.sql) so admins can edit drivers.');
+  if(!r||!r.length)return note('Not saved. Run the latest database update so admins can edit drivers.');
   closeDlg();if(id===me.id){store.set('nameok:'+me.id,row.name);await start();go('roster')}else{await loadBase();render()}note('Driver updated.',1)}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));await loadBase();render()}
 
