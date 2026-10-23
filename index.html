@@ -44,13 +44,18 @@ LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
 GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
 GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
-const H=3600000,$=s=>document.querySelector(s);
+const H=3600000,STINTS=[2,3],$=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const utcH=d=>d.toISOString().slice(11,13)+':00';
-const locH=(d,tz)=>new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',hour12:false}).format(d).replace(/^24/,'00')+':00';
+const utcH=d=>d.toISOString().slice(11,16);
+const locH=(d,tz)=>new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(d);
 const locFull=(d,tz)=>new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
 const utcFull=d=>d.toISOString().slice(0,16).replace('T',' ')+' UTC';
-const toInput=d=>new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+// Wall-clock parts of a moment in a given time zone.
+const zParts=(d,tz)=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));
+const zOff=(d,tz)=>{const p=zParts(d,tz);return Date.UTC(+p.year,p.month-1,+p.day,+p.hour,+p.minute,+p.second)-Math.floor(d/1000)*1000};
+// datetime-local value <-> moment, read in the profile's time zone (not the computer's).
+const toInput=(d,tz)=>{const p=zParts(d,tz);return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`};
+const fromInput=(v,tz)=>{const [y,mo,da,h,mi]=v.split(/[-T:]/).map(Number),w=Date.UTC(y,mo-1,da,h,mi);let t=w;for(let i=0;i<3;i++)t=w-zOff(new Date(t),tz);return new Date(t)};
 const cl=c=>c==='-'?'u':c, name=id=>profiles.find(p=>p.id===id)?.name||'Unknown';
 let me=null,prof=null,races=[],profiles=[],view='cal',raceId=null,sub='avail',AV={},T={ts:[],ms:[],ss:[]},tt;
 
@@ -60,7 +65,7 @@ const hrs=(r,u)=>(AV[u]||'').padEnd(r.length_h,'-').slice(0,r.length_h);
 
 async function boot(){
   const {data}=await sb.auth.getSession();me=data.session?.user||null;
-  sb.auth.onAuthStateChange((e,s)=>{const u=s?.user||null;if(u?.id!==me?.id){me=u;start()}});
+  sb.auth.onAuthStateChange((e,s)=>{const u=s?.user||null;if(u?.id!==me?.id){me=u;setTimeout(start,0)}});
   start();
 }
 async function start(){
@@ -84,16 +89,16 @@ function render(){view==='cal'?calView():view==='race'?raceView():rosterView()}
 
 function calView(){
   const adm=prof.role==='admin';
-  $('#main').innerHTML=`<h2>Season calendar</h2>${adm?`<form class="card form" onsubmit="addRace(event)"><label>Race name<input name="name" required></label><label>Track<input name="track" list="tr"></label><datalist id="tr">${TRACKS.map(t=>`<option>${t}</option>`).join('')}</datalist><label>Length<select name="len">${[4,6,8,12,24].map(h=>`<option value="${h}">${h}H</option>`).join('')}</select></label><label>Start (your local time)<input name="start" type="datetime-local" required></label><button class="pri">Add race</button></form>`:''}`+
+  $('#main').innerHTML=`<h2>Season calendar</h2>${adm?`<form class="card form" onsubmit="addRace(event)"><label>Race name<input name="name" required></label><label>Track<input name="track" list="tr"></label><datalist id="tr">${TRACKS.map(t=>`<option>${t}</option>`).join('')}</datalist><label>Length<select name="len">${[4,6,8,12,24].map(h=>`<option value="${h}">${h}H</option>`).join('')}</select></label><label>Start (${esc(prof.tz)})<input name="start" type="datetime-local" required></label><button class="pri">Add race</button></form>`:''}`+
   (races.map(r=>{const d=new Date(r.start_utc);return `<div class="card row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')} · ${utcFull(d)} · ${locFull(d,prof.tz)} local</div></div><button onclick="go('race',${r.id})">Open</button>${adm?`<button class="ghost" onclick="delRace(${r.id})">Delete</button>`:''}</div>`}).join('')||'<p class="mu">No races yet. An admin can add the first one.</p>');
 }
 async function addRace(e){e.preventDefault();const f=new FormData(e.target);
-  await q(sb.from('races').insert({name:f.get('name'),track:f.get('track')||null,length_h:+f.get('len'),start_utc:new Date(f.get('start')).toISOString()}));
+  await q(sb.from('races').insert({name:f.get('name'),track:f.get('track')||null,length_h:+f.get('len'),start_utc:fromInput(f.get('start'),prof.tz).toISOString()}));
   races=await q(sb.from('races').select('*').order('start_utc'));calView()}
 async function delRace(id){if(!confirm('Delete this race and its teams?'))return;await q(sb.from('races').delete().eq('id',id));races=races.filter(r=>r.id!==id);calView()}
 
 function raceView(){
-  const r=races.find(x=>x.id===raceId),d=new Date(r.start_utc);
+  const r=races.find(x=>x.id===raceId);if(!r)return go('cal');const d=new Date(r.start_utc);
   $('#main').innerHTML=`<button class="ghost" onclick="go('cal')">Back to calendar</button><h2>${esc(r.name)} · ${r.length_h}H</h2><div class="mu">${utcFull(d)} · ${locFull(d,prof.tz)} local</div><div class="tabs"><button class="${sub=='avail'?'on':''}" onclick="sub='avail';render()">Availability</button><button class="${sub=='teams'?'on':''}" onclick="sub='teams';render()">Teams and stints</button></div><div id="sub">Loading…</div>`;
   sub==='avail'?availView(r):teamsView(r);
 }
@@ -117,26 +122,26 @@ async function teamsView(r){
   T={ts,ms,ss};drawTeams(r);
 }
 function drawTeams(r){
-  const form=`<form class="card form" onsubmit="mkTeam(event)"><label>Team name<input name="name" required placeholder="Team A"></label><label>Class<select name="cls">${Object.keys(CARS).map(c=>`<option>${c}</option>`).join('')}</select></label><label>Race start (your local time)<input name="start" type="datetime-local" required value="${toInput(new Date(r.start_utc))}"></label><button class="pri">Create team</button></form>`;
+  const form=`<form class="card form" onsubmit="mkTeam(event)"><label>Team name<input name="name" required placeholder="Team A"></label><label>Class<select name="cls">${Object.keys(CARS).map(c=>`<option>${c}</option>`).join('')}</select></label><label>Team start (${esc(prof.tz)})<input name="start" type="datetime-local" required value="${toInput(new Date(r.start_utc),prof.tz)}"></label><button class="pri">Create team</button></form>`;
   $('#sub').innerHTML=form+(T.ts.map(t=>teamCard(r,t)).join('')||'<p class="mu">No teams yet. Create one with its class and start time, then each driver picks a car and a stint.</p>');
 }
 function teamCard(r,t){
   const lead=t.leader_id===me.id||prof.role==='admin',L=r.length_h,t0=new Date(t.start_utc);
-  const off=Math.round((t0-new Date(r.start_utc))/H),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
+  const off=(t0-new Date(r.start_utc))/H,mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
   const axis=[...Array(L).keys()].map(i=>`<div>${utcH(new Date(+t0+i*H))}</div>`).join('');
   const lanes=mem.map(m=>{
-    const cells=[...Array(L).keys()].map(i=>`<i class="${cl(hrs(r,m.user_id)[i+off]||'-')}"></i>`).join('');
+    const cells=[...Array(L).keys()].map(i=>`<i class="${cl(hrs(r,m.user_id)[Math.floor(i+off+1e-9)]||'-')}"></i>`).join('');
     const bars=st.filter(s=>s.user_id===m.user_id).map(s=>{const a=(new Date(s.start_utc)-t0)/H,b=(new Date(s.end_utc)-t0)/H;return `<div class="bar ${s.status}" style="left:${a/L*100}%;width:${(b-a)/L*100}%">${s.status==='pending'?'Pending · ':''}${b-a}h</div>`}).join('');
     return `<div class="lane"><div class="who"><b>${esc(name(m.user_id))}</b><div class="mu">${esc(m.car)}</div></div><div class="track">${cells}${bars}</div></div>`}).join('');
   const rows=st.map(s=>{const a=new Date(s.start_utc),b=new Date(s.end_utc),own=s.user_id===me.id;return `<tr><td>${esc(name(s.user_id))}</td><td>${utcH(a)}–${utcH(b)} UTC</td><td>${locH(a,prof.tz)}–${locH(b,prof.tz)} local</td><td><span class="chip ${s.status}">${s.status}</span></td><td>${lead&&s.status==='pending'?`<button onclick="appr(${s.id})">Approve</button> `:''}${lead||(own&&s.status==='pending')?`<button class="ghost" onclick="delStint(${s.id})">Remove</button>`:''}</td></tr>`}).join('');
   const opts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return `<option value="${i}">${utcH(x)} UTC · ${locH(x,prof.tz)} local</option>`}).join('');
-  return `<div class="card"><div class="row"><b style="font-size:18px">${esc(t.name)}</b><span class="chip">${t.class}</span><span class="mu grow">Leader: ${esc(name(t.leader_id))} · starts ${utcFull(t0)} · ${locFull(t0,prof.tz)} local</span>${lead?`<button class="ghost" onclick="delTeam(${t.id})">Delete team</button>`:''}</div>
+  return `<div class="card"><div class="row"><b style="font-size:18px">${esc(t.name)}</b><span class="chip">${t.class}</span><span class="mu grow">Leader: ${t.leader_id?esc(name(t.leader_id)):'none (admin manages)'} · starts ${utcFull(t0)} · ${locFull(t0,prof.tz)} local</span>${lead?`<button class="ghost" onclick="delTeam(${t.id})">Delete team</button>`:''}</div>
   <div class="axis">${axis}</div>${lanes||'<p class="mu">No drivers yet.</p>'}
   ${rows?`<div class="scroll"><table><tbody>${rows}</tbody></table></div>`:''}
-  <form class="form" onsubmit="join(event,${t.id})" style="margin-top:10px"><label>Car (${t.class})<select name="car">${CARS[t.class].map(c=>`<option>${esc(c)}</option>`).join('')}</select></label><label>Stint start<select name="s">${opts}</select></label><label>Length<select name="n">${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n}h</option>`).join('')}</select></label><button class="pri">${lead?'Add my stint':'Request stint'}</button></form></div>`;
+  <form class="form" onsubmit="join(event,${t.id})" style="margin-top:10px"><label>Car (${t.class})<select name="car">${CARS[t.class].map(c=>`<option>${esc(c)}</option>`).join('')}</select></label><label>Stint start<select name="s">${opts}</select></label><label>Length<select name="n">${STINTS.map(n=>`<option value="${n}"${n===prof.max_stint?' selected':''}>${n}h</option>`).join('')}</select></label><button class="pri">${lead?'Add my stint':'Request stint'}</button></form></div>`;
 }
 async function mkTeam(e){e.preventDefault();const f=new FormData(e.target),r=races.find(x=>x.id===raceId);
-  await q(sb.from('teams').insert({race_id:r.id,name:f.get('name'),class:f.get('cls'),start_utc:new Date(f.get('start')).toISOString(),leader_id:me.id}));teamsView(r)}
+  await q(sb.from('teams').insert({race_id:r.id,name:f.get('name'),class:f.get('cls'),start_utc:fromInput(f.get('start'),prof.tz).toISOString(),leader_id:me.id}));teamsView(r)}
 async function join(e,tid){e.preventDefault();const f=new FormData(e.target),t=T.ts.find(x=>x.id===tid),r=races.find(x=>x.id===raceId),n=+f.get('n'),s=+f.get('s');
   if(n<prof.min_stint||n>prof.max_stint)return note(`Your stint limits are ${prof.min_stint}–${prof.max_stint}h. Change the length, or update your limits in Roster.`);
   if(s+n>r.length_h)return note('That stint runs past the end of the race.');
@@ -153,9 +158,10 @@ async function rosterView(){
   const all=await q(sb.from('profiles').select('*').order('name')),adm=prof.role==='admin';
   const tzs=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):['UTC'];
   const rows=all.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.tz)}</td><td>${p.min_stint}–${p.max_stint}h</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td><td>${adm&&p.id!==me.id?(p.approved?`<button class="ghost" onclick="setUser('${p.id}',false,'driver')">Remove</button> <button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>`:`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`):''}</td></tr>`).join('');
-  $('#main').innerHTML=`<h2>Roster</h2><form class="card form" onsubmit="saveProf(event)"><label>Your name<input name="name" required value="${esc(prof.name)}"></label><label>Time zone<select name="tz">${tzs.map(z=>`<option${z===prof.tz?' selected':''}>${z}</option>`).join('')}</select></label><label>Min stint (h)<input name="min" type="number" min="1" max="12" value="${prof.min_stint}"></label><label>Max stint (h)<input name="max" type="number" min="1" max="12" value="${prof.max_stint}"></label><button class="pri">Save my profile</button></form><div class="card scroll"><table><tbody>${rows}</tbody></table></div>`;
+  $('#main').innerHTML=`<h2>Roster</h2><form class="card form" onsubmit="saveProf(event)"><label>Your name<input name="name" required value="${esc(prof.name)}"></label><label>Time zone<select name="tz">${tzs.map(z=>`<option${z===prof.tz?' selected':''}>${z}</option>`).join('')}</select></label><label>Min stint (h)<select name="min">${STINTS.map(n=>`<option${n===prof.min_stint?' selected':''}>${n}</option>`).join('')}</select></label><label>Max stint (h)<select name="max">${STINTS.map(n=>`<option${n===prof.max_stint?' selected':''}>${n}</option>`).join('')}</select></label><button class="pri">Save my profile</button></form><div class="card scroll"><table><tbody>${rows}</tbody></table></div>`;
 }
 async function saveProf(e){e.preventDefault();const f=new FormData(e.target);
+  if(+f.get('min')>+f.get('max'))return note('Min stint can\'t be longer than max stint.');
   await q(sb.from('profiles').update({name:f.get('name'),tz:f.get('tz'),min_stint:+f.get('min'),max_stint:+f.get('max')}).eq('id',me.id));
   const {data}=await sb.from('profiles').select('*').eq('id',me.id).single();prof=data;profiles=await q(sb.from('profiles').select('*').eq('approved',true).order('name'));rosterView();note('')}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));profiles=await q(sb.from('profiles').select('*').eq('approved',true).order('name'));rosterView()}
