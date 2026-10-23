@@ -161,6 +161,17 @@ button.cell:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--label) 30%,
 .A{background:var(--cA)}.M{background:var(--cM)}.N{background:var(--cN)}.u{background:var(--cU)}
 button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM)}button.cell.N:hover{background:var(--cN)}button.cell.u:hover{background:var(--cU)}
 .av-wrap{padding:0;overflow:hidden}
+.av-phone{display:none}
+.ph-head{display:flex;align-items:baseline;gap:10px;margin:22px 2px 8px}.ph-head h3{margin:0;font-size:17px;flex:1}
+.day-h{font-size:12px;font-weight:600;color:var(--tint);margin:12px 2px 6px}.day-h:first-child{margin-top:0}
+.chips6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.tchip{min-height:44px;height:44px;padding:0;border-radius:10px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#000;letter-spacing:-.02em}
+.tchip.A{background:var(--cA)}.tchip.M{background:var(--cM)}.tchip.N{background:var(--cN);color:#fff}.tchip.u{background:var(--cU);color:var(--label2)}
+.tchip.A:hover{background:var(--cA)}.tchip.M:hover{background:var(--cM)}.tchip.N:hover{background:var(--cN)}.tchip.u:hover{background:var(--cU)}
+.strip-row{display:grid;grid-template-columns:64px repeat(var(--L),minmax(0,1fr));gap:1px;align-items:center;margin-bottom:5px}
+.strip-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px}
+.sc{height:18px;border-radius:3px}.sc.dst{box-shadow:inset 2px 0 0 var(--tint)}
+.strip-lab{font-size:10px;color:var(--label2);font-variant-numeric:tabular-nums;margin:4px 0 0}
 @container av (max-width:1000px){.av th:not(.k2) .t{visibility:hidden}}
 .li{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 80px minmax(0,250px);gap:4px 16px;align-items:center;padding:12px 18px;border-bottom:.5px solid var(--sep)}
 .li:last-child{border-bottom:0}.li .stat{justify-self:start}.li .who2 b{display:block;font-size:15px;font-weight:600}.li .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
@@ -248,6 +259,7 @@ dialog .form{grid-template-columns:1fr 1fr}
   .av{width:auto;table-layout:auto}.av th{min-width:34px}.cell{min-width:32px}.av th .t{visibility:visible!important}
   .list td:first-child{padding-left:16px}.list td:last-child{padding-right:16px}
   .av .lim{display:none}
+  .av-desk{display:none}.av-phone{display:block}
   .team-head>.grow{flex-basis:100%}
   .li{grid-template-columns:1fr auto;padding:12px 16px}.li .meta{grid-column:1}.li .stat{grid-row:1;grid-column:2;justify-self:end}.li .acts{grid-column:1 / -1;justify-content:flex-start;margin-left:-10px}
   .add-row{grid-template-columns:1fr 1fr}.add-row>button:only-of-type{grid-column:1 / -1}
@@ -277,7 +289,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.5',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.6',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -518,12 +530,30 @@ function drawAvail(r){
       return `<td class="${mk[i]?'dst':''}">${mine?`<button class="cell ${cl(c)}" onclick="cyc(${r.id},${i})" title="${tl}" aria-label="${tl}"></button>`:`<span class="cell ${cl(c)}" title="${esc(p.name)} ${tl}"></span>`}</td>`}).join('')+'</tr>'}).join('');
   const cnt=cols.map(i=>{const a=profiles.filter(p=>hrs(r,p.id)[i]==='A').length,m=profiles.filter(p=>hrs(r,p.id)[i]==='M').length;
     return `<td class="n ${a?'':'zero'}" title="${a} available, ${m} maybe">${a}${m?`<span class="mu">+${m}</span>`:''}</td>`}).join('');
-  $('#sub').innerHTML=`<div class="legend"><span class="chip approved">Available</span><span class="chip pending">Maybe</span><span class="chip bad">No</span><span class="chip dim">Not set</span>
+  $('#sub').innerHTML=phoneAvail(r,tz,d,L,mk)+`<div class="av-desk"><div class="legend"><span class="chip approved">Available</span><span class="chip pending">Maybe</span><span class="chip bad">No</span><span class="chip dim">Not set</span>
     <span class="acts-r"><button onclick="fill(${r.id},'A')">All available</button><button onclick="fill(${r.id},'N')">All no</button></span></div>
     <div class="card av-wrap"><div class="scroll"><table class="av"><thead>${head}</thead><tbody>${body}<tr><td>Available<div class="mu">+ maybe</div></td>${cnt}</tr></tbody></table></div></div>
     <p class="mu">Each box is one hour in your time (${esc(tz)}). Tap your own boxes to switch between available, maybe and no.</p>
-    ${Object.keys(mk).length?'<p class="mu">The amber line marks where your clocks change.</p>':''}`;
+    ${Object.keys(mk).length?'<p class="mu">The amber line marks where your clocks change.</p>':''}</div>`;
 }
+/* Phones: your hours as tappable time chips, grouped by day, and the whole team as a strip that fits the screen. */
+function phoneAvail(r,tz,d,L,mk){
+  const s=hrs(r,me.id),days=[];
+  for(let i=0;i<L;i++){const t=new Date(+d+i*H),wd=new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'long'}).format(t);
+    let g=days[days.length-1];if(!g||g.wd!==wd){g={wd,chips:[],note:''};days.push(g)}
+    if(mk[i])g.note=` · ${mk[i]<0?`the second ${locH(t,tz)} is after clocks go back`:`clocks go forward at ${locH(t,tz)}`}`;
+    const c=s[i];g.chips.push(`<button class="tchip ${cl(c)}" onclick="cyc(${r.id},${i})" aria-label="${range(t,1,tz)}: ${WORD[c]}">${locH(t,tz)}${mk[i]?'↺':''}</button>`)}
+  const first=n=>String(n||'').trim().split(/\s+/)[0];
+  const rows=profiles.map(p=>{const h=hrs(r,p.id);return `<div class="strip-row" style="--L:${L}"><span class="strip-name${p.id===me.id?' am':''}" title="${esc(p.name)}">${esc(first(p.name))}</span>${[...h].map((c,i)=>`<span class="sc ${cl(c)}${mk[i]?' dst':''}" title="${esc(p.name)} ${range(new Date(+d+i*H),1,tz)}: ${WORD[c]}"></span>`).join('')}</div>`}).join('');
+  const labels=[...Array(L).keys()].filter(i=>i%4===0).map(i=>`<span style="grid-column:${i+2} / span ${Math.min(4,L-i)}">${locH(new Date(+d+i*H),tz)}</span>`).join('');
+  return `<div class="av-phone">
+    <div class="ph-head"><h3>Your hours</h3><span class="mu">Tap: yes → maybe → no</span></div>
+    <div class="card">${days.map(g=>`<div class="day-h">${esc(g.wd)}${esc(g.note)}</div><div class="chips6">${g.chips.join('')}</div>`).join('')}
+      <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="ghost" onclick="fill(${r.id},'A')">All yes</button><button class="ghost" onclick="fill(${r.id},'N')">All no</button></div></div>
+    <div class="ph-head"><h3>Team</h3><span class="mu">${esc(tz)}</span></div>
+    <div class="card strip">${rows}<div class="strip-row strip-lab" style="--L:${L}"><span></span>${labels}</div>
+      <div class="legend" style="margin:12px 0 0"><span class="chip approved">Yes</span><span class="chip pending">Maybe</span><span class="chip bad">No</span><span class="chip dim">Not set</span></div></div>
+  </div>`}
 async function saveAv(rid){AVT[me.id]=new Date().toISOString();await q(sb.from('availability').upsert({user_id:me.id,race_id:rid,hours:AV[me.id]}))}
 async function cyc(rid,i){const r=races.find(x=>x.id===rid),s=[...hrs(r,me.id)];s[i]={'-':'A',A:'M',M:'N',N:'A'}[s[i]];AV[me.id]=s.join('');drawAvail(r);await saveAv(rid)}
 async function fill(rid,c){const r=races.find(x=>x.id===rid);AV[me.id]=c.repeat(r.length_h);drawAvail(r);await saveAv(rid)}
