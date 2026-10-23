@@ -18,6 +18,7 @@ button:disabled{opacity:.5;cursor:default}
 button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--am);outline-offset:2px}
 label{display:flex;flex-direction:column;gap:4px;color:var(--mu);font-size:12px}
 .card{background:var(--pn);border:1px solid var(--bd);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+.card.click{cursor:pointer}.card.click:hover{border-color:var(--am)}.card.click:focus-visible{outline:2px solid var(--am);outline-offset:2px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.len{font-size:24px;color:var(--am);width:64px;font-weight:700}
 .form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .tabs{display:flex;gap:6px;margin:12px 0}.tabs button.on{background:var(--am);color:var(--bg);border:0}
@@ -78,7 +79,7 @@ LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
 GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
 GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
-const VERSION='2.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='2.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -119,7 +120,7 @@ const canLead=t=>isAdm()||t.leader_id===me.id;
 const teamGeo=(r,t)=>{const t0=new Date(t.start_utc);return {t0,L:r.length_h,off:(t0-new Date(r.start_utc))/H}};
 const avAt=(r,u,off,i)=>hrs(r,u)[Math.floor(i+off+1e-9)]||'-';
 const stIdx=(s,t0)=>({a:Math.round((new Date(s.start_utc)-t0)/H),n:Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H)});
-const lim=p=>`${p.min_stint}–${p.max_stint}h stints · ${p.max_stints==null?'no max':'max '+p.max_stints} · ${p.min_rest_h??0}h rest`;
+const lim=p=>`${p.max_stints==null?'no stint limit':'max '+p.max_stints+' stints'} · ${p.min_rest_h??0}h rest`;
 const teamName=id=>T.ts.find(t=>t.id===id)?.name||'another team';
 
 function note(m,ok){
@@ -202,6 +203,7 @@ function keepTz(){store.set('tzkeep',DEV_TZ+'>'+prof.tz);tzBanner()}
 function openDlg(html){const d=$('#dlg');d.innerHTML=html+'<div id="dmsg" role="alert"></div>';d.showModal()}
 function closeDlg(){$('#dlg').close()}
 $('#dlg').addEventListener('close',()=>{PLAN=null;if(dirty)refresh()});
+function cardKey(e){if(e.target===e.currentTarget&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.currentTarget.click()}}
 const opt=(v,lab,sel)=>`<option value="${esc(v)}"${sel?' selected':''}>${esc(lab)}</option>`;
 
 /* ---------- My races ---------- */
@@ -221,8 +223,8 @@ async function myView(){
       return `<div class="stint"><b>${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu">${n}h · ${esc(t.name)} · ${esc(t.class)}${m?' · '+esc(m.car):''}</span><span class="chip ${s.status}">${s.status}</span></div>`}).join('');
     const noStint=myTeams.filter(t=>!st.some(s=>s.team_id===t.id)).map(t=>`<div class="stint"><span class="mu">In ${esc(t.name)} (${esc(t.class)}), no stint yet</span></div>`).join('');
     const cn=clockNotes(d,r.length_h).length;
-    return `<div class="card"><div class="row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${rel(d)}</div></div><button onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})">Open</button></div>
-      <div class="row" style="margin-top:8px">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="mu">No stints yet. Open the race to set your availability and request a stint.</p>'}</div>`}).join('');
+    return `<div class="card click" role="link" tabindex="0" onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${rel(d)}</div></div></div>
+      <div class="row" style="margin-top:8px">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="mu">No stints yet. Tap the race to set your availability and request a stint.</p>'}</div>`}).join('');
   $('#main').innerHTML=`<h2>My races</h2><p class="mu">All times in your time zone (${esc(tz)}).</p>
     ${next&&nextR?`<div class="banner ok"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)}, ${rel(new Date(next.start_utc))}${next.status==='pending'?' (pending)':''}.</span></div>`:''}
     ${cards||'<p class="mu">No upcoming races. Check the calendar.</p>'}`;
@@ -231,7 +233,7 @@ async function myView(){
 /* ---------- Calendar ---------- */
 function calView(){
   const adm=isAdm(),tz=myTz(),now=Date.now();
-  const card=r=>{const d=new Date(r.start_utc),cn=clockNotes(d,r.length_h).length;return `<div class="card row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${utcFull(d)}</div>${cn?'<span class="chip warn">Clock change during race</span>':''}</div><button onclick="go('race',${r.id})">Open</button>${adm?`<button class="ghost" onclick="raceDlg(${r.id})">Edit</button>`:''}</div>`};
+  const card=r=>{const d=new Date(r.start_utc),cn=clockNotes(d,r.length_h).length;return `<div class="card row click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${utcFull(d)}</div>${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${adm?`<button class="ghost" onclick="event.stopPropagation();raceDlg(${r.id})">Edit</button>`:''}</div>`};
   const up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>now),past=races.filter(r=>+new Date(r.start_utc)+r.length_h*H<=now).reverse();
   $('#main').innerHTML=`<div class="row"><h2 class="grow">Season calendar</h2>${adm?'<button class="pri" onclick="raceDlg()">Add race</button>':''}</div>
     ${up.map(card).join('')||'<p class="mu">No upcoming races.</p>'}${past.length?`<details><summary>Past races (${past.length})</summary>${past.map(card).join('')}</details>`:''}`;
@@ -360,8 +362,8 @@ async function leaveTeam(tid,uid){
 function stintDlg(tid,sid,uid,start){
   const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),s=sid?T.ss.find(x=>x.id===sid):null;
   uid=s?s.user_id:(uid||me.id);
-  const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{min_stint:2,max_stint:3};
-  const cur=s?stIdx(s,t0):{a:start||0,n:Math.max(2,Math.min(3,p.max_stint))},mem=T.ms.find(m=>m.team_id===tid&&m.user_id===uid);
+  const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{};
+  const cur=s?stIdx(s,t0):{a:start||0,n:3},mem=T.ms.find(m=>m.team_id===tid&&m.user_id===uid);
   const starts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)} (hour ${i+1})`,i===cur.a)}).join('');
   const who=lead&&!s?`<label>Driver<select name="uid">${profiles.map(x=>opt(x.id,x.name,x.id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
   openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
@@ -378,7 +380,6 @@ async function saveStint(e,tid,sid){e.preventDefault();
   const uid=f.get('uid'),a=+f.get('a'),n=+f.get('n'),car=f.get('car'),p=profiles.find(x=>x.id===uid);
   if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');
   const warn=[];
-  if(p&&(n<p.min_stint||n>p.max_stint))warn.push(`${p.name}’s stint limits are ${p.min_stint}–${p.max_stint}h.`);
   {const A0=+t0+a*H,B0=A0+n*H,others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
    if(p&&p.max_stints!=null&&others.length+1>p.max_stints)warn.push(`${p.name} would have ${others.length+1} stints in this race (their max is ${p.max_stints}).`);
    if(rest)others.forEach(x=>{const xs=+new Date(x.start_utc),xe=+new Date(x.end_utc),g=xs>=B0?(xs-B0)/H:A0>=xe?(A0-xe)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${g}h rest next to their ${locH(new Date(xs),tz)} stint (wants ${rest}h).`)})}
@@ -406,7 +407,7 @@ function makePlan(r,t){
   const D=mem.map(uid=>{const p=profiles.find(x=>x.id===uid)||{},rest=p.min_rest_h??0,av=[...Array(L).keys()].map(i=>avAt(r,uid,off,i)),busy=Array(L).fill(false);
     const had=T.ss.filter(x=>x.user_id===uid); // this driver's stints in the whole race, any team, plus rest around them
     had.forEach(x=>{const a=hr(x.start_utc),b=hr(x.end_utc);for(let k=Math.max(0,a-rest);k<Math.min(L,b+rest);k++)busy[k]=true});
-    return {uid,min:p.min_stint??2,max:p.max_stint??3,cap:p.max_stints==null?99:p.max_stints-had.length,rest,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
+    return {uid,min:2,max:3,cap:p.max_stints==null?99:p.max_stints-had.length,rest,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
   const U=D.filter(d=>!d.none&&d.cap>0),load0={};mem.forEach(u=>load0[u]=0);st.forEach(s=>load0[s.user_id]=(load0[s.user_id]||0)+stIdx(s,t0).n);
   const fair=l=>Object.values(l).reduce((a,x)=>a+x*x,0)*0.3,score=s=>s.cost+fair(s.load);
   const bk=Array.from({length:L+1},()=>[]);bk[0].push({last:null,load:load0,cnt:{},end:{},cost:0,steps:[]});
@@ -445,25 +446,33 @@ async function applyPlan(e){e.preventDefault();if(!PLAN)return;const P=PLAN;
   closeDlg();render();note(`${P.steps.length} stints added. Tap any bar to adjust it.`,1)}
 
 /* ---------- Roster ---------- */
+function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
+// The editable driver settings, shared by "Your profile" and the admin's edit window.
+const profFields=p=>`<label>Name<input name="name" required maxlength="40" value="${esc(p.name)}"></label>
+    <label>Time zone<select name="tz">${tzList(p.tz).map(z=>opt(z,z,z===p.tz)).join('')}</select></label>
+    <label>Max stints per race<select name="cnt">${opt('','No limit',p.max_stints==null)}${[1,2,3,4,5,6,7,8].map(n=>opt(n,n,n===p.max_stints)).join('')}</select></label>
+    <label>Rest between stints<select name="rest">${[0,1,2,3,4,5,6,8].map(n=>opt(n,n+'h',n===(p.min_rest_h??0))).join('')}</select></label>`;
+const profRow=f=>({name:f.get('name').trim(),tz:f.get('tz'),max_stints:f.get('cnt')===''?null:+f.get('cnt'),min_rest_h:+f.get('rest')});
+let ROSTER=[],EMAILS={};
 async function rosterView(){
-  const all=await q(sb.from('profiles').select('*').order('name')),adm=isAdm();
-  let tzs=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(!tzs.includes(prof.tz))tzs=[prof.tz,...tzs];if(!tzs.includes('UTC'))tzs=['UTC',...tzs];
-  const rows=all.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.tz)}</td><td class="mu">${lim(p)}</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td>
-    <td>${adm&&p.id!==me.id?(p.approved?`<button class="ghost" onclick="setUser('${p.id}',false,'driver')">Remove</button> <button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>`:`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`):''}</td></tr>`).join('');
-  $('#main').innerHTML=`<h2>Roster</h2><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
-    <label>Your name<input name="name" required value="${esc(prof.name)}"></label>
-    <label>Time zone<select name="tz">${tzs.map(z=>opt(z,z,z===prof.tz)).join('')}</select></label>
-    <label>Min stint<select name="min">${STINTS.map(n=>opt(n,n+'h',n===prof.min_stint)).join('')}</select></label>
-    <label>Max stint<select name="max">${STINTS.map(n=>opt(n,n+'h',n===prof.max_stint)).join('')}</select></label>
-    <label>Max stints per race<select name="cnt">${opt('','No limit',prof.max_stints==null)}${[1,2,3,4,5,6,7,8].map(n=>opt(n,n,n===prof.max_stints)).join('')}</select></label>
-    <label>Rest between stints<select name="rest">${[0,1,2,3,4,5,6,8].map(n=>opt(n,n+'h',n===(prof.min_rest_h??0))).join('')}</select></label>
-    <button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.tz.value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
+  const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
+  EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
+  const rows=ROSTER.map(p=>`<tr><td><b>${esc(p.name)}</b>${adm?`<div class="mu">${esc(EMAILS[p.id]||'')}</div>`:''}</td><td>${esc(p.tz)}</td><td class="mu">${lim(p)}</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td>
+    <td>${adm?`<button class="ghost" onclick="profDlg('${p.id}')">Edit</button> `:''}${adm&&p.id!==me.id?(p.approved?`<button class="ghost" onclick="setUser('${p.id}',false,'driver')">Remove</button> <button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>`:`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`):''}</td></tr>`).join('');
+  $('#main').innerHTML=`<h2>Roster</h2><h3>Your profile</h3><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
+    ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.tz.value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
-    <div class="scroll"><table class="list"><tbody>${rows}</tbody></table></div>`}
-async function saveProf(e){e.preventDefault();const f=new FormData(e.target);
-  if(+f.get('min')>+f.get('max'))return note('Min stint can’t be longer than max stint.');
-  await q(sb.from('profiles').update({name:f.get('name').trim(),tz:f.get('tz'),min_stint:+f.get('min'),max_stint:+f.get('max'),max_stints:f.get('cnt')===''?null:+f.get('cnt'),min_rest_h:+f.get('rest')}).eq('id',me.id));store.set('nameok:'+me.id,f.get('name').trim());
+    <h3>Drivers</h3>${adm?'<p class="mu">Only admins see emails and the Edit buttons.</p>':''}<div class="scroll"><table class="list"><tbody>${rows}</tbody></table></div>`}
+async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.target));
+  await q(sb.from('profiles').update(row).eq('id',me.id));store.set('nameok:'+me.id,row.name);
   delete e.target.dataset.changed;await start();note('Profile saved.',1)}
+function profDlg(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;
+  openDlg(`<form onsubmit="saveProfOf(event,'${p.id}')"><h3>Edit ${esc(p.name)}</h3>${EMAILS[p.id]?`<p class="mu" style="margin:0">${esc(EMAILS[p.id])}</p>`:''}${profFields(p)}
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+async function saveProfOf(e,id){e.preventDefault();const row=profRow(new FormData(e.target));
+  const r=await q(sb.from('profiles').update(row).eq('id',id).select());
+  if(!r||!r.length)return note('Not saved. Run the latest database update (migration4.sql) so admins can edit drivers.');
+  closeDlg();if(id===me.id){store.set('nameok:'+me.id,row.name);await start();go('roster')}else{await loadBase();render()}note('Driver updated.',1)}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));await loadBase();render()}
 
 boot();
