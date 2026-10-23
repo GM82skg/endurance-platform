@@ -66,6 +66,9 @@ header.bar{position:sticky;top:0;z-index:20;height:56px;display:grid;grid-templa
 
 /* bottom tab bar (phones) */
 .tabbar{display:none}
+[data-v="roster"]{position:relative}
+[data-v="roster"].has-dot::after{content:"";position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--tint)}
+.tabbar [data-v="roster"].has-dot::after{top:5px;right:calc(50% - 17px);width:9px;height:9px;box-shadow:0 0 0 2px var(--bar)}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:50px;padding:4px 0 0;background:none;color:var(--label2);font-size:10px;font-weight:500;letter-spacing:.01em;border-radius:0}
 .tabbar button:hover{background:none}.tabbar button.on{color:var(--tint)}.tabbar svg{width:25px;height:25px;display:block}
 
@@ -289,7 +292,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.6',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.7',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -388,9 +391,12 @@ async function start(){
   if(view==='race'&&!curRace())view='my';
   render();
 }
+let WAITING=0;
 async function loadBase(){
   [profiles,races]=await Promise.all([q(sb.from('profiles').select('*').eq('approved',true).order('name')),q(sb.from('races').select('*').order('start_utc'))]);
   const p=profiles.find(x=>x.id===me.id);if(p)prof=p;
+  // Admins: how many sign-ups are waiting for approval (shown as a dot on Roster).
+  WAITING=isAdm()?(await sb.from('profiles').select('id').eq('approved',false)).data?.length||0:0;
 }
 function loginView(){
   $('#app').innerHTML=`<div class="auth">${mark()}<h1>ARION Endurance Crew</h1><p class="sub">Sign in to plan your stints.</p><form onsubmit="return signin(event)"><label>Email<input id="em" type="email" required autocomplete="email"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="current-password"></label><label><span>Your name <span style="font-weight:400">(new accounts only)</span></span><input id="nm" maxlength="40" autocomplete="nickname" placeholder="e.g. George M."></label><div class="row"><button class="pri">Sign in</button><button type="button" onclick="signup()">Create account</button></div><p id="msg" class="mu" role="status"></p></form></div>`}
@@ -432,6 +438,7 @@ function go(v,id){if(v==='race'&&view!=='race')backTo=view==='my'?'my':'cal';vie
 async function render(){
   const key=view+'|'+raceId+'|'+sub,sx=key===lastKey?$$('.scroll').map(e=>e.scrollLeft):[];lastKey=key;
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
+  $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
   tzBanner();
   if(view==='my')await myView();else if(view==='cal')calView();else if(view==='race')await raceView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
