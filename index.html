@@ -78,7 +78,7 @@ LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
 GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
 GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
-const H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='2.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -119,6 +119,7 @@ const canLead=t=>isAdm()||t.leader_id===me.id;
 const teamGeo=(r,t)=>{const t0=new Date(t.start_utc);return {t0,L:r.length_h,off:(t0-new Date(r.start_utc))/H}};
 const avAt=(r,u,off,i)=>hrs(r,u)[Math.floor(i+off+1e-9)]||'-';
 const stIdx=(s,t0)=>({a:Math.round((new Date(s.start_utc)-t0)/H),n:Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H)});
+const lim=p=>`${p.min_stint}–${p.max_stint}h stints · ${p.max_stints==null?'no max':'max '+p.max_stints} · ${p.min_rest_h??0}h rest`;
 const teamName=id=>T.ts.find(t=>t.id===id)?.name||'another team';
 
 function note(m,ok){
@@ -138,12 +139,13 @@ async function start(){
   const {data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data;
   // First login: take the time zone from this device instead of the UTC default.
   if(prof&&prof.tz==='UTC'&&DEV_TZ!=='UTC'){const r=await sb.from('profiles').update({tz:DEV_TZ}).eq('id',me.id).select().maybeSingle();if(!r.error&&r.data)prof=r.data}
+  if(prof&&needsName())return nameView();
   if(!prof||!prof.approved)return pendingView();
   await loadBase();
   $('#app').innerHTML=`<header><b class="brand">ENDURANCE CREW</b><nav>
     <button data-v="my" onclick="go('my')">My races</button><button data-v="cal" onclick="go('cal')">Calendar</button><button data-v="roster" onclick="go('roster')">Roster</button></nav>
     <span class="grow"></span><span id="live" class="live" title="Connecting"><i></i><span>Connecting</span></span>
-    <span class="mu">${esc(prof.name)} · ${esc(prof.tz)}${isAdm()?' · admin':''}</span><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></header>
+    <span class="mu">${esc(prof.name)} · ${esc(prof.tz)}${isAdm()?' · admin':''} · v${VERSION}</span><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></header>
     <main><div id="tzb"></div><div id="main"></div></main><div id="toast" role="status" hidden></div>`;
   startLive();
   if(view==='race'&&!curRace())view='my';
@@ -154,9 +156,14 @@ async function loadBase(){
   const p=profiles.find(x=>x.id===me.id);if(p)prof=p;
 }
 function loginView(){
-  $('#app').innerHTML=`<div class="auth"><h2>Sign in</h2><form onsubmit="return signin(event)"><label>Email<input id="em" type="email" required autocomplete="email"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="current-password"></label><div class="row"><button class="pri">Sign in</button><button type="button" onclick="signup()">Create account</button></div><p id="msg" class="mu" role="status"></p></form></div>`}
+  $('#app').innerHTML=`<div class="auth"><h2>Sign in</h2><form onsubmit="return signin(event)"><label>Email<input id="em" type="email" required autocomplete="email"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="current-password"></label><label>Your name (only for a new account)<input id="nm" maxlength="40" autocomplete="nickname" placeholder="e.g. George M."></label><div class="row"><button class="pri">Sign in</button><button type="button" onclick="signup()">Create account</button></div><p id="msg" class="mu" role="status"></p></form></div>`}
 async function signin(e){e.preventDefault();const {error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)note(error.message);return false}
-async function signup(){const f=$('.auth form');if(!f.reportValidity())return;const {error}=await sb.auth.signUp({email:$('#em').value,password:$('#pw').value});note(error?error.message:'Account created. If email confirmation is on, confirm your email, then sign in. An admin must approve you before you see the schedule.')}
+async function signup(){const f=$('.auth form');if(!f.reportValidity())return;const nm=$('#nm').value.trim();if(!nm){$('#nm').focus();return note('Enter your name to create an account. Your teammates see this name.')}
+  const {error}=await sb.auth.signUp({email:$('#em').value,password:$('#pw').value,options:{data:{name:nm}}});note(error?error.message:'Account created. If email confirmation is on, confirm your email, then sign in. An admin must approve you before you see the schedule.')}
+// Names that are still the email's first part (the old default) must be replaced once.
+const needsName=()=>{const n=(prof.name||'').trim();return !n||(n===String(me.email||'').split('@')[0]&&store.get('nameok:'+me.id)!==n)};
+function nameView(){$('#app').innerHTML=`<div class="auth"><h2>Pick your name</h2><p class="mu">This is the name your teammates see on the schedule. Your email isn’t shown.</p><form onsubmit="return saveName(event)"><label>Your name<input id="nm2" required maxlength="40" value="" placeholder="e.g. George M." autocomplete="nickname"></label><button class="pri">Continue</button><p id="msg" class="mu" role="status"></p></form></div>`}
+async function saveName(e){e.preventDefault();const n=$('#nm2').value.trim();if(!n)return false;const r=await sb.from('profiles').update({name:n}).eq('id',me.id);if(r.error){note(r.error.message);return false}store.set('nameok:'+me.id,n);start();return false}
 function pendingView(){$('#app').innerHTML=`<div class="auth"><h2>Waiting for approval</h2><p class="mu">Your account is created. An admin needs to approve it before you can see the schedule.</p><div class="row"><button class="pri" onclick="start()">Check again</button><button class="ghost" onclick="sb.auth.signOut()">Sign out</button></div></div>`}
 
 /* ---------- live updates ---------- */
@@ -214,7 +221,7 @@ async function myView(){
       return `<div class="stint"><b>${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu">${n}h · ${esc(t.name)} · ${esc(t.class)}${m?' · '+esc(m.car):''}</span><span class="chip ${s.status}">${s.status}</span></div>`}).join('');
     const noStint=myTeams.filter(t=>!st.some(s=>s.team_id===t.id)).map(t=>`<div class="stint"><span class="mu">In ${esc(t.name)} (${esc(t.class)}), no stint yet</span></div>`).join('');
     const cn=clockNotes(d,r.length_h).length;
-    return `<div class="card"><div class="row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${rel(d)}</div></div><button onclick="go('race',${r.id})">Open</button></div>
+    return `<div class="card"><div class="row"><b class="len">${r.length_h}H</b><div class="grow"><b>${esc(r.name)}</b><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} your time · ${rel(d)}</div></div><button onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})">Open</button></div>
       <div class="row" style="margin-top:8px">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="mu">No stints yet. Open the race to set your availability and request a stint.</p>'}</div>`}).join('');
   $('#main').innerHTML=`<h2>My races</h2><p class="mu">All times in your time zone (${esc(tz)}).</p>
     ${next&&nextR?`<div class="banner ok"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)}, ${rel(new Date(next.start_utc))}${next.status==='pending'?' (pending)':''}.</span></div>`:''}
@@ -263,7 +270,7 @@ async function raceView(){
   $('#main').innerHTML=`<button class="ghost" onclick="go('cal')">Back to calendar</button>
     <div class="row" style="margin-top:10px"><h2 class="grow">${esc(r.name)} · ${r.length_h}H</h2>${isAdm()?`<button onclick="raceDlg(${r.id})">Edit race</button>`:''}</div>
     <div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} → ${locFull(e,tz)} your time · starts ${utcFull(d)}</div>${ban}
-    <div class="tabs"><button class="${sub==='avail'?'on':''}" onclick="sub='avail';render()">Availability</button><button class="${sub==='teams'?'on':''}" onclick="sub='teams';render()">Teams and stints</button></div><div id="sub"></div>`;
+    <div class="tabs"><button class="${sub==='avail'?'on':''}" onclick="sub='avail';render()">Availability</button><button class="${sub==='teams'?'on':''}" onclick="sub='teams';render()">Team swimlanes</button></div><div id="sub"></div>`;
   sub==='avail'?drawAvail(r):drawTeams(r);
 }
 
@@ -273,7 +280,7 @@ function drawAvail(r){
   const head='<tr><th></th>'+cols.map(i=>{const t=new Date(+d+i*H),day=locDay(t,tz),show=day!==lastDay;lastDay=day;const m=mk[i];
     return `<th class="${m?'dst':''}" title="${range(t,1,tz)} your time · ${utcHM(t)}–${utcHM(new Date(+t+H))} UTC"><span class="day">${show?day:'&nbsp;'}</span>${locH(t,tz)}${m?`<span class="dstl">${m<0?'−':'+'}${Math.abs(m)/60}h</span>`:''}</th>`}).join('')+'</tr>';
   const body=profiles.map(p=>{const s=hrs(r,p.id),mine=p.id===me.id;
-    return `<tr class="${mine?'me':''}"><td>${esc(p.name)}<div class="mu">${esc(p.tz)}</div></td>`+[...s].map((c,i)=>{const t=new Date(+d+i*H),tl=`${range(t,1,tz)}: ${WORD[c]}`;
+    return `<tr class="${mine?'me':''}"><td>${esc(p.name)}<div class="mu">${esc(p.tz)}</div><div class="mu">${lim(p)}</div></td>`+[...s].map((c,i)=>{const t=new Date(+d+i*H),tl=`${range(t,1,tz)}: ${WORD[c]}`;
       return `<td class="${mk[i]?'dst':''}">${mine?`<button class="cell ${cl(c)}" onclick="cyc(${r.id},${i})" title="${tl}" aria-label="${tl}"></button>`:`<span class="cell ${cl(c)}" title="${esc(p.name)} ${tl}"></span>`}</td>`}).join('')+'</tr>'}).join('');
   const cnt=cols.map(i=>{const a=profiles.filter(p=>hrs(r,p.id)[i]==='A').length,m=profiles.filter(p=>hrs(r,p.id)[i]==='M').length;
     return `<td class="n ${a?'':'zero'}" title="${a} available, ${m} maybe">${a}${m?`<span class="mu">+${m}</span>`:''}</td>`}).join('');
@@ -291,7 +298,7 @@ function coverage(t,L,t0){const c=Array.from({length:L},()=>[]);T.ss.filter(s=>s
 function gapRuns(c,t0,tz){const out=[];let i=0;while(i<c.length){if(!c[i].length){let j=i;while(j<c.length&&!c[j].length)j++;out.push(span(new Date(+t0+i*H),j-i,tz));i=j}else i++}return out}
 function drawTeams(r){
   $('#sub').innerHTML=`<div class="row" style="margin-bottom:10px"><button class="pri" onclick="teamDlg()">New team</button><span class="mu">Tap an hour in your lane to request a stint. Tap a stint bar to change it.</span></div>`+
-    (T.ts.map(t=>teamCard(r,t)).join('')||'<p class="mu">No teams yet. Create one with its class and start time, then drivers tap their lane to request stints.</p>');
+    (T.ts.map(t=>teamCard(r,t)).join('')||'<p class="mu">No teams yet. Each team gets its own swimlane chart with one lane per driver. Create a team, add drivers, then tap a lane to place stints.</p>');
 }
 function teamCard(r,t){
   const tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
@@ -372,6 +379,9 @@ async function saveStint(e,tid,sid){e.preventDefault();
   if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');
   const warn=[];
   if(p&&(n<p.min_stint||n>p.max_stint))warn.push(`${p.name}’s stint limits are ${p.min_stint}–${p.max_stint}h.`);
+  {const A0=+t0+a*H,B0=A0+n*H,others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
+   if(p&&p.max_stints!=null&&others.length+1>p.max_stints)warn.push(`${p.name} would have ${others.length+1} stints in this race (their max is ${p.max_stints}).`);
+   if(rest)others.forEach(x=>{const xs=+new Date(x.start_utc),xe=+new Date(x.end_utc),g=xs>=B0?(xs-B0)/H:A0>=xe?(A0-xe)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${g}h rest next to their ${locH(new Date(xs),tz)} stint (wants ${rest}h).`)})}
   const bad=[];for(let k=a;k<a+n;k++){const c=avAt(r,uid,off,k);if(c!=='A')bad.push(`${locH(new Date(+t0+k*H),tz)} ${WORD[c]}`)}
   if(bad.length)warn.push(`${name(uid)} isn’t marked available for: ${bad.join(', ')}.`);
   const A=new Date(+t0+a*H),B=new Date(+A+n*H);
@@ -391,27 +401,31 @@ async function delStint(id){if(!confirm('Remove this stint?'))return;await q(sb.
    a driver drives for another team. Avoids back-to-back stints by the same driver and
    spreads hours evenly. Existing stints are kept as they are. */
 function makePlan(r,t){
-  const {t0,L,off}=teamGeo(r,t),st=T.ss.filter(s=>s.team_id===t.id),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id);
+  const {t0,L,off}=teamGeo(r,t),st=T.ss.filter(s=>s.team_id===t.id),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id),hr=x=>Math.round((new Date(x)-t0)/H);
   const cov=Array(L).fill(null);st.forEach(s=>{const {a,n}=stIdx(s,t0);for(let k=Math.max(0,a);k<Math.min(L,a+n);k++)cov[k]=s.user_id});
-  const D=mem.map(uid=>{const p=profiles.find(x=>x.id===uid),av=[...Array(L).keys()].map(i=>avAt(r,uid,off,i)),busy=Array(L).fill(false);
-    T.ss.filter(x=>x.user_id===uid&&x.team_id!==t.id).forEach(x=>{const a=Math.round((new Date(x.start_utc)-t0)/H),b=Math.round((new Date(x.end_utc)-t0)/H);for(let k=Math.max(0,a);k<Math.min(L,b);k++)busy[k]=true});
-    return {uid,min:p?.min_stint??2,max:p?.max_stint??3,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
-  const U=D.filter(d=>!d.none),load0={};mem.forEach(u=>load0[u]=0);st.forEach(s=>load0[s.user_id]=(load0[s.user_id]||0)+stIdx(s,t0).n);
+  const D=mem.map(uid=>{const p=profiles.find(x=>x.id===uid)||{},rest=p.min_rest_h??0,av=[...Array(L).keys()].map(i=>avAt(r,uid,off,i)),busy=Array(L).fill(false);
+    const had=T.ss.filter(x=>x.user_id===uid); // this driver's stints in the whole race, any team, plus rest around them
+    had.forEach(x=>{const a=hr(x.start_utc),b=hr(x.end_utc);for(let k=Math.max(0,a-rest);k<Math.min(L,b+rest);k++)busy[k]=true});
+    return {uid,min:p.min_stint??2,max:p.max_stint??3,cap:p.max_stints==null?99:p.max_stints-had.length,rest,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
+  const U=D.filter(d=>!d.none&&d.cap>0),load0={};mem.forEach(u=>load0[u]=0);st.forEach(s=>load0[s.user_id]=(load0[s.user_id]||0)+stIdx(s,t0).n);
   const fair=l=>Object.values(l).reduce((a,x)=>a+x*x,0)*0.3,score=s=>s.cost+fair(s.load);
-  const bk=Array.from({length:L+1},()=>[]);bk[0].push({last:null,load:load0,cost:0,steps:[]});
+  const bk=Array.from({length:L+1},()=>[]);bk[0].push({last:null,load:load0,cnt:{},end:{},cost:0,steps:[]});
   for(let pos=0;pos<L;pos++){
-    const seen=new Map();for(const s of bk[pos]){const k=s.last+'|'+mem.map(u=>s.load[u]||0).join(',');const o=seen.get(k);if(!o||o.cost>s.cost)seen.set(k,s)}
+    const seen=new Map();for(const s of bk[pos]){const k=s.last+'|'+mem.map(u=>`${s.load[u]||0}:${s.end[u]??''}`).join(',');const o=seen.get(k);if(!o||o.cost>s.cost)seen.set(k,s)}
     const b=[...seen.values()].sort((x,y)=>score(x)-score(y)).slice(0,300);
     for(const s of b){
       if(cov[pos]){let e=pos;while(e<L&&cov[e]===cov[pos])e++;bk[e].push({...s,last:cov[pos]});continue}
-      for(const d of U)for(const n of STINTS){if(n<d.min||n>d.max||pos+n>L)continue;let ok=true,mb=0;
-        for(let k=pos;k<pos+n;k++){if(cov[k]||d.busy[k]||!(d.av[k]==='A'||d.av[k]==='M')){ok=false;break}if(d.av[k]==='M')mb++}
-        if(!ok)continue;bk[pos+n].push({last:d.uid,load:{...s.load,[d.uid]:(s.load[d.uid]||0)+n},cost:s.cost+1+mb*4+(d.uid===s.last?8:0),steps:[...s.steps,{uid:d.uid,a:pos,n,mb}]})}
-      bk[pos+1].push({last:null,load:s.load,cost:s.cost+100,steps:[...s.steps,{gap:true,a:pos}]});
+      for(const d of U){if((s.cnt[d.uid]||0)>=d.cap||(s.end[d.uid]!=null&&pos<s.end[d.uid]+d.rest))continue;
+        for(const n of STINTS){if(n<d.min||n>d.max||pos+n>L)continue;let ok=true,mb=0;
+          for(let k=pos;k<pos+n;k++){if(cov[k]||d.busy[k]||!(d.av[k]==='A'||d.av[k]==='M')){ok=false;break}if(d.av[k]==='M')mb++}
+          if(!ok)continue;
+          bk[pos+n].push({last:d.uid,load:{...s.load,[d.uid]:(s.load[d.uid]||0)+n},cnt:{...s.cnt,[d.uid]:(s.cnt[d.uid]||0)+1},end:{...s.end,[d.uid]:pos+n},
+            cost:s.cost+1+mb*4+(d.uid===s.last?8:0),steps:[...s.steps,{uid:d.uid,a:pos,n,mb}]})}}
+      bk[pos+1].push({...s,last:null,cost:s.cost+100,steps:[...s.steps,{gap:true,a:pos}]});
     }
   }
   const best=bk[L].sort((x,y)=>score(x)-score(y))[0]||{steps:[]};
-  return {steps:best.steps.filter(x=>!x.gap),gaps:best.steps.filter(x=>x.gap).map(x=>x.a),skipped:D.filter(d=>d.none).map(d=>d.uid),mem,t0,L}
+  return {steps:best.steps.filter(x=>!x.gap),gaps:best.steps.filter(x=>x.gap).map(x=>x.a),skipped:D.filter(d=>d.none).map(d=>d.uid),full:D.filter(d=>!d.none&&d.cap<=0).map(d=>d.uid),mem,t0,L}
 }
 function planDlg(tid){
   const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),P=makePlan(r,t);
@@ -419,10 +433,10 @@ function planDlg(tid){
   const runs=[];P.gaps.forEach(a=>{const l=runs[runs.length-1];if(l&&l.a+l.n===a)l.n++;else runs.push({a,n:1})});
   const rows=P.steps.map(s=>{const x=new Date(+P.t0+s.a*H);return `<tr><td><b>${esc(name(s.uid))}</b></td><td>${span(x,s.n,tz)}</td><td>${s.n}h</td><td>${s.mb?`<span class="chip warn">${s.mb}h maybe</span>`:''}</td></tr>`}).join('');
   openDlg(`<form onsubmit="applyPlan(event)"><h3>Plan stints · ${esc(t.name)}</h3>
-    <p class="mu" style="margin:0">Fills empty hours from each driver’s availability and stint limits. Existing stints stay as they are. Times are in your time zone.</p>
+    <p class="mu" style="margin:0">Fills empty hours using each driver’s availability, stint length, max stints and rest time. Existing stints stay as they are. Times are in your time zone.</p>
     ${rows?`<div class="scroll"><table class="plan"><tbody>${rows}</tbody></table></div>`:'<p>No new stints could be planned.</p>'}
-    ${runs.length?`<div class="banner warn">Still no driver: ${runs.map(x=>span(new Date(+P.t0+x.a*H),x.n,tz)).join(', ')}. Nobody in the team is available then, or the gap is shorter than 2h.</div>`:''}
-    ${P.skipped.length?`<p class="mu" style="margin:0">Left out (no availability set): ${P.skipped.map(u=>esc(name(u))).join(', ')}</p>`:''}
+    ${runs.length?`<div class="banner warn">Still no driver: ${runs.map(x=>span(new Date(+P.t0+x.a*H),x.n,tz)).join(', ')}. Nobody in the team can drive then (availability, rest time or max stints), or the gap is shorter than 2h.</div>`:''}
+    ${P.skipped.length?`<p class="mu" style="margin:0">Left out (no availability set): ${P.skipped.map(u=>esc(name(u))).join(', ')}</p>`:''}${P.full.length?`<p class="mu" style="margin:0">Already at their max stints: ${P.full.map(u=>esc(name(u))).join(', ')}</p>`:''}
     <div class="row">${rows?`<button class="pri">Add ${P.steps.length} stints</button>`:''}<button type="button" onclick="closeDlg()">Cancel</button></div></form>`);
   PLAN={tid,...P};
 }
@@ -434,19 +448,21 @@ async function applyPlan(e){e.preventDefault();if(!PLAN)return;const P=PLAN;
 async function rosterView(){
   const all=await q(sb.from('profiles').select('*').order('name')),adm=isAdm();
   let tzs=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(!tzs.includes(prof.tz))tzs=[prof.tz,...tzs];if(!tzs.includes('UTC'))tzs=['UTC',...tzs];
-  const rows=all.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.tz)}</td><td>${p.min_stint}–${p.max_stint}h</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td>
+  const rows=all.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.tz)}</td><td class="mu">${lim(p)}</td><td><span class="chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'admin':'driver'):'waiting'}</span></td>
     <td>${adm&&p.id!==me.id?(p.approved?`<button class="ghost" onclick="setUser('${p.id}',false,'driver')">Remove</button> <button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>`:`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`):''}</td></tr>`).join('');
   $('#main').innerHTML=`<h2>Roster</h2><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
     <label>Your name<input name="name" required value="${esc(prof.name)}"></label>
     <label>Time zone<select name="tz">${tzs.map(z=>opt(z,z,z===prof.tz)).join('')}</select></label>
     <label>Min stint<select name="min">${STINTS.map(n=>opt(n,n+'h',n===prof.min_stint)).join('')}</select></label>
     <label>Max stint<select name="max">${STINTS.map(n=>opt(n,n+'h',n===prof.max_stint)).join('')}</select></label>
+    <label>Max stints per race<select name="cnt">${opt('','No limit',prof.max_stints==null)}${[1,2,3,4,5,6,7,8].map(n=>opt(n,n,n===prof.max_stints)).join('')}</select></label>
+    <label>Rest between stints<select name="rest">${[0,1,2,3,4,5,6,8].map(n=>opt(n,n+'h',n===(prof.min_rest_h??0))).join('')}</select></label>
     <button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.tz.value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
     <div class="scroll"><table class="list"><tbody>${rows}</tbody></table></div>`}
 async function saveProf(e){e.preventDefault();const f=new FormData(e.target);
   if(+f.get('min')>+f.get('max'))return note('Min stint can’t be longer than max stint.');
-  await q(sb.from('profiles').update({name:f.get('name'),tz:f.get('tz'),min_stint:+f.get('min'),max_stint:+f.get('max')}).eq('id',me.id));
+  await q(sb.from('profiles').update({name:f.get('name').trim(),tz:f.get('tz'),min_stint:+f.get('min'),max_stint:+f.get('max'),max_stints:f.get('cnt')===''?null:+f.get('cnt'),min_rest_h:+f.get('rest')}).eq('id',me.id));store.set('nameok:'+me.id,f.get('name').trim());
   delete e.target.dataset.changed;await start();note('Profile saved.',1)}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));await loadBase();render()}
 
