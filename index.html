@@ -274,7 +274,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.3',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.4',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -726,11 +726,11 @@ async function rosterView(){
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
   const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
     <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div><span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>
-    ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="danger" onclick="setUser('${p.id}',false,'driver')">Remove</button>`:''}</div>`:''}</div>`).join('');
+    ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
     ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
-    <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and the Edit buttons.</p>':''}
+    <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and these buttons. Suspend blocks a driver but keeps their account (approve again to undo). Remove deletes the driver for good.</p>':''}
     <div class="row" style="margin-top:28px"><button onclick="pwDlg()">Change password</button><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
 async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.target));
   await q(sb.from('profiles').update(row).eq('id',me.id));store.set('nameok:'+me.id,row.name);
@@ -755,6 +755,10 @@ async function saveProfOf(e,id){e.preventDefault();const f=new FormData(e.target
   const r=await q(sb.from('profiles').update(row).eq('id',id).select());
   if(!r||!r.length)return note('Not saved. Run the latest database update so admins can edit drivers.');
   closeDlg();if(id===me.id){store.set('nameok:'+me.id,row.name);await start();go('roster')}else{await loadBase();render()}note('Driver updated.',1)}
+async function delUser(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;
+  if(!confirm(`Remove ${p.name} permanently?\n\nThis deletes their login, availability, team places and stints. It can’t be undone.\n\nTo only block access for now, use Suspend instead.`))return;
+  const {error}=await sb.rpc('admin_delete_user',{uid:id});if(error)return note(error.message);
+  await loadBase();render();note(`${p.name} was removed.`,1)}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));await loadBase();render()}
 
 boot();
