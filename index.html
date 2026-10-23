@@ -160,6 +160,7 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .li{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 80px minmax(0,250px);gap:4px 16px;align-items:center;padding:12px 18px;border-bottom:.5px solid var(--sep)}
 .li:last-child{border-bottom:0}.li .stat{justify-self:start}.li .who2 b{display:block;font-size:15px;font-weight:600}.li .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
 .li .acts button{min-height:30px;padding:0 10px;font-size:14px}
+.car{font-size:15px;font-weight:500;color:var(--label2)}
 .grip{flex:none;width:22px;height:30px;margin:0 4px 0 -4px;display:grid;place-items:center;color:var(--label3);cursor:grab;touch-action:none;border-radius:6px}
 .grip:hover{color:var(--label2);background:var(--fill)}.grip svg{width:10px;height:16px}
 .tl .who.lane{flex-direction:row;align-items:center;justify-content:flex-start}.tl .who .nm{display:flex;flex-direction:column;min-width:0}
@@ -261,7 +262,7 @@ LMP3:['ADESS AD25','Duqueine D09','Ginetta G61-LT-P325-Evo','Ligier JS P325'],
 GT3:['Aston Martin Vantage AMR','BMW M4','Corvette Z06 GT3.R','Ferrari 296','Ford Mustang','Lamborghini Huracan Evo2','Lexus RC F','McLaren 720S Evo','Mercedes-AMG','Porsche 911 GT3 R'],
 GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 911 RSR-19']};
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
-const VERSION='3.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='3.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -323,6 +324,7 @@ const initials=n=>String(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).joi
 const stL=s=>s==='approved'?'Approved':'Pending';
 const lenBadge=r=>`<span class="len">${r.length_h}<small>h</small></span>`;
 const lim=p=>`${p.max_stints==null?'no stint limit':'max '+p.max_stints+' stints'} · ${p.min_rest_h??0}h rest`;
+const teamCar=t=>t?.car||CARS[t?.class]?.[0]||'';
 const teamName=id=>T.ts.find(t=>t.id===id)?.name||'another team';
 
 function note(m,ok){
@@ -427,7 +429,7 @@ async function myView(){
     const moved=a&&r.start_changed_at&&(!a.updated_at||new Date(a.updated_at)<new Date(r.start_changed_at));
     const avChip=!a?'<span class="chip bad">Availability not set</span>':moved?'<span class="chip warn">Race moved: recheck availability</span>':'<span class="chip ok">Availability set</span>';
     const stl=st.filter(s=>myTeams.some(t=>t.id===s.team_id)).map(s=>{const t=myTeams.find(x=>x.id===s.team_id),m=mm.find(x=>x.team_id===t.id),n=Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H);
-      return `<div class="stint"><b class="num">${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu grow">${n}h · ${esc(t.name)} · ${esc(t.class)}${m?' · '+esc(m.car):''}</span><span class="chip ${s.status}">${stL(s.status)}</span></div>`}).join('');
+      return `<div class="stint"><b class="num">${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu grow">${n}h · ${esc(t.name)} · ${esc(t.class)} · ${esc(teamCar(t))}</span><span class="chip ${s.status}">${stL(s.status)}</span></div>`}).join('');
     const noStint=myTeams.filter(t=>!st.some(s=>s.team_id===t.id)).map(t=>`<div class="stint"><span class="mu">In ${esc(t.name)} (${esc(t.class)}) · no stint yet</span></div>`).join('');
     const cn=clockNotes(d,r.length_h).length;
     return `<div class="card click" role="link" tabindex="0" onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
@@ -520,7 +522,7 @@ function teamCard(r,t){
     return `<div class="cov ${k}" style="grid-row:2;grid-column:${i+2}" title="${range(new Date(+t0+i*H),1,tz)}: ${COVW[k]}"></div>`}).join('');
   if(!lanes.length)h+=`<div class="lane-empty" style="grid-row:3">No drivers yet. ${lead?'Add one below, or drag a driver here from another team.':'Join the team to request stints.'}</div>`;
   lanes.forEach((m,li)=>{const R=li+3,mine=m.user_id===me.id,click=mine||lead;
-    const sub2=m.left?'Not in team':esc(m.car),drag=!m.left&&canMoveFrom(m.user_id,t);
+    const sub2=m.left?'Not in team':esc(profiles.find(p=>p.id===m.user_id)?.tz||''),drag=!m.left&&canMoveFrom(m.user_id,t);
     h+=`<div class="who lane" style="grid-row:${R};grid-column:1">${drag?`<span class="grip" data-uid="${m.user_id}" data-tid="${t.id}" onpointerdown="dragStart(event)" title="Drag to another team" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm">${click?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${m.user_id}')" title="Car and team options">${esc(name(m.user_id))}</button>`:`<b>${esc(name(m.user_id))}</b>`}<span class="mu">${sub2}</span></span></div>`;
     for(let i=0;i<L;i++){const c=avAt(r,m.user_id,off,i),tl=`${range(new Date(+t0+i*H),1,tz)}: ${WORD[c]}`;
       h+=click?`<button class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" onclick="stintDlg(${t.id},0,'${m.user_id}',${i})" title="${tl}" aria-label="${esc(name(m.user_id))}, ${tl}"></button>`:`<div class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" title="${tl}"></div>`}
@@ -530,14 +532,14 @@ function teamCard(r,t){
   const list=st.map(x=>{const n=stIdx(x,t0).n;return `<tr><td>${esc(name(x.user_id))}</td><td>${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${n}h</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`}).join('');
   const free=profiles.filter(p=>!T.ms.some(m=>m.user_id===p.id));
   const isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==t.id);
-  const joinBtn=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="memberDlg(${t.id},'${me.id}')">Join team</button>`;
-  return `<div class="card team" data-tid="${t.id}"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span></div>
-    <div class="mu" style="margin-top:2px">Leader ${t.leader_id?esc(name(t.leader_id)):'none (admins manage it)'} · starts ${locFull(t0,tz)}</div></div>
+  const joinBtn=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="joinTeam(${t.id})">Join team</button>`;
+  return `<div class="card team" data-tid="${t.id}"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span><span class="car">${esc(teamCar(t))}</span></div>
+    <div class="mu" style="margin-top:2px">Leader ${t.leader_id?esc(name(t.leader_id)):'none (admins manage it)'} · ${mem.length} driver${mem.length===1?'':'s'}</div></div>
     ${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${joinBtn}</div>
     ${gaps.length?`<div class="banner warn"><span>No driver: ${gaps.join(', ')}</span></div>`:`<div class="banner ok"><span>Every hour has a driver.</span></div>`}${over?'<div class="banner warn"><span>Some stints overlap (striped on the coverage line).</span></div>':''}
     <div class="scroll"><div class="tl" style="--L:${L}">${h}</div></div>
     <div class="legend"><span class="chip approved">Approved stint</span><span class="chip pending">Pending stint</span><span class="mu">Lane shading shows availability. Top line shows coverage.</span></div>
-    ${lead&&free.length?`<div class="add-row"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><label>Car<select id="ac${t.id}">${CARS[t.class].map(c=>opt(c,c)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
+    ${lead&&free.length?`<div class="add-row"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
     ${list?`<details><summary>Stint list (${st.length})</summary><div class="scroll"><table class="list"><tbody>${list}</tbody></table></div></details>`:''}</div>`;
 }
 /* ---------- moving drivers between teams (drag the ⋮⋮ handle, or use the driver's window) ---------- */
@@ -549,15 +551,15 @@ async function moveMember(uid,from,to){
   const st=T.ss.filter(s=>s.team_id===from&&s.user_id===uid),own=!(isAdm()||canLead(a));
   if(own&&st.some(s=>s.status==='approved'))return note(`${name(uid)} has approved stints in ${a.name}. Ask its leader to make the move.`);
   if(!confirm(`Move ${name(uid)} from ${a.name} to ${b.name}?${st.length?`\n\nTheir ${st.length} stint${st.length>1?'s':''} in ${a.name} will be removed.`:''}`))return;
-  const m=T.ms.find(x=>x.team_id===from&&x.user_id===uid),car=m&&a.class===b.class?m.car:CARS[b.class][0];
+  const car=teamCar(b);
   if(st.length)await q(sb.from('stints').delete().in('id',st.map(s=>s.id)));
   const r=await q(sb.from('team_members').update({team_id:to,car}).eq('team_id',from).eq('user_id',uid).select());
   if(!r||!r.length)return note('The move wasn’t allowed. Ask an admin or the leader of both teams.');
-  if($('#dlg').open)closeDlg();render();note(`${name(uid)} moved to ${b.name}.${a.class!==b.class?` Car set to ${car}; tap their name to change it.`:''}`,1)}
+  if($('#dlg').open)closeDlg();render();note(`${name(uid)} moved to ${b.name}.${teamCar(a)!==car?` They now drive the ${car}.`:''}`,1)}
 let DRAG=null;
 function dragStart(e){
   if(e.button>0)return;e.preventDefault();const g=e.currentTarget,uid=g.dataset.uid,tid=+g.dataset.tid,m=T.ms.find(x=>x.team_id===tid&&x.user_id===uid);
-  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.innerHTML=`${esc(name(uid))}<small>${esc(m?.car||'')}</small>`;document.body.appendChild(ghost);
+  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.innerHTML=`${esc(name(uid))}<small>${esc(T.ts.find(x=>x.id===tid)?.name||'')}</small>`;document.body.appendChild(ghost);
   DRAG={uid,tid,over:null};busy++;document.body.classList.add('dragging');try{g.setPointerCapture(e.pointerId)}catch{}
   const clear=()=>$$('.card.team.drop,.card.team.nodrop').forEach(c=>c.classList.remove('drop','nodrop'));
   const move=ev=>{ghost.style.transform=`translate(${ev.clientX+14}px,${ev.clientY+10}px)`;
@@ -570,18 +572,21 @@ function dragStart(e){
   const tick=()=>{if(!DRAG)return;const y=DRAG.y,edge=y<100?-1:y>innerHeight-120?1:0;
     if(edge){window.scrollBy(0,edge*12);move({clientX:DRAG.x,clientY:y})}requestAnimationFrame(tick)};
   g.addEventListener('pointermove',move);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);move(e);requestAnimationFrame(tick)}
-async function addMember(tid){await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:$('#ac'+tid).value}));render()}
+async function addMember(tid){const t=T.ts.find(x=>x.id===tid);await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:teamCar(t)}));render()}
+async function joinTeam(tid){const t=T.ts.find(x=>x.id===tid);await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:teamCar(t)}));render();note(`You joined ${t.name}. Tap an hour in your lane to request a stint.`,1)}
 
 function teamDlg(id){
-  const r=curRace(),t=id?T.ts.find(x=>x.id===id):null,tz=myTz();
+  const t=id?T.ts.find(x=>x.id===id):null,cls=t?.class||'GT3';
   openDlg(`<form onsubmit="saveTeam(event,${id||0})"><h3>${t?'Edit team':'New team'}</h3>
-    <label>Team name<input name="name" required value="${esc(t?.name||'')}" placeholder="Team A"></label>
-    <label>Class<select name="cls">${Object.keys(CARS).map(c=>opt(c,c,t?.class===c)).join('')}</select></label>
-    <label>Team start (${esc(tz)})<input name="start" type="datetime-local" required value="${toInput(new Date(t?t.start_utc:r.start_utc),tz)}"></label>
-    ${t?'<p class="mu">Moving the start moves all of this team’s stints with it. Changing the class means drivers need to pick a new car.</p>':'<p class="mu">You become the team leader.</p>'}
+    <label>Team name<input name="name" required maxlength="40" value="${esc(t?.name||'')}" placeholder="e.g. ARION #7"></label>
+    <label>Class<select name="cls" onchange="carOpts(this)">${Object.keys(CARS).map(c=>opt(c,c,cls===c)).join('')}</select></label>
+    <label>Car<select name="car">${CARS[cls].map(c=>opt(c,c,teamCar(t)===c)).join('')}</select></label>
+    <p class="mu" style="margin:0">${t?'Every driver in the team drives this car.':'The team starts with the race. You become its leader; add drivers or let them join.'}</p>
     <div class="row"><button class="pri">${t?'Save changes':'Create team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t?`<button type="button" class="danger" onclick="delTeam(${t.id})">Delete team</button>`:''}</div></form>`)}
-async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),row={name:f.get('name'),class:f.get('cls'),start_utc:fromInput(f.get('start'),myTz()).toISOString()};
-  if(id)await q(sb.from('teams').update(row).eq('id',id));else await q(sb.from('teams').insert({...row,race_id:raceId,leader_id:me.id}));
+function carOpts(sel){const c=sel.form.querySelector('[name=car]');c.innerHTML=CARS[sel.value].map(x=>opt(x,x)).join('')}
+async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),row={name:f.get('name').trim(),class:f.get('cls'),car:f.get('car')};
+  if(id)await q(sb.from('teams').update(row).eq('id',id));
+  else await q(sb.from('teams').insert({...row,race_id:raceId,start_utc:curRace().start_utc,leader_id:me.id}));
   closeDlg();render()}
 async function delTeam(id){if(!confirm('Delete this team and all its stints?'))return;await q(sb.from('teams').delete().eq('id',id));closeDlg();render()}
 
@@ -590,11 +595,10 @@ function memberDlg(tid,uid){
   if(!lead&&!mine)return;
   const dest=m?T.ts.filter(x=>x.id!==tid&&canMove(uid,tid,x.id)):[];
   openDlg(`<form onsubmit="saveMember(event,${tid},'${uid}')"><h3>${m?`${esc(name(uid))} in ${esc(t.name)}`:`Join ${esc(t.name)}`}</h3>
-    ${m?'':'<p class="mu" style="margin:0">You’ll get a lane in this team’s swimlane, then tap an hour to request a stint.</p>'}
-    <label>Car (${esc(t.class)})<select name="car">${CARS[t.class].map(c=>opt(c,c,m?.car===c)).join('')}</select></label>
+    <p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p>
     ${dest.length?`<div class="add-row" style="grid-template-columns:1fr auto;margin-top:0"><label>Move to another team<select id="mvto">${dest.map(x=>opt(x.id,`${x.name} (${x.class})`)).join('')}</select></label><button type="button" onclick="moveMember('${uid}',${tid},+$('#mvto').value)">Move</button></div>`:''}
-    <div class="row"><button class="pri">${m?'Save':'Join team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${m?`<button type="button" class="danger" onclick="leaveTeam(${tid},'${uid}')">${mine?'Leave team':'Remove from team'}</button>`:''}</div></form>`)}
-async function saveMember(e,tid,uid){e.preventDefault();await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:new FormData(e.target).get('car')}));closeDlg();render()}
+    <div class="row"><button type="button" onclick="closeDlg()">Close</button><span class="grow"></span>${m?`<button type="button" class="danger" onclick="leaveTeam(${tid},'${uid}')">${mine?'Leave team':'Remove from team'}</button>`:''}</div></form>`)}
+function saveMember(e){e.preventDefault();closeDlg()}
 async function leaveTeam(tid,uid){
   const t=T.ts.find(x=>x.id===tid),lead=canLead(t),st=T.ss.filter(s=>s.team_id===tid&&s.user_id===uid),gone=st.filter(s=>lead||s.status==='pending');
   if(!confirm(`Remove ${name(uid)} from ${t.name}?${gone.length?` Their ${gone.length} stint(s) here are removed too.`:''}`))return;
@@ -610,7 +614,7 @@ function stintDlg(tid,sid,uid,start){
   const starts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)}`,i===cur.a)}).join('');
   const who=lead&&!s&&T.ms.filter(m=>m.team_id===tid).length>1?`<label>Driver<select name="uid">${T.ms.filter(m=>m.team_id===tid).map(m=>opt(m.user_id,name(m.user_id),m.user_id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
   openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
-    <label>Car (${esc(t.class)})<select name="car" ${edit?'':'disabled'}>${CARS[t.class].map(c=>opt(c,c,(mem?.car||CARS[t.class][0])===c)).join('')}</select></label>
+    <p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p>
     <div class="form"><label>Start (your time)<select name="a" ${edit?'':'disabled'}>${starts}</select></label><label>Length<select name="n" ${edit?'':'disabled'}>${STINTS.map(n=>opt(n,n+'h',n===cur.n)).join('')}</select></label></div>
     ${s?`<p style="margin:0">Status <span class="chip ${s.status}" style="margin-left:6px">${stL(s.status)}</span></p>`:lead?'<p class="mu">You lead this team, so this stint is approved straight away.</p>':'<p class="mu">Your request stays pending until the team leader approves it.</p>'}
     ${!edit?'<p class="mu">This stint is approved. Ask the team leader to change it.</p>':''}
@@ -620,7 +624,7 @@ function stintDlg(tid,sid,uid,start){
       ${s&&(lead||(own&&s.status==='pending'))?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`)}
 async function saveStint(e,tid,sid){e.preventDefault();
   const f=new FormData(e.target),r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t);
-  const uid=f.get('uid'),a=+f.get('a'),n=+f.get('n'),car=f.get('car'),p=profiles.find(x=>x.id===uid);
+  const uid=f.get('uid'),a=+f.get('a'),n=+f.get('n'),car=teamCar(t),p=profiles.find(x=>x.id===uid);
   if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');
   const warn=[];
   {const A0=+t0+a*H,B0=A0+n*H,others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
@@ -704,7 +708,7 @@ async function rosterView(){
     <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div><span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>
     ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="danger" onclick="setUser('${p.id}',false,'driver')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
-    ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.tz.value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
+    ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
     <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and the Edit buttons.</p>':''}
     <div style="margin-top:28px"><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
