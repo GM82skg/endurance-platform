@@ -242,6 +242,52 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .stops thead td{font-size:12px;font-weight:500;color:var(--label2)}.list td.r{text-align:right}
 .psteps{margin:2px 0 6px;padding-left:2px}.pstep{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px}
 .pstep .num{width:44px;font-weight:600}.pstep i{width:9px;height:9px;border-radius:50%;flex:none}.pstep i.g{background:var(--green)}.pstep i.n{background:var(--label3)}.pstep i.b{background:var(--blue)}.pstep i.o{background:var(--tint)}
+/* ---------- Gantt ---------- */
+.gtools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 12px}
+.gpan{display:inline-flex;align-items:center;gap:8px}.gpan button{min-height:34px;width:38px;padding:0;font-size:17px}
+.gantt{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:4px 0 10px;container:gt / inline-size;user-select:none;-webkit-user-select:none}
+.grw{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:center;min-height:46px}
+.grw.me{background:color-mix(in srgb,var(--tint) 6%,transparent)}
+.gname{display:flex;align-items:center;gap:6px;padding:0 10px 0 16px;min-width:0;font-size:14px;line-height:1.25}
+.gname .nm{display:flex;flex-direction:column;min-width:0}.gname .nm>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gname button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label)}.gname button.am,.gname b.am{color:var(--tint)}
+.gname .mu{font-size:11px}
+.gtrack{position:relative;height:40px;margin-right:16px;border-radius:8px;background:color-mix(in srgb,var(--label) 4%,transparent);touch-action:pan-y}
+.gtrack.edit{cursor:crosshair}.gtrack.axis{height:40px;background:none;touch-action:auto}.gtrack.sum{height:18px;background:none;touch-action:auto}
+.ghdr{border-bottom:.5px solid var(--sep);padding-bottom:4px}
+.gtick{position:absolute;bottom:2px;transform:translateX(-50%);font-size:11px;color:var(--label2);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;line-height:1.2}
+.gtick b{display:block;height:13px;font-size:10px;color:var(--tint)}.gtick em{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:700;color:var(--tint)}
+.gtick.start{transform:none}.gtick.end{transform:translateX(-100%)}.gtick.end em{left:auto;right:0;transform:none}
+.gtick.dst::after{content:"";position:absolute;left:50%;top:0;bottom:-6px;width:2px;background:var(--tint)}
+.ggroup{border-top:.5px solid var(--sep);margin-top:4px;transition:box-shadow .15s}.ggroup.drop{box-shadow:inset 0 0 0 2.5px var(--tint);border-radius:12px}.ggroup.nodrop{box-shadow:inset 0 0 0 2.5px var(--red);border-radius:12px}
+.ghead{display:flex;align-items:center;gap:8px;padding:8px 16px 6px 8px;flex-wrap:wrap}
+.ghead .grow1{flex:1;min-width:200px}.ghead .title{font-size:17px}.gacts{display:flex;gap:6px;flex-wrap:wrap}.gacts button{min-height:32px;padding:0 12px;font-size:14px}
+.gchev{min-height:36px;width:36px;padding:0;background:none;color:var(--label2);font-size:20px}.gchev span{display:inline-block;transition:transform .2s}.gchev span.open{transform:rotate(90deg)}
+.gsum{min-height:22px}.gcov{position:absolute;left:0;right:0;bottom:2px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--red) 55%,transparent)}
+.gcov span{position:absolute;top:0;bottom:0}.gcov .ok{background:var(--green)}.gcov .p{background:var(--yellow)}
+.gtrack.sum .pit{top:0}
+.gband{position:absolute;top:4px;bottom:4px;border-radius:7px;background:color-mix(in srgb,var(--green) 26%,transparent)}
+.gband.M{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--yellow) 38%,transparent) 0 4px,color-mix(in srgb,var(--yellow) 14%,transparent) 4px 8px)}
+.gband.mine{cursor:pointer}.gband.mine:hover{box-shadow:inset 0 0 0 1.5px var(--label3)}
+.gbar{position:absolute;top:7px;bottom:7px;z-index:2;display:flex;align-items:center;gap:4px;border-radius:7px;background:var(--green);color:#000;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.25);cursor:pointer;padding:0 6px}
+.gbar.pending{background:var(--yellow)}.gbar.can{cursor:grab;padding:0}.gbar>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+.gbar .hl,.gbar .hr{flex:none;width:12px;align-self:stretch;cursor:ew-resize;position:relative}.gbar .hl::after,.gbar .hr::after{content:"";position:absolute;top:30%;bottom:30%;left:4px;width:3px;border-radius:2px;background:rgba(0,0,0,.28)}
+.gbar:focus-visible{outline:3px solid color-mix(in srgb,var(--tint) 60%,transparent);outline-offset:1px}
+.gbar.lifted,.gband.lifted{box-shadow:0 0 0 2px var(--label),0 8px 20px rgba(0,0,0,.4)}
+.gpit{position:absolute;top:0;bottom:0;width:1px;background:color-mix(in srgb,var(--label) 14%,transparent)}
+.gghost{position:absolute;top:4px;bottom:4px;z-index:4;border-radius:7px;pointer-events:none;border:2px dashed var(--label)}
+.gghost.band{border-color:var(--green);background:color-mix(in srgb,var(--green) 22%,transparent)}.gghost.band.M{border-color:var(--yellow)}
+.gghost.stint{border-color:var(--tint);background:color-mix(in srgb,var(--tint) 22%,transparent)}
+.gtip{position:absolute;top:-34px;transform:translateX(-50%);z-index:6;pointer-events:none;white-space:nowrap;background:var(--raised);color:var(--label);border-radius:9px;padding:5px 9px;font-size:12px;font-weight:600;box-shadow:var(--pop)}
+.gempty,.gnote{padding:6px 0;font-size:13px}.gadd{margin:8px 16px 0}.glist{margin:6px 16px 0}
+.legend .lg,.legend .pit{display:inline-block;width:18px;height:10px;border-radius:3px;margin-left:10px;margin-right:-2px;vertical-align:middle}.legend .pit{width:8px}.legend .lg:first-child{margin-left:0}
+.lg.A{background:color-mix(in srgb,var(--green) 30%,transparent)}.lg.M{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--yellow) 45%,transparent) 0 3px,color-mix(in srgb,var(--yellow) 15%,transparent) 3px 6px)}
+.lg.ok{background:var(--green)}.lg.p{background:var(--yellow)}
+.segr{flex:1;display:flex}.segr input{position:absolute;opacity:0;pointer-events:none}.segr span{flex:1;display:flex;align-items:center;justify-content:center;height:34px;border-radius:7px;font-size:15px;cursor:pointer}
+.segr input:checked+span{background:var(--seg-on);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12)}.segr input:focus-visible+span{outline:3px solid color-mix(in srgb,var(--tint) 55%,transparent)}
+@container gt (max-width:900px){.gbar .b2{display:none}}
+@container gt (max-width:560px){.grw{grid-template-columns:88px minmax(0,1fr);min-height:52px}.gname{padding:0 6px 0 10px;font-size:13px}.gname .mu{display:none}
+  .gtrack{height:46px;margin-right:10px}.gbar{top:8px;bottom:8px}.gbar .hl,.gbar .hr{width:14px}.ghead .grow1{flex:1 1 calc(100% - 48px);min-width:0}.gacts{margin-left:44px}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -319,7 +365,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.8',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.9',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -534,7 +580,7 @@ function myPits(r,t,s,all,tz){if(!t.strategy)return null;const P=calcStrategy(t.
   return {units:`${n} fuel stint${n===1?'':'s'}`,html:`<div class="psteps">${row(locH(new Date(A),tz),'g',A<=t0+1000?'Race start':`Take over${start?.tyres?', new tyres':''}`)}${inside.map(x=>row(locH(new Date(x.a),tz),x.tyres?'b':'n',`Pit: ${x.tyres?'fuel + tyres':'fuel only'} (≈ ${Math.round(x.loss)} s)`)).join('')}${row(locH(new Date(B),tz),'o',endStop?`Pit and hand over${nxt?' to '+esc(name(nxt.user_id)):''}`:'Chequered flag')}</div>`}}
 async function myView(){
   const now=Date.now(),tz=myTz();
-  const [st,mm,av]=await Promise.all([q(sb.from('stints').select('*').eq('user_id',me.id).order('start_utc')),q(sb.from('team_members').select('*').eq('user_id',me.id)),q(sb.from('availability').select('*').eq('user_id',me.id))]);
+  const [st,mm,av]=await Promise.all([q(sb.from('stints').select('*').eq('user_id',me.id).order('start_utc')),q(sb.from('team_members').select('*').eq('user_id',me.id)),q(sb.from('avail_bands').select('race_id,updated_at').eq('user_id',me.id))]);
   const tids=[...new Set([...st.map(s=>s.team_id),...mm.map(m=>m.team_id)])];
   const ts=tids.length?await q(sb.from('teams').select('*').in('id',tids)):[];
   const all=tids.length?await q(sb.from('stints').select('*').in('team_id',tids).order('start_utc')):[];
@@ -542,7 +588,7 @@ async function myView(){
   const next=st.find(s=>new Date(s.end_utc)>now);
   const nextT=next&&ts.find(t=>t.id===next.team_id),nextR=nextT&&races.find(r=>r.id===nextT.race_id);
   const cards=up.map(r=>{
-    const d=new Date(r.start_utc),a=av.find(x=>x.race_id===r.id),myTeams=ts.filter(t=>t.race_id===r.id);
+    const d=new Date(r.start_utc),mineB=av.filter(x=>x.race_id===r.id),a=mineB.length?{updated_at:mineB.reduce((m,x)=>x.updated_at>m?x.updated_at:m,'')}:null,myTeams=ts.filter(t=>t.race_id===r.id);
     const moved=a&&r.start_changed_at&&(!a.updated_at||new Date(a.updated_at)<new Date(r.start_changed_at));
     const avChip=!a?'<span class="chip bad">Availability not set</span>':moved?'<span class="chip warn">Race moved: recheck availability</span>':'<span class="chip ok">Availability set</span>';
     const stl=st.filter(s=>myTeams.some(t=>t.id===s.team_id)).map(s=>{const t=myTeams.find(x=>x.id===s.team_id),m=mm.find(x=>x.team_id===t.id),n=Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H);
@@ -550,7 +596,7 @@ async function myView(){
       return `<div class="stint"><b class="num">${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu grow">${steps?steps.units:n+'h'} · ${esc(t.name)} · ${esc(t.class)} · ${esc(teamCar(t))}</span><span class="chip ${s.status}">${stL(s.status)}</span></div>${steps?steps.html:''}`}).join('');
     const noStint=myTeams.filter(t=>!st.some(s=>s.team_id===t.id)).map(t=>`<div class="stint"><span class="mu">In ${esc(t.name)} (${esc(t.class)}) · no stint yet</span></div>`).join('');
     const cn=clockNotes(d,r.length_h).length;
-    return `<div class="card click" role="link" tabindex="0" onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
+    return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
       <div class="chips">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="empty">No stints yet. Tap to set your availability and request a stint.</p>'}</div>`}).join('');
   $('#main').innerHTML=`<h1 class="lt">My races</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>
     ${next&&nextR?`<div class="banner ok"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)}, ${rel(new Date(next.start_utc))}${next.status==='pending'?' (pending)':''}.</span></div>`:''}
@@ -582,8 +628,8 @@ async function delRace(id){if(!confirm('Delete this race with all its teams, sti
 
 /* ---------- Race ---------- */
 async function loadRace(r){
-  const [a,ts]=await Promise.all([q(sb.from('availability').select('*').eq('race_id',r.id)),q(sb.from('teams').select('*').eq('race_id',r.id).order('id'))]);
-  AV={};AVT={};a.forEach(x=>{AV[x.user_id]=x.hours;AVT[x.user_id]=x.updated_at});
+  const [bs,ts]=await Promise.all([q(sb.from('avail_bands').select('*').eq('race_id',r.id).order('start_utc')),q(sb.from('teams').select('*').eq('race_id',r.id).order('id'))]);
+  BANDS=bs;
   const ids=ts.map(t=>t.id);
   const [ms,ss]=ids.length?await Promise.all([q(sb.from('team_members').select('*').in('team_id',ids)),q(sb.from('stints').select('*').in('team_id',ids).order('start_utc'))]):[[],[]];
   T={ts,ms,ss};
@@ -593,53 +639,16 @@ async function raceView(){
   await loadRace(r);
   const tz=myTz(),d=new Date(r.start_utc),e=new Date(+d+r.length_h*H);
   let ban='';
-  if(r.start_changed_at&&AV[me.id]&&(!AVT[me.id]||new Date(AVT[me.id])<new Date(r.start_changed_at)))ban+=`<div class="banner warn"><span>The race start was moved. Your ticked hours moved with it, so please check them on the Availability tab.</span></div>`;
-  else if(!AV[me.id]&&e>Date.now())ban+=`<div class="banner"><span>You haven’t set your availability for this race yet.</span></div>`;
+  const mine=BANDS.filter(b=>b.user_id===me.id),last=mine.reduce((m,b)=>b.updated_at>m?b.updated_at:m,'');
+  if(r.start_changed_at&&mine.length&&(!last||new Date(last)<new Date(r.start_changed_at)))ban+=`<div class="banner warn"><span>The race start was moved since you marked your availability. Check your bands still fit.</span></div>`;
+  else if(!mine.length&&e>Date.now())ban+=`<div class="banner"><span>Show when you can drive: drag across your row below, or press “I can drive the whole race”.</span></div>`;
   {const cs=clockSummary(d,r.length_h);if(cs)ban+=`<div class="banner"><span>${cs}</span></div>`}
   $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'My races':'Calendar'}</button>
     <div class="head"><h1 class="lt" style="margin-top:6px">${esc(r.name)}</h1>${isAdm()?`<button onclick="raceDlg(${r.id})">Edit race</button>`:''}</div>
     <p class="lt-sub">${r.length_h} hours${r.track?' at '+esc(r.track):''} · ${locFull(d,tz)} → ${locFull(e,tz)}</p>${ban}
-    <div class="seg" style="margin:14px 0 4px" role="tablist"><button class="${sub==='avail'?'on':''}" onclick="sub='avail';render()">Availability</button><button class="${sub==='teams'?'on':''}" onclick="sub='teams';render()">Team swimlanes</button></div><div id="sub"></div>`;
-  sub==='avail'?drawAvail(r):drawTeams(r);
+    <div id="sub"></div>`;
+  drawGantt(r);
 }
-
-/* Availability grid: one box per hour, labelled in the viewer's own time. */
-function drawAvail(r){
-  const tz=myTz(),d=new Date(r.start_utc),L=r.length_h,cols=[...Array(L).keys()],mk=clockMarks(d,L,tz);let lastDay='';
-  const head='<tr><th></th>'+cols.map(i=>{const t=new Date(+d+i*H),day=locDay(t,tz),show=day!==lastDay;lastDay=day;const m=mk[i];
-    return `<th class="${m?'dst':''} ${i%2?'':'k2'}" title="${range(t,1,tz)} your time · ${utcHM(t)}–${utcHM(new Date(+t+H))} UTC"><span class="day">${show?day:'&nbsp;'}</span><span class="t">${locH(t,tz)}</span>${m?`<span class="dstl">${m<0?'−':'+'}${Math.abs(m)/60}h</span>`:''}</th>`}).join('')+'</tr>';
-  const body=profiles.map(p=>{const s=hrs(r,p.id),mine=p.id===me.id;
-    return `<tr class="${mine?'me':''}"><td>${esc(p.name)}<div class="mu">${esc(p.tz)}</div><div class="mu lim">${lim(p)}</div></td>`+[...s].map((c,i)=>{const t=new Date(+d+i*H),tl=`${range(t,1,tz)}: ${WORD[c]}`;
-      return `<td class="${mk[i]?'dst':''}">${mine?`<button class="cell ${cl(c)}" onclick="cyc(${r.id},${i})" title="${tl}" aria-label="${tl}"></button>`:`<span class="cell ${cl(c)}" title="${esc(p.name)} ${tl}"></span>`}</td>`}).join('')+'</tr>'}).join('');
-  const cnt=cols.map(i=>{const a=profiles.filter(p=>hrs(r,p.id)[i]==='A').length,m=profiles.filter(p=>hrs(r,p.id)[i]==='M').length;
-    return `<td class="n ${a?'':'zero'}" title="${a} available, ${m} maybe">${a}${m?`<span class="mu">+${m}</span>`:''}</td>`}).join('');
-  $('#sub').innerHTML=phoneAvail(r,tz,d,L,mk)+`<div class="av-desk"><div class="legend"><span class="chip approved">Available</span><span class="chip pending">Maybe</span><span class="chip bad">No</span><span class="chip dim">Not set</span>
-    <span class="acts-r"><button onclick="fill(${r.id},'A')">All available</button><button onclick="fill(${r.id},'N')">All no</button></span></div>
-    <div class="card av-wrap"><div class="scroll"><table class="av"><thead>${head}</thead><tbody>${body}<tr><td>Available<div class="mu">+ maybe</div></td>${cnt}</tr></tbody></table></div></div>
-    <p class="mu">Each box is one hour in your time (${esc(tz)}). Tap your own boxes to switch between available, maybe and no.</p>
-    ${Object.keys(mk).length?'<p class="mu">The amber line marks where your clocks change.</p>':''}</div>`;
-}
-/* Phones: your hours as tappable time chips, grouped by day, and the whole team as a strip that fits the screen. */
-function phoneAvail(r,tz,d,L,mk){
-  const s=hrs(r,me.id),days=[];
-  for(let i=0;i<L;i++){const t=new Date(+d+i*H),wd=new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'long'}).format(t);
-    let g=days[days.length-1];if(!g||g.wd!==wd){g={wd,chips:[],note:''};days.push(g)}
-    if(mk[i])g.note=` · ${mk[i]<0?`the second ${locH(t,tz)} is after clocks go back`:`clocks go forward at ${locH(t,tz)}`}`;
-    const c=s[i];g.chips.push(`<button class="tchip ${cl(c)}" onclick="cyc(${r.id},${i})" aria-label="${range(t,1,tz)}: ${WORD[c]}">${locH(t,tz)}${mk[i]?'↺':''}</button>`)}
-  const first=n=>String(n||'').trim().split(/\s+/)[0];
-  const rows=profiles.map(p=>{const h=hrs(r,p.id);return `<div class="strip-row" style="--L:${L}"><span class="strip-name${p.id===me.id?' am':''}" title="${esc(p.name)}">${esc(first(p.name))}</span>${[...h].map((c,i)=>`<span class="sc ${cl(c)}${mk[i]?' dst':''}" title="${esc(p.name)} ${range(new Date(+d+i*H),1,tz)}: ${WORD[c]}"></span>`).join('')}</div>`}).join('');
-  const labels=[...Array(L).keys()].filter(i=>i%4===0).map(i=>`<span style="grid-column:${i+2} / span ${Math.min(4,L-i)}">${locH(new Date(+d+i*H),tz)}</span>`).join('');
-  return `<div class="av-phone">
-    <div class="ph-head"><h3>Your hours</h3><span class="mu">Tap: yes → maybe → no</span></div>
-    <div class="card">${days.map(g=>`<div class="day-h">${esc(g.wd)}${esc(g.note)}</div><div class="chips6">${g.chips.join('')}</div>`).join('')}
-      <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="ghost" onclick="fill(${r.id},'A')">All yes</button><button class="ghost" onclick="fill(${r.id},'N')">All no</button></div></div>
-    <div class="ph-head"><h3>Team</h3><span class="mu">${esc(tz)}</span></div>
-    <div class="card strip">${rows}<div class="strip-row strip-lab" style="--L:${L}"><span></span>${labels}</div>
-      <div class="legend" style="margin:12px 0 0"><span class="chip approved">Yes</span><span class="chip pending">Maybe</span><span class="chip bad">No</span><span class="chip dim">Not set</span></div></div>
-  </div>`}
-async function saveAv(rid){AVT[me.id]=new Date().toISOString();await q(sb.from('availability').upsert({user_id:me.id,race_id:rid,hours:AV[me.id]}))}
-async function cyc(rid,i){const r=races.find(x=>x.id===rid),s=[...hrs(r,me.id)];s[i]={'-':'A',A:'M',M:'N',N:'A'}[s[i]];AV[me.id]=s.join('');drawAvail(r);await saveAv(rid)}
-async function fill(rid,c){const r=races.find(x=>x.id===rid);AV[me.id]=c.repeat(r.length_h);drawAvail(r);await saveAv(rid)}
 
 /* ---------- Teams and stints ---------- */
 /* ---------- Team plans: hour mode (no strategy) or pit-stop mode (strategy entered) ---------- */
@@ -653,64 +662,165 @@ function teamPlan(r,t){
     return {pit:false,err:P.err,sizes:STINTS,slots:hourSlots(t0,L),stops:[]}}
   return {pit:false,sizes:STINTS,slots:hourSlots(t0,L),stops:[]}}
 const hourSlots=(t0,L)=>Array.from({length:L},(_,k)=>({k,a:+t0+k*H,b:+t0+(k+1)*H}));
-// Worst availability across every race hour a time range touches (A > M > N/-).
-function avRange(r,uid,A,B){const r0=+new Date(r.start_utc),s=hrs(r,uid);let w='A';
-  for(let i=Math.max(0,Math.floor((A-r0)/H));i<Math.min(r.length_h,Math.ceil((B-r0)/H-1e-9));i++){const c=s[i]||'-';if(c==='N'||c==='-')return c;if(c==='M')w='M'}return w}
 const stUnits=(t,s)=>{const pl=teamPlan(curRace(),t);if(!pl.pit)return Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H)+'h';
   const a=+new Date(s.start_utc),b=+new Date(s.end_utc),n=pl.slots.filter(x=>x.a>=a-60000&&x.b<=b+60000).length;return n+' fuel stint'+(n===1?'':'s')};
-function coverage(t,L,t0){const st=T.ss.filter(s=>s.team_id===t.id).map(s=>({s,a:+new Date(s.start_utc),b:+new Date(s.end_utc)}));
-  return Array.from({length:L},(_,i)=>{const A=+t0+i*H,B=A+H,ins=st.filter(x=>x.a<B&&x.b>A);
-    return {list:ins.map(x=>x.s),over:ins.some((x,j)=>ins.some((y,k)=>k>j&&x.a<y.b&&y.a<x.b))}})}
-function gapRuns(c,t0,tz){const out=[];let i=0;while(i<c.length){if(!c[i].list.length){let j=i;while(j<c.length&&!c[j].list.length)j++;out.push(span(new Date(+t0+i*H),j-i,tz));i=j}else i++}return out}
-function drawTeams(r){
-  $('#sub').innerHTML=`<div class="row" style="margin:14px 0"><span class="mu grow">Join a team, then tap an hour in your lane to request a stint. Leaders can drag drivers between teams with the ⋮⋮ handle.</span><button class="pri" onclick="teamDlg()">New team</button></div>`+
-    (T.ts.map(t=>teamCard(r,t)).join('')||'<div class="card"><p class="empty" style="margin:0">No teams yet. Each team gets its own swimlane with one lane per driver. Create a team, add drivers, then tap a lane to place stints.</p></div>');
-}
-function stratLine(t,pl,lead){
-  if(pl.pit){const P=pl.P;return `<div class="strat-line"><span class="grow"><b>Strategy:</b> ${P.lps} laps · ${dur(P.stintSec)} per stint · ${P.stops.length} stops${P.tyreStops?` (${P.tyreStops} with tyres)`:''} · driver stints of <b>${P.min===P.max?P.min:P.min+'–'+P.max} fuel stint${P.max>1?'s':''}</b>${P.tyreShort?' · <span style="color:var(--red-ink)">tyres don’t last a full stint</span>':''}</span>${lead?`<button class="ghost" onclick="stratDlg(${t.id})">Edit figures</button>`:''}</div>`}
-  if(pl.err)return `<div class="strat-line"><span class="grow"><b>Strategy:</b> <span style="color:var(--red-ink)">${esc(pl.err)}</span></span>${lead?`<button class="ghost" onclick="stratDlg(${t.id})">Edit figures</button>`:''}</div>`;
-  return lead?`<div class="strat-line"><span class="grow mu">Add fuel and tyre figures to plan driver stints around pit stops.</span><button onclick="stratDlg(${t.id})">Add strategy</button></div>`:''}
-function teamCard(r,t){
-  const tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id),pl=teamPlan(r,t);
-  const cov=coverage(t,L,t0),mk=clockMarks(t0,L,tz),lanes=mem.map(m=>({...m})),W=L*H,pc=ms=>((ms-t0)/W*100).toFixed(3)+'%';
-  st.forEach(s=>{if(!lanes.some(l=>l.user_id===s.user_id))lanes.push({user_id:s.user_id,car:null,left:true})});
-  const pr=pl.pit?1:0,first=3+pr;
-  let h=`<div class="who" style="grid-row:1;grid-column:1"></div>`+[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);
-    return `<div class="ax ${mk[i]?'dst':''} ${i%2?'':'k2'} ${i%4?'':'k4'}" style="grid-row:1;grid-column:${i+2}" title="${range(x,1,tz)} your time"><span class="t">${locH(x,tz)}</span>${mk[i]?`<span class="dstl">${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</span>`:''}</div>`}).join('');
-  if(pl.pit)h+=`<div class="who" style="grid-row:2;grid-column:1;min-height:0"><span class="mu">Pit stops</span></div><div class="pitrow" style="grid-row:2;grid-column:2 / -1">${pl.stops.map(s=>`<span class="pit ${s.tyres?'ty':''}" style="left:${pc(s.a)}" title="Stop ${s.n} · ${locH(new Date(s.a),tz)} · ${s.tyres?'fuel + tyres':'fuel only'} · ≈${Math.round(s.loss)} s"></span>`).join('')}</div>`;
-  h+=`<div class="who" style="grid-row:${2+pr};grid-column:1;min-height:0"><span class="mu">Coverage</span></div>`+cov.map((c,i)=>{const k=c.over?'x':c.list.length?(c.list.some(s=>s.status==='approved')?'ok':'p'):'gap';
-    return `<div class="cov ${k}" style="grid-row:${2+pr};grid-column:${i+2}" title="${range(new Date(+t0+i*H),1,tz)}: ${COVW[k]}"></div>`}).join('');
-  if(!lanes.length)h+=`<div class="lane-empty" style="grid-row:${first}">No drivers yet. ${lead?'Add one below, or drag a driver here from another team.':'Join the team to request stints.'}</div>`;
-  lanes.forEach((m,li)=>{const R=li+first,mine=m.user_id===me.id,click=mine||lead;
-    const sub2=m.left?'Not in team':esc(profiles.find(p=>p.id===m.user_id)?.tz||''),drag=!m.left&&canMoveFrom(m.user_id,t);
-    h+=`<div class="who lane" style="grid-row:${R};grid-column:1">${drag?`<span class="grip" data-uid="${m.user_id}" data-tid="${t.id}" onpointerdown="dragStart(event)" title="Drag to another team" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm">${click?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${m.user_id}')" title="Car and team options">${esc(name(m.user_id))}</button>`:`<b>${esc(name(m.user_id))}</b>`}<span class="mu">${sub2}</span></span></div>`;
-    for(let i=0;i<L;i++){const c=avAt(r,m.user_id,off,i),tl=`${range(new Date(+t0+i*H),1,tz)}: ${WORD[c]}`;
-      h+=click?`<button class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" onclick="stintDlg(${t.id},0,'${m.user_id}',${i})" title="${tl}" aria-label="${esc(name(m.user_id))}, ${tl}"></button>`:`<div class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" title="${tl}"></div>`}
-    const bars=st.filter(x=>x.user_id===m.user_id).map(x=>{const a=Math.max(+t0,+new Date(x.start_utc)),b=Math.min(+t0+W,+new Date(x.end_utc));if(b<=a)return '';
-      const lab=`${esc(name(x.user_id))} · ${locH(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)} · ${stUnits(t,x)} · ${stL(x.status)}`;
-      return `<button class="bar ${x.status}" style="left:calc(${pc(a)} + 1px);width:calc(${((b-a)/W*100).toFixed(3)}% - 2px)" onclick="stintDlg(${t.id},${x.id})" title="${lab}" aria-label="${lab}">${locH(new Date(x.start_utc),tz)}<span class="b2">–${locH(new Date(x.end_utc),tz)}</span></button>`}).join('');
-    h+=`<div class="lane-ov" style="grid-row:${R};grid-column:2 / -1">${pl.pit?pl.stops.map(s=>`<span class="pitline" style="left:${pc(s.a)}"></span>`).join(''):''}${bars}</div>`});
-  const gaps=gapRuns(cov,t0,tz),over=cov.some(c=>c.over);
-  const list=st.map(x=>`<tr><td>${esc(name(x.user_id))}</td><td>${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${stUnits(t,x)}</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`).join('');
-  const free=profiles.filter(p=>!T.ms.some(m=>m.user_id===p.id));
-  const isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==t.id);
-  const joinBtn=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="joinTeam(${t.id})">Join team</button>`;
-  return `<div class="card team" data-tid="${t.id}"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span><span class="car">${esc(teamCar(t))}</span></div>
-    <div class="mu" style="margin-top:2px">Leader ${t.leader_id?esc(name(t.leader_id)):'none (admins manage it)'} · ${mem.length} driver${mem.length===1?'':'s'}</div></div>
-    ${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${joinBtn}</div>
-    ${stratLine(t,pl,lead)}
-    ${gaps.length?`<div class="banner warn"><span>No driver: ${gaps.join(', ')}</span></div>`:`<div class="banner ok"><span>Every hour has a driver.${pl.pit&&handoversOk(t,pl)?' Every driver change happens at a pit stop.':''}</span></div>`}${over?'<div class="banner warn"><span>Some stints overlap (striped on the coverage line).</span></div>':''}
-    <div class="tlw"><div class="tl" style="--L:${L}">${h}</div></div>
-    <div class="legend"><span class="chip approved">Approved stint</span><span class="chip pending">Pending stint</span>${pl.pit?'<span class="mu"><span class="pit" style="position:static;display:inline-block;vertical-align:middle"></span> fuel stop · <span class="pit ty" style="position:static;display:inline-block;vertical-align:middle"></span> fuel + tyres</span>':''}<span class="mu">Lane shading shows availability.</span></div>
-    ${lead&&free.length?`<div class="add-row"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
-    ${list?`<details><summary>Stint list (${st.length})</summary><div class="scroll"><table class="list"><tbody>${list}</tbody></table></div></details>`:''}</div>`;
-}
 // True when every stint ends and starts at a stop (or the race start/finish).
 function handoversOk(t,pl){const ok=ms=>pl.slots.some(s=>Math.abs(s.a-ms)<60000||Math.abs(s.b-ms)<60000);
   return T.ss.filter(s=>s.team_id===t.id).every(s=>ok(+new Date(s.start_utc))&&ok(+new Date(s.end_utc)))}
 
+/* ---------- Gantt planner: one chart per race, one group per team, one row per driver ----------
+   Rows show availability bands (drivers draw their own) and stint bars (drag to move, drag the
+   ends to resize, drag up/down to hand to another driver). Stints snap to pit stops when the team
+   has a strategy, otherwise to the hour; bands snap to 30 minutes. */
+let BANDS=[],GZ={span:12,from:null,race:null},GOPEN={},GMODE='A',GOP=null;
+const HALF=1800000;
+// Worst availability over a time range from a driver's bands: 'A' fully can-drive, 'M' some maybe, 'N' gaps.
+function avRange(r,uid,A,B){const bs=BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>({a:+new Date(b.start_utc),b:+new Date(b.end_utc),k:b.kind})).sort((x,y)=>x.a-y.a);
+  let t=A,w='A';for(const b of bs){if(b.b<=t)continue;if(b.a>t+60000)return 'N';if(b.k==='M')w='M';t=Math.max(t,b.b);if(t>=B-60000)return w}return t>=B-60000?w:'N'}
+function gWin(r){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H,span=Math.min(GZ.span,r.length_h)*H;
+  let from=GZ.race===r.id&&GZ.from!=null?GZ.from:r0;from=Math.max(r0,Math.min(from,r1-span));GZ={...GZ,race:r.id,from};return {r0,r1,from,to:from+span,span}}
+function gPan(dir){const r=curRace(),w=gWin(r);GZ.from=w.from+dir*w.span/2;drawGantt(r)}
+function gZoom(h){const r=curRace(),w=gWin(r),mid=w.from+w.span/2;GZ.span=h;GZ.from=mid-Math.min(h,r.length_h)*H/2;drawGantt(r)}
+function gMode(m){GMODE=m;drawGantt(curRace())}
+function gToggle(tid){GOPEN[tid]=GOPEN[tid]===false;drawGantt(curRace())}
+function gaps(t,r){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H,iv=T.ss.filter(s=>s.team_id===t.id).map(s=>[+new Date(s.start_utc),+new Date(s.end_utc)]).sort((a,b)=>a[0]-b[0]);
+  const out=[];let c=r0;for(const [a,b] of iv){if(a-c>5*60000)out.push([c,a]);c=Math.max(c,b)}if(r1-c>5*60000)out.push([c,r1]);return out}
+function drawGantt(r){
+  const tz=myTz(),w=gWin(r),{from,to,span}=w,pc=ms=>((Math.max(from,Math.min(to,ms))-from)/span*100).toFixed(3)+'%',wd=(a,b)=>((Math.min(to,b)-Math.max(from,a))/span*100).toFixed(3)+'%',vis=(a,b)=>b>from&&a<to;
+  const L=r.length_h,mk=clockMarks(new Date(w.r0),L,tz);
+  const lab=ms=>`${locDay(new Date(ms),tz)} ${locH(new Date(ms),tz)}`;
+  const vw=Math.min(innerWidth,1080),trackW=vw<=720?vw-32-98:vw-48-206,step=Math.max(1,Math.ceil((span/H)*46/Math.max(160,trackW)));
+  let ticks='',lastDay='';for(let i=0;i<=L;i++){const ms=w.r0+i*H;if(ms<from||ms>to)continue;const x=new Date(ms),show=i%step===0,day=locDay(x,tz),pos=(ms-from)/span;
+    ticks+=`<span class="gtick${mk[i]?' dst':''}${pos>0.9?' end':''}${pos<0.04?' start':''}" style="left:${pc(ms)}">${show?`<b>${day!==lastDay?day:''}</b><span class="t">${locH(x,tz)}</span>`:''}${mk[i]?`<em>clocks ${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</em>`:''}</span>`;if(show)lastDay=day}
+  const inTeam=new Set(T.ms.map(m=>m.user_id));
+  const bandHtml=uid=>BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>{const a=+new Date(b.start_utc),e=+new Date(b.end_utc);if(!vis(a,e))return '';
+    return `<div class="gband ${b.kind}${uid===me.id?' mine':''}" data-bid="${b.id}" style="left:${pc(a)};width:${wd(a,e)}" title="${b.kind==='A'?'Can drive':'Maybe'} ${lab(a)}–${locH(new Date(e),tz)}"></div>`}).join('');
+  const row=(t,uid,pl)=>{const lead=t&&canLead(t),mine=uid===me.id,p=profiles.find(x=>x.id===uid)||{};
+    const drag=t?canMoveFrom(uid,t):(mine||isAdm()||T.ts.some(canLead));
+    const bars=t?T.ss.filter(s=>s.team_id===t.id&&s.user_id===uid).map(s=>{const a=+new Date(s.start_utc),e=+new Date(s.end_utc);if(!vis(a,e))return '';
+      const can=lead||(mine&&s.status==='pending'),txt=`${locH(new Date(a),tz)}–${locH(new Date(e),tz)}`,u=stUnits(t,s);
+      return `<div class="gbar ${s.status}${can?' can':''}" data-sid="${s.id}" role="button" tabindex="0" onkeydown="if(event.key==='Enter')stintDlg(${t.id},${s.id})" style="left:${pc(a)};width:${wd(a,e)}" title="${esc(name(uid))} · ${txt} · ${u} · ${stL(s.status)}" aria-label="${esc(name(uid))} ${txt} ${u} ${stL(s.status)}">${can?'<i class="hl"></i>':''}<span>${locH(new Date(a),tz)}<span class="b2">–${locH(new Date(e),tz)}</span></span>${can?'<i class="hr"></i>':''}</div>`}).join(''):'';
+    const pits=pl&&pl.pit?pl.stops.filter(s=>vis(s.a,s.a)).map(s=>`<span class="gpit" style="left:${pc(s.a)}"></span>`).join(''):'';
+    const edit=mine||(t&&lead);
+    return `<div class="grw${mine?' me':''}"><div class="gname">${drag?`<span class="grip" data-uid="${uid}" data-tid="${t?t.id:0}" onpointerdown="dragStart(event)" title="Drag to another team" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm">${t&&(mine||lead)?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${uid}')">${esc(name(uid))}</button>`:`<b class="${mine?'am':''}">${esc(name(uid))}</b>`}<span class="mu">${esc(p.tz||'')}</span></span></div>
+      <div class="gtrack${edit?' edit':''}" data-tid="${t?t.id:0}" data-uid="${uid}">${pits}${bandHtml(uid)}${bars}</div></div>`};
+  const group=t=>{const lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),open=GOPEN[t.id]!==false,pl=teamPlan(r,t),gp=gaps(t,r);
+    const isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==t.id);
+    const join=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="joinTeam(${t.id})">Join team</button>`;
+    const cov=(()=>{const st=T.ss.filter(s=>s.team_id===t.id).map(s=>({a:+new Date(s.start_utc),b:+new Date(s.end_utc),p:s.status==='pending'})).filter(x=>vis(x.a,x.b));
+      return st.map(x=>`<span class="${x.p?'p':'ok'}" style="left:${pc(x.a)};width:${wd(x.a,x.b)}"></span>`).join('')})();
+    const pits=pl.pit?pl.stops.filter(s=>vis(s.a,s.a)).map(s=>`<span class="pit ${s.tyres?'ty':''}" style="left:${pc(s.a)}" title="Stop ${s.n} · ${locH(new Date(s.a),tz)} · ${s.tyres?'fuel + tyres':'fuel only'}"></span>`).join(''):'';
+    const list=T.ss.filter(s=>s.team_id===t.id).map(x=>`<tr><td>${esc(name(x.user_id))}</td><td class="num">${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${stUnits(t,x)}</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`).join('');
+    const free=profiles.filter(p=>!inTeam.has(p.id));
+    return `<section class="ggroup" data-tid="${t.id}"><div class="ghead"><button class="gchev" onclick="gToggle(${t.id})" aria-expanded="${open}" aria-label="${open?'Fold':'Open'} ${esc(t.name)}"><span class="${open?'open':''}">›</span></button>
+      <div class="grow1"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span><span class="car">${esc(teamCar(t))}</span></div>
+      <div class="mu">Leader ${t.leader_id?esc(name(t.leader_id)):'none'} · ${mem.length} driver${mem.length===1?'':'s'}${gp.length?` · <span style="color:var(--red-ink)">no driver ${gp.slice(0,2).map(([a,b])=>`${lab(a)}–${locH(new Date(b),tz)}`).join(', ')}${gp.length>2?' …':''}</span>`:` · every minute covered${pl.pit&&T.ss.some(s=>s.team_id===t.id)&&handoversOk(t,pl)?'. Every driver change happens at a pit stop.':''}`}</div></div>
+      <div class="gacts">${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button class="ghost" onclick="stratDlg(${t.id})">${t.strategy?'Strategy':'Add strategy'}</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${join}</div></div>
+      <div class="grw gsum"><div class="gname mu">${pl.pit?'Pit stops':'Coverage'}</div><div class="gtrack sum">${pl.pit?pits:''}<div class="gcov">${cov}</div></div></div>
+      ${open?(mem.length?mem.map(m=>row(t,m.user_id,pl)).join(''):`<div class="grw"><div class="gname"></div><div class="mu gempty">No drivers yet. ${lead?'Drag one in from “Not in a team”, or add one below.':'Join the team to request stints.'}</div></div>`)+
+        `${pl.pit?`<div class="grw"><div class="gname"></div><div class="mu gnote">${stratText(pl)}</div></div>`:''}
+        ${lead&&free.length?`<div class="add-row gadd"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
+        ${list?`<details class="glist"><summary>Stint list (${T.ss.filter(s=>s.team_id===t.id).length})</summary><div class="scroll"><table class="list"><tbody>${list}</tbody></table></div></details>`:''}`:''}</section>`};
+  const freeRows=profiles.filter(p=>!inTeam.has(p.id));
+  const openFree=GOPEN[0]!==false;
+  const freeGroup=`<section class="ggroup" data-tid="0"><div class="ghead"><button class="gchev" onclick="gToggle(0)" aria-expanded="${openFree}" aria-label="${openFree?'Fold':'Open'} drivers not in a team"><span class="${openFree?'open':''}">›</span></button><div class="grow1"><span class="title" style="font-size:16px">Not in a team</span><div class="mu">${freeRows.length?freeRows.map(p=>esc(p.name.split(' ')[0])).join(', '):'Everyone is in a team'}</div></div></div>
+    ${openFree?freeRows.map(p=>row(null,p.id,null)).join(''):''}</section>`;
+  const myBands=BANDS.some(b=>b.user_id===me.id&&b.race_id===r.id);
+  $('#sub').innerHTML=`<div class="gtools">
+      <div class="seg" role="group" aria-label="What dragging draws"><button class="${GMODE==='A'?'on':''}" onclick="gMode('A')">Draw availability</button><button class="${GMODE==='S'?'on':''}" onclick="gMode('S')">Draw stints</button></div>
+      <div class="seg" role="group" aria-label="Zoom">${[[6,'6h'],[12,'12h'],[99,'Whole race']].map(([h,l])=>`<button class="${Math.min(GZ.span,L)===Math.min(h,L)?'on':''}" onclick="gZoom(${h})">${l}</button>`).join('')}</div>
+      <span class="gpan"><button aria-label="Earlier" onclick="gPan(-1)" ${from<=w.r0?'disabled':''}>‹</button><span class="mu num">${lab(from)} – ${lab(to)}</span><button aria-label="Later" onclick="gPan(1)" ${to>=w.r1?'disabled':''}>›</button></span>
+      <span class="grow"></span><button onclick="allBand()">${myBands?'Whole race: can drive':'I can drive the whole race'}</button><button class="pri" onclick="teamDlg()">New team</button></div>
+    <div class="gantt" onpointerdown="gDown(event)"><div class="grw ghdr"><div class="gname"></div><div class="gtrack axis">${ticks}</div></div>
+      ${T.ts.map(group).join('')||'<div class="mu gempty" style="padding:16px">No teams yet. Create one with New team.</div>'}${freeGroup}</div>
+    <div class="legend"><span class="lg A"></span>Can drive<span class="lg M"></span>Maybe<span class="lg ok"></span>Approved stint<span class="lg p"></span>Pending stint<span class="pit" style="position:static;display:inline-block"></span>Fuel stop<span class="pit ty" style="position:static;display:inline-block"></span>Fuel + tyres</div>
+    <p class="mu">${GMODE==='A'?'Drag across your own row to mark when you can drive. Tap a band to make it “maybe”, change its times or delete it. Drag its ends to adjust.':'Drag across a row to place a stint. Drag a bar to move it, drag its ends to resize, or drag it onto another driver’s row (leaders).'} On a phone, press and hold a bar or band before dragging it.</p>`;
+}
+const stratText=pl=>{const P=pl.P;return `${P.lps} laps · ${dur(P.stintSec)} per stint · ${P.stops.length} stops · driver stints of ${P.min===P.max?P.min:P.min+'–'+P.max} fuel stints`};
+
+/* Pointer handling: draw a band or stint on empty track, move/resize bars and bands. */
+function gDown(e){
+  if(e.button>0||GOP)return;const track=e.target.closest('.gtrack');if(!track||track.classList.contains('axis')||track.classList.contains('sum'))return;
+  const r=curRace(),w=gWin(r),rect=track.getBoundingClientRect(),toMs=x=>w.from+(x-rect.left)/rect.width*w.span;
+  const tid=+track.dataset.tid,uid=track.dataset.uid,t=T.ts.find(x=>x.id===tid),lead=t&&canLead(t),barEl=e.target.closest('.gbar'),bandEl=e.target.closest('.gband');
+  let op=null;
+  if(barEl){const s=T.ss.find(x=>x.id===+barEl.dataset.sid);op={type:'bar',s,t,pl:teamPlan(r,t),edge:e.target.classList.contains('hl')?'l':e.target.classList.contains('hr')?'r':'m',can:barEl.classList.contains('can'),a0:+new Date(s.start_utc),b0:+new Date(s.end_utc),el:barEl}}
+  else if(bandEl&&uid===me.id){const b=BANDS.find(x=>x.id===+bandEl.dataset.bid),a0=+new Date(b.start_utc),b0=+new Date(b.end_utc),x=e.clientX,bx=bandEl.getBoundingClientRect();
+    op={type:'band',b,a0,b0,edge:x-bx.left<12?'l':bx.right-x<12?'r':'m',can:true,el:bandEl}}
+  else if(GMODE==='A'&&uid===me.id)op={type:'drawband',can:true};
+  else if(GMODE==='S'&&t&&(lead||uid===me.id))op={type:'drawstint',t,pl:teamPlan(r,t),can:true};
+  if(!op)return;
+  Object.assign(op,{track,uid,tid,toMs,x0:e.clientX,y0:e.clientY,ms0:toMs(e.clientX),moved:false,touch:e.pointerType==='touch',held:e.pointerType!=='touch'||op.type==='drawband'||op.type==='drawstint',r,w});
+  if(op.type==='bar'||op.type==='band'){if(!op.held)op.timer=setTimeout(()=>{op.held=true;op.el.classList.add('lifted');navigator.vibrate?.(10)},280)}
+  GOP=op;busy++;try{track.setPointerCapture(e.pointerId)}catch{}
+  const move=ev=>gMove(ev),up=ev=>{track.removeEventListener('pointermove',move);track.removeEventListener('pointerup',up);track.removeEventListener('pointercancel',up);gUp(ev)};
+  track.addEventListener('pointermove',move);track.addEventListener('pointerup',up);track.addEventListener('pointercancel',up);
+}
+// Snap helpers: stints to the team's slots (fuel stints or hours), bands to 30 minutes.
+const snapHalf=ms=>Math.round(ms/HALF)*HALF;
+function slotAt(pl,ms){const S=pl.slots;let k=S.findIndex(s=>ms<s.b);return k<0?S.length-1:k}
+function nearestIdx(arr,ms){let bi=0;arr.forEach((v,i)=>{if(Math.abs(v-ms)<Math.abs(arr[bi]-ms))bi=i});return bi}
+function gMove(ev){const op=GOP;if(!op)return;const dx=ev.clientX-op.x0,dy=ev.clientY-op.y0;
+  if(!op.moved&&Math.hypot(dx,dy)<6)return;
+  if(!op.held){clearTimeout(op.timer);op.cancel=true;return}
+  if(!op.can){op.cancel=true;return}
+  op.moved=true;document.body.classList.add('dragging');ev.preventDefault();
+  const ms=op.toMs(ev.clientX),r0=op.w.r0,r1=op.w.r1;let A,B,label,target=op.uid;
+  if(op.type==='drawband'){A=snapHalf(Math.min(op.ms0,ms));B=snapHalf(Math.max(op.ms0,ms));if(B===A)B=A+HALF}
+  else if(op.type==='band'){const d=ms-op.ms0;if(op.edge==='l'){A=snapHalf(op.a0+d);B=op.b0;if(A>B-HALF)A=B-HALF}else if(op.edge==='r'){A=op.a0;B=snapHalf(op.b0+d);if(B<A+HALF)B=A+HALF}else{A=snapHalf(op.a0+d);B=A+(op.b0-op.a0)}}
+  else{const S=op.pl.slots,starts=S.map(s=>s.a),ends=S.map(s=>s.b);
+    if(op.type==='drawstint'){const k1=slotAt(op.pl,Math.min(op.ms0,ms)),k2=slotAt(op.pl,Math.max(op.ms0,ms));A=S[k1].a;B=S[k2].b}
+    else if(op.edge==='l'){const kb=nearestIdx(ends,op.b0);let k=nearestIdx(starts,op.a0+(ms-op.ms0));k=Math.min(k,kb);A=S[k].a;B=op.b0}
+    else if(op.edge==='r'){const ka=nearestIdx(starts,op.a0);let k=nearestIdx(ends,op.b0+(ms-op.ms0));k=Math.max(k,ka);A=op.a0;B=S[k].b}
+    else{const ka=nearestIdx(starts,op.a0),kb=nearestIdx(ends,op.b0),n=kb-ka+1;let k=nearestIdx(starts,op.a0+(ms-op.ms0));k=Math.max(0,Math.min(k,S.length-n));A=S[k].a;B=S[k+n-1].b;
+      if(canLead(op.t)){const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.gtrack'),tu=el&&+el.dataset.tid===op.t.id&&!el.classList.contains('sum')?el.dataset.uid:null;if(tu)target=tu}}
+    const n=S.filter(s=>s.a>=A-60000&&s.b<=B+60000).length;label=op.pl.pit?`${n} fuel stint${n>1?'s':''}`:`${n}h`;
+    if(op.pl.pit&&(n<op.pl.min||n>op.pl.max))label+=` · outside ${op.pl.min}–${op.pl.max}`}
+  A=Math.max(r0,A);B=Math.min(r1+(op.pl?.pit?3600000:0),B);op.A=A;op.B=B;op.target=target;
+  const tz=myTz(),w=op.w,pc=x=>((Math.max(w.from,Math.min(w.to,x))-w.from)/w.span*100).toFixed(3)+'%',wd=((Math.min(w.to,B)-Math.max(w.from,A))/w.span*100).toFixed(3)+'%';
+  const host=target!==op.uid?document.querySelector(`.gtrack[data-tid="${op.tid}"][data-uid="${target}"]`):op.track;
+  if(!op.ghost){op.ghost=document.createElement('div');op.tip=document.createElement('div');op.tip.className='gtip'}
+  op.ghost.className='gghost '+(op.type.includes('band')?'band '+(op.b?.kind||'A'):'stint');host.appendChild(op.ghost);host.appendChild(op.tip);
+  op.ghost.style.left=pc(A);op.ghost.style.width=wd;op.tip.style.left=`calc(${pc(A)} + ${wd} / 2)`;
+  op.tip.textContent=`${locH(new Date(A),tz)}–${locH(new Date(B),tz)}${label?' · '+label:` · ${dur((B-A)/1000)}`}${target!==op.uid?' → '+name(target):''}`;
+  if(op.el)op.el.style.opacity='.35'}
+async function gUp(){const op=GOP;GOP=null;busy--;clearTimeout(op.timer);document.body.classList.remove('dragging');op.ghost?.remove();op.tip?.remove();if(op.el){op.el.style.opacity='';op.el.classList.remove('lifted')}
+  if(op.cancel&&!op.moved)return;
+  if(!op.moved){if(op.type==='bar')return stintDlg(op.t.id,op.s.id);if(op.type==='band')return bandDlg(op.b.id);
+    if(op.type==='drawband')return putBand(snapHalf(op.ms0)-HALF,snapHalf(op.ms0)+HALF,'A');
+    if(op.type==='drawstint'){const k=slotAt(op.pl,op.ms0),n=Math.min(op.pl.pit?Math.min(3,op.pl.max):3,op.pl.slots.length-k);return stintDlg(op.t.id,0,op.uid,null,{A:op.pl.slots[k].a,B:op.pl.slots[k+n-1].b})}return}
+  if(op.A==null)return;
+  if(op.type==='drawband')return putBand(op.A,op.B,'A');
+  if(op.type==='band')return putBand(op.A,op.B,op.b.kind,op.b.id);
+  if(op.type==='drawstint')return stintDlg(op.t.id,0,op.uid,null,{A:op.A,B:op.B});
+  if(op.type==='bar')return commitStint(op.t.id,op.s.id,op.target,op.A,op.B)}
+
+/* Availability bands: save with overlap handling (same kind merges, other kind is cut). */
+async function putBand(a,b,kind,replaceId){const r=curRace(),r0=+new Date(r.start_utc),r1=r0+r.length_h*H;a=Math.max(r0,a);b=Math.min(r1,b);if(b-a<15*60000)return;
+  const mine=BANDS.filter(x=>x.user_id===me.id&&x.race_id===r.id&&x.id!==replaceId),del=replaceId?[replaceId]:[],add=[];
+  for(const x of mine){const xa=+new Date(x.start_utc),xb=+new Date(x.end_utc);
+    if(x.kind===kind&&xa<=b&&xb>=a){a=Math.min(a,xa);b=Math.max(b,xb);del.push(x.id);continue}
+    if(xa<b&&xb>a){del.push(x.id);if(xa<a)add.push([xa,a,x.kind]);if(xb>b)add.push([b,xb,x.kind])}}
+  add.push([a,b,kind]);
+  if(del.length)await q(sb.from('avail_bands').delete().in('id',del));
+  await q(sb.from('avail_bands').insert(add.map(([s,e,k])=>({race_id:r.id,start_utc:new Date(s).toISOString(),end_utc:new Date(e).toISOString(),kind:k}))));
+  closeDlgIf();render()}
+const closeDlgIf=()=>{if($('#dlg').open)closeDlg()};
+async function allBand(){const r=curRace(),r0=+new Date(r.start_utc);
+  if(BANDS.some(b=>b.user_id===me.id&&b.race_id===r.id)&&!confirm('Replace all your availability for this race with “can drive” for the whole race?'))return;
+  await q(sb.from('avail_bands').delete().eq('user_id',me.id).eq('race_id',r.id));BANDS=BANDS.filter(b=>!(b.user_id===me.id&&b.race_id===r.id));await putBand(r0,r0+r.length_h*H,'A')}
+function bandDlg(id){const b=BANDS.find(x=>x.id===id),r=curRace(),tz=myTz(),r0=+new Date(r.start_utc),r1=r0+r.length_h*H,a=+new Date(b.start_utc),e=+new Date(b.end_utc);
+  const times=[];for(let t=r0;t<=r1;t+=HALF)times.push(t);
+  const sel=(n,v)=>`<select name="${n}">${times.map(t=>opt(t,`${locDay(new Date(t),tz)} ${locH(new Date(t),tz)}`,Math.abs(t-v)<60000)).join('')}</select>`;
+  openDlg(`<form onsubmit="saveBand(event,${id})"><h3>Your availability</h3><p class="mu" style="margin:0">${esc(r.name)} · times in ${esc(tz)}</p>
+    <div class="seg" role="radiogroup" style="display:flex"><label class="segr"><input type="radio" name="k" value="A" ${b.kind==='A'?'checked':''}><span>Can drive</span></label><label class="segr"><input type="radio" name="k" value="M" ${b.kind==='M'?'checked':''}><span>Maybe</span></label></div>
+    <div class="form2"><label>From${sel('a',a)}</label><label>Until${sel('b',e)}</label></div>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span><button type="button" class="danger" onclick="delBand(${id})">Delete</button></div></form>`)}
+async function saveBand(e,id){e.preventDefault();const f=new FormData(e.target),a=+f.get('a'),b=+f.get('b');if(b<=a)return note('“Until” must be after “From”.');await putBand(a,b,f.get('k'),id)}
+async function delBand(id){await q(sb.from('avail_bands').delete().eq('id',id));closeDlg();render()}
+
 /* ---------- Stint window ---------- */
-function stintDlg(tid,sid,uid,start){
+function stintDlg(tid,sid,uid,start,pre){
   const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),s=sid?T.ss.find(x=>x.id===sid):null,pl=teamPlan(r,t);
   uid=s?s.user_id:(uid||me.id);
   const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{};
@@ -718,11 +828,12 @@ function stintDlg(tid,sid,uid,start){
   let pick;
   if(pl.pit){const S=pl.slots;let k0,n0;
     if(s){const a=+new Date(s.start_utc),b=+new Date(s.end_utc);k0=S.reduce((bi,x,i)=>Math.abs(x.a-a)<Math.abs(S[bi].a-a)?i:bi,0);n0=Math.max(1,S.filter(x=>x.k>=k0&&x.b<=b+60000).length)}
+    else if(pre){k0=nearestIdx(S.map(x=>x.a),pre.A);n0=Math.max(1,nearestIdx(S.map(x=>x.b),pre.B)-k0+1)}
     else{const tap=+t0+(start||0)*H;k0=S.findIndex(x=>x.b>tap);if(k0<0)k0=S.length-1;n0=Math.min(Math.max(pl.min,Math.min(3,pl.max)),S.length-k0)}
     const opts=S.map(x=>opt(x.k,`Stint ${x.k+1} · ${locDay(new Date(x.a),tz)} ${locH(new Date(x.a),tz)}${x.after?(x.after.tyres?' · new tyres':''):' · race start'}`,x.k===k0)).join('');
     pick=`<label>Start at<select name="k" onchange="pitSum(this.form,${tid})" ${edit?'':'disabled'}>${opts}</select></label>
       <label>Length (fuel stints)<select name="n" onchange="pitSum(this.form,${tid})" ${edit?'':'disabled'}>${[1,2,3,4,5,6].map(n=>opt(n,n+(n===1?' fuel stint':' fuel stints'),n===n0)).join('')}</select></label><div id="pitsum" class="pitsum"></div>`}
-  else{const cur=s?stIdx(s,t0):{a:start||0,n:3};
+  else{const cur=s?stIdx(s,t0):pre?{a:Math.round((pre.A-t0)/H),n:Math.max(2,Math.min(3,Math.round((pre.B-pre.A)/H)))}:{a:start||0,n:3};
     pick=`<div class="form"><label>Start (your time)<select name="a" ${edit?'':'disabled'}>${[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)}`,i===cur.a)}).join('')}</select></label><label>Length<select name="n" ${edit?'':'disabled'}>${STINTS.map(n=>opt(n,n+'h',n===cur.n)).join('')}</select></label></div>`}
   openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
     <p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p>${pick}
@@ -742,23 +853,25 @@ function pitSum(f,tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),pl=teamPlan(
     <div class="mu">${last?'Takes the chequered flag.':`Hand over at the stop at ${locH(new Date(B),tz)}${pl.stops[k+n-1]?.tyres?' (new tyres)':''}.`}</div>
     ${inside.map(s=>`<div class="pitstep num"><span>${locH(new Date(s.a),tz)}</span><span class="chip ${s.tyres?'':'dim'}">${s.tyres?'Pit: fuel + tyres':'Pit: fuel only'}</span></div>`).join('')}${warn}`}
 async function saveStint(e,tid,sid){e.preventDefault();
-  const f=new FormData(e.target),r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),pl=teamPlan(r,t);
-  const uid=f.get('uid'),car=teamCar(t),p=profiles.find(x=>x.id===uid);let A,B;const warn=[];
-  if(pl.pit){const k=+f.get('k'),n=Math.min(+f.get('n'),pl.slots.length-k);A=pl.slots[k].a;B=pl.slots[k+n-1].b;
-    if(n<pl.min||n>pl.max)warn.push(`This team’s driver stints are ${pl.min===pl.max?pl.min:pl.min+'–'+pl.max} fuel stints; this one is ${n}.`)}
+  const f=new FormData(e.target),r=curRace(),t=T.ts.find(x=>x.id===tid),{t0,L}=teamGeo(r,t),pl=teamPlan(r,t);let A,B;
+  if(pl.pit){const k=+f.get('k'),n=Math.min(+f.get('n'),pl.slots.length-k);A=pl.slots[k].a;B=pl.slots[k+n-1].b}
   else{const a=+f.get('a'),n=+f.get('n');if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');A=+t0+a*H;B=A+n*H}
+  await commitStint(tid,sid,f.get('uid'),A,B)}
+// Checks a stint against the driver's limits, availability and other stints, then saves it.
+async function commitStint(tid,sid,uid,A,B){
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),lead=canLead(t),pl=teamPlan(r,t),car=teamCar(t),p=profiles.find(x=>x.id===uid),warn=[];
+  if(pl.pit){const n=pl.slots.filter(x=>x.a>=A-60000&&x.b<=B+60000).length;if(n<pl.min||n>pl.max)warn.push(`This team’s driver stints are ${pl.min===pl.max?pl.min:pl.min+'–'+pl.max} fuel stints; this one is ${n}.`)}
   {const others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
    if(p&&p.max_stints!=null&&others.length+1>p.max_stints)warn.push(`${p.name} would have ${others.length+1} stints in this race (their max is ${p.max_stints}).`);
    if(rest)others.forEach(x=>{const xs=+new Date(x.start_utc),xe=+new Date(x.end_utc),g=xs>=B?(xs-B)/H:A>=xe?(A-xe)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${dur(g*3600)} rest next to their ${locH(new Date(xs),tz)} stint (wants ${rest}h).`)})}
-  const r0=+new Date(r.start_utc),bad=[];for(let i=Math.max(0,Math.floor((A-r0)/H));i<Math.min(L,Math.ceil((B-r0)/H-1e-9));i++){const c=hrs(r,uid)[i]||'-';if(c!=='A')bad.push(`${locH(new Date(r0+i*H),tz)} ${WORD[c]}`)}
-  if(bad.length)warn.push(`${name(uid)} isn’t marked available for: ${bad.join(', ')}.`);
+  const av=avRange(r,uid,A,B);if(av!=='A')warn.push(av==='M'?`${name(uid)} marked part of this time as “maybe”.`:`${name(uid)} hasn’t marked all of this time as available.`);
   T.ss.filter(x=>x.id!==sid&&+new Date(x.start_utc)<B&&+new Date(x.end_utc)>A&&(x.team_id===tid||x.user_id===uid))
     .forEach(x=>warn.push(x.user_id===uid&&x.team_id!==tid?`${name(uid)} already drives for ${teamName(x.team_id)} then.`:`It overlaps ${name(x.user_id)}’s stint.`));
-  if(warn.length&&!confirm(warn.join('\n')+'\n\nSave anyway?'))return;
+  if(warn.length&&!confirm(warn.join('\n')+'\n\nSave anyway?'))return render();
   await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car}));
   const row={team_id:tid,user_id:uid,start_utc:new Date(A).toISOString(),end_utc:new Date(B).toISOString()};
   if(sid)await q(sb.from('stints').update(row).eq('id',sid));else await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));
-  closeDlg();render();note(sid?'Stint updated.':lead?'Stint added.':'Stint requested. The team leader will approve it.',1)}
+  closeDlgIf();render();note(sid?'Stint updated.':lead?'Stint added.':'Stint requested. The team leader will approve it.',1)}
 async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();render()}
 async function delStint(id){if(!confirm('Remove this stint?'))return;await q(sb.from('stints').delete().eq('id',id));closeDlg();render()}
 
@@ -842,8 +955,11 @@ async function clearStrat(tid){if(!confirm('Remove the strategy? The team goes b
 
 /* ---------- moving drivers between teams (drag the ⋮⋮ handle, or use the driver's window) ---------- */
 const canMoveFrom=(uid,t)=>isAdm()||uid===me.id||canLead(t);
-function canMove(uid,from,to){const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);return !!(a&&b)&&(isAdm()||uid===me.id||(canLead(a)&&canLead(b)))}
+function canMove(uid,from,to){const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);if(from===to)return false;if(!from)return !!b&&(isAdm()||uid===me.id||canLead(b));if(!to)return !!a&&(isAdm()||uid===me.id||canLead(a));return !!(a&&b)&&(isAdm()||uid===me.id||(canLead(a)&&canLead(b)))}
 async function moveMember(uid,from,to){
+  if(!from&&to){if(!canMove(uid,0,to))return note('Only admins, team leaders or the driver can add them to a team.');const b=T.ts.find(x=>x.id===to);
+    await q(sb.from('team_members').upsert({team_id:to,user_id:uid,car:teamCar(b)}));render();return note(`${name(uid)} added to ${b.name}.`,1)}
+  if(from&&!to)return leaveTeam(from,uid);
   const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);if(!a||!b||from===to)return;
   if(!canMove(uid,from,to))return note(`Only an admin, ${name(uid)}, or the leader of both teams can move ${name(uid)} to ${b.name}.`);
   const st=T.ss.filter(s=>s.team_id===from&&s.user_id===uid),own=!(isAdm()||canLead(a));
@@ -859,14 +975,14 @@ function dragStart(e){
   if(e.button>0)return;e.preventDefault();const g=e.currentTarget,uid=g.dataset.uid,tid=+g.dataset.tid,m=T.ms.find(x=>x.team_id===tid&&x.user_id===uid);
   const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.innerHTML=`${esc(name(uid))}<small>${esc(T.ts.find(x=>x.id===tid)?.name||'')}</small>`;document.body.appendChild(ghost);
   DRAG={uid,tid,over:null};busy++;document.body.classList.add('dragging');try{g.setPointerCapture(e.pointerId)}catch{}
-  const clear=()=>$$('.card.team.drop,.card.team.nodrop').forEach(c=>c.classList.remove('drop','nodrop'));
+  const clear=()=>$$('.ggroup.drop,.ggroup.nodrop').forEach(c=>c.classList.remove('drop','nodrop'));
   const move=ev=>{ghost.style.transform=`translate(${ev.clientX+14}px,${ev.clientY+10}px)`;
-    const el=document.elementFromPoint(ev.clientX,ev.clientY),card=el&&el.closest('.card.team[data-tid]'),to=card?+card.dataset.tid:null;
+    const el=document.elementFromPoint(ev.clientX,ev.clientY),card=el&&el.closest('.ggroup[data-tid]'),to=card?+card.dataset.tid:null;
     if(DRAG.over!==to){clear();if(card&&to!==tid)card.classList.add(canMove(uid,tid,to)?'drop':'nodrop');DRAG.over=to}
     DRAG.y=ev.clientY;DRAG.x=ev.clientX};
   const up=async()=>{['pointermove','pointerup','pointercancel'].forEach((n,i)=>g.removeEventListener(n,i?up:move));
     ghost.remove();clear();document.body.classList.remove('dragging');busy--;const to=DRAG.over;DRAG=null;
-    if(to&&to!==tid)await moveMember(uid,tid,to)};
+    if(to!=null&&to!==tid)await moveMember(uid,tid,to)};
   const tick=()=>{if(!DRAG)return;const y=DRAG.y,edge=y<100?-1:y>innerHeight-120?1:0;
     if(edge){window.scrollBy(0,edge*12);move({clientX:DRAG.x,clientY:y})}requestAnimationFrame(tick)};
   g.addEventListener('pointermove',move);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);move(e);requestAnimationFrame(tick)}
