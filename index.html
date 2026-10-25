@@ -374,7 +374,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.4',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.5',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1164,26 +1164,27 @@ async function saveImport(e){e.preventDefault();if(!IMP?.events.length)return;
   await q(sb.from('lmu_events').upsert(IMP.events.map(x=>({key:x.key,week_start:IMP.week,name:x.name,track:x.track,classes:x.classes,minutes:x.minutes,rules:x.rules})),{onConflict:'key'}));
   closeDlg();render();note('LMU team events saved. Crew members can now create races from them on My races.',1)}
 async function loadEvents(){const d=await sb.from('lmu_events').select('*').order('week_start',{ascending:false});LMUEV=d.data||[]}
-const evWeekEnd=e=>e.week_start?Date.parse(e.week_start+'T00:00:00Z')+8*86400000:Infinity;
+// Splits run on the Friday, Saturday and Sunday after the header date; the event is listed until Sunday 00:59 UTC.
+const evDays=e=>{if(!e.week_start)return [];let d=Date.parse(e.week_start+'T12:00:00Z')+86400000;while(new Date(d).getUTCDay()!==5)d+=86400000;return [0,1,2].map(i=>new Date(d+i*86400000).toISOString().slice(0,10))};
+const evWeekEnd=e=>{const sun=evDays(e)[2];return sun?Date.parse(sun+'T00:59:59Z'):Infinity};
 function eventsHtml(tz){const up=LMUEV.filter(e=>evWeekEnd(e)>Date.now());
   if(!up.length&&!isAdm())return '';
   const cards=up.map(e=>{const mine=races.filter(r=>r.source===e.key).sort((a,b)=>a.start_utc.localeCompare(b.start_utc)),h=e.minutes?Math.round(e.minutes/60):null;
-    return `<div class="card ev"><div class="race-top">${h?`<span class="len">${h}<small>h</small></span>`:''}<div class="grow"><div class="title">${esc(e.name)}</div><div class="mu">${esc(e.track||'')}${e.week_start?' · week of '+new Date(e.week_start+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</div></div>
+    return `<div class="card ev"><div class="race-top">${h?`<span class="len">${h}<small>h</small></span>`:''}<div class="grow"><div class="title">${esc(e.name)}</div><div class="mu">${esc(e.track||'')}${evDays(e).length?' · '+(()=>{const d=evDays(e).map(x=>new Date(x+'T12:00:00Z'));return `${d[0].toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})} – ${d[2].toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}`})():''}</div></div>
       <button class="pri" onclick="evCreateDlg(${e.id})">${mine.length?'Add another start':'Create race'}</button></div>
       <div class="mu" style="margin-top:8px">${esc(e.classes||'')}</div>
       ${mine.length?`<div class="chips">${mine.map(r=>`<button class="chip ok evrace" onclick="go('race',${r.id})">${locFull(new Date(r.start_utc),tz)} · open</button>`).join('')}</div>`:''}
       ${e.rules?`<details><summary>Rules</summary><p class="mu" style="white-space:pre-line;margin:0">${esc(e.rules)}</p></details>`:''}</div>`}).join('');
   return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">Upcoming LMU team events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
     ${cards||'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
-function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz();
-  // Suggest the Saturday of that week at 19:00 your time.
-  let d=e.week_start?Date.parse(e.week_start+'T12:00:00Z'):Date.now();while(new Date(d).getUTCDay()!==6)d+=86400000;
-  const def=toInput(fromInput(new Date(d).toISOString().slice(0,10)+'T19:00',tz),tz);
+function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz(),days=evDays(e);
+  const dayBtns=days.length?days.map(d=>{const x=new Date(d+'T12:00:00Z');return `<label class="segr"><input type="radio" name="day" value="${d}" required><span>${x.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}</span></label>`}).join(''):'';
   openDlg(`<form onsubmit="evCreate(event,${id})"><h3>Create race · ${esc(e.name)}</h3>
-    <p class="mu" style="margin:0">${esc(e.track||'')} · ${e.minutes?dur(e.minutes*60):''}. The LMU post doesn’t say when your team races, so pick the start you’ll enter.</p>
-    <label>Start (${esc(tz)})<input name="start" type="datetime-local" required value="${def}"></label>
+    <p class="mu" style="margin:0">${esc(e.track||'')} · ${e.minutes?dur(e.minutes*60):''}. This event runs in several splits over Friday, Saturday and Sunday. Pick the day and start time of the split you’ll race.</p>
+    ${days.length?`<div><div class="mu" style="margin-bottom:6px">Day</div><div class="seg" role="radiogroup" style="display:flex">${dayBtns}</div></div>`:`<label>Date<input name="day" type="date" required></label>`}
+    <label>Start time (${esc(tz)})<input name="time" type="time" required></label>
     <div class="row"><button class="pri">Create race</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
-async function evCreate(ev,id){ev.preventDefault();const start=fromInput(new FormData(ev.target).get('start'),myTz()).toISOString();
+async function evCreate(ev,id){ev.preventDefault();const f=new FormData(ev.target),day=f.get('day'),time=f.get('time');if(!day||!time)return note('Pick the day and start time of your split.');const start=fromInput(day+'T'+time,myTz()).toISOString();
   const {data,error}=await sb.rpc('race_from_event',{eid:id,start_at:start});if(error)return note(error.message);
   closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));go('race',data);note('Race created. Create or join a team to start planning.',1)}
 
