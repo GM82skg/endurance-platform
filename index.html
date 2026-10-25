@@ -332,6 +332,7 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 @container gt (max-width:620px){.grw>.gtrack{margin:0}}
 @container gt (max-width:620px){.grw{grid-template-columns:96px minmax(0,1fr)}.gbar .bn{display:none}.gname .grip{display:none}.gnav button{padding:0 6px;font-size:12px}.gteam .ts{display:none}}
 dialog.sheet,.menu button{width:100%}.menu{gap:10px}.menu>button{min-height:46px}
+.lapecho{font-size:12px;font-weight:500;margin-top:2px;font-variant-numeric:tabular-nums}.lapecho.bad{color:var(--red-ink)}
 .lapbox{background:var(--fill);border-radius:14px;padding:14px;text-align:center}.steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
 .step{width:56px;min-height:52px;font-size:17px;font-weight:600;color:var(--label);background:var(--fill2)}.lapn{width:80px;font-size:40px;font-weight:700}
 .lapt{font-size:17px;font-weight:600;margin-top:10px}.shift{min-height:18px;margin-top:6px;font-size:13px;font-weight:600;color:var(--tint)}
@@ -421,7 +422,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.6',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.7',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -466,7 +467,17 @@ function clockNotes(start,L){
    minus the safety margin) is used up; each stop costs pit-lane time + refill time for what was
    used + tyre time when the current set can't do the next stint. The race ends on the lap that
    crosses the time limit (that lap is counted). */
-const parseLap=v=>{const m=String(v??'').trim().match(/^(?:(\d+):)?(\d+(?:[.,]\d+)?)$/);return m?(+(m[1]||0))*60+parseFloat(m[2].replace(',','.')):NaN};
+// Lap times are easy to type on a number pad: digits only (1585 → 1:58.5, 158 → 1:58.0, 15853 → 1:58.53),
+// or with any separator (1.58.5, 1,58,5, 1 58 5, 1:58.534). Plain seconds with a decimal (118.5) also work.
+const parseLap=v=>{const s=String(v??'').trim();if(!s)return NaN;let m;
+  if((m=s.match(/^(\d{1,2})\s*[:.,\s]\s*(\d{2})(?:\s*[.,\s]\s*(\d{1,3}))?$/))&&+m[2]<60)return +m[1]*60+ +m[2]+(m[3]?+('0.'+m[3]):0);
+  if((m=s.match(/^(\d)(\d{2})(\d{0,3})$/))&&+m[2]<60)return +m[1]*60+ +m[2]+(m[3]?+('0.'+m[3]):0);
+  if((m=s.match(/^(\d{2,3})[.,](\d{1,3})$/)))return +m[1]+ +('0.'+m[2]);
+  return NaN};
+// A lap-time box: number pad, live “= 1:58.5” read-back so you see what was understood.
+const lapInput=(attrs,val)=>`<input ${attrs} value="${esc(val||'')}" placeholder="e.g. 1585 for 1:58.5" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)"><span class="lapecho mu">${val?'= '+esc(val):'Type the digits: 1585 = 1:58.5'}</span>`;
+function lapEcho(el){const v=parseLap(el.value),o=el.nextElementSibling;if(!o)return;if(!el.value.trim()){o.textContent='Type the digits: 1585 = 1:58.5';o.classList.remove('bad');return}
+  const ok=v>=30&&v<=900;o.textContent=ok?'= '+fmtLap(v):'Not a lap time yet';o.classList.toggle('bad',!ok)}
 const fmtLap=s=>`${Math.floor(s/60)}:${(s%60).toFixed(1).padStart(4,'0')}`;
 const dur=sec=>{sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`};
 const SDEF={lap:'',ve:'',veMax:100,fuel:'',tank:'',margin:0.5,lane:'',refill:'',tyreAdd:'',tyreLife:'',tyreSets:'',min:2,max:3};
@@ -799,7 +810,7 @@ function teamMenu(tid){const t=T.ts.find(x=>x.id===tid),lead=canLead(t),mem=T.ms
     ${lead?`<button type="button" onclick="closeDlg();planDlg(${tid})">Plan stints</button>`:''}
     ${t.strategy&&(isMem||lead)?`<button type="button" onclick="closeDlg();updDlg(${tid})">Race update</button>`:''}
     ${lead?`<button type="button" onclick="closeDlg();stratDlg(${tid})">${t.strategy?'Strategy figures':'Add strategy'}</button><button type="button" onclick="closeDlg();teamDlg(${tid})">Edit team</button>`:''}
-    ${lead&&free.length?`<div class="add-row" style="grid-template-columns:1fr 110px;margin:0"><label>Add driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><label>Average lap<input id="al${tid}" placeholder="3:30.5" inputmode="decimal"></label><button type="button" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
+    ${lead&&free.length?`<div class="add-row" style="grid-template-columns:1fr 110px;margin:0"><label>Add driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><label>Average lap${lapInput(`id="al${tid}"`,'')}</label><button type="button" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 // Mouse/pen only: drag a bar's right edge to change laps (touch uses the lap buttons).
 function gDown(){}
@@ -903,9 +914,9 @@ function lapDlg(tid,uid){const t=T.ts.find(x=>x.id===tid),r=curRace(),cur=lapOf(
   if(started(r))return note('The race has started. Post live lap times with Race update; they feed the Suggestion.');
   openDlg(`<form onsubmit="saveLap(event,${tid},'${uid}')"><h3>${uid===me.id?'Your':esc(name(uid))+'’s'} average lap</h3>
     <p class="mu" style="margin:0">${esc(r.name)} · ${esc(t.name)} · ${esc(teamCar(t))}. Use the 5-lap average LMU shows after a practice run. It sets how long each of ${uid===me.id?'your':'their'} stints lasts in the plan.</p>
-    <label>Average lap<input name="lap" required value="${cur?fmtLap(cur):''}" placeholder="e.g. 3:30.5" inputmode="decimal" autocomplete="off"></label>
+    <label>Average lap${lapInput('name="lap" required',cur?fmtLap(cur):'')}</label>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
-async function saveLap(e,tid,uid){e.preventDefault();const v=parseLap(new FormData(e.target).get('lap'));if(!(v>=30&&v<=900))return note('Enter a lap time like 3:30.5 (between 0:30 and 15:00).');
+async function saveLap(e,tid,uid){e.preventDefault();const v=parseLap(new FormData(e.target).get('lap'));if(!(v>=30&&v<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
   const t=T.ts.find(x=>x.id===tid);await q(sb.from('team_members').update({avg_lap:v}).eq('team_id',tid).eq('user_id',uid));
   await loadRace(curRace());await syncTimes(t);closeDlg();render();note('Average lap saved. The plan’s times follow it.',1)}
 
@@ -986,14 +997,14 @@ function updDlg(tid){const t=T.ts.find(x=>x.id===tid),tz=myTz(),mem=T.ms.filter(
   const ve=+t.strategy?.ve>0,fu=+t.strategy?.fuel>0||!ve;
   openDlg(`<form onsubmit="saveUpd(event,${tid})"><h3>Race update · ${esc(t.name)}</h3><p class="mu" style="margin:0">Fill in what you know; everything is optional. The Suggestion re-plans from it.</p>
     <div class="form2"><label>Current lap<input name="lap" type="number" min="0" inputmode="numeric"></label><label>In the car<select name="driver">${opt('','–')}${mem.map(m=>opt(m.user_id,name(m.user_id))).join('')}</select></label>
-      <label>Their 5-lap average<input name="avg5" placeholder="e.g. 3:29.8" inputmode="decimal"></label>
+      <label>Their 5-lap average${lapInput('name="avg5"','')}</label>
       ${ve?`<label>Energy per lap (%)<input name="ve" inputmode="decimal" placeholder="e.g. 7.2"></label>`:''}${fu?`<label>Fuel per lap (L)<input name="fuel" inputmode="decimal" placeholder="e.g. 3.1"></label>`:''}
       <label>Laps since last stop<input name="stop" type="number" min="0" inputmode="numeric"></label><label>Laps on these tyres<input name="tyres" type="number" min="0" inputmode="numeric"></label>
       <label>Tyres<select name="ts">${opt('','–')}${opt('ok','OK')}${opt('dropping','Dropping off')}${opt('gone','Gone')}</select></label></div>
     ${U.length?`<details><summary>Latest updates</summary><table class="plan"><tbody>${U.map(u=>`<tr><td class="num">${locH(new Date(u.at),tz)}</td><td>${esc(name(u.by_user).split(' ')[0])}</td><td class="mu">${[u.lap!=null?'lap '+u.lap:'',u.avg5?esc(name(u.driver).split(' ')[0])+' '+fmtLap(+u.avg5):'',u.ve_lap?u.ve_lap+'%/lap':'',u.fuel_lap?u.fuel_lap+' L/lap':'',u.tyre_state||''].filter(Boolean).join(' · ')}</td></tr>`).join('')}</tbody></table></details>`:''}
     <div class="row"><button class="pri">Post update</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function saveUpd(e,tid){e.preventDefault();const f=new FormData(e.target),n=k=>{const v=String(f.get(k)??'').trim().replace(',','.');return v===''?null:+v};
-  const avg=String(f.get('avg5')||'').trim(),a5=avg?parseLap(avg):null;if(avg&&!(a5>=30&&a5<=900))return note('Enter the 5-lap average like 3:29.8.');
+  const avg=String(f.get('avg5')||'').trim(),a5=avg?parseLap(avg):null;if(avg&&!(a5>=30&&a5<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
   if(a5&&!f.get('driver'))return note('Pick who is in the car for that lap time.');
   const row={team_id:tid,lap:n('lap'),driver:f.get('driver')||null,avg5:a5,ve_lap:n('ve'),fuel_lap:n('fuel'),stop_laps:n('stop'),tyre_laps:n('tyres'),tyre_state:f.get('ts')||null};
   if(Object.entries(row).every(([k,v])=>k==='team_id'||v==null))return note('Fill in at least one thing.');
@@ -1002,7 +1013,7 @@ async function saveUpd(e,tid){e.preventDefault();const f=new FormData(e.target),
 /* ---------- Team strategy figures (leader) ---------- */
 function stratFields(f,withRange){const v=k=>esc(f[k]??'');const inp=(k,lab,ph,full)=>`<label${full?' style="grid-column:1 / -1"':''}>${lab}<input name="${k}" value="${v(k)}" inputmode="decimal" placeholder="${ph||''}" autocomplete="off"></label>`;
   return `<div class="sgroup"><div class="sg-h">Car <span class="mu">Leave fuel or energy empty if your class doesn’t use it</span></div><div class="form2">
-    ${inp('lap','Average lap','e.g. 3:30.5',1)}${inp('ve','Energy per lap (%)','Not used')}${inp('veMax','Energy limit (%)','100')}${inp('fuel','Fuel per lap (L)','Not used')}${inp('tank','Tank (L)','Not used')}${inp('margin','Safety margin (laps)','0.5',1)}</div></div>
+    <label style="grid-column:1 / -1">Average lap${lapInput('name="lap"',f.lap?(isNaN(parseLap(f.lap))?f.lap:fmtLap(parseLap(f.lap))):'')}</label>${inp('ve','Energy per lap (%)','Not used')}${inp('veMax','Energy limit (%)','100')}${inp('fuel','Fuel per lap (L)','Not used')}${inp('tank','Tank (L)','Not used')}${inp('margin','Safety margin (laps)','0.5',1)}</div></div>
     <div class="sgroup"><div class="sg-h">Pit stops and tyres</div><div class="form2">
     ${inp('lane','Pit lane loss (s)','e.g. 26')}${inp('refill','Full refill takes (s)','e.g. 30')}${inp('tyreAdd','Tyre change adds (s)','e.g. 12')}${inp('tyreLife','Tyre life (laps)','Not limited')}${inp('tyreSets','Tyre sets allowed','Not limited',1)}</div></div>
     ${withRange?`<div class="sgroup"><div class="sg-h">Driver stints</div><div class="form2"><label>Shortest<select name="min">${[1,2,3,4].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.min||2))).join('')}</select></label><label>Longest<select name="max">${[1,2,3,4,5,6].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.max||3))).join('')}</select></label></div></div>`:''}`}
@@ -1056,14 +1067,14 @@ function dragStart(e){
   const tick=()=>{if(!DRAG)return;const y=DRAG.y,edge=y<100?-1:y>innerHeight-120?1:0;
     if(edge){window.scrollBy(0,edge*12);move({clientX:DRAG.x,clientY:y})}requestAnimationFrame(tick)};
   g.addEventListener('pointermove',move);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);move(e);requestAnimationFrame(tick)}
-async function addMember(tid){const t=T.ts.find(x=>x.id===tid),v=($('#al'+tid)?.value||'').trim(),l=v?parseLap(v):null;if(v&&!(l>=30&&l<=900))return note('Enter the lap time like 3:30.5, or leave it empty for the driver to fill in.');
+async function addMember(tid){const t=T.ts.find(x=>x.id===tid),v=($('#al'+tid)?.value||'').trim(),l=v?parseLap(v):null;if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5, or leave it empty.');
   await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:teamCar(t),...(l?{avg_lap:l}:{})}));render()}
 function joinTeam(tid){const t=T.ts.find(x=>x.id===tid),r=curRace();
   openDlg(`<form onsubmit="doJoin(event,${tid})"><h3>Join ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}. Your average lap time for this race sets how long your stints last in the plan. Use the 5-lap average LMU shows after practice; you can change it until the race starts.</p>
-    <label>Your average lap<input name="lap" ${started(r)?'':'required'} placeholder="e.g. 3:30.5" inputmode="decimal" autocomplete="off"></label>
+    <label>Your average lap${lapInput(`name="lap" ${started(r)?'':'required'}`,'')}</label>
     <div class="row"><button class="pri">Join team</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function doJoin(e,tid){e.preventDefault();const t=T.ts.find(x=>x.id===tid),v=String(new FormData(e.target).get('lap')||'').trim(),l=v?parseLap(v):null;
-  if(v&&!(l>=30&&l<=900))return note('Enter a lap time like 3:30.5.');
+  if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
   await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:teamCar(t),...(l?{avg_lap:l}:{})}));closeDlg();render();note(`You joined ${t.name}. Switch to “Draw stints” and drag across your row to request a stint.`,1)}
 
 function teamDlg(id){
