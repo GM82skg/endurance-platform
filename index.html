@@ -217,6 +217,31 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 @container tl (max-width:560px){.tl{grid-template-columns:92px repeat(var(--L),minmax(0,1fr));gap:1px}.tl .ax{font-size:10px}.tl .ax:not(.k4) .t{visibility:hidden}
   .tl .h{min-height:34px;border-radius:3px}.tl .bar{font-size:0;padding:0;margin:4px 0;border-radius:4px}.tl .who{font-size:13px;padding-right:6px}.tl .grip{width:16px;margin:0 2px 0 -4px}}
 
+/* ---------- strategy ---------- */
+.strat-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--fill);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:14px;line-height:1.4}
+.strat-line button{min-height:32px;padding:0 12px;font-size:14px}
+.tl .pitrow{position:relative;height:14px;align-self:center}
+.pit{position:absolute;top:2px;width:8px;height:10px;margin-left:-4px;border-radius:3px;background:var(--label2)}.pit.ty{background:var(--blue)}
+.tl .lane-ov{position:relative;pointer-events:none;z-index:2;align-self:stretch}
+.tl .lane-ov .bar{position:absolute;top:4px;bottom:4px;margin:0;pointer-events:auto}
+.pitline{position:absolute;top:0;bottom:0;width:1.5px;margin-left:-.75px;background:color-mix(in srgb,var(--label) 22%,transparent)}
+.pitsum{background:var(--fill);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.4}.pitsum:empty{display:none}
+.pitstep{display:flex;gap:10px;align-items:center;margin-top:6px}.pitstep>span:first-child{width:46px;color:var(--label2)}
+.warnline{color:var(--warn-ink);margin-top:8px}
+.sgroup{display:flex;flex-direction:column;gap:10px}.sgroup+.sgroup{margin-top:16px}.sg-h{font-size:17px;font-weight:600}.sg-h .mu{font-weight:400;margin-left:6px}
+.form2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sp-grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.sp-in{flex:1 1 320px;max-width:400px;display:flex;flex-direction:column;gap:12px}.sp-in>button{min-height:44px}
+.sp-out{flex:999 1 480px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 20px}
+.stats b{display:block;font-size:26px;line-height:1.15;font-weight:700;letter-spacing:-.02em}.stats span{font-size:13px;color:var(--label2)}
+.segs{display:flex;gap:2px}.sseg{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.sseg i{display:block;width:100%;height:22px;border-radius:4px;background:var(--fill2)}.sseg i.b{background:var(--fill)}
+.sseg em{width:6px;height:6px;border-radius:3px}.sseg em.on{background:var(--blue)}
+.segs-lab{display:flex;justify-content:space-between;margin-top:6px}
+.stops thead td{font-size:12px;font-weight:500;color:var(--label2)}.list td.r{text-align:right}
+.psteps{margin:2px 0 6px;padding-left:2px}.pstep{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px}
+.pstep .num{width:44px;font-weight:600}.pstep i{width:9px;height:9px;border-radius:50%;flex:none}.pstep i.g{background:var(--green)}.pstep i.n{background:var(--label3)}.pstep i.b{background:var(--blue)}.pstep i.o{background:var(--tint)}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -263,6 +288,8 @@ dialog .form{grid-template-columns:1fr 1fr}
   .list td:first-child{padding-left:16px}.list td:last-child{padding-right:16px}
   .av .lim{display:none}
   .av-desk{display:none}.av-phone{display:block}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stats b{font-size:22px}.sp-in{max-width:none}
+  .stops td:nth-child(3){display:none}.stops td{padding-left:8px;padding-right:8px}
   .team-head>.grow{flex-basis:100%}
   .li{grid-template-columns:1fr auto;padding:12px 16px}.li .meta{grid-column:1}.li .stat{grid-row:1;grid-column:2;justify-self:end}.li .acts{grid-column:1 / -1;justify-content:flex-start;margin-left:-10px}
   .add-row{grid-template-columns:1fr 1fr}.add-row>button:only-of-type{grid-column:1 / -1}
@@ -292,7 +319,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.7',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.8',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -332,6 +359,44 @@ function clockNotes(start,L){
     out.push(`${tz===myTz()?`Your time zone (${tz})`:tz}: clocks go ${m<0?'back':'forward'} ${h}h during this race, so ${m<0?'an hour repeats':'an hour is skipped'} around ${locH(t,tz)} local.`)}));
   return out}
 
+/* ---------- Strategy engine ----------
+   Simulates the race lap by lap: a stint ends when fuel or energy (whichever runs out first,
+   minus the safety margin) is used up; each stop costs pit-lane time + refill time for what was
+   used + tyre time when the current set can't do the next stint. The race ends on the lap that
+   crosses the time limit (that lap is counted). */
+const parseLap=v=>{const m=String(v??'').trim().match(/^(?:(\d+):)?(\d+(?:[.,]\d+)?)$/);return m?(+(m[1]||0))*60+parseFloat(m[2].replace(',','.')):NaN};
+const fmtLap=s=>`${Math.floor(s/60)}:${(s%60).toFixed(1).padStart(4,'0')}`;
+const dur=sec=>{sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`};
+const SDEF={lap:'',ve:'',veMax:100,fuel:'',tank:'',margin:0.5,lane:'',refill:'',tyreAdd:'',tyreLife:'',tyreSets:'',min:2,max:3};
+function calcStrategy(f,lenH){
+  const num=x=>x===''||x==null||isNaN(+x)?NaN:+x,lap=parseLap(f.lap);
+  if(!(lap>0))return {err:'Enter an average lap time, like 3:30.5.'};
+  const ve=num(f.ve),veMax=num(f.veMax)||100,fuel=num(f.fuel),tank=num(f.tank),margin=Math.max(0,num(f.margin)||0),lim=[];
+  if(ve>0)lim.push({by:'energy',laps:veMax/ve});
+  if(fuel>0&&tank>0)lim.push({by:'fuel',laps:tank/fuel});
+  if(!lim.length)return {err:'Enter energy per lap, or fuel per lap and tank size.'};
+  lim.sort((a,b)=>a.laps-b.laps);
+  const lps=Math.floor(lim[0].laps-margin+1e-9);
+  if(lps<1)return {err:'That’s less than one lap per stint. Check the figures.'};
+  const lane=num(f.lane)||0,refill=num(f.refill)||0,tyreAdd=num(f.tyreAdd)||0,life=num(f.tyreLife)||0,setsMax=num(f.tyreSets)||0,race=lenH*3600;
+  let t=0,laps=0,inSt=0,tyreL=0;const stints=[{start:0}],stops=[];
+  for(let guard=0;guard<100000;guard++){
+    t+=lap;laps++;inSt++;tyreL++;
+    if(t>=race)break;
+    if(inSt>=lps){
+      const next=Math.min(lps,Math.ceil((race-t)/lap)),tyres=life>0&&tyreL+next>life;
+      const frac=Math.min(1,Math.max(...lim.map(x=>inSt/x.laps))),loss=lane+refill*frac+(tyres?tyreAdd:0);
+      stops.push({n:stops.length+1,at:t,leave:t+loss,lap:laps,tyres,loss});
+      Object.assign(stints[stints.length-1],{end:t,laps:inSt});
+      t+=loss;inSt=0;if(tyres)tyreL=0;stints.push({start:t});
+    }
+  }
+  Object.assign(stints[stints.length-1],{end:t,laps:inSt});
+  const ty=stops.filter(s=>s.tyres).length;
+  return {lap,lps,by:lim[0].by,stintSec:lps*lap,stops,stints,laps,finish:t,pit:stops.reduce((a,s)=>a+s.loss,0),
+    sets:life>0?1+ty:null,setsMax:setsMax||null,tyreStops:ty,tyreShort:life>0&&life<lps,race,min:+f.min||2,max:+f.max||3};
+}
+
 /* ---------- state ---------- */
 let me=null,prof=null,profiles=[],races=[],view='my',raceId=null,sub='avail',AV={},AVT={},T={ts:[],ms:[],ss:[]},PLAN=null;
 let busy=0,chan=null,dirty=false,rt=null,tt,lastKey='';
@@ -348,6 +413,7 @@ const ICON={
   cal:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="4"/><path d="M4 11.5h20M9.5 3.5v5M18.5 3.5v5"/></svg>',
   roster:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="10" r="4"/><path d="M3.5 23c.8-4.2 3.8-6.5 7.5-6.5s6.7 2.3 7.5 6.5"/><circle cx="20" cy="10.5" r="3.2"/><path d="M19.5 16.6c2.7.2 4.6 2.2 5.1 5.4"/></svg>',
   grip:'<svg viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="3" r="1.5"/><circle cx="7.5" cy="3" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><circle cx="7.5" cy="8" r="1.5"/><circle cx="2.5" cy="13" r="1.5"/><circle cx="7.5" cy="13" r="1.5"/></svg>',
+  strat:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v18"/><path d="M5 24h15"/><path d="M18 11h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V10l-3-3"/><path d="M10 9h5"/></svg>',
   back:'<svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 2 10l8 8"/></svg>'};
 const mark=()=>`<span class="mark" aria-hidden="true">${ICON.mark}</span>`;
 const initials=n=>String(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
@@ -378,7 +444,7 @@ async function start(){
   if(prof&&prof.must_change_pw)return pwView();
   if(!prof||!prof.approved)return pendingView();
   await loadBase();
-  const navs=[['my','My races'],['cal','Calendar'],['roster','Roster']];
+  const navs=[['my','My races'],['cal','Calendar'],['strat','Strategy'],['roster','Roster']];
   $('#app').innerHTML=`<header class="bar"><div class="brand">${mark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
     <nav class="seg" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${l}</button>`).join('')}</nav>
     <div class="me-box"><span id="live" class="live" title="Connecting"><i></i><span>Connecting</span></span>
@@ -440,7 +506,7 @@ async function render(){
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
   $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
   tzBanner();
-  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='race')await raceView();else await rosterView();
+  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
 }
 function tzBanner(){
@@ -458,11 +524,20 @@ function cardKey(e){if(e.target===e.currentTarget&&(e.key==='Enter'||e.key===' '
 const opt=(v,lab,sel)=>`<option value="${esc(v)}"${sel?' selected':''}>${esc(lab)}</option>`;
 
 /* ---------- My races ---------- */
+// For a stint in a team with a strategy: the stops during it and who takes over at the end.
+function myPits(r,t,s,all,tz){if(!t.strategy)return null;const P=calcStrategy(t.strategy,r.length_h);if(P.err)return null;
+  const t0=+new Date(t.start_utc),A=+new Date(s.start_utc),B=+new Date(s.end_utc),stops=P.stops.map(x=>({...x,a:t0+x.at*1000}));
+  const inside=stops.filter(x=>x.a>A+60000&&x.a<B-60000),endStop=stops.find(x=>Math.abs(x.a-B)<60000),start=stops.find(x=>Math.abs(t0+x.leave*1000-A)<60000);
+  const nxt=all.filter(x=>x.team_id===t.id&&x.id!==s.id&&+new Date(x.start_utc)>=B-60000).sort((x,y)=>new Date(x.start_utc)-new Date(y.start_utc))[0];
+  const n=P.stints.filter(x=>t0+x.start*1000>=A-60000&&t0+x.end*1000<=B+60000).length;
+  const row=(time,dot,txt)=>`<div class="pstep"><span class="num">${time}</span><i class="${dot}"></i><span>${txt}</span></div>`;
+  return {units:`${n} fuel stint${n===1?'':'s'}`,html:`<div class="psteps">${row(locH(new Date(A),tz),'g',A<=t0+1000?'Race start':`Take over${start?.tyres?', new tyres':''}`)}${inside.map(x=>row(locH(new Date(x.a),tz),x.tyres?'b':'n',`Pit: ${x.tyres?'fuel + tyres':'fuel only'} (≈ ${Math.round(x.loss)} s)`)).join('')}${row(locH(new Date(B),tz),'o',endStop?`Pit and hand over${nxt?' to '+esc(name(nxt.user_id)):''}`:'Chequered flag')}</div>`}}
 async function myView(){
   const now=Date.now(),tz=myTz();
   const [st,mm,av]=await Promise.all([q(sb.from('stints').select('*').eq('user_id',me.id).order('start_utc')),q(sb.from('team_members').select('*').eq('user_id',me.id)),q(sb.from('availability').select('*').eq('user_id',me.id))]);
   const tids=[...new Set([...st.map(s=>s.team_id),...mm.map(m=>m.team_id)])];
   const ts=tids.length?await q(sb.from('teams').select('*').in('id',tids)):[];
+  const all=tids.length?await q(sb.from('stints').select('*').in('team_id',tids).order('start_utc')):[];
   const up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>now);
   const next=st.find(s=>new Date(s.end_utc)>now);
   const nextT=next&&ts.find(t=>t.id===next.team_id),nextR=nextT&&races.find(r=>r.id===nextT.race_id);
@@ -471,7 +546,8 @@ async function myView(){
     const moved=a&&r.start_changed_at&&(!a.updated_at||new Date(a.updated_at)<new Date(r.start_changed_at));
     const avChip=!a?'<span class="chip bad">Availability not set</span>':moved?'<span class="chip warn">Race moved: recheck availability</span>':'<span class="chip ok">Availability set</span>';
     const stl=st.filter(s=>myTeams.some(t=>t.id===s.team_id)).map(s=>{const t=myTeams.find(x=>x.id===s.team_id),m=mm.find(x=>x.team_id===t.id),n=Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H);
-      return `<div class="stint"><b class="num">${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu grow">${n}h · ${esc(t.name)} · ${esc(t.class)} · ${esc(teamCar(t))}</span><span class="chip ${s.status}">${stL(s.status)}</span></div>`}).join('');
+      const steps=myPits(r,t,s,all,tz);
+      return `<div class="stint"><b class="num">${locFull(new Date(s.start_utc),tz)}–${locH(new Date(s.end_utc),tz)}</b><span class="mu grow">${steps?steps.units:n+'h'} · ${esc(t.name)} · ${esc(t.class)} · ${esc(teamCar(t))}</span><span class="chip ${s.status}">${stL(s.status)}</span></div>${steps?steps.html:''}`}).join('');
     const noStint=myTeams.filter(t=>!st.some(s=>s.team_id===t.id)).map(t=>`<div class="stint"><span class="mu">In ${esc(t.name)} (${esc(t.class)}) · no stint yet</span></div>`).join('');
     const cn=clockNotes(d,r.length_h).length;
     return `<div class="card click" role="link" tabindex="0" onclick="sub='${myTeams.length?'teams':'avail'}';go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
@@ -566,42 +642,204 @@ async function cyc(rid,i){const r=races.find(x=>x.id===rid),s=[...hrs(r,me.id)];
 async function fill(rid,c){const r=races.find(x=>x.id===rid);AV[me.id]=c.repeat(r.length_h);drawAvail(r);await saveAv(rid)}
 
 /* ---------- Teams and stints ---------- */
-function coverage(t,L,t0){const c=Array.from({length:L},()=>[]);T.ss.filter(s=>s.team_id===t.id).forEach(s=>{const {a,n}=stIdx(s,t0);for(let k=Math.max(0,a);k<Math.min(L,a+n);k++)c[k].push(s)});return c}
-function gapRuns(c,t0,tz){const out=[];let i=0;while(i<c.length){if(!c[i].length){let j=i;while(j<c.length&&!c[j].length)j++;out.push(span(new Date(+t0+i*H),j-i,tz));i=j}else i++}return out}
+/* ---------- Team plans: hour mode (no strategy) or pit-stop mode (strategy entered) ---------- */
+// A team's plan: slots are the units a driver stint is built from — hours, or whole fuel stints.
+function teamPlan(r,t){
+  const t0=new Date(t.start_utc),L=r.length_h;
+  if(t.strategy){const P=calcStrategy(t.strategy,L);
+    if(!P.err)return {pit:true,P,min:P.min,max:P.max,sizes:[1,2,3,4,5,6].filter(n=>n>=P.min&&n<=P.max),
+      slots:P.stints.map((s,k)=>({k,a:+t0+s.start*1000,b:+t0+s.end*1000,laps:s.laps,after:P.stops[k-1]||null})),
+      stops:P.stops.map(s=>({...s,a:+t0+s.at*1000,b:+t0+s.leave*1000}))};
+    return {pit:false,err:P.err,sizes:STINTS,slots:hourSlots(t0,L),stops:[]}}
+  return {pit:false,sizes:STINTS,slots:hourSlots(t0,L),stops:[]}}
+const hourSlots=(t0,L)=>Array.from({length:L},(_,k)=>({k,a:+t0+k*H,b:+t0+(k+1)*H}));
+// Worst availability across every race hour a time range touches (A > M > N/-).
+function avRange(r,uid,A,B){const r0=+new Date(r.start_utc),s=hrs(r,uid);let w='A';
+  for(let i=Math.max(0,Math.floor((A-r0)/H));i<Math.min(r.length_h,Math.ceil((B-r0)/H-1e-9));i++){const c=s[i]||'-';if(c==='N'||c==='-')return c;if(c==='M')w='M'}return w}
+const stUnits=(t,s)=>{const pl=teamPlan(curRace(),t);if(!pl.pit)return Math.round((new Date(s.end_utc)-new Date(s.start_utc))/H)+'h';
+  const a=+new Date(s.start_utc),b=+new Date(s.end_utc),n=pl.slots.filter(x=>x.a>=a-60000&&x.b<=b+60000).length;return n+' fuel stint'+(n===1?'':'s')};
+function coverage(t,L,t0){const st=T.ss.filter(s=>s.team_id===t.id).map(s=>({s,a:+new Date(s.start_utc),b:+new Date(s.end_utc)}));
+  return Array.from({length:L},(_,i)=>{const A=+t0+i*H,B=A+H,ins=st.filter(x=>x.a<B&&x.b>A);
+    return {list:ins.map(x=>x.s),over:ins.some((x,j)=>ins.some((y,k)=>k>j&&x.a<y.b&&y.a<x.b))}})}
+function gapRuns(c,t0,tz){const out=[];let i=0;while(i<c.length){if(!c[i].list.length){let j=i;while(j<c.length&&!c[j].list.length)j++;out.push(span(new Date(+t0+i*H),j-i,tz));i=j}else i++}return out}
 function drawTeams(r){
   $('#sub').innerHTML=`<div class="row" style="margin:14px 0"><span class="mu grow">Join a team, then tap an hour in your lane to request a stint. Leaders can drag drivers between teams with the ⋮⋮ handle.</span><button class="pri" onclick="teamDlg()">New team</button></div>`+
     (T.ts.map(t=>teamCard(r,t)).join('')||'<div class="card"><p class="empty" style="margin:0">No teams yet. Each team gets its own swimlane with one lane per driver. Create a team, add drivers, then tap a lane to place stints.</p></div>');
 }
+function stratLine(t,pl,lead){
+  if(pl.pit){const P=pl.P;return `<div class="strat-line"><span class="grow"><b>Strategy:</b> ${P.lps} laps · ${dur(P.stintSec)} per stint · ${P.stops.length} stops${P.tyreStops?` (${P.tyreStops} with tyres)`:''} · driver stints of <b>${P.min===P.max?P.min:P.min+'–'+P.max} fuel stint${P.max>1?'s':''}</b>${P.tyreShort?' · <span style="color:var(--red-ink)">tyres don’t last a full stint</span>':''}</span>${lead?`<button class="ghost" onclick="stratDlg(${t.id})">Edit figures</button>`:''}</div>`}
+  if(pl.err)return `<div class="strat-line"><span class="grow"><b>Strategy:</b> <span style="color:var(--red-ink)">${esc(pl.err)}</span></span>${lead?`<button class="ghost" onclick="stratDlg(${t.id})">Edit figures</button>`:''}</div>`;
+  return lead?`<div class="strat-line"><span class="grow mu">Add fuel and tyre figures to plan driver stints around pit stops.</span><button onclick="stratDlg(${t.id})">Add strategy</button></div>`:''}
 function teamCard(r,t){
-  const tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id);
-  const cov=coverage(t,L,t0),mk=clockMarks(t0,L,tz),lanes=mem.map(m=>({...m}));
+  const tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),st=T.ss.filter(s=>s.team_id===t.id),pl=teamPlan(r,t);
+  const cov=coverage(t,L,t0),mk=clockMarks(t0,L,tz),lanes=mem.map(m=>({...m})),W=L*H,pc=ms=>((ms-t0)/W*100).toFixed(3)+'%';
   st.forEach(s=>{if(!lanes.some(l=>l.user_id===s.user_id))lanes.push({user_id:s.user_id,car:null,left:true})});
+  const pr=pl.pit?1:0,first=3+pr;
   let h=`<div class="who" style="grid-row:1;grid-column:1"></div>`+[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);
     return `<div class="ax ${mk[i]?'dst':''} ${i%2?'':'k2'} ${i%4?'':'k4'}" style="grid-row:1;grid-column:${i+2}" title="${range(x,1,tz)} your time"><span class="t">${locH(x,tz)}</span>${mk[i]?`<span class="dstl">${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</span>`:''}</div>`}).join('');
-  h+=`<div class="who" style="grid-row:2;grid-column:1;min-height:0"><span class="mu">Coverage</span></div>`+cov.map((c,i)=>{const k=c.length>1?'x':c.length?(c.some(s=>s.status==='approved')?'ok':'p'):'gap';
-    return `<div class="cov ${k}" style="grid-row:2;grid-column:${i+2}" title="${range(new Date(+t0+i*H),1,tz)}: ${COVW[k]}"></div>`}).join('');
-  if(!lanes.length)h+=`<div class="lane-empty" style="grid-row:3">No drivers yet. ${lead?'Add one below, or drag a driver here from another team.':'Join the team to request stints.'}</div>`;
-  lanes.forEach((m,li)=>{const R=li+3,mine=m.user_id===me.id,click=mine||lead;
+  if(pl.pit)h+=`<div class="who" style="grid-row:2;grid-column:1;min-height:0"><span class="mu">Pit stops</span></div><div class="pitrow" style="grid-row:2;grid-column:2 / -1">${pl.stops.map(s=>`<span class="pit ${s.tyres?'ty':''}" style="left:${pc(s.a)}" title="Stop ${s.n} · ${locH(new Date(s.a),tz)} · ${s.tyres?'fuel + tyres':'fuel only'} · ≈${Math.round(s.loss)} s"></span>`).join('')}</div>`;
+  h+=`<div class="who" style="grid-row:${2+pr};grid-column:1;min-height:0"><span class="mu">Coverage</span></div>`+cov.map((c,i)=>{const k=c.over?'x':c.list.length?(c.list.some(s=>s.status==='approved')?'ok':'p'):'gap';
+    return `<div class="cov ${k}" style="grid-row:${2+pr};grid-column:${i+2}" title="${range(new Date(+t0+i*H),1,tz)}: ${COVW[k]}"></div>`}).join('');
+  if(!lanes.length)h+=`<div class="lane-empty" style="grid-row:${first}">No drivers yet. ${lead?'Add one below, or drag a driver here from another team.':'Join the team to request stints.'}</div>`;
+  lanes.forEach((m,li)=>{const R=li+first,mine=m.user_id===me.id,click=mine||lead;
     const sub2=m.left?'Not in team':esc(profiles.find(p=>p.id===m.user_id)?.tz||''),drag=!m.left&&canMoveFrom(m.user_id,t);
     h+=`<div class="who lane" style="grid-row:${R};grid-column:1">${drag?`<span class="grip" data-uid="${m.user_id}" data-tid="${t.id}" onpointerdown="dragStart(event)" title="Drag to another team" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm">${click?`<button class="${mine?'am':''}" onclick="memberDlg(${t.id},'${m.user_id}')" title="Car and team options">${esc(name(m.user_id))}</button>`:`<b>${esc(name(m.user_id))}</b>`}<span class="mu">${sub2}</span></span></div>`;
     for(let i=0;i<L;i++){const c=avAt(r,m.user_id,off,i),tl=`${range(new Date(+t0+i*H),1,tz)}: ${WORD[c]}`;
       h+=click?`<button class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" onclick="stintDlg(${t.id},0,'${m.user_id}',${i})" title="${tl}" aria-label="${esc(name(m.user_id))}, ${tl}"></button>`:`<div class="h ${cl(c)}" style="grid-row:${R};grid-column:${i+2}" title="${tl}"></div>`}
-    st.filter(x=>x.user_id===m.user_id).forEach(x=>{const {a,n}=stIdx(x,t0),a2=Math.max(0,a),n2=Math.min(L,a+n)-a2;if(n2<=0)return;
-      h+=`<button class="bar ${x.status}" style="grid-row:${R};grid-column:${a2+2}/span ${n2}" onclick="stintDlg(${t.id},${x.id})" title="${esc(name(x.user_id))} · ${range(new Date(x.start_utc),n,tz)} · ${stL(x.status)}" aria-label="${esc(name(x.user_id))} ${range(new Date(x.start_utc),n,tz)} ${stL(x.status)}">${locH(new Date(x.start_utc),tz)}<span class="b2">–${locH(new Date(x.end_utc),tz)}</span></button>`})});
-  const gaps=gapRuns(cov,t0,tz),over=cov.some(c=>c.length>1);
-  const list=st.map(x=>{const n=stIdx(x,t0).n;return `<tr><td>${esc(name(x.user_id))}</td><td>${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${n}h</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`}).join('');
+    const bars=st.filter(x=>x.user_id===m.user_id).map(x=>{const a=Math.max(+t0,+new Date(x.start_utc)),b=Math.min(+t0+W,+new Date(x.end_utc));if(b<=a)return '';
+      const lab=`${esc(name(x.user_id))} · ${locH(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)} · ${stUnits(t,x)} · ${stL(x.status)}`;
+      return `<button class="bar ${x.status}" style="left:calc(${pc(a)} + 1px);width:calc(${((b-a)/W*100).toFixed(3)}% - 2px)" onclick="stintDlg(${t.id},${x.id})" title="${lab}" aria-label="${lab}">${locH(new Date(x.start_utc),tz)}<span class="b2">–${locH(new Date(x.end_utc),tz)}</span></button>`}).join('');
+    h+=`<div class="lane-ov" style="grid-row:${R};grid-column:2 / -1">${pl.pit?pl.stops.map(s=>`<span class="pitline" style="left:${pc(s.a)}"></span>`).join(''):''}${bars}</div>`});
+  const gaps=gapRuns(cov,t0,tz),over=cov.some(c=>c.over);
+  const list=st.map(x=>`<tr><td>${esc(name(x.user_id))}</td><td>${locFull(new Date(x.start_utc),tz)}–${locH(new Date(x.end_utc),tz)}</td><td>${stUnits(t,x)}</td><td><span class="chip ${x.status}">${stL(x.status)}</span></td><td><button class="ghost" onclick="stintDlg(${t.id},${x.id})">Open</button></td></tr>`).join('');
   const free=profiles.filter(p=>!T.ms.some(m=>m.user_id===p.id));
   const isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==t.id);
   const joinBtn=isMem?'':other?`<button onclick="moveMember('${me.id}',${other.team_id},${t.id})">Move me here</button>`:`<button class="pri" onclick="joinTeam(${t.id})">Join team</button>`;
   return `<div class="card team" data-tid="${t.id}"><div class="team-head"><div class="grow"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span><span class="car">${esc(teamCar(t))}</span></div>
     <div class="mu" style="margin-top:2px">Leader ${t.leader_id?esc(name(t.leader_id)):'none (admins manage it)'} · ${mem.length} driver${mem.length===1?'':'s'}</div></div>
     ${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${joinBtn}</div>
-    ${gaps.length?`<div class="banner warn"><span>No driver: ${gaps.join(', ')}</span></div>`:`<div class="banner ok"><span>Every hour has a driver.</span></div>`}${over?'<div class="banner warn"><span>Some stints overlap (striped on the coverage line).</span></div>':''}
+    ${stratLine(t,pl,lead)}
+    ${gaps.length?`<div class="banner warn"><span>No driver: ${gaps.join(', ')}</span></div>`:`<div class="banner ok"><span>Every hour has a driver.${pl.pit&&handoversOk(t,pl)?' Every driver change happens at a pit stop.':''}</span></div>`}${over?'<div class="banner warn"><span>Some stints overlap (striped on the coverage line).</span></div>':''}
     <div class="tlw"><div class="tl" style="--L:${L}">${h}</div></div>
-    <div class="legend"><span class="chip approved">Approved stint</span><span class="chip pending">Pending stint</span><span class="mu">Lane shading shows availability. Top line shows coverage.</span></div>
+    <div class="legend"><span class="chip approved">Approved stint</span><span class="chip pending">Pending stint</span>${pl.pit?'<span class="mu"><span class="pit" style="position:static;display:inline-block;vertical-align:middle"></span> fuel stop · <span class="pit ty" style="position:static;display:inline-block;vertical-align:middle"></span> fuel + tyres</span>':''}<span class="mu">Lane shading shows availability.</span></div>
     ${lead&&free.length?`<div class="add-row"><label>Add driver<select id="ad${t.id}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><button onclick="addMember(${t.id})">Add to team</button></div>`:''}
     ${list?`<details><summary>Stint list (${st.length})</summary><div class="scroll"><table class="list"><tbody>${list}</tbody></table></div></details>`:''}</div>`;
 }
+// True when every stint ends and starts at a stop (or the race start/finish).
+function handoversOk(t,pl){const ok=ms=>pl.slots.some(s=>Math.abs(s.a-ms)<60000||Math.abs(s.b-ms)<60000);
+  return T.ss.filter(s=>s.team_id===t.id).every(s=>ok(+new Date(s.start_utc))&&ok(+new Date(s.end_utc)))}
+
+/* ---------- Stint window ---------- */
+function stintDlg(tid,sid,uid,start){
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),s=sid?T.ss.find(x=>x.id===sid):null,pl=teamPlan(r,t);
+  uid=s?s.user_id:(uid||me.id);
+  const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{};
+  const who=lead&&!s&&T.ms.filter(m=>m.team_id===tid).length>1?`<label>Driver<select name="uid">${T.ms.filter(m=>m.team_id===tid).map(m=>opt(m.user_id,name(m.user_id),m.user_id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
+  let pick;
+  if(pl.pit){const S=pl.slots;let k0,n0;
+    if(s){const a=+new Date(s.start_utc),b=+new Date(s.end_utc);k0=S.reduce((bi,x,i)=>Math.abs(x.a-a)<Math.abs(S[bi].a-a)?i:bi,0);n0=Math.max(1,S.filter(x=>x.k>=k0&&x.b<=b+60000).length)}
+    else{const tap=+t0+(start||0)*H;k0=S.findIndex(x=>x.b>tap);if(k0<0)k0=S.length-1;n0=Math.min(Math.max(pl.min,Math.min(3,pl.max)),S.length-k0)}
+    const opts=S.map(x=>opt(x.k,`Stint ${x.k+1} · ${locDay(new Date(x.a),tz)} ${locH(new Date(x.a),tz)}${x.after?(x.after.tyres?' · new tyres':''):' · race start'}`,x.k===k0)).join('');
+    pick=`<label>Start at<select name="k" onchange="pitSum(this.form,${tid})" ${edit?'':'disabled'}>${opts}</select></label>
+      <label>Length (fuel stints)<select name="n" onchange="pitSum(this.form,${tid})" ${edit?'':'disabled'}>${[1,2,3,4,5,6].map(n=>opt(n,n+(n===1?' fuel stint':' fuel stints'),n===n0)).join('')}</select></label><div id="pitsum" class="pitsum"></div>`}
+  else{const cur=s?stIdx(s,t0):{a:start||0,n:3};
+    pick=`<div class="form"><label>Start (your time)<select name="a" ${edit?'':'disabled'}>${[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)}`,i===cur.a)}).join('')}</select></label><label>Length<select name="n" ${edit?'':'disabled'}>${STINTS.map(n=>opt(n,n+'h',n===cur.n)).join('')}</select></label></div>`}
+  openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
+    <p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p>${pick}
+    ${s?`<p style="margin:0">Status <span class="chip ${s.status}" style="margin-left:6px">${stL(s.status)}</span></p>`:lead?'<p class="mu">You lead this team, so this stint is approved straight away.</p>':'<p class="mu">Your request stays pending until the team leader approves it.</p>'}
+    ${!edit?'<p class="mu">This stint is approved. Ask the team leader to change it.</p>':''}
+    <div class="row">${edit?`<button class="pri">${s?'Save changes':lead?'Add stint':'Request stint'}</button>`:''}
+      ${s&&lead&&s.status==='pending'?`<button type="button" onclick="appr(${s.id})">Approve</button>`:''}
+      <button type="button" onclick="closeDlg()">${edit?'Cancel':'Close'}</button><span class="grow"></span>
+      ${s&&(lead||(own&&s.status==='pending'))?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`);
+  if(pl.pit)pitSum($('#dlg form'),tid)}
+// Live summary under the fuel-stint picker: duration, end, stops inside, who takes over.
+function pitSum(f,tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),pl=teamPlan(r,t),tz=myTz(),S=pl.slots;
+  const k=+f.querySelector('[name=k]').value;let n=+f.querySelector('[name=n]').value;n=Math.min(n,S.length-k);
+  const A=S[k].a,B=S[k+n-1].b,inside=pl.stops.filter(s=>s.a>A&&s.a<B-60000),last=k+n>=S.length;
+  const warn=n<pl.min||n>pl.max?`<div class="warnline">Outside this team’s ${pl.min===pl.max?pl.min:pl.min+'–'+pl.max} fuel stint range. You can still save it.</div>`:'';
+  $('#pitsum').innerHTML=`<b class="num">${n} fuel stint${n>1?'s':''} · ${dur((B-A)/1000)} · ends ${locH(new Date(B),tz)}</b>
+    <div class="mu">${last?'Takes the chequered flag.':`Hand over at the stop at ${locH(new Date(B),tz)}${pl.stops[k+n-1]?.tyres?' (new tyres)':''}.`}</div>
+    ${inside.map(s=>`<div class="pitstep num"><span>${locH(new Date(s.a),tz)}</span><span class="chip ${s.tyres?'':'dim'}">${s.tyres?'Pit: fuel + tyres':'Pit: fuel only'}</span></div>`).join('')}${warn}`}
+async function saveStint(e,tid,sid){e.preventDefault();
+  const f=new FormData(e.target),r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),pl=teamPlan(r,t);
+  const uid=f.get('uid'),car=teamCar(t),p=profiles.find(x=>x.id===uid);let A,B;const warn=[];
+  if(pl.pit){const k=+f.get('k'),n=Math.min(+f.get('n'),pl.slots.length-k);A=pl.slots[k].a;B=pl.slots[k+n-1].b;
+    if(n<pl.min||n>pl.max)warn.push(`This team’s driver stints are ${pl.min===pl.max?pl.min:pl.min+'–'+pl.max} fuel stints; this one is ${n}.`)}
+  else{const a=+f.get('a'),n=+f.get('n');if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');A=+t0+a*H;B=A+n*H}
+  {const others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
+   if(p&&p.max_stints!=null&&others.length+1>p.max_stints)warn.push(`${p.name} would have ${others.length+1} stints in this race (their max is ${p.max_stints}).`);
+   if(rest)others.forEach(x=>{const xs=+new Date(x.start_utc),xe=+new Date(x.end_utc),g=xs>=B?(xs-B)/H:A>=xe?(A-xe)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${dur(g*3600)} rest next to their ${locH(new Date(xs),tz)} stint (wants ${rest}h).`)})}
+  const r0=+new Date(r.start_utc),bad=[];for(let i=Math.max(0,Math.floor((A-r0)/H));i<Math.min(L,Math.ceil((B-r0)/H-1e-9));i++){const c=hrs(r,uid)[i]||'-';if(c!=='A')bad.push(`${locH(new Date(r0+i*H),tz)} ${WORD[c]}`)}
+  if(bad.length)warn.push(`${name(uid)} isn’t marked available for: ${bad.join(', ')}.`);
+  T.ss.filter(x=>x.id!==sid&&+new Date(x.start_utc)<B&&+new Date(x.end_utc)>A&&(x.team_id===tid||x.user_id===uid))
+    .forEach(x=>warn.push(x.user_id===uid&&x.team_id!==tid?`${name(uid)} already drives for ${teamName(x.team_id)} then.`:`It overlaps ${name(x.user_id)}’s stint.`));
+  if(warn.length&&!confirm(warn.join('\n')+'\n\nSave anyway?'))return;
+  await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car}));
+  const row={team_id:tid,user_id:uid,start_utc:new Date(A).toISOString(),end_utc:new Date(B).toISOString()};
+  if(sid)await q(sb.from('stints').update(row).eq('id',sid));else await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));
+  closeDlg();render();note(sid?'Stint updated.':lead?'Stint added.':'Stint requested. The team leader will approve it.',1)}
+async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();render()}
+async function delStint(id){if(!confirm('Remove this stint?'))return;await q(sb.from('stints').delete().eq('id',id));closeDlg();render()}
+
+/* ---------- Auto stint plan ----------
+   Works on the team's slots: hours (2–3h stints) or whole fuel stints (the team's range).
+   Uses time a driver marked Available (preferred) or Maybe (avoided where possible), never time
+   they drive for another team, and respects rest time and max stints. Avoids back-to-back stints
+   by one driver and spreads driving time evenly. Existing stints stay. */
+function makePlan(r,t){
+  const pl=teamPlan(r,t),S=pl.slots,P=S.length,sizes=pl.sizes,st=T.ss.filter(s=>s.team_id===t.id),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id);
+  const iv=x=>({a:+new Date(x.start_utc),b:+new Date(x.end_utc)});
+  const cov=S.map(sl=>{const s=st.find(x=>{const v=iv(x);return Math.min(v.b,sl.b)-Math.max(v.a,sl.a)>(sl.b-sl.a)/2});return s?s.user_id:null});
+  const D=mem.map(uid=>{const p=profiles.find(x=>x.id===uid)||{},rest=(p.min_rest_h??0)*H,had=T.ss.filter(x=>x.user_id===uid).map(iv);
+    const av=S.map(sl=>avRange(r,uid,sl.a,sl.b)),busy=S.map(sl=>had.some(v=>sl.a<v.b+rest&&sl.b>v.a-rest));
+    return {uid,rest,cap:p.max_stints==null?99:p.max_stints-had.length,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
+  const U=D.filter(d=>!d.none&&d.cap>0),load0={};mem.forEach(u=>load0[u]=0);st.forEach(s=>{const v=iv(s);load0[s.user_id]=(load0[s.user_id]||0)+(v.b-v.a)/H});
+  const fair=l=>Object.values(l).reduce((a,x)=>a+x*x,0)*0.3,score=s=>s.cost+fair(s.load);
+  const bk=Array.from({length:P+1},()=>[]);bk[0].push({last:null,load:load0,cnt:{},end:{},cost:0,steps:[]});
+  for(let pos=0;pos<P;pos++){
+    const seen=new Map();for(const s of bk[pos]){const k=s.last+'|'+mem.map(u=>`${Math.round((s.load[u]||0)*10)}:${s.end[u]??''}`).join(',');const o=seen.get(k);if(!o||o.cost>s.cost)seen.set(k,s)}
+    const b=[...seen.values()].sort((x,y)=>score(x)-score(y)).slice(0,300);
+    for(const s of b){
+      if(cov[pos]){let e=pos;while(e<P&&cov[e]===cov[pos])e++;bk[e].push({...s,last:cov[pos]});continue}
+      for(const d of U){if((s.cnt[d.uid]||0)>=d.cap||(s.end[d.uid]!=null&&S[pos].a<s.end[d.uid]+d.rest))continue;
+        for(const n of sizes){if(pos+n>P)continue;let ok=true,mb=0;
+          for(let k=pos;k<pos+n;k++){if(cov[k]||d.busy[k]||!(d.av[k]==='A'||d.av[k]==='M')){ok=false;break}if(d.av[k]==='M')mb++}
+          if(!ok)continue;const hrsN=(S[pos+n-1].b-S[pos].a)/H;
+          bk[pos+n].push({last:d.uid,load:{...s.load,[d.uid]:(s.load[d.uid]||0)+hrsN},cnt:{...s.cnt,[d.uid]:(s.cnt[d.uid]||0)+1},end:{...s.end,[d.uid]:S[pos+n-1].b},
+            cost:s.cost+1+mb*4+(d.uid===s.last?8:0),steps:[...s.steps,{uid:d.uid,a:pos,n,mb}]})}}
+      // With pit stops, the last driver may take fewer fuel stints than the usual range so the race is covered.
+      if(pl.pit&&P-pos<Math.min(...sizes))for(const d of U){if(cov[pos]||d.busy[pos]||(s.end[d.uid]!=null&&S[pos].a<s.end[d.uid]+d.rest))continue;const n=P-pos;let ok=true;for(let k=pos;k<P;k++)if(!(d.av[k]==='A'||d.av[k]==='M')||d.busy[k])ok=false;
+        if(ok)bk[P].push({...s,last:d.uid,cost:s.cost+3,steps:[...s.steps,{uid:d.uid,a:pos,n,mb:0}]})}
+      bk[pos+1].push({...s,last:null,cost:s.cost+100,steps:[...s.steps,{gap:true,a:pos}]});
+    }
+  }
+  const best=bk[P].sort((x,y)=>score(x)-score(y))[0]||{steps:[]};
+  return {pl,steps:best.steps.filter(x=>!x.gap).map(x=>({...x,A:S[x.a].a,B:S[x.a+x.n-1].b})),gaps:best.steps.filter(x=>x.gap).map(x=>x.a),
+    skipped:D.filter(d=>d.none).map(d=>d.uid),full:D.filter(d=>!d.none&&d.cap<=0).map(d=>d.uid),mem}
+}
+function planDlg(tid){
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),P=makePlan(r,t),S=P.pl.slots,unit=n=>P.pl.pit?`${n} fuel stint${n>1?'s':''}`:n+'h';
+  if(!P.mem.length)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Plan stints · ${esc(t.name)}</h3><p>Add drivers to the team first. The plan only uses drivers in this team.</p><div class="row"><button class="pri">OK</button></div></form>`);
+  const runs=[];P.gaps.forEach(a=>{const l=runs[runs.length-1];if(l&&l.a+l.n===a)l.n++;else runs.push({a,n:1})});
+  const lab=(A,B)=>{const d1=locDay(new Date(A),tz),d2=locDay(new Date(B),tz);return `${d1} ${locH(new Date(A),tz)}–${d2!==d1?d2+' ':''}${locH(new Date(B),tz)}`};
+  const rows=P.steps.map(s=>`<tr><td><b>${esc(name(s.uid))}</b></td><td class="num">${lab(s.A,s.B)}</td><td>${unit(s.n)}</td><td>${s.mb?`<span class="chip warn">${s.mb} maybe</span>`:''}</td></tr>`).join('');
+  openDlg(`<form onsubmit="applyPlan(event)"><h3>Plan stints · ${esc(t.name)}</h3>
+    <p class="mu" style="margin:0">Fills the empty ${P.pl.pit?'fuel stints, changing drivers only at pit stops,':'hours'} using each driver’s availability, max stints and rest time. Existing stints stay as they are. Times are in your time zone.</p>
+    ${rows?`<div class="scroll"><table class="plan"><tbody>${rows}</tbody></table></div>`:'<p>No new stints could be planned.</p>'}
+    ${runs.length?`<div class="banner warn"><span>Still no driver: ${runs.map(x=>lab(S[x.a].a,S[x.a+x.n-1].b)).join(', ')}. Nobody in the team can drive then (availability, rest time or max stints).</span></div>`:''}
+    ${P.skipped.length?`<p class="mu" style="margin:0">Left out (no availability set): ${P.skipped.map(u=>esc(name(u))).join(', ')}</p>`:''}${P.full.length?`<p class="mu" style="margin:0">Already at their max stints: ${P.full.map(u=>esc(name(u))).join(', ')}</p>`:''}
+    <div class="row">${rows?`<button class="pri">Add ${P.steps.length} stints</button>`:''}<button type="button" onclick="closeDlg()">Cancel</button></div></form>`);
+  PLAN={tid,...P};
+}
+async function applyPlan(e){e.preventDefault();if(!PLAN)return;const P=PLAN;
+  await q(sb.from('stints').insert(P.steps.map(s=>({team_id:P.tid,user_id:s.uid,start_utc:new Date(s.A).toISOString(),end_utc:new Date(s.B).toISOString(),status:'approved'}))));
+  closeDlg();render();note(`${P.steps.length} stints added. Tap any bar to adjust it.`,1)}
+
+/* ---------- Team strategy figures (leader) ---------- */
+function stratFields(f,withRange){const v=k=>esc(f[k]??'');const inp=(k,lab,ph,full)=>`<label${full?' style="grid-column:1 / -1"':''}>${lab}<input name="${k}" value="${v(k)}" inputmode="decimal" placeholder="${ph||''}" autocomplete="off"></label>`;
+  return `<div class="sgroup"><div class="sg-h">Car <span class="mu">Leave fuel or energy empty if your class doesn’t use it</span></div><div class="form2">
+    ${inp('lap','Average lap','e.g. 3:30.5',1)}${inp('ve','Energy per lap (%)','Not used')}${inp('veMax','Energy limit (%)','100')}${inp('fuel','Fuel per lap (L)','Not used')}${inp('tank','Tank (L)','Not used')}${inp('margin','Safety margin (laps)','0.5',1)}</div></div>
+    <div class="sgroup"><div class="sg-h">Pit stops and tyres</div><div class="form2">
+    ${inp('lane','Pit lane loss (s)','e.g. 26')}${inp('refill','Full refill takes (s)','e.g. 30')}${inp('tyreAdd','Tyre change adds (s)','e.g. 12')}${inp('tyreLife','Tyre life (laps)','Not limited')}${inp('tyreSets','Tyre sets allowed','Not limited',1)}</div></div>
+    ${withRange?`<div class="sgroup"><div class="sg-h">Driver stints</div><div class="form2"><label>Shortest<select name="min">${[1,2,3,4].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.min||2))).join('')}</select></label><label>Longest<select name="max">${[1,2,3,4,5,6].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.max||3))).join('')}</select></label></div></div>`:''}`}
+const readStrat=form=>{const o={};Object.keys(SDEF).forEach(k=>{const el=form.querySelector(`[name="${k}"]`);if(el)o[k]=el.value.trim()});return o};
+function stratDlg(tid){const t=T.ts.find(x=>x.id===tid),f={...SDEF,...(t.strategy||{})};
+  openDlg(`<form onsubmit="saveStrat(event,${tid})" oninput="stratPreview(this)"><h3>Strategy · ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}. Use figures from your own practice laps.</p>
+    ${stratFields(f,true)}<div id="spv" class="pitsum"></div>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t.strategy?`<button type="button" class="danger" onclick="clearStrat(${tid})">Remove strategy</button>`:''}</div></form>`);
+  stratPreview($('#dlg form'))}
+function stratPreview(form){const f=readStrat(form),P=calcStrategy(f,curRace()?.length_h||24),el=$('#spv');if(!el)return;
+  el.innerHTML=P.err?`<span class="mu">${esc(P.err)}</span>`:`<b class="num">${P.lps} laps · ${dur(P.stintSec)} per stint · ${P.stops.length} stops · ${dur(P.pit)} in the pits</b><div class="mu">${P.by==='energy'?'Energy':'Fuel'} runs out first.${P.sets?` Tyre sets: ${P.sets}${P.setsMax?' of '+P.setsMax:''}.`:''}</div>${+f.min>+f.max?'<div class="warnline">Shortest is longer than longest.</div>':''}`}
+async function saveStrat(e,tid){e.preventDefault();const f=readStrat(e.target),t=T.ts.find(x=>x.id===tid);
+  if(+f.min>+f.max)return note('The shortest driver stint can’t be longer than the longest.');
+  const P=calcStrategy(f,curRace().length_h);if(P.err)return note(P.err);
+  const st=T.ss.filter(s=>s.team_id===tid);
+  await q(sb.from('teams').update({strategy:f}).eq('id',tid));closeDlg();render();
+  note(st.length?'Strategy saved. Existing stints weren’t moved; check they still start and end at pit stops.':'Strategy saved. Tap a lane to place stints between pit stops.',1)}
+async function clearStrat(tid){if(!confirm('Remove the strategy? The team goes back to hour-based stints. Existing stints stay.'))return;
+  await q(sb.from('teams').update({strategy:null}).eq('id',tid));closeDlg();render()}
+
 /* ---------- moving drivers between teams (drag the ⋮⋮ handle, or use the driver's window) ---------- */
 const canMoveFrom=(uid,t)=>isAdm()||uid===me.id||canLead(t);
 function canMove(uid,from,to){const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);return !!(a&&b)&&(isAdm()||uid===me.id||(canLead(a)&&canLead(b)))}
@@ -646,7 +884,10 @@ function teamDlg(id){
 function carOpts(sel){const c=sel.form.querySelector('[name=car]');c.innerHTML=CARS[sel.value].map(x=>opt(x,x)).join('')}
 async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),row={name:f.get('name').trim(),class:f.get('cls'),car:f.get('car')};
   if(id)await q(sb.from('teams').update(row).eq('id',id));
-  else await q(sb.from('teams').insert({...row,race_id:raceId,start_utc:curRace().start_utc,leader_id:me.id}));
+  else{let strategy=null;try{const prev=await q(sb.from('teams').select('*').eq('car',row.car)),tr=curRace().track;
+      const same=prev.filter(x=>x.strategy&&(races.find(r=>r.id===x.race_id)?.track||'')===(tr||'')).sort((x,y)=>y.id-x.id)[0];strategy=same?.strategy||null}catch{}
+    await q(sb.from('teams').insert({...row,race_id:raceId,start_utc:curRace().start_utc,leader_id:me.id,...(strategy?{strategy}:{})}));
+    if(strategy)note(`Strategy figures copied from the last ${row.car} team at this track. Check them under Edit figures.`,1)}
   closeDlg();render()}
 async function delTeam(id){if(!confirm('Delete this team and all its stints?'))return;await q(sb.from('teams').delete().eq('id',id));closeDlg();render()}
 
@@ -666,91 +907,51 @@ async function leaveTeam(tid,uid){
   await q(sb.from('team_members').delete().eq('team_id',tid).eq('user_id',uid));
   closeDlg();render();if(gone.length<st.length)note('Approved stints stay until the team leader removes them.')}
 
-function stintDlg(tid,sid,uid,start){
-  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L}=teamGeo(r,t),lead=canLead(t),s=sid?T.ss.find(x=>x.id===sid):null;
-  uid=s?s.user_id:(uid||me.id);
-  const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),p=profiles.find(x=>x.id===uid)||{};
-  const cur=s?stIdx(s,t0):{a:start||0,n:3},mem=T.ms.find(m=>m.team_id===tid&&m.user_id===uid);
-  const starts=[...Array(L).keys()].map(i=>{const x=new Date(+t0+i*H);return opt(i,`${locDay(x,tz)} ${locH(x,tz)}`,i===cur.a)}).join('');
-  const who=lead&&!s&&T.ms.filter(m=>m.team_id===tid).length>1?`<label>Driver<select name="uid">${T.ms.filter(m=>m.team_id===tid).map(m=>opt(m.user_id,name(m.user_id),m.user_id===uid)).join('')}</select></label>`:`<input type="hidden" name="uid" value="${esc(uid)}"><p style="margin:0"><b>${esc(name(uid))}</b> <span class="mu">${esc(p.tz||'')}</span></p>`;
-  openDlg(`<form onsubmit="saveStint(event,${tid},${sid||0})"><h3>${s?'Stint':'New stint'} · ${esc(t.name)}</h3>${who}
-    <p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p>
-    <div class="form"><label>Start (your time)<select name="a" ${edit?'':'disabled'}>${starts}</select></label><label>Length<select name="n" ${edit?'':'disabled'}>${STINTS.map(n=>opt(n,n+'h',n===cur.n)).join('')}</select></label></div>
-    ${s?`<p style="margin:0">Status <span class="chip ${s.status}" style="margin-left:6px">${stL(s.status)}</span></p>`:lead?'<p class="mu">You lead this team, so this stint is approved straight away.</p>':'<p class="mu">Your request stays pending until the team leader approves it.</p>'}
-    ${!edit?'<p class="mu">This stint is approved. Ask the team leader to change it.</p>':''}
-    <div class="row">${edit?`<button class="pri">${s?'Save changes':lead?'Add stint':'Request stint'}</button>`:''}
-      ${s&&lead&&s.status==='pending'?`<button type="button" onclick="appr(${s.id})">Approve</button>`:''}
-      <button type="button" onclick="closeDlg()">${edit?'Cancel':'Close'}</button><span class="grow"></span>
-      ${s&&(lead||(own&&s.status==='pending'))?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`)}
-async function saveStint(e,tid,sid){e.preventDefault();
-  const f=new FormData(e.target),r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),{t0,L,off}=teamGeo(r,t),lead=canLead(t);
-  const uid=f.get('uid'),a=+f.get('a'),n=+f.get('n'),car=teamCar(t),p=profiles.find(x=>x.id===uid);
-  if(a+n>L)return note('That stint runs past the end of the race. Pick an earlier start or a shorter stint.');
-  const warn=[];
-  {const A0=+t0+a*H,B0=A0+n*H,others=T.ss.filter(x=>x.user_id===uid&&x.id!==sid),rest=p?.min_rest_h??0;
-   if(p&&p.max_stints!=null&&others.length+1>p.max_stints)warn.push(`${p.name} would have ${others.length+1} stints in this race (their max is ${p.max_stints}).`);
-   if(rest)others.forEach(x=>{const xs=+new Date(x.start_utc),xe=+new Date(x.end_utc),g=xs>=B0?(xs-B0)/H:A0>=xe?(A0-xe)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${g}h rest next to their ${locH(new Date(xs),tz)} stint (wants ${rest}h).`)})}
-  const bad=[];for(let k=a;k<a+n;k++){const c=avAt(r,uid,off,k);if(c!=='A')bad.push(`${locH(new Date(+t0+k*H),tz)} ${WORD[c]}`)}
-  if(bad.length)warn.push(`${name(uid)} isn’t marked available for: ${bad.join(', ')}.`);
-  const A=new Date(+t0+a*H),B=new Date(+A+n*H);
-  T.ss.filter(x=>x.id!==sid&&new Date(x.start_utc)<B&&new Date(x.end_utc)>A&&(x.team_id===tid||x.user_id===uid))
-    .forEach(x=>warn.push(x.user_id===uid&&x.team_id!==tid?`${name(uid)} already drives for ${teamName(x.team_id)} then.`:`It overlaps ${name(x.user_id)}’s stint.`));
-  if(warn.length&&!confirm(warn.join('\n')+'\n\nSave anyway?'))return;
-  await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car}));
-  const row={team_id:tid,user_id:uid,start_utc:A.toISOString(),end_utc:B.toISOString()};
-  if(sid)await q(sb.from('stints').update(row).eq('id',sid));else await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));
-  closeDlg();render();note(sid?'Stint updated.':lead?'Stint added.':'Stint requested. The team leader will approve it.',1)}
-async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();render()}
-async function delStint(id){if(!confirm('Remove this stint?'))return;await q(sb.from('stints').delete().eq('id',id));closeDlg();render()}
-
-/* ---------- Auto stint plan ----------
-   Fills the hours that have no stint yet with 2–3h stints inside each driver's limits.
-   Uses hours marked Available (preferred) or Maybe (avoided where possible), never hours
-   a driver drives for another team. Avoids back-to-back stints by the same driver and
-   spreads hours evenly. Existing stints are kept as they are. */
-function makePlan(r,t){
-  const {t0,L,off}=teamGeo(r,t),st=T.ss.filter(s=>s.team_id===t.id),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id),hr=x=>Math.round((new Date(x)-t0)/H);
-  const cov=Array(L).fill(null);st.forEach(s=>{const {a,n}=stIdx(s,t0);for(let k=Math.max(0,a);k<Math.min(L,a+n);k++)cov[k]=s.user_id});
-  const D=mem.map(uid=>{const p=profiles.find(x=>x.id===uid)||{},rest=p.min_rest_h??0,av=[...Array(L).keys()].map(i=>avAt(r,uid,off,i)),busy=Array(L).fill(false);
-    const had=T.ss.filter(x=>x.user_id===uid); // this driver's stints in the whole race, any team, plus rest around them
-    had.forEach(x=>{const a=hr(x.start_utc),b=hr(x.end_utc);for(let k=Math.max(0,a-rest);k<Math.min(L,b+rest);k++)busy[k]=true});
-    return {uid,min:2,max:3,cap:p.max_stints==null?99:p.max_stints-had.length,rest,av,busy,none:!av.some(c=>c==='A'||c==='M')}});
-  const U=D.filter(d=>!d.none&&d.cap>0),load0={};mem.forEach(u=>load0[u]=0);st.forEach(s=>load0[s.user_id]=(load0[s.user_id]||0)+stIdx(s,t0).n);
-  const fair=l=>Object.values(l).reduce((a,x)=>a+x*x,0)*0.3,score=s=>s.cost+fair(s.load);
-  const bk=Array.from({length:L+1},()=>[]);bk[0].push({last:null,load:load0,cnt:{},end:{},cost:0,steps:[]});
-  for(let pos=0;pos<L;pos++){
-    const seen=new Map();for(const s of bk[pos]){const k=s.last+'|'+mem.map(u=>`${s.load[u]||0}:${s.end[u]??''}`).join(',');const o=seen.get(k);if(!o||o.cost>s.cost)seen.set(k,s)}
-    const b=[...seen.values()].sort((x,y)=>score(x)-score(y)).slice(0,300);
-    for(const s of b){
-      if(cov[pos]){let e=pos;while(e<L&&cov[e]===cov[pos])e++;bk[e].push({...s,last:cov[pos]});continue}
-      for(const d of U){if((s.cnt[d.uid]||0)>=d.cap||(s.end[d.uid]!=null&&pos<s.end[d.uid]+d.rest))continue;
-        for(const n of STINTS){if(n<d.min||n>d.max||pos+n>L)continue;let ok=true,mb=0;
-          for(let k=pos;k<pos+n;k++){if(cov[k]||d.busy[k]||!(d.av[k]==='A'||d.av[k]==='M')){ok=false;break}if(d.av[k]==='M')mb++}
-          if(!ok)continue;
-          bk[pos+n].push({last:d.uid,load:{...s.load,[d.uid]:(s.load[d.uid]||0)+n},cnt:{...s.cnt,[d.uid]:(s.cnt[d.uid]||0)+1},end:{...s.end,[d.uid]:pos+n},
-            cost:s.cost+1+mb*4+(d.uid===s.last?8:0),steps:[...s.steps,{uid:d.uid,a:pos,n,mb}]})}}
-      bk[pos+1].push({...s,last:null,cost:s.cost+100,steps:[...s.steps,{gap:true,a:pos}]});
-    }
-  }
-  const best=bk[L].sort((x,y)=>score(x)-score(y))[0]||{steps:[]};
-  return {steps:best.steps.filter(x=>!x.gap),gaps:best.steps.filter(x=>x.gap).map(x=>x.a),skipped:D.filter(d=>d.none).map(d=>d.uid),full:D.filter(d=>!d.none&&d.cap<=0).map(d=>d.uid),mem,t0,L}
-}
-function planDlg(tid){
-  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),P=makePlan(r,t);
-  if(!P.mem.length)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Plan stints · ${esc(t.name)}</h3><p>Add drivers to the team first. The plan only uses drivers in this team.</p><div class="row"><button class="pri">OK</button></div></form>`);
-  const runs=[];P.gaps.forEach(a=>{const l=runs[runs.length-1];if(l&&l.a+l.n===a)l.n++;else runs.push({a,n:1})});
-  const rows=P.steps.map(s=>{const x=new Date(+P.t0+s.a*H);return `<tr><td><b>${esc(name(s.uid))}</b></td><td>${span(x,s.n,tz)}</td><td>${s.n}h</td><td>${s.mb?`<span class="chip warn">${s.mb}h maybe</span>`:''}</td></tr>`}).join('');
-  openDlg(`<form onsubmit="applyPlan(event)"><h3>Plan stints · ${esc(t.name)}</h3>
-    <p class="mu" style="margin:0">Fills empty hours using each driver’s availability, stint length, max stints and rest time. Existing stints stay as they are. Times are in your time zone.</p>
-    ${rows?`<div class="scroll"><table class="plan"><tbody>${rows}</tbody></table></div>`:'<p>No new stints could be planned.</p>'}
-    ${runs.length?`<div class="banner warn"><span>Still no driver: ${runs.map(x=>span(new Date(+P.t0+x.a*H),x.n,tz)).join(', ')}. Nobody in the team can drive then (availability, rest time or max stints), or the gap is shorter than 2h.</span></div>`:''}
-    ${P.skipped.length?`<p class="mu" style="margin:0">Left out (no availability set): ${P.skipped.map(u=>esc(name(u))).join(', ')}</p>`:''}${P.full.length?`<p class="mu" style="margin:0">Already at their max stints: ${P.full.map(u=>esc(name(u))).join(', ')}</p>`:''}
-    <div class="row">${rows?`<button class="pri">Add ${P.steps.length} stints</button>`:''}<button type="button" onclick="closeDlg()">Cancel</button></div></form>`);
-  PLAN={tid,...P};
-}
-async function applyPlan(e){e.preventDefault();if(!PLAN)return;const P=PLAN;
-  await q(sb.from('stints').insert(P.steps.map(s=>({team_id:P.tid,user_id:s.uid,start_utc:new Date(+P.t0+s.a*H).toISOString(),end_utc:new Date(+P.t0+(s.a+s.n)*H).toISOString(),status:'approved'}))));
-  closeDlg();render();note(`${P.steps.length} stints added. Tap any bar to adjust it.`,1)}
+/* ---------- Strategy page (standalone what-ifs; saved on this device only) ---------- */
+let SP=null,SPALL=false;
+function spLoad(){if(SP)return SP;let s=null;try{s=JSON.parse(store.get('strat')||'null')}catch{}SP={len:24,race:'',...SDEF,...(s||{})};return SP}
+function stratView(){
+  const f=spLoad(),up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>Date.now());
+  $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p>
+    <div class="sp-grid"><form id="spf" class="sp-in" oninput="spCalc()" onchange="spCalc()" onsubmit="event.preventDefault()">
+      <div class="sgroup card"><div class="sg-h">Race</div><div class="form2">
+        <label style="grid-column:1 / -1">Race<select name="race">${opt('','No race, just a length',!f.race)}${up.map(r=>opt(r.id,`${r.name} · ${r.length_h}h`,String(r.id)===String(f.race))).join('')}</select></label>
+        <label style="grid-column:1 / -1">Length<select name="len">${[4,6,8,12,24].map(h=>opt(h,h+' hours',+f.len===h)).join('')}</select></label></div></div>
+      <div class="card">${stratFields(f,false)}</div>
+      <button type="button" onclick="copyDlg()">Copy to a team…</button></form>
+      <div id="spout" class="sp-out"></div></div>`;
+  spCalc()}
+function spCalc(){const form=$('#spf');if(!form)return;const f={...readStrat(form),race:form.querySelector('[name=race]').value,len:+form.querySelector('[name=len]').value};
+  const r=races.find(x=>String(x.id)===f.race);if(r&&+f.len!==r.length_h){f.len=r.length_h;form.querySelector('[name=len]').value=r.length_h}
+  form.querySelector('[name=len]').disabled=!!r;SP=f;store.set('strat',JSON.stringify(f));
+  const P=calcStrategy(f,f.len),out=$('#spout'),tz=myTz(),t0=r?+new Date(r.start_utc):null;
+  if(P.err){out.innerHTML=`<div class="card"><p class="empty" style="margin:0">${esc(P.err)}</p></div>`;return}
+  const when=s=>t0?`${locDay(new Date(t0+s*1000),tz)} ${locH(new Date(t0+s*1000),tz)}`:`+${dur(s)}`;
+  const stops=(SPALL?P.stops:P.stops.slice(0,9)).map(s=>`<tr><td class="mu">${s.n}</td><td><b>${when(s.at)}</b></td><td>${s.lap}</td><td><span class="chip ${s.tyres?'':'dim'}">${s.tyres?'Fuel + tyres':'Fuel only'}</span></td><td class="r">${Math.round(s.loss)} s</td></tr>`).join('');
+  const segs=P.stints.map((s,i)=>`<span class="sseg" style="flex:${s.end-s.start}" title="Stint ${i+1}: ${s.laps} laps${i&&P.stops[i-1].tyres?' · new tyres':''}"><i class="${i%2?'b':''}"></i><em class="${i&&P.stops[i-1].tyres?'on':''}"></em></span>`).join('');
+  out.innerHTML=`<div class="card stats">
+      <div><b>${P.lps} laps</b><span>per stint · ${P.by} runs out first</span></div>
+      <div><b class="num">${dur(P.stintSec)}</b><span>per stint on track</span></div>
+      <div><b>${P.stops.length} stop${P.stops.length===1?'':'s'}</b><span>${P.tyreStops} with new tyres</span></div>
+      <div><b class="num">${dur(P.pit)}</b><span>spent in the pits</span></div>
+      <div><b>≈ ${P.laps} laps</b><span>incl. the lap after time runs out</span></div>
+      <div><b>${P.sets?P.sets+(P.setsMax?' / '+P.setsMax:''):'–'}</b><span>${P.sets?'tyre sets used':'tyre life not set'}</span></div></div>
+    ${P.setsMax&&P.sets>P.setsMax?`<div class="banner warn"><span>The plan needs ${P.sets} tyre sets but only ${P.setsMax} are allowed.</span></div>`:''}${P.tyreShort?'<div class="banner warn"><span>Tyres don’t last a full stint with these figures.</span></div>':''}
+    <div class="card"><div class="row" style="margin-bottom:10px"><b class="grow" style="font-size:17px">Race at a glance</b><span class="mu">${P.stints.length} stints · dot = new tyres</span></div><div class="segs">${segs}</div>
+      <div class="segs-lab mu num"><span>${t0?when(0):'Start'}</span><span>${t0?when(P.race):'+'+f.len+'h'}</span></div></div>
+    ${P.stops.length?`<div class="card flush"><div class="scroll"><table class="list stops"><thead><tr><td>Stop</td><td>${t0?'Your time':'Race time'}</td><td>After lap</td><td>Service</td><td class="r">Time lost</td></tr></thead><tbody>${stops}</tbody></table></div>
+      ${P.stops.length>9?`<button class="ghost" style="width:100%" onclick="SPALL=!SPALL;spCalc()">${SPALL?'Show fewer':'Show all '+P.stops.length+' stops'}</button>`:''}</div>`:'<div class="card"><p class="empty" style="margin:0">No pit stops needed.</p></div>'}`}
+async function copyDlg(){const f=SP||spLoad(),up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>Date.now());
+  const ts=up.length?await q(sb.from('teams').select('*').in('race_id',up.map(r=>r.id))):[],mine=ts.filter(t=>canLead(t));
+  if(!mine.length)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Copy to a team</h3><p>You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.</p><div class="row"><button class="pri">OK</button></div></form>`);
+  COPY={f,ts:mine};
+  openDlg(`<form onsubmit="doCopy(event)"><h3>Copy to a team</h3><p class="mu" style="margin:0">The team gets these car, pit and tyre figures. Its driver stint range stays as it is.</p>
+    <label>Team<select name="t">${mine.map(t=>{const r=races.find(x=>x.id===t.race_id);return opt(t.id,`${t.name} · ${t.class} · ${r?.name||''}`)}).join('')}</select></label>
+    <div class="row"><button class="pri">Copy</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+let COPY=null;
+async function doCopy(e){e.preventDefault();const id=+new FormData(e.target).get('t'),t=COPY.ts.find(x=>x.id===id),keep=t.strategy||{};
+  const s={};Object.keys(SDEF).forEach(k=>s[k]=COPY.f[k]??'');s.min=keep.min||2;s.max=keep.max||3;
+  await q(sb.from('teams').update({strategy:s}).eq('id',id));closeDlg();note(`Figures copied to ${t.name}.`,1)}
 
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
