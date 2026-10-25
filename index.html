@@ -125,6 +125,8 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.card.notes{padding:4px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
+textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
 .empty{color:var(--label2);font-size:14px;margin:12px 0 0}
 
 /* notices */
@@ -372,7 +374,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.4',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -581,7 +583,7 @@ const opt=(v,lab,sel)=>`<option value="${esc(v)}"${sel?' selected':''}>${esc(lab
 function myPlanLine(r,t,s,all,ms,tz){const P=planOf(r,t,all,ms),i=P.items.findIndex(x=>x.s.id===s.id),it=P.items[i],nx=P.items[i+1];if(!it)return null;
   return {A:it.A,B:it.B,laps:it.laps,html:`<div class="psteps"><div class="pstep"><span class="num">${locH(new Date(it.A),tz)}</span><i class="g"></i><span>${i?'Take over from '+esc(name(P.items[i-1].s.user_id)):'Race start'}</span></div><div class="pstep"><span class="num">${locH(new Date(it.B),tz)}</span><i class="o"></i><span>${nx?'Hand over to '+esc(name(nx.s.user_id)):'Chequered flag'}</span></div></div>`}}
 async function myView(){
-  const now=Date.now(),tz=myTz();
+  const now=Date.now(),tz=myTz();await loadEvents();
   const [st,mm,av]=await Promise.all([q(sb.from('stints').select('*').eq('user_id',me.id).order('start_utc')),q(sb.from('team_members').select('*').eq('user_id',me.id)),q(sb.from('avail_bands').select('race_id,updated_at').eq('user_id',me.id))]);
   const tids=[...new Set([...st.map(s=>s.team_id),...mm.map(m=>m.team_id)])];
   const ts=tids.length?await q(sb.from('teams').select('*').in('id',tids)):[];
@@ -601,7 +603,7 @@ async function myView(){
     const cn=clockNotes(d,r.length_h).length;
     return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
       <div class="chips">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="empty">No stints yet. Tap to set your availability and request a stint.</p>'}</div>`}).join('');
-  $('#main').innerHTML=`<h1 class="lt">My races</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>
+  $('#main').innerHTML=`<h1 class="lt">My races</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>${eventsHtml(tz)}<h3 style="margin:22px 0 10px">Your races</h3>
     ${next&&nextR?`<div class="banner ok"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)}, ${rel(new Date(next.start_utc))}${next.status==='pending'?' (pending)':''}.</span></div>`:''}
     ${cards||'<div class="card"><p class="empty" style="margin:0">No upcoming races yet. They’ll appear here once an admin adds them to the calendar.</p></div>'}`;
 }
@@ -611,7 +613,7 @@ function calView(){
   const adm=isAdm(),tz=myTz(),now=Date.now();
   const card=r=>{const d=new Date(r.start_utc),cn=clockNotes(d,r.length_h).length;return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${utcFull(d)}</div>${cn?'<div class="chips" style="margin-top:8px"><span class="chip warn">Clock change during race</span></div>':''}</div>${adm?`<button class="ghost" onclick="event.stopPropagation();raceDlg(${r.id})">Edit</button>`:''}</div></div>`};
   const up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>now),past=races.filter(r=>+new Date(r.start_utc)+r.length_h*H<=now).reverse();
-  $('#main').innerHTML=`<div class="head"><h1 class="lt">Calendar</h1>${adm?'<button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
+  $('#main').innerHTML=`<div class="head"><h1 class="lt">Calendar</h1>${adm?'<button class="ghost" onclick="importDlg()">Import LMU schedule</button><button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
     ${up.map(card).join('')||`<div class="card"><p class="empty" style="margin:0">No upcoming races.${adm?' Use Add race to create one.':''}</p></div>`}${past.length?`<details><summary>Past races (${past.length})</summary>${past.map(card).join('')}</details>`:''}`;
 }
 function raceDlg(id){
@@ -650,7 +652,7 @@ async function raceView(){
   {const cs=clockSummary(d,r.length_h);if(cs)ban+=`<div class="banner"><span>${cs}</span></div>`}
   $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'My races':'Calendar'}</button>
     <div class="head"><h1 class="lt" style="margin-top:6px">${esc(r.name)}</h1>${isAdm()?`<button onclick="raceDlg(${r.id})">Edit race</button>`:''}</div>
-    <p class="lt-sub">${r.length_h} hours${r.track?' at '+esc(r.track):''} · ${locFull(d,tz)} → ${locFull(e,tz)}</p>${ban}
+    <p class="lt-sub">${r.length_h} hours${r.track?' at '+esc(r.track):''} · ${locFull(d,tz)} → ${locFull(e,tz)}</p>${r.notes?`<details class="card notes"><summary>Race info</summary><p class="mu">${esc(r.notes)}</p></details>`:''}${ban}
     <div id="sub"></div>`;
   drawGantt(r);
 }
@@ -1119,6 +1121,71 @@ let COPY=null;
 async function doCopy(e){e.preventDefault();const id=+new FormData(e.target).get('t'),t=COPY.ts.find(x=>x.id===id),keep=t.strategy||{};
   const s={};Object.keys(SDEF).forEach(k=>s[k]=COPY.f[k]??'');s.min=keep.min||2;s.max=keep.max||3;
   await q(sb.from('teams').update({strategy:s}).eq('id',id));closeDlg();note(`Figures copied to ${t.name}.`,1)}
+
+/* ---------- LMU weekly schedule: read the Discord post (pasted text) ----------
+   Picks the week from the header ("… from: 27th October 2026") and every event under
+   "Special Events (Team)": name, entry tags, track, classes, length (360m → 6h) and the rest as rules. */
+const MONTHS={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function parseLmuPost(txt){
+  const clean=s=>String(s).replace(/<a?:\w+:\d+>/g,'').replace(/:[a-z0-9_]+:/gi,'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D|[\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/^\s*#+\s*/,'').replace(/[*_~`|>]/g,'').replace(/\s+/g,' ').trim();
+  const lines=String(txt||'').split(/\r?\n/).map(clean).filter(Boolean);
+  let week=null;
+  for(const l of lines){const m=l.match(/from:?\s*(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/i);if(m&&MONTHS[m[2].slice(0,3).toLowerCase()]!=null){week=new Date(Date.UTC(+m[3],MONTHS[m[2].slice(0,3).toLowerCase()],+m[1])).toISOString().slice(0,10);break}}
+  const events=[];let inTeam=false;
+  for(const l of lines){
+    if(/special events?\b.*\bteam/i.test(l)){inTeam=true;continue}
+    if(!inTeam)continue;
+    if(/^important\b/i.test(l)||/^(beginner|intermediate|advanced|weekly races|daily race)/i.test(l)){inTeam=false;continue}
+    const ev=events[events.length-1];
+    if(/^(race start in-game time|utc days|start times?|in-game)/i.test(l)){if(ev)ev.extra.push(l);continue}
+    const m=l.match(/^(.+?)\s*:\s*(.+)$/);if(!m){if(ev)ev.extra.push(l);continue}
+    const head=m[1],rest=m[2],tags=(head.match(/\[(.*?)\]/)||[])[1]||'',name=head.replace(/\[.*?\]/g,'').replace(/\s+/g,' ').trim();
+    const parts=rest.split(',').map(s=>s.trim()).filter(Boolean),track=parts[0]||'';
+    const classes=parts.find(p=>/class/i.test(p))||'';
+    const lm=rest.match(/(\d+(?:\.\d+)?)\s*(m|min|mins|minutes|h|hr|hrs|hours)\s+races?/i);
+    const minutes=lm?Math.round(/^h/i.test(lm[2])?+lm[1]*60:+lm[1]):(name.match(/(\d+)\s*hours?/i)?+name.match(/(\d+)\s*hours?/i)[1]*60:null);
+    const rules=parts.slice(1).filter(p=>p!==classes&&!/\braces?$/i.test(p)).join(', ');
+    events.push({name,tags,track,classes,minutes,rules,extra:[]});
+  }
+  return {week,events:events.map(e=>({...e,rules:[e.tags,e.rules,...e.extra].filter(Boolean).join('\n'),key:`${week||'?'}|${e.name}`}))}}
+
+/* LMU events: admins import the weekly post; any crew member creates a race from an event. */
+let LMUEV=[];
+function importDlg(){openDlg(`<form onsubmit="saveImport(event)"><h3>Import LMU schedule</h3>
+  <p class="mu" style="margin:0">In Discord, long-press the weekly schedule post, choose <b>Copy Text</b>, and paste it here. The team events under “Special Events (Team)” are picked out.</p>
+  <label>Post text<textarea name="txt" rows="7" oninput="importPrev(this.form)" placeholder="Paste the whole post"></textarea></label><div id="iprev" class="pitsum"></div>
+  <div class="row"><button class="pri" id="isave" disabled>Save events</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+let IMP=null;
+function importPrev(form){IMP=parseLmuPost(form.querySelector('[name=txt]').value);const el=$('#iprev'),b=$('#isave');
+  if(!IMP.events.length){el.innerHTML=`<span class="mu">${form.querySelector('[name=txt]').value.trim()?'No events found under “Special Events (Team)”. Check the whole post was copied.':''}</span>`;b.disabled=true;return}
+  el.innerHTML=`<b>Week of ${IMP.week?new Date(IMP.week+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'(no date found)'}</b>`+IMP.events.map(e=>`<div class="pitstep" style="align-items:flex-start"><span style="width:auto">•</span><span><b>${esc(e.name)}</b> · ${esc(e.track)} · ${e.minutes?dur(e.minutes*60):'length unknown'}<br><span class="mu">${esc(e.classes)}</span></span></div>`).join('');
+  b.disabled=false;b.textContent=`Save ${IMP.events.length} event${IMP.events.length>1?'s':''}`}
+async function saveImport(e){e.preventDefault();if(!IMP?.events.length)return;
+  await q(sb.from('lmu_events').upsert(IMP.events.map(x=>({key:x.key,week_start:IMP.week,name:x.name,track:x.track,classes:x.classes,minutes:x.minutes,rules:x.rules})),{onConflict:'key'}));
+  closeDlg();render();note('LMU team events saved. Crew members can now create races from them on My races.',1)}
+async function loadEvents(){const d=await sb.from('lmu_events').select('*').order('week_start',{ascending:false});LMUEV=d.data||[]}
+const evWeekEnd=e=>e.week_start?Date.parse(e.week_start+'T00:00:00Z')+8*86400000:Infinity;
+function eventsHtml(tz){const up=LMUEV.filter(e=>evWeekEnd(e)>Date.now());
+  if(!up.length&&!isAdm())return '';
+  const cards=up.map(e=>{const mine=races.filter(r=>r.source===e.key).sort((a,b)=>a.start_utc.localeCompare(b.start_utc)),h=e.minutes?Math.round(e.minutes/60):null;
+    return `<div class="card ev"><div class="race-top">${h?`<span class="len">${h}<small>h</small></span>`:''}<div class="grow"><div class="title">${esc(e.name)}</div><div class="mu">${esc(e.track||'')}${e.week_start?' · week of '+new Date(e.week_start+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</div></div>
+      <button class="pri" onclick="evCreateDlg(${e.id})">${mine.length?'Add another start':'Create race'}</button></div>
+      <div class="mu" style="margin-top:8px">${esc(e.classes||'')}</div>
+      ${mine.length?`<div class="chips">${mine.map(r=>`<button class="chip ok evrace" onclick="go('race',${r.id})">${locFull(new Date(r.start_utc),tz)} · open</button>`).join('')}</div>`:''}
+      ${e.rules?`<details><summary>Rules</summary><p class="mu" style="white-space:pre-line;margin:0">${esc(e.rules)}</p></details>`:''}</div>`}).join('');
+  return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">Upcoming LMU team events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
+    ${cards||'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
+function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz();
+  // Suggest the Saturday of that week at 19:00 your time.
+  let d=e.week_start?Date.parse(e.week_start+'T12:00:00Z'):Date.now();while(new Date(d).getUTCDay()!==6)d+=86400000;
+  const def=toInput(fromInput(new Date(d).toISOString().slice(0,10)+'T19:00',tz),tz);
+  openDlg(`<form onsubmit="evCreate(event,${id})"><h3>Create race · ${esc(e.name)}</h3>
+    <p class="mu" style="margin:0">${esc(e.track||'')} · ${e.minutes?dur(e.minutes*60):''}. The LMU post doesn’t say when your team races, so pick the start you’ll enter.</p>
+    <label>Start (${esc(tz)})<input name="start" type="datetime-local" required value="${def}"></label>
+    <div class="row"><button class="pri">Create race</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+async function evCreate(ev,id){ev.preventDefault();const start=fromInput(new FormData(ev.target).get('start'),myTz()).toISOString();
+  const {data,error}=await sb.rpc('race_from_event',{eid:id,start_at:start});if(error)return note(error.message);
+  closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));go('race',data);note('Race created. Create or join a team to start planning.',1)}
 
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
