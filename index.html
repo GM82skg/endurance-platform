@@ -181,7 +181,7 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .li .acts button{min-height:30px;padding:0 10px;font-size:14px}
 .car{font-size:15px;font-weight:500;color:var(--label2)}
 .pwbox{margin-top:22px;padding-top:18px;border-top:.5px solid var(--sep)}
-.grip{flex:none;width:22px;height:30px;margin:0 4px 0 -4px;display:grid;place-items:center;color:var(--label3);cursor:grab;touch-action:none;border-radius:6px}
+.grip{flex:none;width:22px;height:26px;margin:0 4px 0 -4px;display:grid;place-items:center;color:var(--label3);cursor:grab;touch-action:none;border-radius:6px}
 .grip:hover{color:var(--label2);background:var(--fill)}.grip svg{width:10px;height:16px}
 .tl .who.lane{flex-direction:row;align-items:center;justify-content:flex-start}.tl .who .nm{display:flex;flex-direction:column;min-width:0}
 .card.team{transition:box-shadow .15s,background-color .15s}
@@ -246,10 +246,11 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .gtools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 12px}
 .gpan{display:inline-flex;align-items:center;gap:8px}.gpan button{min-height:34px;width:38px;padding:0;font-size:17px}
 .gantt{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:4px 0 10px;container:gt / inline-size;user-select:none;-webkit-user-select:none}
-.grw{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:center;min-height:46px}
-.grw.me{background:color-mix(in srgb,var(--tint) 6%,transparent)}
-.gname{display:flex;align-items:center;gap:6px;padding:0 10px 0 16px;min-width:0;font-size:14px;line-height:1.25}
-.gname .nm{display:flex;flex-direction:column;min-width:0}.gname .nm>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grw{display:flex;flex-direction:column;padding:4px 0 6px}.grw>.gtrack{margin-left:16px}
+.grw.me{background:color-mix(in srgb,var(--tint) 6%,transparent)}.grw.ghdr>.gtrack,.grw.gsum>.gtrack{margin-top:0}
+.gsum .gname{padding-left:16px}
+.gname{display:flex;align-items:center;gap:6px;padding:0 16px 3px 10px;min-width:0;font-size:14px;line-height:1.25}.gname:empty{display:none}
+.gname .nm{display:flex;align-items:baseline;gap:8px;min-width:0}.gname .nm>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gname button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label)}.gname button.am,.gname b.am{color:var(--tint)}
 .gname .mu{font-size:11px}
 .gtrack{position:relative;height:40px;margin-right:16px;border-radius:8px;background:color-mix(in srgb,var(--label) 4%,transparent);touch-action:pan-y}
@@ -279,15 +280,16 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .gghost.band{border-color:var(--green);background:color-mix(in srgb,var(--green) 22%,transparent)}.gghost.band.M{border-color:var(--yellow)}
 .gghost.stint{border-color:var(--tint);background:color-mix(in srgb,var(--tint) 22%,transparent)}
 .gtip{position:absolute;top:-34px;transform:translateX(-50%);z-index:6;pointer-events:none;white-space:nowrap;background:var(--raised);color:var(--label);border-radius:9px;padding:5px 9px;font-size:12px;font-weight:600;box-shadow:var(--pop)}
-.gempty,.gnote{padding:6px 0;font-size:13px}.gadd{margin:8px 16px 0}.glist{margin:6px 16px 0}
+.gempty,.gnote{padding:6px 16px;font-size:13px}.gpractice{flex-basis:100%;order:3;padding:2px 0 0 44px;font-size:13px}
+.banner.practice::before{background:var(--blue)}.gadd{margin:8px 16px 0}.glist{margin:6px 16px 0}
 .legend .lg,.legend .pit{display:inline-block;width:18px;height:10px;border-radius:3px;margin-left:10px;margin-right:-2px;vertical-align:middle}.legend .pit{width:8px}.legend .lg:first-child{margin-left:0}
 .lg.A{background:color-mix(in srgb,var(--green) 30%,transparent)}.lg.M{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--yellow) 45%,transparent) 0 3px,color-mix(in srgb,var(--yellow) 15%,transparent) 3px 6px)}
 .lg.ok{background:var(--green)}.lg.p{background:var(--yellow)}
 .segr{flex:1;display:flex}.segr input{position:absolute;opacity:0;pointer-events:none}.segr span{flex:1;display:flex;align-items:center;justify-content:center;height:34px;border-radius:7px;font-size:15px;cursor:pointer}
 .segr input:checked+span{background:var(--seg-on);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12)}.segr input:focus-visible+span{outline:3px solid color-mix(in srgb,var(--tint) 55%,transparent)}
 @container gt (max-width:900px){.gbar .b2{display:none}}
-@container gt (max-width:560px){.grw{grid-template-columns:88px minmax(0,1fr);min-height:52px}.gname{padding:0 6px 0 10px;font-size:13px}.gname .mu{display:none}
-  .gtrack{height:46px;margin-right:10px}.gbar{top:8px;bottom:8px}.gbar .hl,.gbar .hr{width:14px}.ghead .grow1{flex:1 1 calc(100% - 48px);min-width:0}.gacts{margin-left:44px}}
+@container gt (max-width:560px){.gname{font-size:14px}.grw>.gtrack{margin-left:12px}
+  .gtrack{height:44px;margin-right:12px}.gbar{top:8px;bottom:8px}.gbar .hl,.gbar .hr{width:14px}.ghead .grow1{flex:1 1 calc(100% - 48px);min-width:0}.gacts{margin-left:44px}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -365,7 +367,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.3.9',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.3.10',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -689,7 +691,7 @@ function drawGantt(r){
   const tz=myTz(),w=gWin(r),{from,to,span}=w,pc=ms=>((Math.max(from,Math.min(to,ms))-from)/span*100).toFixed(3)+'%',wd=(a,b)=>((Math.min(to,b)-Math.max(from,a))/span*100).toFixed(3)+'%',vis=(a,b)=>b>from&&a<to;
   const L=r.length_h,mk=clockMarks(new Date(w.r0),L,tz);
   const lab=ms=>`${locDay(new Date(ms),tz)} ${locH(new Date(ms),tz)}`;
-  const vw=Math.min(innerWidth,1080),trackW=vw<=720?vw-32-98:vw-48-206,step=Math.max(1,Math.ceil((span/H)*46/Math.max(160,trackW)));
+  const vw=Math.min(innerWidth,1080),trackW=vw<=720?vw-32-24:vw-48-32,step=Math.max(1,Math.ceil((span/H)*46/Math.max(160,trackW)));
   let ticks='',lastDay='';for(let i=0;i<=L;i++){const ms=w.r0+i*H;if(ms<from||ms>to)continue;const x=new Date(ms),show=i%step===0,day=locDay(x,tz),pos=(ms-from)/span;
     ticks+=`<span class="gtick${mk[i]?' dst':''}${pos>0.9?' end':''}${pos<0.04?' start':''}" style="left:${pc(ms)}">${show?`<b>${day!==lastDay?day:''}</b><span class="t">${locH(x,tz)}</span>`:''}${mk[i]?`<em>clocks ${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</em>`:''}</span>`;if(show)lastDay=day}
   const inTeam=new Set(T.ms.map(m=>m.user_id));
@@ -715,6 +717,7 @@ function drawGantt(r){
     return `<section class="ggroup" data-tid="${t.id}"><div class="ghead"><button class="gchev" onclick="gToggle(${t.id})" aria-expanded="${open}" aria-label="${open?'Fold':'Open'} ${esc(t.name)}"><span class="${open?'open':''}">›</span></button>
       <div class="grow1"><div class="row" style="gap:8px"><span class="title">${esc(t.name)}</span><span class="chip">${esc(t.class)}</span><span class="car">${esc(teamCar(t))}</span></div>
       <div class="mu">Leader ${t.leader_id?esc(name(t.leader_id)):'none'} · ${mem.length} driver${mem.length===1?'':'s'}${gp.length?` · <span style="color:var(--red-ink)">no driver ${gp.slice(0,2).map(([a,b])=>`${lab(a)}–${locH(new Date(b),tz)}`).join(', ')}${gp.length>2?' …':''}</span>`:` · every minute covered${pl.pit&&T.ss.some(s=>s.team_id===t.id)&&handoversOk(t,pl)?'. Every driver change happens at a pit stop.':''}`}</div></div>
+      ${!t.strategy&&new Date(r.start_utc)>Date.now()?`<div class="gpractice mu">No strategy yet. Drivers: do a practice run (10+ laps in race trim) and send your average lap, fuel or energy per lap and tyre life to ${t.leader_id?esc(name(t.leader_id).split(' ')[0]):'the leader'}.</div>`:''}
       <div class="gacts">${lead?`<button class="ghost" onclick="teamDlg(${t.id})">Edit</button><button class="ghost" onclick="stratDlg(${t.id})">${t.strategy?'Strategy':'Add strategy'}</button><button onclick="planDlg(${t.id})">Plan stints</button>`:''}${join}</div></div>
       <div class="grw gsum"><div class="gname mu">${pl.pit?'Pit stops':'Coverage'}</div><div class="gtrack sum">${pl.pit?pits:''}<div class="gcov">${cov}</div></div></div>
       ${open?(mem.length?mem.map(m=>row(t,m.user_id,pl)).join(''):`<div class="grw"><div class="gname"></div><div class="mu gempty">No drivers yet. ${lead?'Drag one in from “Not in a team”, or add one below.':'Join the team to request stints.'}</div></div>`)+
@@ -938,7 +941,7 @@ function stratFields(f,withRange){const v=k=>esc(f[k]??'');const inp=(k,lab,ph,f
     ${withRange?`<div class="sgroup"><div class="sg-h">Driver stints</div><div class="form2"><label>Shortest<select name="min">${[1,2,3,4].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.min||2))).join('')}</select></label><label>Longest<select name="max">${[1,2,3,4,5,6].map(n=>opt(n,n+(n>1?' fuel stints':' fuel stint'),n===(+f.max||3))).join('')}</select></label></div></div>`:''}`}
 const readStrat=form=>{const o={};Object.keys(SDEF).forEach(k=>{const el=form.querySelector(`[name="${k}"]`);if(el)o[k]=el.value.trim()});return o};
 function stratDlg(tid){const t=T.ts.find(x=>x.id===tid),f={...SDEF,...(t.strategy||{})};
-  openDlg(`<form onsubmit="saveStrat(event,${tid})" oninput="stratPreview(this)"><h3>Strategy · ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}. Use figures from your own practice laps.</p>
+  openDlg(`<form onsubmit="saveStrat(event,${tid})" oninput="stratPreview(this)"><h3>Strategy · ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}</p><div class="banner practice"><span><b>Practice first.</b> These figures decide every stint, so get them from your own running before the race: do a practice session of at least 10 clean laps in race trim and note your average lap, fuel or energy used per lap, and how many laps the tyres last before they drop off. Update the figures if conditions change.</span></div>
     ${stratFields(f,true)}<div id="spv" class="pitsum"></div>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t.strategy?`<button type="button" class="danger" onclick="clearStrat(${tid})">Remove strategy</button>`:''}</div></form>`);
   stratPreview($('#dlg form'))}
@@ -1028,7 +1031,7 @@ let SP=null,SPALL=false;
 function spLoad(){if(SP)return SP;let s=null;try{s=JSON.parse(store.get('strat')||'null')}catch{}SP={len:24,race:'',...SDEF,...(s||{})};return SP}
 function stratView(){
   const f=spLoad(),up=races.filter(r=>+new Date(r.start_utc)+r.length_h*H>Date.now());
-  $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p>
+  $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p><div class="banner practice"><span><b>Practice first.</b> These figures decide every stint, so get them from your own running before the race: do a practice session of at least 10 clean laps in race trim and note your average lap, fuel or energy used per lap, and how many laps the tyres last before they drop off. Update the figures if conditions change.</span></div>
     <div class="sp-grid"><form id="spf" class="sp-in" oninput="spCalc()" onchange="spCalc()" onsubmit="event.preventDefault()">
       <div class="sgroup card"><div class="sg-h">Race</div><div class="form2">
         <label style="grid-column:1 / -1">Race<select name="race">${opt('','No race, just a length',!f.race)}${up.map(r=>opt(r.id,`${r.name} · ${r.length_h}h`,String(r.id)===String(f.race))).join('')}</select></label>
