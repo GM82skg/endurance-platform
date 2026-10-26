@@ -580,7 +580,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.2',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1456,7 +1456,7 @@ const canMoveFrom=(uid,t)=>isAdm()||uid===me.id||canLead(t);
 function canMove(uid,from,to){const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);if(from===to)return false;if(!from)return !!b&&(isAdm()||uid===me.id||canLead(b));if(!to)return !!a&&(isAdm()||uid===me.id||canLead(a));return !!(a&&b)&&(isAdm()||uid===me.id||(canLead(a)&&canLead(b)))}
 async function moveMember(uid,from,to){
   if(!from&&to){if(!canMove(uid,0,to))return note('Only admins, team leaders or the driver can add them to a team.');const b=T.ts.find(x=>x.id===to);
-    await q(sb.from('team_members').upsert({team_id:to,user_id:uid,car:teamCar(b)}));await loadRace(curRace());render();note(`${name(uid)} added to ${b.name}.`,1);if(!started(curRace()))lapDlg(to,uid);return}
+    await q(sb.from('team_members').upsert({team_id:to,user_id:uid,car:teamCar(b)}));await loadRace(curRace());render();note(`${name(uid)} added to ${b.name}${lapOf(b,uid)?'':refLap(b)?` (using the team’s ≈${fmtLap(refLap(b))} lap; tap it under the name to change)`:''}.`,1);return}
   if(from&&!to)return leaveTeam(from,uid);
   const a=T.ts.find(x=>x.id===from),b=T.ts.find(x=>x.id===to);if(!a||!b||from===to)return;
   if(!canMove(uid,from,to))return note(`Only an admin, ${name(uid)}, or the leader of both teams can move ${name(uid)} to ${b.name}.`);
@@ -1487,12 +1487,13 @@ function dragStart(e){
 async function addMember(tid){const t=T.ts.find(x=>x.id===tid),v=($('#al'+tid)?.value||'').trim(),l=v?parseLap(v):null;if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5, or leave it empty.');
   await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:teamCar(t),...(l?{avg_lap:l}:{})}));render()}
 function joinTeam(tid){const t=T.ts.find(x=>x.id===tid),r=curRace();
-  openDlg(`<form onsubmit="doJoin(event,${tid})"><h3>Join ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}. Your average lap time for this race sets how long your stints last in the plan. Use the 5-lap average LMU shows after practice; you can change it until the race starts.</p>
-    <label>Your average lap${lapInput(`name="lap" ${started(r)?'':'required'}`,'')}</label>
+  openDlg(`<form onsubmit="doJoin(event,${tid})"><h3>Join ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}${refLap(t)?` · team lap ≈${fmtLap(refLap(t))}`:''}</p>
+    <label><span>Your average lap <span class="mu">· optional</span></span>${lapInput('name="lap"','')}</label>
+    <p class="mu" style="margin:-4px 0 0">${refLap(t)?`Leave it empty to use the team’s ≈${fmtLap(refLap(t))}.`:'Leave it empty if you don’t know it yet.'} You can add or change it any time before the race by tapping your lap time under your name.</p>
     <div class="row"><button class="pri">Join team</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function doJoin(e,tid){e.preventDefault();const t=T.ts.find(x=>x.id===tid),v=String(new FormData(e.target).get('lap')||'').trim(),l=v?parseLap(v):null;
   if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
-  await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:teamCar(t),...(l?{avg_lap:l}:{})}));closeDlg();render();note(`You joined ${t.name}. Press + Add stint on the team to add your first stint.`,1)}
+  await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:teamCar(t),...(l?{avg_lap:l}:{})}));closeDlg();render();note(`You joined ${t.name}${l?'':refLap(t)?` (using the team’s ≈${fmtLap(refLap(t))} lap)`:''}. Press + Add stint on the team to add your first stint.`,1)}
 
 function teamDlg(id){
   const t=id?T.ts.find(x=>x.id===id):null,cls=t?.class||'GT3';
