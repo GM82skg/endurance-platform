@@ -378,7 +378,7 @@ body.placing{overflow:hidden;overscroll-behavior:none}body.placing .gantt .gtrac
 #online{position:fixed;top:56px;right:0;bottom:0;width:240px;padding:18px 16px;background:var(--surface);border-left:.5px solid var(--sep);overflow:auto;z-index:15}
 #online .ohead{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--label2)}#online h3{margin:4px 0 10px;font-size:17px}#online .on{color:var(--green-ink)}
 #online .orow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:.5px solid var(--sep);font-size:14px;font-weight:600}
-body.has-online main{margin-right:240px}body.has-online footer{margin-right:240px}
+
 .grab{display:none}
 @container gt (max-width:620px){
   .grw{display:block;border-bottom:.5px solid color-mix(in srgb,var(--sep) 60%,transparent)}
@@ -393,6 +393,44 @@ body.has-online main{margin-right:240px}body.has-online footer{margin-right:240p
   .grab::after{content:"";position:absolute;left:50%;top:9px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--label3)}
   dialog{transition:transform .2s,max-height .25s}dialog.full{max-height:100dvh;height:100dvh;border-radius:0}
   .plbanner{top:52px}}
+/* ---------- v0.5.2 polish ---------- */
+.gname.gn0{display:block!important;min-height:0;padding:0}
+.grw{grid-template-columns:250px minmax(0,1fr)}
+.nl{min-width:0;max-width:100%}.nl>button{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nl .fair{flex:none}
+body.has-online main{margin-left:max(0px,calc((100vw - 240px - 1080px)/2));margin-right:calc(240px + max(0px,(100vw - 240px - 1080px)/2))}
+.gantt{border-radius:16px}
+.gteam{background:color-mix(in srgb,var(--fill) 55%,transparent);border-bottom:0}
+.gcovrow{min-height:0!important;border-bottom:.5px solid var(--sep)!important;background:color-mix(in srgb,var(--fill) 55%,transparent)}
+.gtrack.cov{min-height:6px!important;height:6px;margin:0 0 10px!important;border-radius:3px;overflow:hidden;cursor:default;
+  background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--label) 34%,transparent) 0 3px,color-mix(in srgb,var(--label) 7%,transparent) 3px 6px)}
+.gtrack.cov span{position:absolute;top:0;bottom:0}.gtrack.cov .ok{background:var(--green)}.gtrack.cov .p{background:var(--yellow)}.gtrack.cov .ov{background:var(--red)}
+.gbar{top:8px;bottom:8px;padding:0 12px;border-radius:8px;font-weight:600;letter-spacing:-.005em;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.28);transition:box-shadow .15s,filter .15s}
+.gbar.can{padding:0 18px}.gbar:hover{filter:brightness(1.05)}
+.gbar .hl,.gbar .hr{position:absolute;top:0;bottom:0;width:16px;cursor:ew-resize;z-index:3;align-self:auto}
+.gbar .hl{left:0}.gbar .hr{right:0}
+.gbar .hl::after,.gbar .hr::after{content:"";position:absolute;top:28%;bottom:28%;width:3px;border-radius:2px;background:rgba(0,0,0,.38);opacity:.55;transition:opacity .15s}
+.gbar .hl::after{left:6px}.gbar .hr::after{right:6px}
+.gbar:hover .hl::after,.gbar:hover .hr::after,.gbar:focus-visible .hl::after,.gbar:focus-visible .hr::after,.gbar.lifted .hl::after,.gbar.lifted .hr::after{opacity:1}
+@media (pointer:coarse){.gbar .hl,.gbar .hr{width:22px}.gbar .hl::after,.gbar .hr::after{opacity:.9}.gbar .hl::after{left:8px}.gbar .hr::after{right:8px}.gbar.can{padding:0 22px}}
+.gbar .hl.big,.gbar .hr.big{width:30px}.gbar .hl.big{left:-15px}.gbar .hr.big{right:-15px}
+.gbar .hl.big::after,.gbar .hr.big::after{top:50%;bottom:auto;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:#fff;opacity:1;box-shadow:0 0 0 2px var(--tint),0 2px 8px rgba(0,0,0,.45)}
+.gbar .hl.big::after{left:6px}.gbar .hr.big::after{right:6px}
+.gbar.placing{padding:0 22px}
+.ovl{background:repeating-linear-gradient(135deg,#FF453A 0 6px,#E5372D 6px 12px)}
+.gtip{top:-36px;padding:6px 11px;border-radius:10px;font-size:12px;font-weight:600;background:var(--raised);border:.5px solid var(--sep);box-shadow:0 8px 24px rgba(0,0,0,.35);transform:none}
+.gtip::after{content:"";position:absolute;left:18px;bottom:-5px;width:10px;height:10px;background:inherit;border-right:.5px solid var(--sep);border-bottom:.5px solid var(--sep);transform:rotate(45deg)}
+.askbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:12px;margin:10px 12px;padding:12px 14px;border-radius:14px;
+  background:color-mix(in srgb,var(--yellow) 14%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--yellow) 45%,transparent),0 10px 30px rgba(0,0,0,.25);animation:askin .22s cubic-bezier(.2,.8,.2,1)}
+.askbar.danger{background:color-mix(in srgb,var(--red) 12%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--red) 45%,transparent),0 10px 30px rgba(0,0,0,.25)}
+.askic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#000;background:var(--yellow)}.askbar.danger .askic{background:var(--red);color:#fff}
+.asktxt{font-size:14px;line-height:1.4;padding-top:3px}.asktxt b{font-size:15px}.asktxt ul{margin:6px 0 0;padding-left:18px;color:var(--label2)}.asktxt li{margin:2px 0}
+.askbtn{display:flex;gap:8px;align-self:center}.askbtn button{min-height:38px;padding:0 14px;font-weight:600}
+@keyframes askin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+dialog .askbar{margin:0 0 4px}
+@container gt (max-width:620px){.gcovrow .gname{display:none}.gtrack.cov{margin:0 12px 10px!important}.gbar{padding:0 10px}.gbar.can{padding:0 22px}}
+@media (max-width:720px){dialog::before{display:none!important;content:none!important}
+  .askbar{grid-template-columns:auto minmax(0,1fr)}.askbtn{grid-column:1 / -1;justify-content:flex-end}.askbtn button{flex:1}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -470,7 +508,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -735,10 +773,10 @@ function raceDlg(id){
     ${r?'<p class="mu">Moving the start moves every team and stint with it. Drivers are asked to recheck their availability.</p>':''}
     <div class="row"><button class="pri">${r?'Save changes':'Add race'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${r?`<button type="button" class="danger" onclick="delRace(${r.id})">Delete race</button>`:''}</div></form>`)}
 async function saveRace(e,id){e.preventDefault();const f=new FormData(e.target),ts=f.get('tracksel'),row={name:f.get('name'),track:(ts==='__other'?String(f.get('track')||'').trim():ts)||null,length_h:+f.get('len'),start_utc:null};const pk=readPicker(e.target,myTz());if(pk.err)return note(pk.err);row.start_utc=new Date(pk.ms).toISOString();{const fb=e.target.querySelector('[name=fair]');if(fb)row.fair_share=fb.checked}
-  if(id){const r=races.find(x=>x.id===id);if(row.length_h<r.length_h&&!confirm(`Shorten to ${row.length_h}H? Stints after hour ${row.length_h} will no longer show.`))return;await q(sb.from('races').update(row).eq('id',id))}
+  if(id){const r=races.find(x=>x.id===id);if(row.length_h<r.length_h&&!await askO({ok:'Shorten race'})(`Shorten to ${row.length_h}H? Stints after hour ${row.length_h} will no longer show.`))return;await q(sb.from('races').update(row).eq('id',id))}
   else await q(sb.from('races').insert(row));
   closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));render();note(id?'Race updated.':'Race added.',1)}
-async function delRace(id){if(!confirm('Delete this race with all its teams, stints and availability?'))return;await q(sb.from('races').delete().eq('id',id));closeDlg();races=races.filter(r=>r.id!==id);go('cal')}
+async function delRace(id){if(!await askO({danger:true,ok:'Delete race'})('Delete this race with all its teams, stints and availability?'))return;await q(sb.from('races').delete().eq('id',id));closeDlg();races=races.filter(r=>r.id!==id);go('cal')}
 
 /* ---------- Race ---------- */
 async function loadRace(r){
@@ -848,10 +886,10 @@ function drawGantt(r){
       tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}`,
       ov=sug?'':overlapsOf(P,it).map(o=>`<span class="ovl" role="button" tabindex="-1" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();overlapFix(${t.id},${it.s.id},${o.x.s.id})" title="Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}: tap to fix" style="left:${((o.a-it.A)/(it.B-it.A)*100).toFixed(2)}%;width:${((o.b-o.a)/(it.B-it.A)*100).toFixed(2)}%"></span>`).join(''),
       live=!sug&&now>=it.A&&now<it.B;
-    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hr" aria-hidden="true"></i>':''}</button>`};
+    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
   const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,B=A+PL.laps*lap*1000;
     const P=planOf(r,t),fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
-    return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hr big" aria-hidden="true"></i></div>`};
+    return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hl big" aria-hidden="true"></i><i class="hr big" aria-hidden="true"></i></div>`};
   const row=(t,uid,bars,P)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),fi=t?fairInfo(r,t,P):null,pl=t?lapsBy(P)[uid]||0:0;
     const curLive=t&&P.items.some(it=>it.s.user_id===uid&&now>=it.A&&now<it.B);
     const chip=t?(fi&&fi.min?`<span class="fair${pl<fi.min?' short':''}" title="Fair share: ${pl} laps planned, minimum ${fi.min}">[${pl}/~${fi.min} laps]</span>`:`<span class="fair plain">[${pl} laps]</span>`):'';
@@ -867,9 +905,10 @@ function drawGantt(r){
     return `<section class="ggroup" data-tid="${t.id}"><div class="gteam"><button class="gchev" onclick="gToggle(${t.id})" aria-expanded="${open}" aria-label="${open?'Fold':'Open'} ${esc(t.name)}"><span class="${open?'open':''}">›</span></button>
       <div class="tmain"><div class="tl1"><span class="tn">${esc(t.name)}</span><span class="ts">${esc(t.class)} · ${refLap(t)?'≈'+fmtLap(refLap(t))+' · ':''}${mem.length} driver${mem.length===1?'':'s'}${tab==='sug'?' · <b class="am">Suggestion</b>':''}</span></div>
         <div class="tl2">${st.map(([x,c])=>`<span class="tst ${c}">${x}</span>`).join('<span class="dotsep">·</span>')}</div>
-        <div class="gcov2" aria-hidden="true">${covHtml}</div></div>
+</div>
       ${canAdd?`<button class="addst" onclick="addStint(${t.id})" aria-label="Add a stint to ${esc(t.name)}"><span class="plus">+</span><span class="lbl"> Add stint</span></button>`:''}
       <button class="gdots" onclick="teamMenu(${t.id})" aria-label="${esc(t.name)} options">⋯</button></div>
+      <div class="grw gcovrow" aria-hidden="true"><div class="gname gn0"></div><div class="gtrack cov">${covHtml}</div></div>
       ${open?(mem.length?mem.map(m=>row(t,m.user_id,body[m.user_id],P)).join(''):`<div class="gempty">No drivers yet. ${lead?'Add one from the ⋯ menu.':'Join from the ⋯ menu.'}</div>`)+extra:''}</section>`};
   const free=ENT.filter(u=>!inTeam.has(u)&&profiles.some(p=>p.id===u)),openFree=GOPEN[0]!==false;
   const freeGroup=free.length?`<section class="ggroup" data-tid="0"><div class="gteam"><button class="gchev" onclick="gToggle(0)" aria-expanded="${openFree}" aria-label="${openFree?'Fold':'Open'} joined drivers without a team"><span class="${openFree?'open':''}">›</span></button><div class="tmain"><div class="tl1"><span class="tn">Joined, no team yet</span><span class="ts">${free.length} driver${free.length===1?'':'s'}</span></div></div></div>
@@ -885,7 +924,7 @@ function drawGantt(r){
 }
 // Joining the race (sign-up) is separate from joining a team.
 async function joinRace(){await q(sb.from('race_entries').insert({race_id:raceId}));await loadRace(curRace());render();note('You joined this race. Now pick a team (its ⋯ menu) or create one.',1)}
-async function leaveRace(){const mine=T.ss.filter(s=>s.user_id===me.id).length;if(!confirm(`Leave this race?${T.ms.some(m=>m.user_id===me.id)?' You’ll be removed from your team'+(mine?` and your ${mine} stint${mine>1?'s':''} deleted`:'')+'.':''}`))return;
+async function leaveRace(){const mine=T.ss.filter(s=>s.user_id===me.id).length;if(!await askO({danger:true,ok:'Leave race'})(`Leave this race?${T.ms.some(m=>m.user_id===me.id)?' You’ll be removed from your team'+(mine?` and your ${mine} stint${mine>1?'s':''} deleted`:'')+'.':''}`))return;
   await q(sb.from('race_entries').delete().eq('race_id',raceId).eq('user_id',me.id));await loadRace(curRace());render();note('You left this race.',1)}
 function freeDlg(uid){const ts=T.ts.filter(t=>canMove(uid,0,t.id));
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>${esc(name(uid))}</h3><p class="mu" style="margin:0">Joined this race, not in a team yet.</p>
@@ -947,10 +986,10 @@ async function plDone(){const p=PL;PL=null;document.body.classList.remove('placi
 // Start snaps to whole minutes, and onto the race start or any stint's start/end in the team within 5 minutes (handover magnet).
 function snapStart(P,A,skipId,len){let best=Math.round(A/60000)*60000,bd=MAG;const pts=[P.r0];P.items.forEach(it=>{if(it.s.id!==skipId)pts.push(it.B,it.A-(len||0))});
   pts.forEach(p=>{const d=Math.abs(p-A);if(d<bd){bd=d;best=p}});return best}
-function plDown(e){if(e.button>0)return;e.preventDefault();e.stopPropagation();const el=e.currentTarget,track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),t=T.ts.find(x=>x.id===PL.tid),P=planOf(r,t),edge=e.target.classList.contains('hr');
+function plDown(e){if(e.button>0)return;e.preventDefault();e.stopPropagation();const el=e.currentTarget,track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),t=T.ts.find(x=>x.id===PL.tid),P=planOf(r,t),edge=e.target.classList.contains('hr')?'r':e.target.classList.contains('hl')?'l':'';
   const x0=e.clientX,A0=PL.A,L0=PL.laps;try{el.setPointerCapture(e.pointerId)}catch{}busy++;
   const mv=ev=>{const dms=(ev.clientX-x0)/rc.width*w.span;
-    if(edge){PL.laps=Math.max(PL.floor,Math.max(1,Math.round(L0+dms/1000/PL.lap)))}else{PL.A=snapStart(P,Math.max(P.r0-0,Math.min(P.r1-60000,A0+dms)),null,PL.laps*PL.lap*1000)}
+    if(edge==='r'){PL.laps=Math.max(PL.floor,Math.max(1,Math.round(L0+dms/1000/PL.lap)))}else if(edge==='l'){const B0=A0+L0*PL.lap*1000;PL.laps=Math.max(PL.floor,Math.max(1,Math.round((B0-(A0+dms))/1000/PL.lap)));PL.A=B0-PL.laps*PL.lap*1000}else{PL.A=snapStart(P,Math.max(P.r0-0,Math.min(P.r1-60000,A0+dms)),null,PL.laps*PL.lap*1000)}
     const B=PL.A+PL.laps*PL.lap*1000;el.style.left=((Math.max(w.from,PL.A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,PL.A))/w.span*100).toFixed(3)+'%';
     el.querySelector('span').textContent=`${PL.laps} laps · ${locH(new Date(PL.A),myTz())}–${locH(new Date(B),myTz())}`;
     const bn=document.querySelector('.plbanner');if(bn)bn.outerHTML=plBanner(r)};
@@ -965,7 +1004,7 @@ function trackTap(e,tid,uid){if(e.target.closest('.gbar'))return;const tr=e.curr
 let BARDRAG=false;
 function barDown(e){if(e.button>0)return;const el=e.currentTarget;if(!el.classList.contains('can'))return;
   const track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),tid=+el.dataset.tid,sid=+el.dataset.sid,t=T.ts.find(x=>x.id===tid),P=planOf(r,t),it=P.items.find(x=>x.s.id===sid);if(!it)return;
-  const edge=e.target.classList.contains('hr'),touch=e.pointerType==='touch',x0=e.clientX,y0=e.clientY,floor=fairFloor(r,t,it.s.user_id,sid);
+  const edge=e.target.classList.contains('hr')?'r':e.target.classList.contains('hl')?'l':'',touch=e.pointerType==='touch',x0=e.clientX,y0=e.clientY,floor=fairFloor(r,t,it.s.user_id,sid);
   let held=!touch,moved=false,A=it.A,laps=it.laps,tip=null,timer=touch?setTimeout(()=>{held=true;el.classList.add('lifted');try{el.setPointerCapture(e.pointerId)}catch{}navigator.vibrate?.(10)},300):0;
   if(!touch)try{el.setPointerCapture(e.pointerId)}catch{}
   const draw=()=>{const B=A+laps*it.lap*1000;el.style.left=((Math.max(w.from,A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,A))/w.span*100).toFixed(3)+'%';
@@ -976,9 +1015,11 @@ function barDown(e){if(e.button>0)return;const el=e.currentTarget;if(!el.classLi
     if(!held){clearTimeout(timer);cleanup(false);return}
     if(!moved){moved=true;BARDRAG=true;busy++;try{el.setPointerCapture(ev.pointerId)}catch{}document.body.classList.add('dragging')}
     ev.preventDefault();const dms=dx/rc.width*w.span;
-    if(edge)laps=Math.max(floor,Math.max(1,Math.round(it.laps+dms/1000/it.lap)));else A=snapStart(P,Math.max(P.r0,Math.min(P.r1-60000,it.A+dms)),sid,laps*it.lap*1000);draw()};
+    if(edge==='r')laps=Math.max(floor,Math.max(1,Math.round(it.laps+dms/1000/it.lap)));
+    else if(edge==='l'){laps=Math.max(floor,Math.max(1,Math.round((it.B-(it.A+dms))/1000/it.lap)));A=it.B-laps*it.lap*1000}
+    else A=snapStart(P,Math.max(P.r0,Math.min(P.r1-60000,it.A+dms)),sid,laps*it.lap*1000);draw()};
   const cleanup=async commit=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',upF);el.removeEventListener('pointercancel',cancelF);clearTimeout(timer);tip?.remove();el.classList.remove('lifted');document.body.classList.remove('dragging');
-    if(moved){busy--;setTimeout(()=>BARDRAG=false,50);if(commit&&(A!==it.A||laps!==it.laps))await commitStint(tid,sid,edge?{laps}:{start:A});else drawGantt(r)}};
+    if(moved){busy--;setTimeout(()=>BARDRAG=false,50);if(commit&&(A!==it.A||laps!==it.laps))await commitStint(tid,sid,edge==='r'?{laps}:edge==='l'?{laps,start:A}:{start:A});else drawGantt(r)}};
   const upF=()=>cleanup(true),cancelF=()=>cleanup(false);
   el.addEventListener('pointermove',mv,{passive:false});el.addEventListener('pointerup',upF);el.addEventListener('pointercancel',cancelF)}
 function barClick(e,tid,sid){e.stopPropagation();if(BARDRAG)return;stintSheet(tid,sid)}
@@ -1028,7 +1069,7 @@ async function putBand(a,b,kind,replaceId){const r=curRace(),r0=+new Date(r.star
   await loadRace(r);drawGantt(r)}
 const closeDlgIf=()=>{if($('#dlg').open)closeDlg()};
 async function allBand(){const r=curRace(),r0=+new Date(r.start_utc);
-  if(BANDS.some(b=>b.user_id===me.id&&b.race_id===r.id)&&!confirm('Replace all your availability for this race with “can drive” for the whole race?'))return;
+  if(BANDS.some(b=>b.user_id===me.id&&b.race_id===r.id)&&!await askO({ok:'Replace'})('Replace all your availability for this race with “can drive” for the whole race?'))return;
   await q(sb.from('avail_bands').delete().eq('user_id',me.id).eq('race_id',r.id));BANDS=BANDS.filter(b=>!(b.user_id===me.id&&b.race_id===r.id));await putBand(r0,r0+r.length_h*H,'A')}
 async function delBand(id){await q(sb.from('avail_bands').delete().eq('id',id));await loadRace(curRace());drawGantt(curRace())}
 
@@ -1080,7 +1121,7 @@ async function commitStint(tid,sid,ch){
   if(rest)mineIts.forEach(x=>{const g=x.A>=it.B?(x.A-it.B)/H:it.A>=x.B?(it.A-x.B)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${dur(g*3600)} rest next to their ${locH(new Date(x.A),tz)} stint (wants ${rest}h).`)});
   const av=avRange(r,uid,it.A,it.B);if(av!=='A')warn.push(av==='M'?`${name(uid)} marked part of this time as “maybe”.`:`${name(uid)} hasn’t marked all of this time (${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}) as available.`);
   T.ss.filter(x=>x.team_id!==tid&&x.user_id===uid&&+new Date(x.start_utc)<it.B&&+new Date(x.end_utc)>it.A).forEach(x=>warn.push(`${name(uid)} already drives for ${teamName(x.team_id)} then.`));
-  if(warn.length&&!confirm([...new Set(warn)].slice(0,6).join('\n')+'\n\nSave anyway?'))return render();
+  if(warn.length&&!await ask([...new Set(warn)].slice(0,6),{title:'Save this stint anyway?',ok:'Save anyway',tid}))return render();
   if(!T.ms.some(m=>m.team_id===tid&&m.user_id===uid))await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:teamCar(t)}));
   const row={team_id:tid,user_id:uid,laps:tmp.laps,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString()};
   if(sid){const prev={user_id:cur.user_id,laps:cur.laps,start_utc:cur.start_utc,end_utc:cur.end_utc};await q(sb.from('stints').update(row).eq('id',sid));
@@ -1090,7 +1131,7 @@ async function commitStint(tid,sid,ch){
     undoToast(lead?'Stint added.':'Stint requested. The team leader will approve it.',made?()=>q(sb.from('stints').delete().eq('id',made.id)):null)}}
 async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();await loadRace(curRace());render()}
 async function delStint(id){const s=T.ss.find(x=>x.id===id);if(!s)return;const t=T.ts.find(x=>x.id===s.team_id),r=curRace(),fi=fairInfo(r,t,planOf(r,t)),left=(lapsBy(planOf(r,t))[s.user_id]||0)-(s.laps||0);
-  if(!confirm(`Remove this stint?${fi&&fi.min&&left<fi.min?`\n${name(s.user_id)} would then have ${left} laps, below the fair-share minimum of ${fi.min}.`:''}`))return;
+  if(!await askO({danger:true,ok:'Remove stint',tid:s.team_id})(`Remove this stint?${fi&&fi.min&&left<fi.min?`\n${name(s.user_id)} would then have ${left} laps, below the fair-share minimum of ${fi.min}.`:''}`))return;
   const keep={team_id:s.team_id,user_id:s.user_id,laps:s.laps,start_utc:s.start_utc,end_utc:s.end_utc,status:s.status};
   await q(sb.from('stints').delete().eq('id',id));closeDlgIf();await loadRace(r);render();undoToast('Stint removed.',()=>q(sb.from('stints').insert(keep)))}
 
@@ -1176,7 +1217,7 @@ function sugPanel(r,t,S,lead,tz){const lab=ms=>`${locDay(new Date(ms),tz)} ${loc
     ${lead?`<div class="row" style="margin-top:8px"><button class="pri" onclick="useSug(${t.id},0)">Use this suggestion</button></div>`:''}</div>`}
 async function useSug(tid,from){const r=curRace(),t=T.ts.find(x=>x.id===tid),S=suggest(r,t),P=planOf(r,t),start=S.items[from].A;
   const drop=P.items.filter(it=>it.A>=start-60000);
-  if(!confirm(`Replace ${drop.length} planned stint${drop.length===1?'':'s'} from ${locH(new Date(start),myTz())} on with ${S.items.length-from} suggested stint${S.items.length-from===1?'':'s'}?`))return;
+  if(!await askO({ok:'Replace',tid})(`Replace ${drop.length} planned stint${drop.length===1?'':'s'} from ${locH(new Date(start),myTz())} on with ${S.items.length-from} suggested stint${S.items.length-from===1?'':'s'}?`))return;
   if(drop.length)await q(sb.from('stints').delete().in('id',drop.map(x=>x.s.id)));
   await q(sb.from('stints').insert(S.items.slice(from).map(it=>({team_id:tid,user_id:it.uid,laps:it.laps,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString(),status:'approved'}))));
   GTAB[tid]='plan';await loadRace(r);render();note('Suggestion copied into the plan.',1)}
@@ -1220,7 +1261,7 @@ async function saveStrat(e,tid){e.preventDefault();const f=readStrat(e.target),t
   const st=T.ss.filter(s=>s.team_id===tid);
   await q(sb.from('teams').update({strategy:f}).eq('id',tid));closeDlg();render();
   note(st.length?'Strategy saved. Existing stints weren’t moved; check they still start and end at pit stops.':'Strategy saved. Tap a lane to place stints between pit stops.',1)}
-async function clearStrat(tid){if(!confirm('Remove the strategy? The team goes back to hour-based stints. Existing stints stay.'))return;
+async function clearStrat(tid){if(!await askO({danger:true,ok:'Remove strategy',tid})('Remove the strategy? The team goes back to hour-based stints. Existing stints stay.'))return;
   await q(sb.from('teams').update({strategy:null}).eq('id',tid));closeDlg();render()}
 
 /* ---------- moving drivers between teams (drag the ⋮⋮ handle, or use the driver's window) ---------- */
@@ -1234,7 +1275,7 @@ async function moveMember(uid,from,to){
   if(!canMove(uid,from,to))return note(`Only an admin, ${name(uid)}, or the leader of both teams can move ${name(uid)} to ${b.name}.`);
   const st=T.ss.filter(s=>s.team_id===from&&s.user_id===uid),own=!(isAdm()||canLead(a));
   if(own&&st.some(s=>s.status==='approved'))return note(`${name(uid)} has approved stints in ${a.name}. Ask its leader to make the move.`);
-  if(!confirm(`Move ${name(uid)} from ${a.name} to ${b.name}?${st.length?`\n\nTheir ${st.length} stint${st.length>1?'s':''} in ${a.name} will be removed.`:''}`))return;
+  if(!await askO({ok:'Move',tid:from})(`Move ${name(uid)} from ${a.name} to ${b.name}?${st.length?`\n\nTheir ${st.length} stint${st.length>1?'s':''} in ${a.name} will be removed.`:''}`))return;
   const car=teamCar(b);
   if(st.length)await q(sb.from('stints').delete().in('id',st.map(s=>s.id)));
   const r=await q(sb.from('team_members').update({team_id:to,car}).eq('team_id',from).eq('user_id',uid).select());
@@ -1285,7 +1326,7 @@ async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),
     if(!joined(me.id))try{await sb.from('race_entries').insert({race_id:raceId})}catch{}
     if(strategy)note(`Strategy figures copied from the last ${row.car} team at this track. Check them under Edit figures.`,1)}
   closeDlg();render()}
-async function delTeam(id){if(!confirm('Delete this team and all its stints?'))return;await q(sb.from('teams').delete().eq('id',id));closeDlg();render()}
+async function delTeam(id){if(!await askO({danger:true,ok:'Delete team',tid:id})('Delete this team and all its stints?'))return;await q(sb.from('teams').delete().eq('id',id));closeDlg();render()}
 
 function memberDlg(tid,uid){
   const t=T.ts.find(x=>x.id===tid),m=T.ms.find(x=>x.team_id===tid&&x.user_id===uid),lead=canLead(t),mine=uid===me.id;
@@ -1298,7 +1339,7 @@ function memberDlg(tid,uid){
 function saveMember(e){e.preventDefault();closeDlg()}
 async function leaveTeam(tid,uid){
   const t=T.ts.find(x=>x.id===tid),lead=canLead(t),st=T.ss.filter(s=>s.team_id===tid&&s.user_id===uid),gone=st.filter(s=>lead||s.status==='pending');
-  if(!confirm(`Remove ${name(uid)} from ${t.name}?${gone.length?` Their ${gone.length} stint(s) here are removed too.`:''}`))return;
+  if(!await askO({danger:true,ok:'Remove',tid})(`Remove ${name(uid)} from ${t.name}?${gone.length?` Their ${gone.length} stint(s) here are removed too.`:''}`))return;
   if(gone.length)await q(sb.from('stints').delete().in('id',gone.map(s=>s.id)));
   await q(sb.from('team_members').delete().eq('team_id',tid).eq('user_id',uid));
   closeDlg();render();if(gone.length<st.length)note('Approved stints stay until the team leader removes them.')}
@@ -1457,6 +1498,26 @@ function icsStint(title,A,B){const f=d=>new Date(d).toISOString().replace(/[-:]/
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download='stint.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
 const countdown=ms=>{const d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/H),m=Math.floor(ms%H/60000);return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m} min`};
 
+/* ---------- In-app confirmation (no browser popups) ----------
+   On the race page it opens inside the team's block, just above its timeline; inside an open
+   window it opens at the top of that window; elsewhere as a small sheet. Enter = OK, Esc = Cancel. */
+const askO=o=>(m,o2)=>ask(m,{...o,...(o2||{})});
+function ask(msg,o={}){return new Promise(res=>{
+  document.querySelectorAll('.askbar').forEach(x=>x.remove());
+  const lines=Array.isArray(msg)?msg:String(msg).split('\n').filter(Boolean);let title=o.title;if(!title){title=lines.length>1?lines.shift():lines.shift()}
+  const el=document.createElement('div');el.className='askbar'+(o.danger?' danger':'');el.setAttribute('role','alertdialog');el.setAttribute('aria-label',title);
+  el.innerHTML=`<div class="askic" aria-hidden="true">${o.danger?'!':'?'}</div><div class="asktxt"><b>${esc(title)}</b>${lines.length?`<ul>${lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`:''}</div>
+    <div class="askbtn"><button type="button" class="no">${esc(o.cancel||'Cancel')}</button><button type="button" class="${o.danger?'danger':'pri'} yes">${esc(o.ok||'OK')}</button></div>`;
+  const d=$('#dlg'),sec=o.tid!=null?document.querySelector(`.ggroup[data-tid="${o.tid}"]`):null;let host='inline';
+  if(d.open){const f=d.querySelector('form')||d;f.prepend(el);host='dlg'}
+  else if(sec){sec.querySelector('.gteam').after(el)}
+  else if($('#sub')&&$('.gantt')){$('.gantt').before(el)}
+  else{openDlg('<div class="askhost"></div>');$('.askhost').append(el);host='sheet'}
+  busy++;const done=v=>{busy--;el.remove();document.removeEventListener('keydown',key,true);if(host==='sheet')closeDlg();res(v)};
+  const key=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();done(false)}else if(e.key==='Enter'&&document.activeElement?.closest('.askbar')===el){e.preventDefault();done(true)}};
+  el.querySelector('.yes').onclick=()=>done(true);el.querySelector('.no').onclick=()=>done(false);document.addEventListener('keydown',key,true);
+  el.scrollIntoView({block:'nearest',behavior:'smooth'});setTimeout(()=>el.querySelector('.yes').focus({preventScroll:true}),30)})}
+
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
 // The editable driver settings, shared by "Your profile" and the admin's edit window.
@@ -1501,7 +1562,7 @@ async function saveProfOf(e,id){e.preventDefault();const f=new FormData(e.target
   if(!r||!r.length)return note('Not saved. Run the latest database update so admins can edit drivers.');
   closeDlg();if(id===me.id){store.set('nameok:'+me.id,row.name);await start();go('roster')}else{await loadBase();render()}note('Driver updated.',1)}
 async function delUser(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;
-  if(!confirm(`Remove ${p.name} permanently?\n\nThis deletes their login, availability, team places and stints. It can’t be undone.\n\nTo only block access for now, use Suspend instead.`))return;
+  if(!await askO({danger:true,ok:'Remove permanently'})(`Remove ${p.name} permanently?\n\nThis deletes their login, availability, team places and stints. It can’t be undone.\n\nTo only block access for now, use Suspend instead.`))return;
   const {error}=await sb.rpc('admin_delete_user',{uid:id});if(error)return note(error.message);
   await loadBase();render();note(`${p.name} was removed.`,1)}
 async function setUser(id,ok,role){await q(sb.rpc('set_user',{uid:id,ok,r:role}));await loadBase();render()}
