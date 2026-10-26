@@ -508,6 +508,8 @@ dialog .askbar{margin:0 0 4px}
 .tstart{font-size:13px;font-weight:700;color:var(--label);margin-top:2px}.livet{color:var(--green-ink)}
 .grw.ghdr.tax{border-radius:0;margin:0;box-shadow:none;background:color-mix(in srgb,var(--cls) 7%,var(--surface));border-bottom:.5px solid var(--sep)}
 .freelist{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px}.freechip{min-height:34px;padding:0 12px;border-radius:17px;background:var(--fill);color:var(--label);font-weight:600;font-size:14px}.freechip.me{color:var(--tint)}
+.presets2{display:flex;flex-wrap:wrap;gap:8px}.presetbtn{display:flex;flex-direction:column;align-items:flex-start;min-height:48px;padding:6px 12px;border-radius:12px;background:var(--fill);color:var(--label);line-height:1.25}
+.presetbtn small{font-size:12px;color:var(--label2);font-weight:500}.presetbtn.on{background:color-mix(in srgb,var(--tint) 18%,transparent);box-shadow:inset 0 0 0 2px var(--tint)}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -585,7 +587,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.3',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.4',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1539,7 +1541,7 @@ function teamDlg(id){
     <label>Approximate lap time for this race${lapInput('name="ref" required',t?.ref_lap?fmtLap(+t.ref_lap):'')}</label>
     <p class="mu" style="margin:-6px 0 0">Drivers use it until they enter their own${curRace().fair_share?'; fair share is worked out from it':''}. ≈ race laps = ${curRace().length_h}h ÷ this lap.</p>
     <div class="sg-h" style="margin:4px 0 -2px;font-size:15px;font-weight:700">When does this team race?</div>
-    ${dtPicker(eventDays(curRace()),t?tStart(curRace(),t):null,myTz())}
+    ${dtPicker(eventDays(curRace()),t?tStart(curRace(),t):null,myTz(),T.ts.filter(x=>!t||x.id!==t.id).map(x=>({ms:tStart(curRace(),x),label:x.name})).filter((p,i,a)=>a.findIndex(q=>q.ms===p.ms)===i))}
     <p class="mu" style="margin:0">${t?'Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'You become the team’s leader. Other drivers join the team whose day and time suits them.'}</p>
     <div class="row"><button class="pri">${t?'Save changes':'Create team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t?`<button type="button" class="danger" onclick="delTeam(${t.id})">Delete team</button>`:''}</div></form>`)}
 function carOpts(sel){const c=sel.form.querySelector('[name=car]');c.innerHTML=CARS[sel.value].map(x=>opt(x,x)).join('')}
@@ -1687,19 +1689,22 @@ async function evCreate(ev,id){ev.preventDefault();const pk=readPicker(ev.target
   closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));go('race',data);note('Race created. Create or join a team to start planning.',1)}
 
 /* ---------- Day + time picker (weekday names; no phone date wheel) ---------- */
-const TIMES=['14:00','16:00','18:00','19:00','20:00','21:00','21:30','22:00'];
-// days: array of 'YYYY-MM-DD' (as calendar days in tz). sel: current moment (ms) or null.
-function dtPicker(days,sel,tz){const sd=sel?toInput(new Date(sel),tz).slice(0,10):null,st=sel?toInput(new Date(sel),tz).slice(11,16):null,lab=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+// Day + start time. No made-up time buttons: only the team times already chosen in this event
+// (presets: [{ms,label}]) and a plain time field (1800, 18:00, 18.00, 18 → 18:00).
+const parseClock=v=>{const t=String(v||'').trim().replace(/\s+/g,'');let m=t.match(/^(\d{1,2})[:.,h]?(\d{2})$/)||t.match(/^(\d{1,2})$/);if(!m)return null;const h=+m[1],mi=m[2]!=null?+m[2]:0;return h<24&&mi<60?String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0'):null};
+function clockEcho(el){const o=el.parentElement.querySelector('.lapecho');if(!o)return;if(!el.value.trim()){o.textContent='Type it like 1800 or 18:00';o.classList.remove('bad');return}const c=parseClock(el.value);o.textContent=c?`= ${c} your time`:'Not a time yet';o.classList.toggle('bad',!c)}
+function pickPreset(btn,day,time){const f=btn.form;f.querySelectorAll('[name=pday]').forEach(x=>{if(x.type==='radio')x.checked=x.value===day;else x.value=day});const t=f.querySelector('[name=pother]');t.value=time;clockEcho(t);f.querySelectorAll('.presetbtn').forEach(x=>x.classList.toggle('on',x===btn))}
+function dtPicker(days,sel,tz,presets){const sd=sel?toInput(new Date(sel),tz).slice(0,10):null,st=sel?toInput(new Date(sel),tz).slice(11,16):'',lab=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
   const dayPart=days.length<=7?`<div class="daylist">${days.map(d=>`<label class="dayopt"><input type="radio" name="pday" value="${d}" ${d===sd?'checked':''} required><span><b>${lab(d).split(' ')[0]}</b> ${lab(d).split(' ').slice(1).join(' ')}</span></label>`).join('')}</div>`
     :`<select name="pday" required>${sd&&!days.includes(sd)?opt(sd,lab(sd),true):''}${opt('','Choose a day',!sd)}${days.map(d=>opt(d,lab(d),d===sd)).join('')}</select>`;
-  const other=st&&!TIMES.includes(st)?st:'';
-  return `<div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Day</div>${dayPart}
-    <div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Start time (${esc(tz)})</div>
-    <div class="timegrid">${TIMES.map(x=>`<label class="topt"><input type="radio" name="ptime" value="${x}" ${x===st?'checked':''} onchange="this.form.querySelector('[name=pother]').value=''"><span>${x}</span></label>`).join('')}</div>
-    <label class="trow">Other time<input name="pother" value="${other}" placeholder="e.g. 21:45" inputmode="numeric" autocomplete="off" oninput="if(this.value)this.form.querySelectorAll('[name=ptime]').forEach(x=>x.checked=false)"></label>`}
-function readPicker(form,tz){const d=form.querySelector('[name=pday]:checked')?.value||form.querySelector('select[name=pday]')?.value,o=(form.querySelector('[name=pother]')?.value||'').trim(),t=o||form.querySelector('[name=ptime]:checked')?.value;
-  if(!d)return {err:'Pick a day.'};if(!t)return {err:'Pick a start time.'};const m=t.match(/^(\d{1,2})[:.]?(\d{2})$/);if(!m||+m[1]>23||+m[2]>59)return {err:'Type the time like 21:45.'};
-  return {ms:+fromInput(`${d}T${String(+m[1]).padStart(2,'0')}:${m[2]}`,tz)}}
+  const pre=(presets||[]).filter(p=>days.includes(toInput(new Date(p.ms),tz).slice(0,10)));
+  return `${pre.length?`<div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Same start as one of your teams</div><div class="presets2">${pre.map(p=>{const d=toInput(new Date(p.ms),tz);return `<button type="button" class="presetbtn" onclick="pickPreset(this,'${d.slice(0,10)}','${d.slice(11,16)}')"><b>${locDay(new Date(p.ms),tz)} ${d.slice(11,16)}</b><small>${esc(p.label)}</small></button>`}).join('')}</div>`:''}
+    <div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Day</div>${dayPart}
+    <label><span>Start time <span class="mu">· your time (${esc(tz)})</span></span><input name="pother" required value="${st}" placeholder="e.g. 1800" inputmode="numeric" autocomplete="off" oninput="clockEcho(this);this.form.querySelectorAll('.presetbtn').forEach(x=>x.classList.remove('on'))"><span class="lapecho mu">${st?'= '+st+' your time':'Type it like 1800 or 18:00'}</span></label>
+    <p class="mu" style="margin:-4px 0 0">Use the split start time LMU shows for this event.</p>`}
+function readPicker(form,tz){const d=form.querySelector('[name=pday]:checked')?.value||form.querySelector('select[name=pday]')?.value,raw=(form.querySelector('[name=pother]')?.value||'').trim();
+  if(!d)return {err:'Pick a day.'};if(!raw)return {err:'Type the start time, e.g. 1800.'};const c=parseClock(raw);if(!c)return {err:'That isn’t a time. Type it like 1800 or 18:00.'};
+  return {ms:+fromInput(`${d}T${c}`,tz)}}
 const nextDays=(n,from=Date.now(),tz=myTz())=>{const out=[];for(let i=0;i<n;i++)out.push(toInput(new Date(from+i*86400000),tz).slice(0,10));return [...new Set(out)]};
 
 /* ---------- Phone sheets: drag the handle up for full screen, down to shrink or close ---------- */
@@ -1752,8 +1757,8 @@ function ask(msg,o={}){return new Promise(res=>{
 
 // Required fields: the app shows its own message instead of the browser's bubble.
 let INVT=0;document.addEventListener('invalid',e=>{e.preventDefault();if(Date.now()-INVT<300)return;INVT=Date.now();const f=e.target;
-  const lab=(f.closest('label')?.firstChild?.textContent||'').trim()||(f.name==='pday'?'day':f.name==='ptime'?'start time':'this field');
-  note(f.name==='pday'?'Pick a day.':f.name==='ptime'?'Pick a start time.':f.type==='radio'||f.tagName==='SELECT'?`Pick ${lab.toLowerCase()}.`:`Please fill in “${lab}”.`);try{f.focus({preventScroll:false})}catch{}},true);
+  const lab=(f.closest('label')?.firstChild?.textContent||'').trim()||(f.name==='pday'?'day':f.name==='pother'?'start time':'this field');
+  note(f.name==='pday'?'Pick a day.':f.name==='pother'?'Type the start time, e.g. 1800.':f.type==='radio'||f.tagName==='SELECT'?`Pick ${lab.toLowerCase()}.`:`Please fill in “${lab}”.`);try{f.focus({preventScroll:false})}catch{}},true);
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
 // The editable driver settings, shared by "Your profile" and the admin's edit window.
