@@ -431,6 +431,14 @@ dialog .askbar{margin:0 0 4px}
 @container gt (max-width:620px){.gcovrow .gname{display:none}.gtrack.cov{margin:0 12px 10px!important}.gbar{padding:0 10px}.gbar.can{padding:0 22px}}
 @media (max-width:720px){dialog::before{display:none!important;content:none!important}
   .askbar{grid-template-columns:auto minmax(0,1fr)}.askbtn{grid-column:1 / -1;justify-content:flex-end}.askbtn button{flex:1}}
+/* ---------- v0.5.3 ---------- */
+.gbar.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4.5px #FF375F,0 4px 14px rgba(0,0,0,.35);z-index:4}
+.gbar.pending.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4.5px #5E5CE6,0 4px 14px rgba(0,0,0,.35)}
+.gbar.sel .hl::after,.gbar.sel .hr::after{opacity:1}
+.addblk{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:14px;background:var(--fill)}
+.addblk .sg-h{margin:0;font-size:13px;font-weight:700;color:var(--label2);text-transform:none}
+.addblk label{display:flex;flex-direction:column;gap:6px}.addblk select,.addblk input{width:100%}.addblk .lapecho{margin-top:0}
+.menu>button{text-align:center}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -508,7 +516,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.2',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.3',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -817,7 +825,15 @@ const started=r=>Date.now()>=+new Date(r.start_utc);
 function planOf(r,t,ss=T.ss,ms=T.ms){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H;
   const items=ss.filter(s=>s.team_id===t.id).map(s=>{const lap=lapUse(t,s.user_id,ms)||120,laps=s.laps||Math.max(1,Math.round((new Date(s.end_utc)-new Date(s.start_utc))/1000/lap)),A=+new Date(s.start_utc);
     return {s,A,B:A+laps*lap*1000,lap,laps,est:!lapOf(t,s.user_id,ms)&&!refLap(t)}}).sort((a,b)=>a.A-b.A||a.s.id-b.s.id);
+  items.forEach(it=>{it.B=handover(items,it,it.B)});
   return {items,end:items.reduce((m,x)=>Math.max(m,x.B),r0),r0,r1}}
+// A stint's end lands on lap boundaries; if another driver's stint starts within about half a lap of it,
+// that's the handover: the end meets it exactly, so tiny gaps or overlaps never appear.
+function handover(items,it,B){const tol=(it.lap||120)*1000*0.6;let best=B,bd=tol;
+  items.forEach(x=>{if(x===it||x.s.id===it.s.id||x.s.user_id===it.s.user_id)return;const d=Math.abs(x.A-B);if(d<bd){bd=d;best=x.A}});return best}
+// Same for a start dragged near another driver's end.
+function handoverStart(items,skipId,uid,A,lap){const tol=(lap||120)*1000*0.6;let best=A,bd=tol;
+  items.forEach(x=>{if(x.s.id===skipId||x.s.user_id===uid)return;const d=Math.abs(x.B-A);if(d<bd){bd=d;best=x.B}});return best}
 // Gaps (no driver) and overlaps (two drivers at once) over the race.
 function covOf(P){const pts=[];P.items.forEach(it=>{const a=Math.max(P.r0,it.A),b=Math.min(P.r1,it.B);if(b>a)pts.push([a,1],[b,-1])});pts.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
   const gaps=[],over=[];let c=0,last=P.r0;for(const [t,d] of pts){if(t>last){if(c===0)gaps.push([last,t]);else if(c>1)over.push([last,t])}c+=d;last=Math.max(last,t)}if(last<P.r1)gaps.push([last,P.r1]);
@@ -886,9 +902,9 @@ function drawGantt(r){
       tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}`,
       ov=sug?'':overlapsOf(P,it).map(o=>`<span class="ovl" role="button" tabindex="-1" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();overlapFix(${t.id},${it.s.id},${o.x.s.id})" title="Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}: tap to fix" style="left:${((o.a-it.A)/(it.B-it.A)*100).toFixed(2)}%;width:${((o.b-o.a)/(it.B-it.A)*100).toFixed(2)}%"></span>`).join(''),
       live=!sug&&now>=it.A&&now<it.B;
-    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
-  const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,B=A+PL.laps*lap*1000;
-    const P=planOf(r,t),fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
+    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}${!sug&&SEL===it.s.id?' sel':''}" onfocus="selBar(${sug?0:it.s.id})" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
+  const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,P=planOf(r,t),B=handover(P.items,{s:{id:-1,user_id:uid},lap,A},A+PL.laps*lap*1000);
+    const fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
     return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hl big" aria-hidden="true"></i><i class="hr big" aria-hidden="true"></i></div>`};
   const row=(t,uid,bars,P)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),fi=t?fairInfo(r,t,P):null,pl=t?lapsBy(P)[uid]||0:0;
     const curLive=t&&P.items.some(it=>it.s.user_id===uid&&now>=it.A&&now<it.B);
@@ -947,7 +963,10 @@ function teamMenu(tid){const t=T.ts.find(x=>x.id===tid),lead=canLead(t),mem=T.ms
     ${lead?`<button type="button" onclick="closeDlg();planDlg(${tid})">Plan stints (fill the gaps)</button>`:''}
     ${t.strategy&&(isMem||lead)?`<button type="button" onclick="closeDlg();updDlg(${tid})">Race update</button>`:''}
     ${lead?`<button type="button" onclick="closeDlg();stratDlg(${tid})">${t.strategy?'Strategy figures':'Add strategy'}</button><button type="button" onclick="closeDlg();teamDlg(${tid})">Edit team</button>`:''}
-    ${lead&&free.length?`<div class="add-row" style="grid-template-columns:1fr 110px;margin:0"><label>Add driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name+(joined(p.id)?'':' (joins the race)'))).join('')}</select></label><label>Own lap (optional)${lapInput(`id="al${tid}"`,'')}</label><button type="button" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
+    ${lead&&free.length?`<div class="addblk"><div class="sg-h">Add a driver</div>
+      <label>Driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name+(joined(p.id)?'':' · joins the race'))).join('')}</select></label>
+      <label><span>Their own lap time <span class="mu">· optional, else the team’s ≈${fmtLap(lapFallback(t)||120)}</span></span><input id="al${tid}" placeholder="e.g. 1585" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)"><span class="lapecho mu">Type the digits: 1585 = 1:58.5</span></label>
+      <button type="button" class="pri" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 function fairDlg(tid){const t=T.ts.find(x=>x.id===tid),r=curRace(),P=planOf(r,t),f=fairInfo(r,t,P),mem=T.ms.filter(m=>m.team_id===tid);
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Fair share – minimum laps</h3>
@@ -977,7 +996,7 @@ function addStint(tid,uid,at){const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=
   let laps=Math.max(floor,Math.round(7200/lap));const room=Math.floor((P.r1-A)/1000/lap);if(room>=floor)laps=Math.min(laps,Math.max(floor,room));
   PL={tid,uid,A,laps,floor,lap};GOPEN[tid]=true;
   const w=gWin(r);if(A<w.from||A>w.to-30*60000){GZ.from=A-w.span/4}drawGantt(r);document.querySelector('#plbar')?.scrollIntoView({block:'center',behavior:'smooth'})}
-function plBanner(r){const t=T.ts.find(x=>x.id===PL.tid),tz=myTz(),B=PL.A+PL.laps*PL.lap*1000,P=planOf(r,t),ov=overlapsOf(P,{s:{id:-1,user_id:PL.uid},A:PL.A,B}),fi=fairInfo(r,t,P),tot=(lapsBy(P)[PL.uid]||0)+PL.laps;
+function plBanner(r){const t=T.ts.find(x=>x.id===PL.tid),tz=myTz(),P=planOf(r,t),B=handover(P.items,{s:{id:-1,user_id:PL.uid},lap:PL.lap,A:PL.A},PL.A+PL.laps*PL.lap*1000),ov=overlapsOf(P,{s:{id:-1,user_id:PL.uid},A:PL.A,B}),fi=fairInfo(r,t,P),tot=(lapsBy(P)[PL.uid]||0)+PL.laps;
   return `<div class="plbanner" role="status"><button type="button" onclick="plCancel()">✕ Cancel</button><div class="plinfo"><b>${locDay(new Date(PL.A),tz)} ${locH(new Date(PL.A),tz)} → ${locH(new Date(B),tz)} · ${PL.laps} laps</b>
     ${ov.length?`<span class="ovt">overlaps ${ov.map(o=>`${esc(first(name(o.x.s.user_id)))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}`).join(', ')}</span>`:''}
     ${fi&&fi.min?`<span class="${tot<fi.min?'ovt':'okt'}">${PL.uid===me.id?'your':esc(first(name(PL.uid)))+'’s'} total ${tot}/~${fi.min}${tot>=fi.min?' ✓':''}</span>`:''}</div><button type="button" class="pri" onclick="plDone()">✓ Done</button></div>`}
@@ -990,24 +1009,25 @@ function plDown(e){if(e.button>0)return;e.preventDefault();e.stopPropagation();c
   const x0=e.clientX,A0=PL.A,L0=PL.laps;try{el.setPointerCapture(e.pointerId)}catch{}busy++;
   const mv=ev=>{const dms=(ev.clientX-x0)/rc.width*w.span;
     if(edge==='r'){PL.laps=Math.max(PL.floor,Math.max(1,Math.round(L0+dms/1000/PL.lap)))}else if(edge==='l'){const B0=A0+L0*PL.lap*1000;PL.laps=Math.max(PL.floor,Math.max(1,Math.round((B0-(A0+dms))/1000/PL.lap)));PL.A=B0-PL.laps*PL.lap*1000}else{PL.A=snapStart(P,Math.max(P.r0-0,Math.min(P.r1-60000,A0+dms)),null,PL.laps*PL.lap*1000)}
-    const B=PL.A+PL.laps*PL.lap*1000;el.style.left=((Math.max(w.from,PL.A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,PL.A))/w.span*100).toFixed(3)+'%';
+    if(edge==='l')PL.A=handoverStart(P.items,-1,PL.uid,PL.A,PL.lap);const B=handover(P.items,{s:{id:-1,user_id:PL.uid},lap:PL.lap,A:PL.A},PL.A+PL.laps*PL.lap*1000);el.style.left=((Math.max(w.from,PL.A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,PL.A))/w.span*100).toFixed(3)+'%';
     el.querySelector('span').textContent=`${PL.laps} laps · ${locH(new Date(PL.A),myTz())}–${locH(new Date(B),myTz())}`;
     const bn=document.querySelector('.plbanner');if(bn)bn.outerHTML=plBanner(r)};
   const up=()=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);busy--;drawGantt(r)};
   el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
 // Tap on empty lane space: place a new stint there (own lane, or any lane for leaders).
-function trackTap(e,tid,uid){if(e.target.closest('.gbar'))return;const tr=e.currentTarget,r=curRace(),w=gWin(r),rc=tr.getBoundingClientRect();addStint(tid,uid,w.from+(e.clientX-rc.left)/rc.width*w.span)}
+function trackTap(e,tid,uid){if(e.target.closest('.gbar'))return;if(SEL){selBar(null);return}const tr=e.currentTarget,r=curRace(),w=gWin(r),rc=tr.getBoundingClientRect();addStint(tid,uid,w.from+(e.clientX-rc.left)/rc.width*w.span)}
 
 /* ---------- Moving and resizing existing stints ----------
    Mouse: drag at once. Touch: press and hold ~0.3 s first, so normal scrolling still works.
    Only along the driver's own lane; resize only by the right-hand end. */
-let BARDRAG=false;
-function barDown(e){if(e.button>0)return;const el=e.currentTarget;if(!el.classList.contains('can'))return;
+let BARDRAG=false,SEL=null;
+function selBar(sid){SEL=sid;document.querySelectorAll('.gbar.sel').forEach(x=>x.classList.remove('sel'));document.querySelector(`.gbar[data-sid="${sid}"]`)?.classList.add('sel')}
+function barDown(e){if(e.button>0)return;const el=e.currentTarget;selBar(+el.dataset.sid);if(!el.classList.contains('can'))return;
   const track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),tid=+el.dataset.tid,sid=+el.dataset.sid,t=T.ts.find(x=>x.id===tid),P=planOf(r,t),it=P.items.find(x=>x.s.id===sid);if(!it)return;
   const edge=e.target.classList.contains('hr')?'r':e.target.classList.contains('hl')?'l':'',touch=e.pointerType==='touch',x0=e.clientX,y0=e.clientY,floor=fairFloor(r,t,it.s.user_id,sid);
   let held=!touch,moved=false,A=it.A,laps=it.laps,tip=null,timer=touch?setTimeout(()=>{held=true;el.classList.add('lifted');try{el.setPointerCapture(e.pointerId)}catch{}navigator.vibrate?.(10)},300):0;
   if(!touch)try{el.setPointerCapture(e.pointerId)}catch{}
-  const draw=()=>{const B=A+laps*it.lap*1000;el.style.left=((Math.max(w.from,A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,A))/w.span*100).toFixed(3)+'%';
+  const draw=()=>{const B=handover(P.items,{...it,A},A+laps*it.lap*1000);el.style.left=((Math.max(w.from,A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,A))/w.span*100).toFixed(3)+'%';
     el.querySelectorAll('.ovl').forEach(x=>x.remove());overlapsOf(P,{s:it.s,A,B}).forEach(o=>{const s=document.createElement('span');s.className='ovl';s.style.left=((o.a-A)/(B-A)*100).toFixed(2)+'%';s.style.width=((o.b-o.a)/(B-A)*100).toFixed(2)+'%';el.appendChild(s)});
     if(!tip){tip=document.createElement('div');tip.className='gtip';track.appendChild(tip)}tip.style.left=el.style.left;
     const ov=overlapsOf(P,{s:it.s,A,B});tip.textContent=`${locH(new Date(A),myTz())}–${locH(new Date(B),myTz())} · ${laps} laps${laps===floor&&floor>1?' (fair-share minimum)':''}${ov.length?' · overlaps '+ov.map(o=>first(name(o.x.s.user_id))).join(', '):''}`};
@@ -1016,7 +1036,7 @@ function barDown(e){if(e.button>0)return;const el=e.currentTarget;if(!el.classLi
     if(!moved){moved=true;BARDRAG=true;busy++;try{el.setPointerCapture(ev.pointerId)}catch{}document.body.classList.add('dragging')}
     ev.preventDefault();const dms=dx/rc.width*w.span;
     if(edge==='r')laps=Math.max(floor,Math.max(1,Math.round(it.laps+dms/1000/it.lap)));
-    else if(edge==='l'){laps=Math.max(floor,Math.max(1,Math.round((it.B-(it.A+dms))/1000/it.lap)));A=it.B-laps*it.lap*1000}
+    else if(edge==='l'){laps=Math.max(floor,Math.max(1,Math.round((it.B-(it.A+dms))/1000/it.lap)));A=handoverStart(P.items,sid,it.s.user_id,it.B-laps*it.lap*1000,it.lap)}
     else A=snapStart(P,Math.max(P.r0,Math.min(P.r1-60000,it.A+dms)),sid,laps*it.lap*1000);draw()};
   const cleanup=async commit=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',upF);el.removeEventListener('pointercancel',cancelF);clearTimeout(timer);tip?.remove();el.classList.remove('lifted');document.body.classList.remove('dragging');
     if(moved){busy--;setTimeout(()=>BARDRAG=false,50);if(commit&&(A!==it.A||laps!==it.laps))await commitStint(tid,sid,edge==='r'?{laps}:edge==='l'?{laps,start:A}:{start:A});else drawGantt(r)}};
