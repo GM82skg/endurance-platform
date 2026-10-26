@@ -451,6 +451,17 @@ dialog .askbar{margin:0 0 4px}
 .ctxmenu button{display:block;width:100%;min-height:34px;padding:0 10px;border-radius:8px;background:none;color:var(--label);text-align:left;font-size:14px;font-weight:500}
 .ctxmenu button:hover,.ctxmenu button:focus-visible{background:var(--tint);color:var(--tint-ink);outline:none}.ctxmenu button.danger{color:var(--red-ink)}.ctxmenu button.danger:hover{background:var(--red);color:#fff}
 .ctxmenu hr{border:0;border-top:.5px solid var(--sep);margin:4px 2px}
+/* ---------- v0.5.6 micro-gaps ---------- */
+.gtrack.cov{overflow:visible}
+.mgcov{position:absolute;top:-2px;bottom:-2px;min-width:4px;margin-left:-1px;border-radius:2px;background:var(--orange,#FF9F0A);box-shadow:0 0 0 2px color-mix(in srgb,#FF9F0A 35%,transparent);animation:mgpulse 1.6s ease-in-out infinite}
+.mgpill{position:absolute;bottom:9px;transform:translateX(-50%);z-index:5;min-height:22px;height:22px;padding:0 8px;border-radius:11px;background:#FF9F0A;color:#000;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.mgpill::after{content:"";position:absolute;left:50%;bottom:-4px;margin-left:-4px;border:4px solid transparent;border-top-color:#FF9F0A;border-bottom:0}
+.mgpill:hover{filter:brightness(1.08)}
+.mgline{position:absolute;top:0;bottom:0;min-width:3px;margin-left:-1px;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(180deg,#FF9F0A 0 5px,transparent 5px 9px);opacity:.9}
+@keyframes mgpulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.mgcov{animation:none}}
+.gcovrow.hasmg{padding-top:26px}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -528,7 +539,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.5',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.6',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -851,6 +862,18 @@ function covOf(P){const pts=[];P.items.forEach(it=>{const a=Math.max(P.r0,it.A),
   const gaps=[],over=[];let c=0,last=P.r0;for(const [t,d] of pts){if(t>last){if(c===0)gaps.push([last,t]);else if(c>1)over.push([last,t])}c+=d;last=Math.max(last,t)}if(last<P.r1)gaps.push([last,P.r1]);
   return {gaps:gaps.filter(([a,b])=>b-a>=60000),over:over.filter(([a,b])=>b-a>=30000)}}
 const sumMs=a=>a.reduce((s,[x,y])=>s+(y-x),0);
+const MICRO=15*60000;
+// Short holes between two stints inside the race: usually an accident, so flagged and fixable in one click.
+function microGaps(P){return covOf(P).gaps.filter(([a,b])=>b-a<MICRO&&a>P.r0&&b<P.r1).map(([a,b])=>({a,b,prev:P.items.filter(x=>Math.abs(x.B-a)<1000).sort((x,y)=>y.A-x.A)[0],next:P.items.filter(x=>Math.abs(x.A-b)<1000)[0]}))}
+const gapTxt=ms=>ms<60000?`${Math.round(ms/1000)}s`:`${Math.floor(ms/60000)}m${Math.round(ms%60000/1000)?' '+String(Math.round(ms%60000/1000)).padStart(2,'0')+'s':''}`;
+function gapFix(tid,a,b){const r=curRace(),t=T.ts.find(x=>x.id===tid),P=planOf(r,t),g=microGaps(P).find(x=>Math.abs(x.a-a)<1000)||{a,b},tz=myTz(),opts=[];
+  const canE=it=>it&&(canLead(t)||it.s.user_id===me.id);
+  if(canE(g.next))opts.push([`Start ${esc(first(name(g.next.s.user_id)))}’s stint at ${locH(new Date(g.a),tz)} (right after ${esc(first(name(g.prev?.s.user_id||'')))})`,`commitStint(${tid},${g.next.s.id},{start:${g.a}})`]);
+  if(canE(g.prev)){const n=Math.max(g.prev.laps,Math.round((g.b-g.prev.A)/1000/g.prev.lap));if(n!==g.prev.laps)opts.push([`Extend ${esc(first(name(g.prev.s.user_id)))} to ${n} laps so ${esc(first(name(g.next?.s.user_id||'')))} takes over`,`commitStint(${tid},${g.prev.s.id},{laps:${n}})`])}
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>Gap of ${gapTxt(g.b-g.a)} with no driver</h3>
+    <p class="mu" style="margin:0">${locH(new Date(g.a),tz)}–${locH(new Date(g.b),tz)}${g.prev&&g.next?`, between ${esc(name(g.prev.s.user_id))} and ${esc(name(g.next.s.user_id))}`:''}. Nobody would be in the car.</p>
+    ${opts.map(([l,f])=>`<button type="button" class="pri" onclick="closeDlg();${f}">${l}</button>`).join('')||'<p class="mu">Only the drivers involved or the team leader can close it.</p>'}
+    <div class="row"><button type="button" onclick="closeDlg()">Leave it</button></div></form>`)}
 // Parts of a stint that overlap other drivers' stints in the same team.
 const overlapsOf=(P,it)=>P.items.filter(x=>x!==it&&x.s.user_id!==it.s.user_id&&x.A<it.B&&x.B>it.A).map(x=>({x,a:Math.max(x.A,it.A),b:Math.min(x.B,it.B)}));
 const stUnits=(t,s)=>`${s.laps||'?'} laps`;
@@ -896,7 +919,9 @@ function teamStatus(r,t,P,tz){const mem=T.ms.filter(m=>m.team_id===t.id);if(!mem
   const out=[],cv=covOf(P),fi=fairInfo(r,t,P),now=Date.now();
   if(now>=P.r0&&now<P.r1){const nx=P.items.find(it=>it.A>now);if(nx)out.push([`Next: ${first(name(nx.s.user_id))} in ${dur((nx.A-now)/1000)}`,'ok'])}
   const g=sumMs(cv.gaps),o=sumMs(cv.over);
-  if(!P.items.length)out.push(['No stints yet','bad']);else if(g)out.push([`${dur(g/1000)} no driver`,'gap']);
+  const mgs=microGaps(P);if(mgs.length)out.push([`⚠ ${mgs.length} small gap${mgs.length>1?'s':''} (${mgs.map(x=>gapTxt(x.b-x.a)).join(', ')})`,'bad']);
+  const g2=g-sumMs(mgs.map(x=>[x.a,x.b]));
+  if(!P.items.length)out.push(['No stints yet','bad']);else if(g2>0)out.push([`${dur(g2/1000)} no driver`,'gap']);
   if(o)out.push([`${dur(o/1000)} overlap`,'bad']);
   if(fi&&fi.min){const sh=fairShort(t,P).length;out.push([sh?`Fair share: ${sh} short`:'Fair share OK',sh?'bad':'ok'])}
   if(P.items.length&&!g&&!o)out.unshift(['Covered','ok']);return out}
@@ -929,7 +954,10 @@ function drawGantt(r){
     if(tab==='plan')P.items.forEach(it=>{body[it.s.user_id]=(body[it.s.user_id]||'')+barHtml(t,P,it,false)});
     else{const S=suggest(r,t);if(S.err)extra=`<div class="banner warn" style="margin:8px 12px"><span>${esc(S.err)}</span></div>`;else{const pits=S.stops.filter(x=>vis(x.a,x.a)).map(x=>`<span class="gpit2${x.tyres?' ty':''}" style="left:${pc(x.a)}"></span>`).join('');mem.forEach(m=>body[m.user_id]=pits);S.items.forEach(it=>{body[it.uid]=(body[it.uid]||pits)+barHtml(t,P,it,true)});extra=sugPanel(r,t,S,lead,tz)}}
     const cv=covOf(P),covHtml=P.items.filter(it=>vis(it.A,it.B)).map(it=>`<span class="${it.s.status==='pending'?'p':'ok'}" style="left:${pc(it.A)};width:${wd(it.A,it.B)}"></span>`).join('')+cv.over.filter(([a,b])=>vis(a,b)).map(([a,b])=>`<span class="ov" style="left:${pc(a)};width:${wd(a,b)}"></span>`).join('');
-    const canAdd=(isMem||lead)&&tab==='plan';
+    const canAdd=(isMem||lead)&&tab==='plan',mg=tab==='plan'?microGaps(P).filter(g=>vis(g.a,g.b)):[];
+    const mgCov=mg.map(g=>`<button class="mgpill" style="left:${pc((g.a+g.b)/2)}" onclick="gapFix(${t.id},${g.a},${g.b})" title="Gap ${gapTxt(g.b-g.a)} with no driver: click to fix">⚠ ${gapTxt(g.b-g.a)} gap</button><span class="mgcov" style="left:${pc(g.a)};width:${wd(g.a,g.b)}"></span>`).join('');
+    const mgLane=mg.map(g=>`<span class="mgline" style="left:${pc(g.a)};width:${wd(g.a,g.b)}" aria-hidden="true"></span>`).join('');
+    if(mgLane)mem.forEach(m=>body[m.user_id]=(body[m.user_id]||'')+mgLane);
     return `<section class="ggroup" data-tid="${t.id}"><div class="gteam"><button class="gchev" onclick="gToggle(${t.id})" aria-expanded="${open}" aria-label="${open?'Fold':'Open'} ${esc(t.name)}"><span class="${open?'open':''}">›</span></button>
       <div class="tmain"><div class="tl1"><span class="tn">${esc(t.name)}</span><span class="ts">${esc(t.class)} · ${refLap(t)?'≈'+fmtLap(refLap(t))+' · ':''}${mem.length} driver${mem.length===1?'':'s'}${tab==='sug'?' · <b class="am">Suggestion</b>':''}</span></div>
         <div class="tl2">${st.map(([x,c])=>`<span class="tst ${c}">${x}</span>`).join('<span class="dotsep">·</span>')}</div>
@@ -937,7 +965,7 @@ function drawGantt(r){
       ${P.items.length?(()=>{const n=teamIssues(r,t,P).length+cv.gaps.length+fairShort(t,P).length;return `<button class="chkbtn${n?' has':''}" onclick="checkPlan(${t.id})" title="Final check of this team’s plan">${n?`<b>${n}</b> to check`:'✓ Check plan'}</button>`})():''}
       ${canAdd?`<button class="addst" onclick="addStint(${t.id})" aria-label="Add a stint to ${esc(t.name)}"><span class="plus">+</span><span class="lbl"> Add stint</span></button>`:''}
       <button class="gdots" onclick="teamMenu(${t.id})" aria-label="${esc(t.name)} options">⋯</button></div>
-      <div class="grw gcovrow" aria-hidden="true"><div class="gname gn0"></div><div class="gtrack cov">${covHtml}</div></div>
+      <div class="grw gcovrow${mg.length?' hasmg':''}"><div class="gname gn0"></div><div class="gtrack cov">${covHtml}${typeof mgCov!=='undefined'?mgCov:''}</div></div>
       ${open?(mem.length?mem.map(m=>row(t,m.user_id,body[m.user_id],P)).join(''):`<div class="gempty">No drivers yet. ${lead?'Add one from the ⋯ menu.':'Join from the ⋯ menu.'}</div>`)+extra:''}</section>`};
   const free=ENT.filter(u=>!inTeam.has(u)&&profiles.some(p=>p.id===u)),openFree=GOPEN[0]!==false;
   const freeGroup=free.length?`<section class="ggroup" data-tid="0"><div class="gteam"><button class="gchev" onclick="gToggle(0)" aria-expanded="${openFree}" aria-label="${openFree?'Fold':'Open'} joined drivers without a team"><span class="${openFree?'open':''}">›</span></button><div class="tmain"><div class="tl1"><span class="tn">Joined, no team yet</span><span class="ts">${free.length} driver${free.length===1?'':'s'}</span></div></div></div>
@@ -1191,7 +1219,7 @@ function stintIssues(r,t,P,it){const tz=myTz(),uid=it.s.user_id,p=profiles.find(
 function teamIssues(r,t,P){return P.items.map(it=>({it,list:stintIssues(r,t,P,it)})).filter(x=>x.list.length)}
 function checkPlan(tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),P=planOf(r,t),tz=myTz(),iss=teamIssues(r,t,P),cv=covOf(P),fs=fairShort(t,P);
   const rows=[...iss.map(x=>`<div class="bitem chk"><span class="grow"><b>${esc(name(x.it.s.user_id))} · ${locH(new Date(x.it.A),tz)}–${locH(new Date(x.it.B),tz)}</b><br><span class="mu">${x.list.map(esc).join(' · ')}</span></span><button type="button" onclick="closeDlg();selBar(${x.it.s.id});stintSheet(${tid},${x.it.s.id})">Open</button></div>`),
-    ...cv.gaps.map(([a,b])=>`<div class="bitem chk"><span class="grow"><b>No driver ${locDay(new Date(a),tz)} ${locH(new Date(a),tz)}–${locH(new Date(b),tz)}</b><br><span class="mu">${dur((b-a)/1000)} uncovered</span></span></div>`),
+    ...cv.gaps.map(([a,b])=>b-a<MICRO&&a>P.r0&&b<P.r1?`<div class="bitem chk"><span class="grow"><b>⚠ Small gap ${locH(new Date(a),tz)}–${locH(new Date(b),tz)}</b><br><span class="mu">${gapTxt(b-a)} with nobody in the car</span></span><button type="button" onclick="closeDlg();gapFix(${tid},${a},${b})">Fix</button></div>`:`<div class="bitem chk"><span class="grow"><b>No driver ${locDay(new Date(a),tz)} ${locH(new Date(a),tz)}–${locH(new Date(b),tz)}</b><br><span class="mu">${dur((b-a)/1000)} uncovered</span></span></div>`),
     ...fs.map(f=>`<div class="bitem chk"><span class="grow"><b>Fair share: ${esc(name(f.uid))}</b><br><span class="mu">${f.laps}/${f.min} laps</span></span></div>`)];
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Check plan · ${esc(t.name)}</h3>
     ${rows.length?`<p class="mu" style="margin:0">Nothing here stops the plan from saving; it’s a final look before race day.</p><div class="blist">${rows.join('')}</div>`:'<div class="banner ok"><span>All good: every minute covered, no overlaps, availability, rest and fair share fine.</span></div>'}
