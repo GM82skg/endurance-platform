@@ -462,6 +462,14 @@ dialog .askbar{margin:0 0 4px}
 @keyframes mgpulse{0%,100%{opacity:1}50%{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.mgcov{animation:none}}
 .gcovrow.hasmg{padding-top:26px}
+/* ---------- v0.5.9 fair share purple ---------- */
+.gbar.fs{background-color:#BF5AF2;color:#fff}.gbar.fs.pending{background-color:#BF5AF2;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px)}
+.gbar.fs .hl::after,.gbar.fs .hr::after{background:rgba(255,255,255,.75)}
+.gbar.fs.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4.5px #A6E22E,0 4px 14px rgba(0,0,0,.35)}
+.gbar.fs .bang{background:#fff;color:#7d2fa8}
+.gbar.fs:hover{background-color:#c56ef4}
+.legend .lg.fs{background:#BF5AF2}
+.gtrack.cov .fs{background:#BF5AF2}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -539,7 +547,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.8',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.9',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -888,8 +896,10 @@ function fairInfo(r,t,P){if(!r||!r.fair_share)return null;const n=T.ms.filter(m=
   return {n,total,est:true,pct:fairPct(n),min:n>=2?Math.floor(total*fairPct(n)):0,by:lapsBy(P)}}
 const fairMin=fairInfo;
 function fairShort(t,P){const f=fairInfo(curRace(),t,P);if(!f||!f.min)return [];return T.ms.filter(m=>m.team_id===t.id).map(m=>({uid:m.user_id,laps:f.by[m.user_id]||0,min:f.min})).filter(x=>x.laps<x.min)}
-// Fewest laps this stint may have so the driver's total still reaches the fair-share minimum.
-function fairFloor(r,t,uid,sid){const f=fairInfo(r,t,planOf(r,t));if(!f||!f.min)return 1;
+// Fair share is a combined minimum over the whole race: drivers add stints freely and are warned,
+// never blocked. fairFloor is therefore always 1; fairNeed is what this stint would need to reach the minimum.
+function fairFloor(){return 1}
+function fairNeed(r,t,uid,sid){const f=fairInfo(r,t,planOf(r,t));if(!f||!f.min)return 1;
   const other=T.ss.filter(s=>s.team_id===t.id&&s.user_id===uid&&s.id!==sid).reduce((a,s)=>a+(s.laps||0),0);return Math.max(1,f.min-other)}
 // Leaders keep stored end times in step with lap-time changes (other screens read them).
 async function syncTimes(t){if(!canLead(t))return;const P=planOf(curRace(),t);
@@ -937,11 +947,11 @@ function drawGantt(r){
   const now=Date.now(),nowLine=now>from&&now<to?`<span class="gnow" style="left:${pc(now)}"></span>`:'';
   const inTeam=new Set(T.ms.map(m=>m.user_id));
   const shade=uid=>BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>{const a=+new Date(b.start_utc),e=+new Date(b.end_utc);return vis(a,e)?`<span class="gshade ${b.kind}" style="left:${pc(a)};width:${wd(a,e)}"></span>`:''}).join('');
-  const barHtml=(t,P,it,sug)=>{if(!vis(it.A,it.B))return '';const uid=it.uid||it.s.user_id,can=!sug&&(canLead(t)||uid===me.id),iss=sug?[]:stintIssues(r,t,P,it),txt=`${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}`,
-      tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}${iss.length?' · to check: '+iss.map(esc).join('; '):''}`,
+  const barHtml=(t,P,it,sug)=>{if(!vis(it.A,it.B))return '';const uid=it.uid||it.s.user_id,can=!sug&&(canLead(t)||uid===me.id),iss=sug?[]:stintIssues(r,t,P,it),fsi=sug?null:fairInfo(r,t,P),fsShort=!!(fsi&&fsi.min&&(fsi.by[uid]||0)<fsi.min),txt=`${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}`,
+      tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}${fsShort?` · below fair share: ${fsi.by[uid]||0}/${fsi.min} laps in total`:''}${iss.length?' · to check: '+iss.map(esc).join('; '):''}`,
       ov=sug?'':overlapsOf(P,it).map(o=>`<span class="ovl" aria-hidden="true" style="left:${((o.a-it.A)/(it.B-it.A)*100).toFixed(2)}%;width:${((o.b-o.a)/(it.B-it.A)*100).toFixed(2)}%"></span>`).join(''),
       live=!sug&&now>=it.A&&now<it.B;
-    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}${!sug&&SEL===it.s.id?' sel':''}" onfocus="selBar(${sug?0:it.s.id})" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" oncontextmenu="barMenu(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}">${iss.length&&!iss.every(x=>x.startsWith('Overlaps'))?'<span class="bang" aria-hidden="true">!</span>':''}<span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
+    return `<button class="gbar ${sug?'sug':it.s.status}${fsShort?' fs':''}${it.est?' est':''}${can?' can':''}${live?' live':''}${!sug&&SEL===it.s.id?' sel':''}" onfocus="selBar(${sug?0:it.s.id})" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" oncontextmenu="barMenu(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}">${iss.length&&!iss.every(x=>x.startsWith('Overlaps'))?'<span class="bang" aria-hidden="true">!</span>':''}<span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
   const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,P=planOf(r,t),B=handover(P.items,{s:{id:-1,user_id:uid},lap,A},A+PL.laps*lap*1000);
     const fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
     return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hl big" aria-hidden="true"></i><i class="hr big" aria-hidden="true"></i></div>`};
@@ -977,7 +987,7 @@ function drawGantt(r){
     ${PL?plBanner(r):''}
     <div class="gantt"><div class="grw ghdr"><div class="gname gnav"><button aria-label="Earlier" onclick="gPan(-1)" ${from<=w.r0?'disabled':''}>‹</button><button onclick="gNow()">Now</button><button aria-label="Later" onclick="gPan(1)" ${to>=w.r1?'disabled':''}>›</button></div><div class="gtrack axis">${ticks}</div></div>
       ${T.ts.map(group).join('')||'<div class="gempty">No teams yet. Press + New team.</div>'}${freeGroup}</div>
-    <div class="legend"><span class="lg ok"></span>Stint<span class="lg p"></span>Pending<span class="lg ov"></span>Overlap<span class="lg gap"></span>No driver<span class="lg A"></span>Can drive${T.ts.some(t=>t.strategy)?'<span class="lg sg"></span>Suggested':''}</div>
+    <div class="legend"><span class="lg ok"></span>Stint<span class="lg p"></span>Pending${T.ts.length&&curRace().fair_share?'<span class="lg fs"></span>Below fair share':''}<span class="lg ov"></span>Overlap<span class="lg gap"></span>No driver<span class="lg A"></span>Can drive${T.ts.some(t=>t.strategy)?'<span class="lg sg"></span>Suggested':''}</div>
     <p class="mu">${phone?'Press + on your team to add a stint. Tap a stint to select it, double-tap to edit it; press and hold to move it.':'Add stint, then drag it into place and drag its ends to set the laps. Click a stint to select it, double-click to edit, right-click for options. With it selected, ← → move it a minute and ↑ ↓ change laps.'}</p>`;
   if(PL)document.body.classList.add('placing');else document.body.classList.remove('placing');
 }
@@ -1036,7 +1046,7 @@ function addStint(tid,uid,at){const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=
   const lap=lapUse(t,uid);if(!lap)return lapDlg(tid,uid);
   const P=planOf(r,t),cv=covOf(P),floor=fairFloor(r,t,uid,0);
   let A=at!=null?at:(cv.gaps[0]?cv.gaps[0][0]:P.end);A=Math.max(P.r0,Math.min(A,P.r1-60000));A=snapStart(P,A,null);
-  let laps=Math.max(floor,Math.round(7200/lap));const room=Math.floor((P.r1-A)/1000/lap);if(room>=floor)laps=Math.min(laps,Math.max(floor,room));
+  const need=fairNeed(r,t,uid,0);let laps=Math.max(need,Math.round(7200/lap));const room=Math.floor((P.r1-A)/1000/lap);if(room>=1)laps=Math.min(laps,Math.max(1,room));
   PL={tid,uid,A,laps,floor,lap};GOPEN[tid]=true;
   const w=gWin(r);if(A<w.from||A>w.to-30*60000){GZ.from=A-w.span/4}drawGantt(r);document.querySelector('#plbar')?.scrollIntoView({block:'center',behavior:'smooth'})}
 function plBanner(r){const t=T.ts.find(x=>x.id===PL.tid),tz=myTz(),P=planOf(r,t),B=handover(P.items,{s:{id:-1,user_id:PL.uid},lap:PL.lap,A:PL.A},PL.A+PL.laps*PL.lap*1000),ov=overlapsOf(P,{s:{id:-1,user_id:PL.uid},A:PL.A,B}),fi=fairInfo(r,t,P),tot=(lapsBy(P)[PL.uid]||0)+PL.laps;
@@ -1099,7 +1109,7 @@ function barMenu(e,tid,sid){e.preventDefault();e.stopPropagation();selBar(sid);c
   if(edit){
     if(prev&&prev.B!==it.A)items.push([`Start right after ${esc(first(name(prev.s.user_id)))} (${locH(new Date(prev.B),tz)})`,`commitStint(${tid},${sid},{start:${prev.B}})`]);
     if(next&&next.A>it.B){const n=Math.max(floor,Math.round((next.A-it.A)/1000/it.lap));if(n!==it.laps)items.push([`Run until ${esc(first(name(next.s.user_id)))} takes over (${n} laps)`,`commitStint(${tid},${sid},{laps:${n}})`])}
-    if(fi&&fi.min&&floor!==it.laps)items.push([`Fair-share minimum (${floor} laps)`,`commitStint(${tid},${sid},{laps:${floor}})`]);
+    {const nd=fairNeed(r,t,it.s.user_id,sid);if(fi&&fi.min&&nd>it.laps)items.push([`Reach fair share (${nd} laps)`,`commitStint(${tid},${sid},{laps:${nd}})`])}
     if(lead&&it.s.status==='pending')items.push(['Approve',`appr(${sid})`]);
     items.push(['-']);items.push(['Remove stint',`delStint(${sid})`,'danger'])}
   const m=document.createElement('div');m.className='ctxmenu';m.setAttribute('role','menu');
@@ -1166,10 +1176,10 @@ function stintSheet(tid,sid){const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=c
 function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz=myTz(),mems=T.ms.filter(m=>m.team_id===S.tid),s=T.ss.find(x=>x.id===S.sid);
   const {P,it}=project(S.tid,S.sid,{user_id:S.uid,laps:S.laps,start:S.start}),fi=fairInfo(r,t,P),mine=(fi?.by||lapsBy(P))[S.uid]||0,floor=fairFloor(r,t,S.uid,S.sid),ov=overlapsOf(P,it),lap=it.lap||120;
   const btn=(d,l,fn,dis)=>`<button type="button" class="step" onclick="${fn}(${d})" ${S.edit&&!dis?'':'disabled'} aria-label="${l}">${d>0?'+':'−'}${Math.abs(d)}</button>`;
-  const presets=[...(fi&&fi.min?[[`Fair share (${floor})`,floor]]:[]),['1 hour',Math.max(floor,Math.round(3600/lap))],['2 hours',Math.max(floor,Math.round(7200/lap))],['To the finish',Math.max(floor,Math.ceil((P.r1-it.A)/1000/lap))]];
+  const need=fairNeed(r,t,S.uid,S.sid),presets=[...(fi&&fi.min&&need>1?[[`Reach fair share (${need})`,need]]:[]),['1 hour',Math.max(floor,Math.round(3600/lap))],['2 hours',Math.max(floor,Math.round(7200/lap))],['To the finish',Math.max(floor,Math.ceil((P.r1-it.A)/1000/lap))]];
   const html=`<form onsubmit="saveSheet(event)"><h3>${esc(name(S.uid))} · ${esc(t.name)}</h3>
     <p class="mu" style="margin:0">Average lap ${fmtLap(lap)}${lapOf(t,S.uid)?'':' (team)'}${s?' · '+stL(s.status):''}</p>
-    ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b>${mine>=fi.min?' ✓':''}.`:`<b>Fair share</b><br>Only one driver in the team, so there’s no minimum.`}</div>`:''}
+    ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps, combined over all their stints. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b>${mine>=fi.min?' ✓':` · ${fi.min-mine} more needed`}.`:`<b>Fair share</b><br>Only one driver in the team, so there’s no minimum.`}</div>`:''}
     <div class="lapbox"><div class="mu">Laps</div><div class="steps">${btn(-5,'5 laps fewer','stepLaps',S.laps-5<floor&&S.laps<=floor)}${btn(-1,'1 lap fewer','stepLaps',S.laps<=floor)}<span class="lapn num">${S.laps}</span>${btn(1,'1 lap more','stepLaps')}${btn(5,'5 laps more','stepLaps')}</div>
       ${S.edit?`<div class="presets">${presets.map(([l,n])=>`<button type="button" class="${n===S.laps?'on':''}" onclick="SHEET.laps=${n};renderSheet()">${l}<small>${n} laps</small></button>`).join('')}</div>`:''}
       <div class="mu" style="margin-top:12px">Start</div><div class="steps">${btn(-5,'5 minutes earlier','stepStart')}${btn(-1,'1 minute earlier','stepStart')}<span class="startn num">${locH(new Date(it.A),tz)}</span>${btn(1,'1 minute later','stepStart')}${btn(5,'5 minutes later','stepStart')}</div>
@@ -1196,20 +1206,22 @@ function project(tid,sid,ch){const r=curRace(),t=T.ts.find(x=>x.id===tid),cur=si
 async function commitStint(tid,sid,ch){
   const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),lead=canLead(t),cur=sid?T.ss.find(x=>x.id===sid):null,{P,it,tmp}=project(tid,sid,ch),uid=tmp.user_id,p=profiles.find(x=>x.id===uid),warn=[];
   const fi=fairInfo(r,t,P),tot=lapsBy(P)[uid]||0;
-  const shrinking=!sid||(ch.user_id&&ch.user_id!==cur.user_id)||(ch.laps&&ch.laps<(cur.laps||0));
-  if(fi&&fi.min&&tot<fi.min&&shrinking){const need=tmp.laps+(fi.min-tot);FIX={tid,sid:sid||0,ch:{user_id:uid,start:it.A,laps:need}};
+  if(false){const need=tmp.laps+(fi.min-tot);FIX={tid,sid:sid||0,ch:{user_id:uid,start:it.A,laps:need}};
     return openDlg(`<form onsubmit="event.preventDefault();closeDlg();commitStint(FIX.tid,FIX.sid,FIX.ch)"><h3>Fair share: at least ${fi.min} laps</h3>
       <p style="margin:0">${uid===me.id?'Your':esc(name(uid))+'’s'} stints would add up to <b>${tot} laps</b>. With ${fi.n} drivers each must drive at least ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps, so the minimum is <b>${fi.min}</b>.</p>
       <div class="row"><button class="pri">Set it to ${need} laps</button><button type="button" onclick="closeDlg();drawGantt(curRace())">Cancel</button></div></form>`)}
   if(!T.ms.some(m=>m.team_id===tid&&m.user_id===uid))await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:teamCar(t)}));
   const row={team_id:tid,user_id:uid,laps:tmp.laps,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString(),...(lead?{}:{status:'pending'})};
   if(sid){const prev={user_id:cur.user_id,laps:cur.laps,start_utc:cur.start_utc,end_utc:cur.end_utc,...(lead?{status:cur.status}:{})};await q(sb.from('stints').update(row).eq('id',sid));
-    closeDlgIf();await loadRace(r);await syncTimes(t);render();undoToast((ch.start!=null&&!ch.laps?'Stint moved.':'Stint changed.')+(!lead&&cur.status==='approved'?' It needs the leader’s approval again.':''),()=>q(sb.from('stints').update(prev).eq('id',sid)))}
+    closeDlgIf();await loadRace(r);await syncTimes(t);render();undoToast(fsWarn(r,t,uid,(ch.start!=null&&!ch.laps?'Stint moved.':'Stint changed.')+(!lead&&cur.status==='approved'?' It needs the leader’s approval again.':'')),()=>q(sb.from('stints').update(prev).eq('id',sid)))}
   else{await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));closeDlgIf();await loadRace(r);
     const made=T.ss.filter(x=>x.team_id===tid&&x.user_id===uid&&+new Date(x.start_utc)===it.A).sort((a,b)=>b.id-a.id)[0];render();
-    undoToast(lead?'Stint added.':'Stint requested. The team leader will approve it.',made?()=>q(sb.from('stints').delete().eq('id',made.id)):null)}}
+    undoToast(fsWarn(r,t,uid,lead?'Stint added.':'Stint requested. The team leader will approve it.'),made?()=>q(sb.from('stints').delete().eq('id',made.id)):null)}}
 async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();await loadRace(curRace());render()}
 // Things worth a look in a stint: shown as a small ! on the bar and listed once in “Check plan”.
+// Adds a fair-share reminder to a message when the driver's combined laps are still short.
+function fsWarn(r,t,uid,msg){const P=planOf(r,t),f=fairInfo(r,t,P);if(!f||!f.min)return msg;const n=lapsBy(P)[uid]||0;
+  return n<f.min?`${msg} Fair share: ${uid===me.id?'you have':first(name(uid))+' has'} ${n}/${f.min} laps in total, ${f.min-n} more needed.`:msg}
 function stintIssues(r,t,P,it){const tz=myTz(),uid=it.s.user_id,p=profiles.find(x=>x.id===uid),out=[];
   if(it.A<P.r0-60000)out.push('Starts before the race');if(it.A>=P.r1)out.push('Starts after the finish');
   overlapsOf(P,it).forEach(o=>out.push(`Overlaps ${name(o.x.s.user_id)} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}`));
