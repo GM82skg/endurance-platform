@@ -425,7 +425,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.9',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.10',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -685,10 +685,10 @@ function raceDlg(id){
     <label class="trother" ${known?'hidden':''}>Track name<input name="track" maxlength="60" value="${esc(known?'':cur)}" placeholder="e.g. Algarve"></label>`})()}
     <label>Length<select name="len">${[4,6,8,12,24].map(h=>opt(h,h+'H',r?.length_h===h)).join('')}</select></label>
     ${dtPicker(nextDays(120),d?+d:null,tz)}
-    <label class="check"><input type="checkbox" name="fair" ${r?.fair_share?'checked':''}><span>Fair share applies (LMU team event)</span></label>
+    ${r?.source?`<p class="mu" style="margin:0"><span class="chip warn">Fair share applies</span> always on for LMU team events</p>`:`<label class="check"><input type="checkbox" name="fair" ${!r||r.fair_share?'checked':''}><span>Fair share applies (on for team events)</span></label>`}
     ${r?'<p class="mu">Moving the start moves every team and stint with it. Drivers are asked to recheck their availability.</p>':''}
     <div class="row"><button class="pri">${r?'Save changes':'Add race'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${r?`<button type="button" class="danger" onclick="delRace(${r.id})">Delete race</button>`:''}</div></form>`)}
-async function saveRace(e,id){e.preventDefault();const f=new FormData(e.target),ts=f.get('tracksel'),row={name:f.get('name'),track:(ts==='__other'?String(f.get('track')||'').trim():ts)||null,length_h:+f.get('len'),start_utc:null};const pk=readPicker(e.target,myTz());if(pk.err)return note(pk.err);row.start_utc=new Date(pk.ms).toISOString();row.fair_share=!!e.target.querySelector('[name=fair]')?.checked;
+async function saveRace(e,id){e.preventDefault();const f=new FormData(e.target),ts=f.get('tracksel'),row={name:f.get('name'),track:(ts==='__other'?String(f.get('track')||'').trim():ts)||null,length_h:+f.get('len'),start_utc:null};const pk=readPicker(e.target,myTz());if(pk.err)return note(pk.err);row.start_utc=new Date(pk.ms).toISOString();{const fb=e.target.querySelector('[name=fair]');if(fb)row.fair_share=fb.checked}
   if(id){const r=races.find(x=>x.id===id);if(row.length_h<r.length_h&&!confirm(`Shorten to ${row.length_h}H? Stints after hour ${row.length_h} will no longer show.`))return;await q(sb.from('races').update(row).eq('id',id))}
   else await q(sb.from('races').insert(row));
   closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));render();note(id?'Race updated.':'Race added.',1)}
