@@ -445,6 +445,12 @@ dialog .askbar{margin:0 0 4px}
 .bang{position:relative;z-index:2;flex:none;margin-right:6px;width:16px;height:16px;border-radius:50%;background:#000;color:var(--yellow);font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;pointer-events:none}
 .bitem.chk{align-items:center}.bitem.chk button{min-height:34px;width:auto;padding:0 12px}
 @container gt (max-width:620px){.chkbtn{min-height:44px;padding:0 10px}}
+/* ---------- v0.5.5 context menu ---------- */
+.ctxmenu{position:fixed;z-index:60;min-width:230px;max-width:320px;padding:6px;border-radius:12px;background:var(--raised);border:.5px solid var(--sep);box-shadow:0 18px 50px rgba(0,0,0,.45);animation:askin .14s ease-out}
+.ctxh{padding:6px 10px 8px;font-size:12px;font-weight:600;color:var(--label2);border-bottom:.5px solid var(--sep);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctxmenu button{display:block;width:100%;min-height:34px;padding:0 10px;border-radius:8px;background:none;color:var(--label);text-align:left;font-size:14px;font-weight:500}
+.ctxmenu button:hover,.ctxmenu button:focus-visible{background:var(--tint);color:var(--tint-ink);outline:none}.ctxmenu button.danger{color:var(--red-ink)}.ctxmenu button.danger:hover{background:var(--red);color:#fff}
+.ctxmenu hr{border:0;border-top:.5px solid var(--sep);margin:4px 2px}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -522,7 +528,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.4',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.5',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -908,7 +914,7 @@ function drawGantt(r){
       tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}${iss.length?' · to check: '+iss.map(esc).join('; '):''}`,
       ov=sug?'':overlapsOf(P,it).map(o=>`<span class="ovl" role="button" tabindex="-1" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();overlapFix(${t.id},${it.s.id},${o.x.s.id})" title="Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}: tap to fix" style="left:${((o.a-it.A)/(it.B-it.A)*100).toFixed(2)}%;width:${((o.b-o.a)/(it.B-it.A)*100).toFixed(2)}%"></span>`).join(''),
       live=!sug&&now>=it.A&&now<it.B;
-    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}${!sug&&SEL===it.s.id?' sel':''}" onfocus="selBar(${sug?0:it.s.id})" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}">${iss.length&&!iss.every(x=>x.startsWith('Overlaps'))?'<span class="bang" aria-hidden="true">!</span>':''}<span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
+    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}${!sug&&SEL===it.s.id?' sel':''}" onfocus="selBar(${sug?0:it.s.id})" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" oncontextmenu="barMenu(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}">${iss.length&&!iss.every(x=>x.startsWith('Overlaps'))?'<span class="bang" aria-hidden="true">!</span>':''}<span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hl" aria-hidden="true"></i><i class="hr" aria-hidden="true"></i>':''}</button>`};
   const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,P=planOf(r,t),B=handover(P.items,{s:{id:-1,user_id:uid},lap,A},A+PL.laps*lap*1000);
     const fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
     return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hl big" aria-hidden="true"></i><i class="hr big" aria-hidden="true"></i></div>`};
@@ -942,7 +948,7 @@ function drawGantt(r){
     <div class="gantt"><div class="grw ghdr"><div class="gname gnav"><button aria-label="Earlier" onclick="gPan(-1)" ${from<=w.r0?'disabled':''}>‹</button><button onclick="gNow()">Now</button><button aria-label="Later" onclick="gPan(1)" ${to>=w.r1?'disabled':''}>›</button></div><div class="gtrack axis">${ticks}</div></div>
       ${T.ts.map(group).join('')||'<div class="gempty">No teams yet. Press + New team.</div>'}${freeGroup}</div>
     <div class="legend"><span class="lg ok"></span>Stint<span class="lg p"></span>Pending<span class="lg ov"></span>Overlap<span class="lg gap"></span>No driver<span class="lg A"></span>Can drive${T.ts.some(t=>t.strategy)?'<span class="lg sg"></span>Suggested':''}</div>
-    <p class="mu">${phone?'Press + on your team to add a stint. Tap a stint for laps; press and hold it to move it.':'Add stint, then drag it into place and drag its right edge to set the laps. Click a stint for details; with it selected, ← → move it a minute and ↑ ↓ change laps.'}</p>`;
+    <p class="mu">${phone?'Press + on your team to add a stint. Tap a stint to select it, double-tap to edit it; press and hold to move it.':'Add stint, then drag it into place and drag its ends to set the laps. Click a stint to select it, double-click to edit, right-click for options. With it selected, ← → move it a minute and ↑ ↓ change laps.'}</p>`;
   if(PL)document.body.classList.add('placing');else document.body.classList.remove('placing');
 }
 // Joining the race (sign-up) is separate from joining a team.
@@ -1049,7 +1055,29 @@ function barDown(e){if(e.button>0)return;const el=e.currentTarget;selBar(+el.dat
     if(moved){busy--;setTimeout(()=>BARDRAG=false,50);if(commit&&(A!==it.A||laps!==it.laps))await commitStint(tid,sid,edge==='r'?{laps}:edge==='l'?{laps,start:A}:{start:A});else drawGantt(r)}};
   const upF=()=>cleanup(true),cancelF=()=>cleanup(false);
   el.addEventListener('pointermove',mv,{passive:false});el.addEventListener('pointerup',upF);el.addEventListener('pointercancel',cancelF)}
-function barClick(e,tid,sid){e.stopPropagation();if(BARDRAG)return;stintSheet(tid,sid)}
+// One click / tap selects; a second within 0.4 s (double-click, double-tap) opens the details; right-click shows options.
+let LASTTAP={sid:0,t:0};
+function barClick(e,tid,sid){e.stopPropagation();if(BARDRAG)return;const now=Date.now();
+  if(LASTTAP.sid===sid&&now-LASTTAP.t<400){LASTTAP={sid:0,t:0};stintSheet(tid,sid);return}
+  LASTTAP={sid,t:now};selBar(sid)}
+function barMenu(e,tid,sid){e.preventDefault();e.stopPropagation();selBar(sid);ctxClose();
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),P=planOf(r,t),it=P.items.find(x=>x.s.id===sid);if(!it)return;
+  const lead=canLead(t),edit=lead||it.s.user_id===me.id,fi=fairInfo(r,t,P),floor=fairFloor(r,t,it.s.user_id,sid),tz=myTz(),items=[];
+  const prev=P.items.filter(x=>x!==it&&x.B<=it.A+60000).sort((a,b)=>b.B-a.B)[0],next=P.items.filter(x=>x!==it&&x.A>=it.A+60000).sort((a,b)=>a.A-b.A)[0];
+  items.push([edit?'Edit stint…':'Details…',`stintSheet(${tid},${sid})`]);
+  if(edit){
+    if(prev&&prev.B!==it.A)items.push([`Start right after ${esc(first(name(prev.s.user_id)))} (${locH(new Date(prev.B),tz)})`,`commitStint(${tid},${sid},{start:${prev.B}})`]);
+    if(next&&next.A>it.B){const n=Math.max(floor,Math.round((next.A-it.A)/1000/it.lap));if(n!==it.laps)items.push([`Run until ${esc(first(name(next.s.user_id)))} takes over (${n} laps)`,`commitStint(${tid},${sid},{laps:${n}})`])}
+    if(fi&&fi.min&&floor!==it.laps)items.push([`Fair-share minimum (${floor} laps)`,`commitStint(${tid},${sid},{laps:${floor}})`]);
+    if(lead&&it.s.status==='pending')items.push(['Approve',`appr(${sid})`]);
+    items.push(['-']);items.push(['Remove stint',`delStint(${sid})`,'danger'])}
+  const m=document.createElement('div');m.className='ctxmenu';m.setAttribute('role','menu');
+  m.innerHTML=`<div class="ctxh">${esc(name(it.s.user_id))} · ${it.laps} laps · ${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}</div>`+items.map(([l,f,c])=>l==='-'?'<hr>':`<button type="button" role="menuitem" class="${c||''}" onclick="ctxClose();${f}">${l}</button>`).join('');
+  document.body.appendChild(m);const w=m.offsetWidth,h=m.offsetHeight;m.style.left=Math.min(e.clientX,innerWidth-w-8)+'px';m.style.top=Math.min(e.clientY,innerHeight-h-8)+'px';
+  m.querySelector('button')?.focus();setTimeout(()=>{addEventListener('pointerdown',ctxOut,true);addEventListener('keydown',ctxKey,true);addEventListener('scroll',ctxClose,{once:true,capture:true})},0)}
+function ctxOut(e){if(!e.target.closest('.ctxmenu'))ctxClose()}
+function ctxKey(e){if(e.key==='Escape'){e.preventDefault();ctxClose()}else if(['ArrowDown','ArrowUp'].includes(e.key)){const b=[...document.querySelectorAll('.ctxmenu button')],i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.key==='ArrowDown'?1:-1)+b.length)%b.length]?.focus()}}
+function ctxClose(){document.querySelectorAll('.ctxmenu').forEach(x=>x.remove());removeEventListener('pointerdown',ctxOut,true);removeEventListener('keydown',ctxKey,true)}
 // Keyboard (desktop): ← → move 1 minute, ↑ ↓ one lap; saved after a short pause.
 let KEYED=null;
 function barKey(e,tid,sid){const k=e.key;if(k==='Enter')return stintSheet(tid,sid);if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k))return;e.preventDefault();
