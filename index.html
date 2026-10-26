@@ -539,7 +539,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.5.7',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.8',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -816,8 +816,10 @@ async function loadRace(r){
   const ids=ts.map(t=>t.id);
   const [ms,ss]=ids.length?await Promise.all([q(sb.from('team_members').select('*').in('team_id',ids)),q(sb.from('stints').select('*').in('team_id',ids).order('start_utc'))]):[[],[]];
   const up=ids.length?await q(sb.from('race_updates').select('*').in('team_id',ids).order('at')):[];
+  // Fixed order: who joined the team first is listed first (name breaks ties).
+  ms.sort((a,b)=>String(a.joined_at||'').localeCompare(String(b.joined_at||''))||name(a.user_id).localeCompare(name(b.user_id)));
   T={ts,ms,ss,up};
-  try{ENT=(await q(sb.from('race_entries').select('user_id').eq('race_id',r.id))).map(x=>x.user_id)}catch{ENT=[...new Set([...ms.map(m=>m.user_id),...bs.map(b=>b.user_id)])]}
+  try{ENT=(await q(sb.from('race_entries').select('user_id,created_at').eq('race_id',r.id).order('created_at'))).map(x=>x.user_id)}catch{ENT=[...new Set([...ms.map(m=>m.user_id),...bs.map(b=>b.user_id)])]}
 }
 async function raceView(){
   const r=curRace();if(!r){view='cal';return calView()}
