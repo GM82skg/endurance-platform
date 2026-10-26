@@ -351,6 +351,48 @@ dialog.sheet,.menu button{width:100%}.menu{gap:10px}.menu>button{min-height:46px
 .topt input:checked+span{background:var(--tint);color:var(--tint-ink)}.dayopt input:focus-visible+span,.topt input:focus-visible+span{outline:3px solid color-mix(in srgb,var(--tint) 55%,transparent)}
 .trow{flex-direction:row;align-items:center;gap:10px}.trow input{flex:1}
 b.wk{color:var(--label)}
+/* ---------- v0.5: free placement, join race, online ---------- */
+.gtools .joined{background:color-mix(in srgb,var(--green) 18%,transparent);color:var(--green-ink)}
+.gteam{align-items:flex-start;padding:8px 6px 8px 4px}.gteam .gchev{margin-top:2px}
+.tmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.tl1{display:flex;align-items:baseline;gap:8px;min-width:0}.tl1 .ts{flex:1}
+.tl2{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;font-size:12px;font-weight:600}.tst.ok{color:var(--green-ink)}.tst.bad{color:var(--red-ink)}.tst.gap{color:var(--label2)}.dotsep{color:var(--label3)}
+.gcov2{position:relative;height:6px;border-radius:3px;overflow:hidden;margin-top:3px;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--label) 38%,transparent) 0 3px,color-mix(in srgb,var(--label) 8%,transparent) 3px 6px)}
+.gcov2 span{position:absolute;top:0;bottom:0}.gcov2 .ok{background:var(--green)}.gcov2 .p{background:var(--yellow)}.gcov2 .ov{background:var(--red)}
+.addst{min-height:36px;padding:0 14px;border-radius:10px;background:var(--tint);color:var(--tint-ink);font-weight:700;font-size:14px;flex:none;margin-top:2px}.addst .plus{font-size:18px;line-height:1}
+.nl{display:flex;align-items:baseline;gap:6px;min-width:0}.fair.plain{color:var(--label2)}
+.gbar.can{cursor:grab;touch-action:pan-y}.gbar.live{box-shadow:0 0 0 2px var(--label),0 1px 2px rgba(0,0,0,.25)}.grw.livedrv{background:color-mix(in srgb,var(--green) 8%,transparent)}
+.gbar .hr{width:14px}
+.ovl{position:absolute;top:0;bottom:0;background:var(--red);cursor:pointer;z-index:1}.gbar .blab,.gbar.placing>span:first-child{position:relative;z-index:2;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gbar.placing{background:var(--tint);color:var(--tint-ink);cursor:grab;touch-action:none;box-shadow:0 0 0 2px var(--label),0 8px 20px rgba(0,0,0,.4);z-index:5;overflow:visible}
+.gbar.placing>span:first-child{overflow:hidden;text-overflow:ellipsis}.gbar .hr.big{width:30px;right:-15px}.gbar .hr.big::after{right:7px;top:50%;bottom:auto;width:16px;height:16px;margin-top:-8px;border-radius:50%;background:var(--label);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+body.placing{overflow:hidden;overscroll-behavior:none}body.placing .gantt .gtrack{touch-action:none}
+.plbanner{position:sticky;top:56px;z-index:30;display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0 0 10px;border-radius:14px;background:var(--tint);color:var(--tint-ink);box-shadow:var(--shadow)}
+.plbanner button{min-height:40px;padding:0 12px;background:rgba(0,0,0,.15);color:var(--tint-ink);font-weight:700;flex:none}.plbanner button.pri{background:#000;color:var(--tint)}
+.plinfo{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px;line-height:1.3;text-align:center}.plinfo .ovt{color:#7a0000;font-weight:700}.plinfo .okt{font-weight:600}
+.legend .lg.ov{background:var(--red)}.legend .lg.gap{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--label) 38%,transparent) 0 3px,color-mix(in srgb,var(--label) 8%,transparent) 3px 6px)}
+.startn{width:80px;font-size:24px;font-weight:700}.ovlist{display:flex;flex-direction:column;gap:6px;margin-top:10px}.ovlist button{min-height:40px;background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red-ink);font-size:13px}
+.bitem.cur{background:color-mix(in srgb,var(--tint) 14%,transparent)}
+#toast .undo{margin-left:12px;min-height:30px;padding:0 12px;background:rgba(255,255,255,.18);color:inherit;font-weight:700}
+.nextst{align-items:center}.nextst button{flex:none;min-height:36px}.nextst .cd{font-size:15px}
+.odot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:1px}.odot.on{background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 25%,transparent)}
+#online{position:fixed;top:56px;right:0;bottom:0;width:240px;padding:18px 16px;background:var(--surface);border-left:.5px solid var(--sep);overflow:auto;z-index:15}
+#online .ohead{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--label2)}#online h3{margin:4px 0 10px;font-size:17px}#online .on{color:var(--green-ink)}
+#online .orow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:.5px solid var(--sep);font-size:14px;font-weight:600}
+body.has-online main{margin-right:240px}body.has-online footer{margin-right:240px}
+.grab{display:none}
+@container gt (max-width:620px){
+  .grw{display:block;border-bottom:.5px solid color-mix(in srgb,var(--sep) 60%,transparent)}
+  .grw .gname{padding:8px 12px 4px}.grw .gname .grip{display:none}
+  .gname .nm{flex-direction:row;align-items:baseline;gap:8px;width:100%}.gname .nm .nl{flex:1}.gname .nm .lapline{flex:none}
+  .grw>.gtrack{margin:0 12px 8px!important;min-height:40px;border-radius:6px;background:color-mix(in srgb,var(--label) 5%,transparent)}
+  .grw.ghdr .gname{padding:8px 12px 0}.grw.ghdr>.gtrack{margin:0 12px!important;background:none}
+  .gbar .bn{display:none}.addst{width:44px;height:44px;min-height:44px;padding:0;border-radius:22px}.addst .lbl{display:none}.addst .plus{font-size:26px;font-weight:500}
+  .fair .lw{display:none}}
+@media (max-width:720px){dialog::before{display:none}
+  .grab{display:block;width:100%;height:24px;margin:-8px 0 6px;cursor:grab;touch-action:none;position:relative}
+  .grab::after{content:"";position:absolute;left:50%;top:9px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--label3)}
+  dialog{transition:transform .2s,max-height .25s}dialog.full{max-height:100dvh;height:100dvh;border-radius:0}
+  .plbanner{top:52px}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -428,7 +470,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.12',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.5.1',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -603,6 +645,7 @@ function pendingView(){$('#app').innerHTML=`<div class="auth">${mark()}<h1>Waiti
 
 /* ---------- live updates ---------- */
 function startLive(){
+  startPresence();
   chan=sb.channel('ec-'+me.id).on('postgres_changes',{event:'*',schema:'public'},()=>{dirty=true;clearTimeout(rt);rt=setTimeout(refresh,700)})
    .subscribe(s=>{const el=$('#live');if(!el)return;const on=s==='SUBSCRIBED';el.classList.toggle('on',on);el.title=on?'Live: other drivers’ changes appear by themselves':'Not live: reload the page to see other drivers’ changes';el.lastChild.textContent=on?'Live':'Offline'});
 }
@@ -620,7 +663,7 @@ async function refresh(){
 /* ---------- navigation ---------- */
 let backTo='cal';
 function go(v,id){if(v==='race'&&view!=='race')backTo=view==='my'?'my':'cal';view=v;raceId=id??null;window.scrollTo(0,0);render()}
-async function render(){
+async function render(){setTimeout(showOnline,0);
   const key=view+'|'+raceId+'|'+sub,sx=key===lastKey?$$('.scroll').map(e=>e.scrollLeft):[];lastKey=key;
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
   $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
@@ -636,7 +679,7 @@ async function setTz(z){await q(sb.from('profiles').update({tz:z}).eq('id',me.id
 function keepTz(){store.set('tzkeep',DEV_TZ+'>'+prof.tz);tzBanner()}
 
 /* ---------- dialog helpers ---------- */
-function openDlg(html){const d=$('#dlg');d.innerHTML=html+'<div id="dmsg" role="alert"></div>';d.setAttribute('tabindex','-1');d.showModal();d.focus()}
+function openDlg(html){const d=$('#dlg');d.classList.remove('full');d.style.transform='';d.innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';d.setAttribute('tabindex','-1');d.showModal();d.focus();wireGrab()}
 function closeDlg(){$('#dlg').close()}
 $('#dlg').addEventListener('close',()=>{PLAN=null;if(dirty)refresh()});
 function cardKey(e){if(e.target===e.currentTarget&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.currentTarget.click()}}
@@ -668,7 +711,7 @@ async function myView(){
     return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
       <div class="chips">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="empty">No stints yet. Tap to set your availability and request a stint.</p>'}</div>`}).join('');
   $('#main').innerHTML=`<h1 class="lt">My races</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>${eventsHtml(tz)}<h3 style="margin:22px 0 10px">Your races</h3>
-    ${next&&nextR?`<div class="banner ok"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)}, ${rel(new Date(next.start_utc))}${next.status==='pending'?' (pending)':''}.</span></div>`:''}
+    ${next&&nextR?`<div class="banner ok nextst"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)} · ${next.laps||'?'} laps${next.status==='pending'?' (pending)':''}<br><b class="cd">${+new Date(next.start_utc)>now?'in '+countdown(+new Date(next.start_utc)-now):'driving now'}</b></span><button type="button" onclick="icsStint(${JSON.stringify(nextR.name+' – stint').replace(/"/g,'&quot;')},${+new Date(next.start_utc)},${+new Date(next.end_utc)})">Add to calendar</button></div>`:''}
     ${cards||'<div class="card"><p class="empty" style="margin:0">No upcoming races yet. They’ll appear here once an admin adds them to the calendar.</p></div>'}`;
 }
 
@@ -705,6 +748,7 @@ async function loadRace(r){
   const [ms,ss]=ids.length?await Promise.all([q(sb.from('team_members').select('*').in('team_id',ids)),q(sb.from('stints').select('*').in('team_id',ids).order('start_utc'))]):[[],[]];
   const up=ids.length?await q(sb.from('race_updates').select('*').in('team_id',ids).order('at')):[];
   T={ts,ms,ss,up};
+  try{ENT=(await q(sb.from('race_entries').select('user_id').eq('race_id',r.id))).map(x=>x.user_id)}catch{ENT=[...new Set([...ms.map(m=>m.user_id),...bs.map(b=>b.user_id)])]}
 }
 async function raceView(){
   const r=curRace();if(!r){view='cal';return calView()}
@@ -723,100 +767,128 @@ async function raceView(){
 }
 
 /* ---------- Teams and stints ---------- */
-/* ---------- Plan: stints in laps, timed by each driver's own average lap ----------
-   The plan is the team's running order. A stint's clock time = its laps × that driver's average
-   lap for this race, starting where the previous stint ended. Change a lap time and every later
-   bar slides. Fuel, energy, pit stops and tyres live only in the Suggestion (strategy). */
+/* ---------- Plan: stints are placed at a time and counted in laps ----------
+   A stint has a start (where it was placed) and a number of laps. Its end = start + laps × that
+   driver's lap time (their own, else the team's approximate lap). Gaps and overlaps are allowed
+   and shown: gaps hatched in the team line, overlaps red on the bars. */
+const refLap=t=>+(t&&t.ref_lap)||null;
 const lapOf=(t,uid,ms=T.ms)=>{const m=ms.find(x=>x.team_id===t.id&&x.user_id===uid);return m&&m.avg_lap?+m.avg_lap:null};
-const lapFallback=(t,ms=T.ms)=>{const v=ms.filter(m=>m.team_id===t.id&&m.avg_lap).map(m=>+m.avg_lap).sort((a,b)=>a-b);return v.length?v[Math.floor(v.length/2)]:null};
+const lapFallback=(t,ms=T.ms)=>{if(refLap(t))return refLap(t);const v=ms.filter(m=>m.team_id===t.id&&m.avg_lap).map(m=>+m.avg_lap).sort((a,b)=>a-b);return v.length?v[Math.floor(v.length/2)]:null};
 const lapUse=(t,uid,ms=T.ms)=>lapOf(t,uid,ms)||lapFallback(t,ms);
 const started=r=>Date.now()>=+new Date(r.start_utc);
-const ordered=(t,ss=T.ss)=>ss.filter(s=>s.team_id===t.id).sort((a,b)=>(a.seq??1e9)-(b.seq??1e9)||String(a.start_utc).localeCompare(String(b.start_utc))||a.id-b.id);
-function planOf(r,t,ss=T.ss,ms=T.ms){let c=+new Date(r.start_utc);
-  const items=ordered(t,ss).map(s=>{const lap=lapUse(t,s.user_id,ms),laps=s.laps||Math.max(1,Math.round((new Date(s.end_utc)-new Date(s.start_utc))/1000/(lap||120)));
-    const d=(lap||120)*laps*1000,it={s,A:c,B:c+d,lap,laps,est:!lapOf(t,s.user_id,ms)};c+=d;return it});
-  return {items,end:c,r1:+new Date(r.start_utc)+r.length_h*H}}
+function planOf(r,t,ss=T.ss,ms=T.ms){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H;
+  const items=ss.filter(s=>s.team_id===t.id).map(s=>{const lap=lapUse(t,s.user_id,ms)||120,laps=s.laps||Math.max(1,Math.round((new Date(s.end_utc)-new Date(s.start_utc))/1000/lap)),A=+new Date(s.start_utc);
+    return {s,A,B:A+laps*lap*1000,lap,laps,est:!lapOf(t,s.user_id,ms)&&!refLap(t)}}).sort((a,b)=>a.A-b.A||a.s.id-b.s.id);
+  return {items,end:items.reduce((m,x)=>Math.max(m,x.B),r0),r0,r1}}
+// Gaps (no driver) and overlaps (two drivers at once) over the race.
+function covOf(P){const pts=[];P.items.forEach(it=>{const a=Math.max(P.r0,it.A),b=Math.min(P.r1,it.B);if(b>a)pts.push([a,1],[b,-1])});pts.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
+  const gaps=[],over=[];let c=0,last=P.r0;for(const [t,d] of pts){if(t>last){if(c===0)gaps.push([last,t]);else if(c>1)over.push([last,t])}c+=d;last=Math.max(last,t)}if(last<P.r1)gaps.push([last,P.r1]);
+  return {gaps:gaps.filter(([a,b])=>b-a>=60000),over:over.filter(([a,b])=>b-a>=30000)}}
+const sumMs=a=>a.reduce((s,[x,y])=>s+(y-x),0);
+// Parts of a stint that overlap other drivers' stints in the same team.
+const overlapsOf=(P,it)=>P.items.filter(x=>x!==it&&x.s.user_id!==it.s.user_id&&x.A<it.B&&x.B>it.A).map(x=>({x,a:Math.max(x.A,it.A),b:Math.min(x.B,it.B)}));
 const stUnits=(t,s)=>`${s.laps||'?'} laps`;
-// Fair share: laps planned per driver vs the team's minimum (entered from LMU).
-const lapsBy=(P)=>{const o={};P.items.forEach(it=>o[it.s.user_id]=(o[it.s.user_id]||0)+it.laps);return o};
-// LMU Fair Share Rule (team events): every driver who drives must complete at least 50% ÷ number of drivers
-// of the team's laps (2 → 25%, 3 → 16.7%, 4 → 12.5%, 5 → 10%, 6 → 8.3%), rounded down: 2 drivers, 50 laps → 12 each.
+const lapsBy=P=>{const o={};P.items.forEach(it=>o[it.s.user_id]=(o[it.s.user_id]||0)+it.laps);return o};
+// LMU Fair Share Rule: with N drivers in the team (N ≥ 2) each must drive ≥ 50% ÷ N of the team's laps
+// (2 → 25%, 3 → 16.7%, 4 → 12.5%, 5 → 10%, 6 → 8.3%), rounded down. One driver: no rule.
+// Race laps are estimated from the team's approximate lap time.
 const fairPct=n=>n>=2?0.5/n:0;
-function fairMin(r,t,P){if(!r?.fair_share)return null;const by=lapsBy(P),drivers=Object.keys(by).filter(u=>by[u]>0),n=drivers.length,total=P.items.reduce((a,x)=>a+x.laps,0);
-  if(n<2)return {n,total,min:0,pct:0};return {n,total,pct:fairPct(n),min:Math.floor(total*fairPct(n))}}
-// What each driver needs, shown from the very first stint: until the plan reaches the finish it
-// estimates the race laps from the team's typical lap and counts every driver in the team.
-function fairInfo(r,t,P){if(!r?.fair_share)return null;const mem=T.ms.filter(m=>m.team_id===t.id),by=lapsBy(P),done=P.end>=P.r1-60000;
-  const drivers=done?Object.keys(by).filter(u=>by[u]>0).length:Math.max(mem.length,Object.keys(by).filter(u=>by[u]>0).length);
-  const total=done?P.items.reduce((a,x)=>a+x.laps,0):Math.round(r.length_h*3600/(lapFallback(t)||120));
-  return {n:drivers,total,est:!done,pct:fairPct(drivers),min:drivers>=2?Math.floor(total*fairPct(drivers)):0,by}}
-function fairShort(t,P,ms=T.ms){const f=fairMin(curRace(),t,P);if(!f||!f.min)return [];const by=lapsBy(P);return Object.keys(by).filter(u=>by[u]>0&&by[u]<f.min).map(uid=>({uid,laps:by[uid],min:f.min}))}
-const seqBetween=(a,b)=>a==null&&b==null?1:a==null?b-1:b==null?a+1:(a+b)/2;
-// Running-order position for a time: between the stints whose middles are before/after it.
-function seqAt(t,ms,skipId){const P=planOf(curRace(),t),its=P.items.filter(x=>x.s.id!==skipId);const i=its.filter(x=>(x.A+x.B)/2<ms).length;return seqBetween(its[i-1]?.s.seq??null,its[i]?.s.seq??null)}
-// Leaders keep the stored start/end times in step with the computed plan (used by other screens and checks).
-async function syncTimes(t){if(!canLead(t))return;const r=curRace(),P=planOf(r,t),ch=P.items.filter(it=>Math.abs(+new Date(it.s.start_utc)-it.A)>30000||Math.abs(+new Date(it.s.end_utc)-it.B)>30000||it.s.laps!==it.laps);
-  for(const it of ch)await sb.from('stints').update({start_utc:new Date(it.A).toISOString(),end_utc:new Date(it.B).toISOString(),laps:it.laps}).eq('id',it.s.id)}
+function fairInfo(r,t,P){if(!r||!r.fair_share)return null;const n=T.ms.filter(m=>m.team_id===t.id).length,lap=lapFallback(t)||120,total=Math.round(r.length_h*3600/lap);
+  return {n,total,est:true,pct:fairPct(n),min:n>=2?Math.floor(total*fairPct(n)):0,by:lapsBy(P)}}
+const fairMin=fairInfo;
+function fairShort(t,P){const f=fairInfo(curRace(),t,P);if(!f||!f.min)return [];return T.ms.filter(m=>m.team_id===t.id).map(m=>({uid:m.user_id,laps:f.by[m.user_id]||0,min:f.min})).filter(x=>x.laps<x.min)}
+// Fewest laps this stint may have so the driver's total still reaches the fair-share minimum.
+function fairFloor(r,t,uid,sid){const f=fairInfo(r,t,planOf(r,t));if(!f||!f.min)return 1;
+  const other=T.ss.filter(s=>s.team_id===t.id&&s.user_id===uid&&s.id!==sid).reduce((a,s)=>a+(s.laps||0),0);return Math.max(1,f.min-other)}
+// Leaders keep stored end times in step with lap-time changes (other screens read them).
+async function syncTimes(t){if(!canLead(t))return;const P=planOf(curRace(),t);
+  for(const it of P.items){if(Math.abs(+new Date(it.s.end_utc)-it.B)>30000||it.s.laps!==it.laps)await sb.from('stints').update({end_utc:new Date(it.B).toISOString(),laps:it.laps}).eq('id',it.s.id)}}
+// Undo for the last change (move, resize, add, remove).
+let UNDO=null;
+function undoToast(msg,fn){UNDO=fn;const t=$('#toast');if(!t)return;t.innerHTML=`<span>${esc(msg)}</span><button type="button" class="undo" onclick="doUndo()">Undo</button>`;t.className='ok';t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true;UNDO=null},7000)}
+async function doUndo(){const f=UNDO;UNDO=null;$('#toast').hidden=true;if(f){await f();await loadRace(curRace());render();note('Undone.',1)}}
 
-/* ---------- Race grid: one compact grid, a header row per team, one row per driver ----------
-   Bars show laps; tap one for the lap buttons, tap empty space in a row to add a stint.
-   On a computer the right edge of a bar can also be dragged. Availability is a faint shading,
-   edited in "My availability". The Suggestion (strategy) is a per-team toggle. */
-let BANDS=[],GZ={span:null,from:null,race:null},GOPEN={0:false},GOP=null,GTAB={};
-const HALF=1800000;
+/* ---------- Race grid: one compact grid, a header row per team, one lane per driver ----------
+   Drivers join the race first, then a team, then add stints with + (phone) / Add stint (desktop):
+   a block appears that they drag into place and resize by its end handle. Overlaps with other
+   drivers are red, gaps are hatched. Tap a stint for the lap buttons. */
+let BANDS=[],ENT=[],GZ={span:null,from:null,race:null},GOPEN={},GOP=null,GTAB={},PL=null;
+const HALF=1800000,MAG=5*60000;
 function avRange(r,uid,A,B){const bs=BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>({a:+new Date(b.start_utc),b:+new Date(b.end_utc),k:b.kind})).sort((x,y)=>x.a-y.a);
   let t=A,w='A';for(const b of bs){if(b.b<=t)continue;if(b.a>t+60000)return 'N';if(b.k==='M')w='M';t=Math.max(t,b.b);if(t>=B-60000)return w}return t>=B-60000?w:'N'}
-const defSpan=r=>{const phone=innerWidth<=720;return Math.min(r.length_h,phone?6:12)};
-function gWin(r){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H,span=Math.min(GZ.race===r.id&&GZ.span?GZ.span:defSpan(r),r.length_h)*H;
-  let from=GZ.race===r.id&&GZ.from!=null?GZ.from:r0;from=Math.max(r0,Math.min(from,r1-span));GZ={...GZ,race:r.id,from,span:span/H};return {r0,r1,from,to:from+span,span}}
+const defSpan=r=>Math.min(r.length_h,innerWidth<=720?6:12);
+function gWin(r){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H,span=Math.min(GZ.race===r.id&&GZ.span?GZ.span:defSpan(r),r.length_h)*H,now=Date.now();
+  let from=GZ.race===r.id&&GZ.from!=null?GZ.from:(now>r0&&now<r1?now-span/3:r0);from=Math.max(r0,Math.min(from,r1-span));GZ={...GZ,race:r.id,from,span:span/H};return {r0,r1,from,to:from+span,span}}
 function gPan(dir){const r=curRace(),w=gWin(r);GZ.from=w.from+dir*w.span/2;drawGantt(r)}
 function gNow(){const r=curRace(),w=gWin(r),n=Date.now();GZ.from=n>w.r0&&n<w.r1?n-w.span/3:w.r0;drawGantt(r)}
 function gZoom(h){const r=curRace(),w=gWin(r),mid=w.from+w.span/2;GZ.span=Math.min(h,r.length_h);GZ.from=mid-GZ.span*H/2;closeDlgIf();drawGantt(r)}
 function gToggle(tid){GOPEN[tid]=GOPEN[tid]===false;drawGantt(curRace())}
 function gTab(tid,v){GTAB[tid]=v;closeDlgIf();drawGantt(curRace())}
 const first=n=>String(n||'').trim().split(/\s+/)[0];
-function teamStatus(r,t,P,tz){const mem=T.ms.filter(m=>m.team_id===t.id),need=mem.filter(m=>!m.avg_lap).length;
-  const fi=fairInfo(r,t,P),fsTxt=fi&&fi.min?` · fair share ≈${fi.min} laps each`:'';
-  if(!mem.length)return ['No drivers yet','bad'];if(!P.items.length)return [need?`${need} lap time${need>1?'s':''} missing`:'No stints yet'+fsTxt,'bad'];
-  if(P.end<P.r1-60000)return [`${dur((P.r1-P.end)/1000)} uncovered${fsTxt}`,'bad'];const fs=fairShort(t,P);if(fs.length)return [`Fair share: ${fs.length} driver${fs.length>1?'s':''} short`,'bad'];
-  return [need?`Covered · ${need} lap time${need>1?'s':''} missing`:fairMin(r,t,P)?.min?'Covered · fair share OK':'Covered','ok']}
+const joined=uid=>ENT.includes(uid);
+function teamStatus(r,t,P,tz){const mem=T.ms.filter(m=>m.team_id===t.id);if(!mem.length)return [['No drivers yet','bad']];
+  const out=[],cv=covOf(P),fi=fairInfo(r,t,P),now=Date.now();
+  if(now>=P.r0&&now<P.r1){const nx=P.items.find(it=>it.A>now);if(nx)out.push([`Next: ${first(name(nx.s.user_id))} in ${dur((nx.A-now)/1000)}`,'ok'])}
+  const g=sumMs(cv.gaps),o=sumMs(cv.over);
+  if(!P.items.length)out.push(['No stints yet','bad']);else if(g)out.push([`${dur(g/1000)} no driver`,'gap']);
+  if(o)out.push([`${dur(o/1000)} overlap`,'bad']);
+  if(fi&&fi.min){const sh=fairShort(t,P).length;out.push([sh?`Fair share: ${sh} short`:'Fair share OK',sh?'bad':'ok'])}
+  if(P.items.length&&!g&&!o)out.unshift(['Covered','ok']);return out}
 function drawGantt(r){
   const tz=myTz(),w=gWin(r),{from,to,span}=w,pc=ms=>((Math.max(from,Math.min(to,ms))-from)/span*100).toFixed(3)+'%',wd=(a,b)=>((Math.min(to,b)-Math.max(from,a))/span*100).toFixed(3)+'%',vis=(a,b)=>b>from&&a<to;
-  const L=r.length_h,mk=clockMarks(new Date(w.r0),L,tz);
-  const vw=Math.min(innerWidth,1180),trackW=vw<=720?vw-32-92:vw-48-200,step=Math.max(1,Math.ceil((span/H)*48/Math.max(160,trackW)));
+  const L=r.length_h,mk=clockMarks(new Date(w.r0),L,tz),phone=innerWidth<=720;
+  const vw=Math.min(innerWidth,1180),trackW=phone?vw-56:vw-48-250,step=Math.max(1,Math.ceil((span/H)*48/Math.max(160,trackW)));
   let ticks='',lines='',lastDay='';for(let i=0;i<=L;i++){const ms=w.r0+i*H;if(ms<from||ms>to)continue;const x=new Date(ms),show=i%step===0,day=locDay(x,tz),pos=(ms-from)/span,nd=day!==lastDay;
     lines+=`<span class="gl${nd&&i?' day':''}" style="left:${pc(ms)}"></span>`;
     ticks+=`<span class="gtick${pos>0.92?' end':''}${pos<0.04?' start':''}${mk[i]?' dst':''}" style="left:${pc(ms)}">${show||nd?`<b>${nd?day+' '+x.toLocaleDateString('en-GB',{timeZone:tz,day:'numeric'}):''}</b><span class="t">${show?locH(x,tz):''}</span>`:''}${mk[i]?`<em>clocks ${mk[i]<0?'−':'+'}${Math.abs(mk[i])/60}h</em>`:''}</span>`;if(nd)lastDay=day}
   const now=Date.now(),nowLine=now>from&&now<to?`<span class="gnow" style="left:${pc(now)}"></span>`:'';
   const inTeam=new Set(T.ms.map(m=>m.user_id));
   const shade=uid=>BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>{const a=+new Date(b.start_utc),e=+new Date(b.end_utc);return vis(a,e)?`<span class="gshade ${b.kind}" style="left:${pc(a)};width:${wd(a,e)}"></span>`:''}).join('');
-  const row=(t,uid,bars)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),pl=t?lapsBy(planOf(r,t))[uid]||0:0,fm=t?(fairInfo(r,t,planOf(r,t))?.min||0):0;
-    return `<div class="grw${mine?' me':''}"><div class="gname">${t?`<span class="grip" data-uid="${uid}" data-tid="${t.id}" onpointerdown="dragStart(event)" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm"><button class="${mine?'am':''}" onclick="${t?`memberDlg(${t.id},'${uid}')`:`freeDlg('${uid}')`}">${esc(name(uid))}</button>${t?`<span class="subl"><button class="lapline${lap?'':' need'}" onclick="${can&&!started(r)?`lapDlg(${t.id},'${uid}')`:''}" ${can&&!started(r)?'':'tabindex="-1"'}>${lap?fmtLap(lap):'Lap time needed'}</button>${fm?`<span class="fair${pl<fm?' short':''}" title="Fair share: ${pl} laps planned, minimum ${fm}">${pl}/${fm}<span class="lw"> laps</span></span>`:''}</span>`:''}</span></div>
-      <div class="gtrack${can?' edit':''}" data-tid="${t?t.id:0}" data-uid="${uid}" ${can?`onclick="trackTap(event,${t.id},'${uid}')"`:''}>${lines}${shade(uid)}${bars||''}${nowLine}</div></div>`};
-  const barHtml=(t,it,sug)=>{if(!vis(it.A,it.B))return '';const uid=it.uid||it.s.user_id,can=!sug&&(canLead(t)||(uid===me.id&&it.s.status==='pending')),txt=`${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}`,
-      tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}`;
-    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" onclick="event.stopPropagation();stintSheet(${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span>${can?'<i class="hr" onpointerdown="resizeStart(event)"></i>':''}</button>`};
-  const group=t=>{const lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),open=GOPEN[t.id]!==false,tab=t.strategy&&GTAB[t.id]==='sug'?'sug':'plan',P=planOf(r,t),[st,stc]=teamStatus(r,t,P,tz);
+  const barHtml=(t,P,it,sug)=>{if(!vis(it.A,it.B))return '';const uid=it.uid||it.s.user_id,can=!sug&&(canLead(t)||(uid===me.id&&it.s.status==='pending')),txt=`${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}`,
+      tip=`${esc(name(uid))} · ${it.laps} laps · ${txt} (${dur((it.B-it.A)/1000)})${it.est?' · lap time estimated':''}`,
+      ov=sug?'':overlapsOf(P,it).map(o=>`<span class="ovl" role="button" tabindex="-1" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();overlapFix(${t.id},${it.s.id},${o.x.s.id})" title="Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}: tap to fix" style="left:${((o.a-it.A)/(it.B-it.A)*100).toFixed(2)}%;width:${((o.b-o.a)/(it.B-it.A)*100).toFixed(2)}%"></span>`).join(''),
+      live=!sug&&now>=it.A&&now<it.B;
+    return `<button class="gbar ${sug?'sug':it.s.status}${it.est?' est':''}${can?' can':''}${live?' live':''}" ${sug?'tabindex="-1"':`data-sid="${it.s.id}" data-tid="${t.id}" onpointerdown="barDown(event)" onclick="barClick(event,${t.id},${it.s.id})" onkeydown="barKey(event,${t.id},${it.s.id})"`} style="left:${pc(it.A)};width:${wd(it.A,it.B)}" title="${tip}" aria-label="${tip}"><span class="blab"><span class="bn">${esc(first(name(uid)))} · </span>${it.laps} laps<span class="b2"> · ${txt}</span></span>${ov}${can?'<i class="hr" aria-hidden="true"></i>':''}</button>`};
+  const plHtml=(t,uid)=>{if(!PL||PL.tid!==t.id||PL.uid!==uid)return '';const lap=lapUse(t,uid)||120,A=PL.A,B=A+PL.laps*lap*1000;
+    const P=planOf(r,t),fake={s:{id:-1,user_id:uid},A,B},ov=overlapsOf(P,fake).map(o=>`<span class="ovl" style="left:${((o.a-A)/(B-A)*100).toFixed(2)}%;width:${((o.b-o.a)/(B-A)*100).toFixed(2)}%"></span>`).join('');
+    return `<div class="gbar placing" id="plbar" onpointerdown="plDown(event)" style="left:${pc(A)};width:${wd(A,B)}"><span>${PL.laps} laps · ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}</span>${ov}<i class="hr big" aria-hidden="true"></i></div>`};
+  const row=(t,uid,bars,P)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),fi=t?fairInfo(r,t,P):null,pl=t?lapsBy(P)[uid]||0:0;
+    const curLive=t&&P.items.some(it=>it.s.user_id===uid&&now>=it.A&&now<it.B);
+    const chip=t?(fi&&fi.min?`<span class="fair${pl<fi.min?' short':''}" title="Fair share: ${pl} laps planned, minimum ${fi.min}">[${pl}/~${fi.min} laps]</span>`:`<span class="fair plain">[${pl} laps]</span>`):'';
+    const lapTxt=t?(lap?fmtLap(lap):refLap(t)?`${fmtLap(refLap(t))} team`:'Lap time needed'):'';
+    return `<div class="grw${mine?' me':''}${curLive?' livedrv':''}"><div class="gname">${t?`<span class="grip" data-uid="${uid}" data-tid="${t.id}" onpointerdown="dragStart(event)" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm"><span class="nl"><button class="${mine?'am':''}" onclick="${t?`memberDlg(${t.id},'${uid}')`:`freeDlg('${uid}')`}">${esc(name(uid))}</button>${chip}</span>${t?`<button class="lapline${lap||refLap(t)?'':' need'}" onclick="${can&&!started(r)?`lapDlg(${t.id},'${uid}')`:''}" ${can&&!started(r)?'':'tabindex="-1"'}>${lapTxt}</button>`:''}</span></div>
+      <div class="gtrack${can?' edit':''}" data-tid="${t?t.id:0}" data-uid="${uid}" ${can&&!PL?`onclick="trackTap(event,${t.id},'${uid}')"`:''}>${lines}${shade(uid)}${bars||''}${t?plHtml(t,uid):''}${nowLine}</div></div>`};
+  const group=t=>{const lead=canLead(t),mem=T.ms.filter(m=>m.team_id===t.id),open=GOPEN[t.id]!==false,tab=t.strategy&&GTAB[t.id]==='sug'?'sug':'plan',P=planOf(r,t),st=teamStatus(r,t,P,tz),isMem=mem.some(m=>m.user_id===me.id);
     const body={};let extra='';
-    if(tab==='plan')P.items.forEach(it=>{body[it.s.user_id]=(body[it.s.user_id]||'')+barHtml(t,it,false)});
-    else{const S=suggest(r,t);if(S.err)extra=`<div class="banner warn" style="margin:8px 12px"><span>${esc(S.err)}</span></div>`;else{const pits=S.stops.filter(x=>vis(x.a,x.a)).map(x=>`<span class="gpit2${x.tyres?' ty':''}" style="left:${pc(x.a)}" title="Pit ${locH(new Date(x.a),tz)} · ${x.tyres?'fuel + tyres':'fuel only'}"></span>`).join('');mem.forEach(m=>body[m.user_id]=pits);S.items.forEach(it=>{body[it.uid]=(body[it.uid]||pits)+barHtml(t,it,true)});extra=sugPanel(r,t,S,lead,tz)}}
+    if(tab==='plan')P.items.forEach(it=>{body[it.s.user_id]=(body[it.s.user_id]||'')+barHtml(t,P,it,false)});
+    else{const S=suggest(r,t);if(S.err)extra=`<div class="banner warn" style="margin:8px 12px"><span>${esc(S.err)}</span></div>`;else{const pits=S.stops.filter(x=>vis(x.a,x.a)).map(x=>`<span class="gpit2${x.tyres?' ty':''}" style="left:${pc(x.a)}"></span>`).join('');mem.forEach(m=>body[m.user_id]=pits);S.items.forEach(it=>{body[it.uid]=(body[it.uid]||pits)+barHtml(t,P,it,true)});extra=sugPanel(r,t,S,lead,tz)}}
+    const cv=covOf(P),covHtml=P.items.filter(it=>vis(it.A,it.B)).map(it=>`<span class="${it.s.status==='pending'?'p':'ok'}" style="left:${pc(it.A)};width:${wd(it.A,it.B)}"></span>`).join('')+cv.over.filter(([a,b])=>vis(a,b)).map(([a,b])=>`<span class="ov" style="left:${pc(a)};width:${wd(a,b)}"></span>`).join('');
+    const canAdd=(isMem||lead)&&tab==='plan';
     return `<section class="ggroup" data-tid="${t.id}"><div class="gteam"><button class="gchev" onclick="gToggle(${t.id})" aria-expanded="${open}" aria-label="${open?'Fold':'Open'} ${esc(t.name)}"><span class="${open?'open':''}">›</span></button>
-      <span class="tn">${esc(t.name)}</span><span class="ts">${esc(t.class)} · ${esc(teamCar(t))}${tab==='sug'?' · <b class="am">Suggestion</b>':''}</span><span class="tstat ${stc}">${st}</span>
+      <div class="tmain"><div class="tl1"><span class="tn">${esc(t.name)}</span><span class="ts">${esc(t.class)} · ${refLap(t)?'≈'+fmtLap(refLap(t))+' · ':''}${mem.length} driver${mem.length===1?'':'s'}${tab==='sug'?' · <b class="am">Suggestion</b>':''}</span></div>
+        <div class="tl2">${st.map(([x,c])=>`<span class="tst ${c}">${x}</span>`).join('<span class="dotsep">·</span>')}</div>
+        <div class="gcov2" aria-hidden="true">${covHtml}</div></div>
+      ${canAdd?`<button class="addst" onclick="addStint(${t.id})" aria-label="Add a stint to ${esc(t.name)}"><span class="plus">+</span><span class="lbl"> Add stint</span></button>`:''}
       <button class="gdots" onclick="teamMenu(${t.id})" aria-label="${esc(t.name)} options">⋯</button></div>
-      ${open?(mem.length?mem.map(m=>row(t,m.user_id,body[m.user_id])).join(''):`<div class="gempty">No drivers yet. ${lead?'Add one from the ⋯ menu.':'Join from the ⋯ menu.'}</div>`)+extra:''}</section>`};
-  const freeRows=profiles.filter(p=>!inTeam.has(p.id)),openFree=GOPEN[0]!==false;
-  const freeGroup=`<section class="ggroup" data-tid="0"><div class="gteam"><button class="gchev" onclick="gToggle(0)" aria-expanded="${openFree}" aria-label="${openFree?'Fold':'Open'} drivers not in a team"><span class="${openFree?'open':''}">›</span></button><span class="tn">Not in a team</span><span class="ts">${freeRows.length} driver${freeRows.length===1?'':'s'}</span></div>
-    ${openFree?freeRows.map(p=>row(null,p.id,'')).join(''):''}</section>`;
-  $('#sub').innerHTML=`<div class="gtools"><button onclick="availSheet()">My availability</button><button class="pri" onclick="teamDlg()">+ New team</button></div>
-    <div class="gantt" onpointerdown="gDown(event)"><div class="grw ghdr"><div class="gname gnav"><button aria-label="Earlier" onclick="gPan(-1)" ${from<=w.r0?'disabled':''}>‹</button><button onclick="gNow()">Now</button><button aria-label="Later" onclick="gPan(1)" ${to>=w.r1?'disabled':''}>›</button></div><div class="gtrack axis">${ticks}</div></div>
+      ${open?(mem.length?mem.map(m=>row(t,m.user_id,body[m.user_id],P)).join(''):`<div class="gempty">No drivers yet. ${lead?'Add one from the ⋯ menu.':'Join from the ⋯ menu.'}</div>`)+extra:''}</section>`};
+  const free=ENT.filter(u=>!inTeam.has(u)&&profiles.some(p=>p.id===u)),openFree=GOPEN[0]!==false;
+  const freeGroup=free.length?`<section class="ggroup" data-tid="0"><div class="gteam"><button class="gchev" onclick="gToggle(0)" aria-expanded="${openFree}" aria-label="${openFree?'Fold':'Open'} joined drivers without a team"><span class="${openFree?'open':''}">›</span></button><div class="tmain"><div class="tl1"><span class="tn">Joined, no team yet</span><span class="ts">${free.length} driver${free.length===1?'':'s'}</span></div></div></div>
+    ${openFree?free.map(u=>row(null,u,'',null)).join(''):''}</section>`:'';
+  const j=joined(me.id);
+  $('#sub').innerHTML=`<div class="gtools">${j?`<button class="joined" onclick="leaveRace()" title="Leave this race">✓ Joined</button>`:`<button class="pri" onclick="joinRace()">Join this race</button>`}<button onclick="availSheet()">My availability</button><button onclick="teamDlg()">+ New team</button></div>
+    ${PL?plBanner(r):''}
+    <div class="gantt"><div class="grw ghdr"><div class="gname gnav"><button aria-label="Earlier" onclick="gPan(-1)" ${from<=w.r0?'disabled':''}>‹</button><button onclick="gNow()">Now</button><button aria-label="Later" onclick="gPan(1)" ${to>=w.r1?'disabled':''}>›</button></div><div class="gtrack axis">${ticks}</div></div>
       ${T.ts.map(group).join('')||'<div class="gempty">No teams yet. Press + New team.</div>'}${freeGroup}</div>
-    <div class="legend"><span class="lg A"></span>Can drive<span class="lg M"></span>Maybe<span class="lg ok"></span>Stint<span class="lg p"></span>Pending${T.ts.some(t=>t.strategy)?'<span class="lg sg"></span>Suggested':''}</div>
-    <p class="mu">Tap a stint to change its laps. Tap empty space in a row to add one.${innerWidth>720?' On a computer you can also drag a stint’s right edge.':''}</p>`;
+    <div class="legend"><span class="lg ok"></span>Stint<span class="lg p"></span>Pending<span class="lg ov"></span>Overlap<span class="lg gap"></span>No driver<span class="lg A"></span>Can drive${T.ts.some(t=>t.strategy)?'<span class="lg sg"></span>Suggested':''}</div>
+    <p class="mu">${phone?'Press + on your team to add a stint. Tap a stint for laps; press and hold it to move it.':'Add stint, then drag it into place and drag its right edge to set the laps. Click a stint for details; with it selected, ← → move it a minute and ↑ ↓ change laps.'}</p>`;
+  if(PL)document.body.classList.add('placing');else document.body.classList.remove('placing');
 }
-// Tap on empty track: add a stint for that driver, starting where the plan has a free slot near that time.
-function trackTap(e,tid,uid){if(e.target.closest('.gbar'))return;const tr=e.currentTarget,r=curRace(),w=gWin(r),rc=tr.getBoundingClientRect(),ms=w.from+(e.clientX-rc.left)/rc.width*w.span;stintSheet(tid,0,uid,ms)}
+// Joining the race (sign-up) is separate from joining a team.
+async function joinRace(){await q(sb.from('race_entries').insert({race_id:raceId}));await loadRace(curRace());render();note('You joined this race. Now pick a team (its ⋯ menu) or create one.',1)}
+async function leaveRace(){const mine=T.ss.filter(s=>s.user_id===me.id).length;if(!confirm(`Leave this race?${T.ms.some(m=>m.user_id===me.id)?' You’ll be removed from your team'+(mine?` and your ${mine} stint${mine>1?'s':''} deleted`:'')+'.':''}`))return;
+  await q(sb.from('race_entries').delete().eq('race_id',raceId).eq('user_id',me.id));await loadRace(curRace());render();note('You left this race.',1)}
 function freeDlg(uid){const ts=T.ts.filter(t=>canMove(uid,0,t.id));
-  openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>${esc(name(uid))}</h3><p class="mu" style="margin:0">Not in a team for this race.</p>
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>${esc(name(uid))}</h3><p class="mu" style="margin:0">Joined this race, not in a team yet.</p>
     ${ts.map(t=>`<button type="button" onclick="closeDlg();moveMember('${uid}',0,${t.id})">Add to ${esc(t.name)}</button>`).join('')||'<p class="mu">No team you can add them to.</p>'}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 function raceMenu(){const r=curRace(),L=r.length_h,sp=gWin(r).span/H;
@@ -826,35 +898,109 @@ function raceMenu(){const r=curRace(),L=r.length_h,sp=gWin(r).span/H;
     ${isAdm()?`<button type="button" onclick="closeDlg();raceDlg(${r.id})">Edit race</button>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 function teamMenu(tid){const t=T.ts.find(x=>x.id===tid),lead=canLead(t),mem=T.ms.filter(m=>m.team_id===tid),isMem=mem.some(m=>m.user_id===me.id),other=T.ms.find(m=>m.user_id===me.id&&m.team_id!==tid),inTeam=new Set(T.ms.map(m=>m.user_id)),free=profiles.filter(p=>!inTeam.has(p.id));
-  const tab=GTAB[tid]==='sug'?'sug':'plan';
-  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))} · leader ${t.leader_id?esc(name(t.leader_id)):'none'}</p>
+  const tab=GTAB[tid]==='sug'?'sug':'plan',pend=T.ss.filter(s=>s.team_id===tid&&s.status==='pending').length;
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))} · leader ${t.leader_id?esc(name(t.leader_id)):'none'}${refLap(t)?` · ≈${fmtLap(refLap(t))} lap`:''}</p>
     ${t.strategy?`<div class="seg" style="display:flex"><button type="button" class="${tab==='plan'?'on':''}" onclick="gTab(${tid},'plan')">Plan</button><button type="button" class="${tab==='sug'?'on':''}" onclick="gTab(${tid},'sug')">Suggestion</button></div>`:''}
-    ${curRace().fair_share?`<button type="button" onclick="fairDlg(${tid})">Fair share – minimum laps</button>`:''}
     ${!isMem?(other?`<button type="button" class="pri" onclick="closeDlg();moveMember('${me.id}',${other.team_id},${tid})">Move me to this team</button>`:`<button type="button" class="pri" onclick="closeDlg();joinTeam(${tid})">Join this team</button>`):''}
-    ${lead?`<button type="button" onclick="closeDlg();planDlg(${tid})">Plan stints</button>`:''}
+    ${curRace().fair_share?`<button type="button" onclick="fairDlg(${tid})">Fair share – minimum laps</button>`:''}
+    <button type="button" onclick="closeDlg();copyLineup(${tid})">Copy lineup for Discord</button>
+    ${lead&&pend?`<button type="button" onclick="closeDlg();approveAll(${tid})">Approve all pending (${pend})</button>`:''}
+    ${lead?`<button type="button" onclick="closeDlg();planDlg(${tid})">Plan stints (fill the gaps)</button>`:''}
     ${t.strategy&&(isMem||lead)?`<button type="button" onclick="closeDlg();updDlg(${tid})">Race update</button>`:''}
     ${lead?`<button type="button" onclick="closeDlg();stratDlg(${tid})">${t.strategy?'Strategy figures':'Add strategy'}</button><button type="button" onclick="closeDlg();teamDlg(${tid})">Edit team</button>`:''}
-    ${lead&&free.length?`<div class="add-row" style="grid-template-columns:1fr 110px;margin:0"><label>Add driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name)).join('')}</select></label><label>Average lap${lapInput(`id="al${tid}"`,'')}</label><button type="button" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
+    ${lead&&free.length?`<div class="add-row" style="grid-template-columns:1fr 110px;margin:0"><label>Add driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name+(joined(p.id)?'':' (joins the race)'))).join('')}</select></label><label>Own lap (optional)${lapInput(`id="al${tid}"`,'')}</label><button type="button" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
-function fairDlg(tid){const t=T.ts.find(x=>x.id===tid),r=curRace(),P=planOf(r,t),by=lapsBy(P),f=fairMin(r,t,P);
+function fairDlg(tid){const t=T.ts.find(x=>x.id===tid),r=curRace(),P=planOf(r,t),f=fairInfo(r,t,P),mem=T.ms.filter(m=>m.team_id===tid);
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Fair share – minimum laps</h3>
-    <p class="mu" style="margin:0">LMU’s Fair Share Rule: every driver who drives must complete at least <b>50% ÷ the number of drivers</b> of the team’s laps, rounded down. If anyone falls short, the whole lineup gains no DR/SR.</p>
-    <div class="blist">${[2,3,4,5,6].map(n=>`<div class="bitem"><span class="grow">${n} drivers</span><b class="num">${(fairPct(n)*100).toFixed(1)}% each</b></div>`).join('')}</div>
-    ${f&&f.n>=2?`<p style="margin:0"><b>This plan:</b> ${f.total} laps, ${f.n} drivers → at least <b>${f.min} laps</b> each (${(f.pct*100).toFixed(1)}%).</p>
-    <div class="blist">${Object.keys(by).filter(u=>by[u]>0).map(u=>`<div class="bitem"><span class="grow">${esc(name(u))}</span><span class="num fair${by[u]<f.min?' short':''}">${by[u]}/${f.min} laps</span></div>`).join('')}</div>`:'<p class="mu" style="margin:0">It applies once two or more drivers have stints.</p>'}
-    <p class="mu" style="margin:0">The minimum updates as the plan changes, the same way LMU updates it live from the laps driven.</p>
+    <p class="mu" style="margin:0">LMU’s Fair Share Rule: with 2 or more drivers, each must complete at least <b>50% ÷ the number of drivers</b> of the team’s laps, rounded down. A driver can’t plan fewer laps than that in total. If anyone falls short, the whole lineup gains no DR/SR.</p>
+    <div class="blist">${[2,3,4,5,6].map(n=>`<div class="bitem${f&&f.n===n?' cur':''}"><span class="grow">${n} drivers</span><b class="num">${(fairPct(n)*100).toFixed(1)}% each</b></div>`).join('')}</div>
+    ${f&&f.min?`<p style="margin:0"><b>${esc(t.name)}:</b> ${f.n} drivers, ≈ ${f.total} race laps (${r.length_h}h at ≈${fmtLap(lapFallback(t)||120)}) → at least <b>${f.min} laps</b> each.</p>
+    <div class="blist">${mem.map(m=>{const n=f.by[m.user_id]||0;return `<div class="bitem"><span class="grow">${esc(name(m.user_id))}</span><span class="num fair${n<f.min?' short':''}">${n}/~${f.min} laps</span></div>`}).join('')}</div>`:`<p class="mu" style="margin:0">${f&&f.n===1?'Only one driver in the team, so fair share doesn’t apply.':'Add drivers to the team to see the minimum.'}</p>`}
     <div class="row"><button class="pri">OK</button></div></form>`)}
-// Mouse/pen only: drag a bar's right edge to change laps (touch uses the lap buttons).
-function gDown(){}
-function resizeStart(e){if(e.pointerType==='touch'||e.button>0)return;e.preventDefault();e.stopPropagation();
-  const bar=e.target.closest('.gbar'),track=bar.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),t=T.ts.find(x=>x.id===+track.dataset.tid),s=T.ss.find(x=>x.id===+bar.dataset.sid),it=planOf(r,t).items.find(x=>x.s.id===s.id),lap=it.lap||120;
-  const tip=document.createElement('div');tip.className='gtip';track.appendChild(tip);busy++;let laps=it.laps;bar.classList.add('lifted');
-  const mv=ev=>{const ms=w.from+(ev.clientX-rc.left)/rc.width*w.span;laps=Math.max(1,Math.round((ms-it.A)/1000/lap));const B=it.A+laps*lap*1000;
-    bar.style.width=((Math.min(w.to,B)-Math.max(w.from,it.A))/w.span*100).toFixed(3)+'%';tip.style.left=bar.style.left;tip.textContent=`${laps} laps · ends ${locH(new Date(B),myTz())} · later stints slide`};
-  const up=async()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);tip.remove();busy--;bar.classList.remove('lifted');if(laps!==it.laps)await commitStint(t.id,s.id,{laps});else drawGantt(r)};
-  addEventListener('pointermove',mv);addEventListener('pointerup',up);mv(e)}
-// Bar clicks shouldn't fire after a resize drag.
-document.addEventListener('click',e=>{if(e.target.classList?.contains('hr'))e.stopPropagation()},true);
+async function approveAll(tid){await q(sb.from('stints').update({status:'approved'}).eq('team_id',tid).eq('status','pending'));await loadRace(curRace());render();note('All pending stints approved.',1)}
+function copyLineup(tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),P=planOf(r,t),cv=covOf(P),f=fairInfo(r,t,P),d=new Date(r.start_utc);
+  const lines=[`**${r.name}** · ${locFull(d,tz)} → ${locFull(new Date(+d+r.length_h*H),tz)} (${tz})`,`**${t.name}** · ${t.class} · ${teamCar(t)}`,
+    ...P.items.map(it=>`• ${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}  ${name(it.s.user_id)} · ${it.laps} laps${it.s.status==='pending'?' (pending)':''}`),
+    ...(cv.gaps.length?[`No driver: ${cv.gaps.map(([a,b])=>`${locH(new Date(a),tz)}–${locH(new Date(b),tz)}`).join(', ')}`]:[]),
+    ...(f&&f.min?[`Fair share: ${f.min} laps each (${f.n} drivers)`]:[])].join('\n');
+  const done=()=>note('Lineup copied. Paste it in Discord.',1);
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(lines).then(done,()=>showCopy(lines));else showCopy(lines)}
+function showCopy(txt){openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Lineup</h3><p class="mu" style="margin:0">Select and copy it, then paste it in Discord.</p><textarea rows="10" readonly onfocus="this.select()">${esc(txt)}</textarea><div class="row"><button class="pri">Done</button></div></form>`)}
+
+/* ---------- Adding a stint: placing mode ---------- */
+function addStint(tid,uid,at){const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=canLead(t),isMem=T.ms.some(m=>m.team_id===tid&&m.user_id===me.id);
+  if(!uid){if(isMem)uid=me.id;else if(lead){const mem=T.ms.filter(m=>m.team_id===tid);if(!mem.length)return note('Add a driver to the team first.');
+      if(mem.length===1)uid=mem[0].user_id;else return openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>Add a stint for…</h3>${mem.map(m=>`<button type="button" onclick="closeDlg();addStint(${tid},'${m.user_id}')">${esc(name(m.user_id))}</button>`).join('')}<div class="row"><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
+    else return note('Join the team first (its ⋯ menu).')}
+  const lap=lapUse(t,uid);if(!lap)return lapDlg(tid,uid);
+  const P=planOf(r,t),cv=covOf(P),floor=fairFloor(r,t,uid,0);
+  let A=at!=null?at:(cv.gaps[0]?cv.gaps[0][0]:P.end);A=Math.max(P.r0,Math.min(A,P.r1-60000));A=snapStart(P,A,null);
+  let laps=Math.max(floor,Math.round(7200/lap));const room=Math.floor((P.r1-A)/1000/lap);if(room>=floor)laps=Math.min(laps,Math.max(floor,room));
+  PL={tid,uid,A,laps,floor,lap};GOPEN[tid]=true;
+  const w=gWin(r);if(A<w.from||A>w.to-30*60000){GZ.from=A-w.span/4}drawGantt(r);document.querySelector('#plbar')?.scrollIntoView({block:'center',behavior:'smooth'})}
+function plBanner(r){const t=T.ts.find(x=>x.id===PL.tid),tz=myTz(),B=PL.A+PL.laps*PL.lap*1000,P=planOf(r,t),ov=overlapsOf(P,{s:{id:-1,user_id:PL.uid},A:PL.A,B}),fi=fairInfo(r,t,P),tot=(lapsBy(P)[PL.uid]||0)+PL.laps;
+  return `<div class="plbanner" role="status"><button type="button" onclick="plCancel()">✕ Cancel</button><div class="plinfo"><b>${locDay(new Date(PL.A),tz)} ${locH(new Date(PL.A),tz)} → ${locH(new Date(B),tz)} · ${PL.laps} laps</b>
+    ${ov.length?`<span class="ovt">overlaps ${ov.map(o=>`${esc(first(name(o.x.s.user_id)))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}`).join(', ')}</span>`:''}
+    ${fi&&fi.min?`<span class="${tot<fi.min?'ovt':'okt'}">${PL.uid===me.id?'your':esc(first(name(PL.uid)))+'’s'} total ${tot}/~${fi.min}${tot>=fi.min?' ✓':''}</span>`:''}</div><button type="button" class="pri" onclick="plDone()">✓ Done</button></div>`}
+function plCancel(){PL=null;drawGantt(curRace())}
+async function plDone(){const p=PL;PL=null;document.body.classList.remove('placing');await commitStint(p.tid,0,{user_id:p.uid,laps:p.laps,start:p.A})}
+// Start snaps to whole minutes, and onto the race start or any stint's start/end in the team within 5 minutes (handover magnet).
+function snapStart(P,A,skipId,len){let best=Math.round(A/60000)*60000,bd=MAG;const pts=[P.r0];P.items.forEach(it=>{if(it.s.id!==skipId)pts.push(it.B,it.A-(len||0))});
+  pts.forEach(p=>{const d=Math.abs(p-A);if(d<bd){bd=d;best=p}});return best}
+function plDown(e){if(e.button>0)return;e.preventDefault();e.stopPropagation();const el=e.currentTarget,track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),t=T.ts.find(x=>x.id===PL.tid),P=planOf(r,t),edge=e.target.classList.contains('hr');
+  const x0=e.clientX,A0=PL.A,L0=PL.laps;try{el.setPointerCapture(e.pointerId)}catch{}busy++;
+  const mv=ev=>{const dms=(ev.clientX-x0)/rc.width*w.span;
+    if(edge){PL.laps=Math.max(PL.floor,Math.max(1,Math.round(L0+dms/1000/PL.lap)))}else{PL.A=snapStart(P,Math.max(P.r0-0,Math.min(P.r1-60000,A0+dms)),null,PL.laps*PL.lap*1000)}
+    const B=PL.A+PL.laps*PL.lap*1000;el.style.left=((Math.max(w.from,PL.A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,PL.A))/w.span*100).toFixed(3)+'%';
+    el.querySelector('span').textContent=`${PL.laps} laps · ${locH(new Date(PL.A),myTz())}–${locH(new Date(B),myTz())}`;
+    const bn=document.querySelector('.plbanner');if(bn)bn.outerHTML=plBanner(r)};
+  const up=()=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',up);busy--;drawGantt(r)};
+  el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
+// Tap on empty lane space: place a new stint there (own lane, or any lane for leaders).
+function trackTap(e,tid,uid){if(e.target.closest('.gbar'))return;const tr=e.currentTarget,r=curRace(),w=gWin(r),rc=tr.getBoundingClientRect();addStint(tid,uid,w.from+(e.clientX-rc.left)/rc.width*w.span)}
+
+/* ---------- Moving and resizing existing stints ----------
+   Mouse: drag at once. Touch: press and hold ~0.3 s first, so normal scrolling still works.
+   Only along the driver's own lane; resize only by the right-hand end. */
+let BARDRAG=false;
+function barDown(e){if(e.button>0)return;const el=e.currentTarget;if(!el.classList.contains('can'))return;
+  const track=el.closest('.gtrack'),r=curRace(),w=gWin(r),rc=track.getBoundingClientRect(),tid=+el.dataset.tid,sid=+el.dataset.sid,t=T.ts.find(x=>x.id===tid),P=planOf(r,t),it=P.items.find(x=>x.s.id===sid);if(!it)return;
+  const edge=e.target.classList.contains('hr'),touch=e.pointerType==='touch',x0=e.clientX,y0=e.clientY,floor=fairFloor(r,t,it.s.user_id,sid);
+  let held=!touch,moved=false,A=it.A,laps=it.laps,tip=null,timer=touch?setTimeout(()=>{held=true;el.classList.add('lifted');try{el.setPointerCapture(e.pointerId)}catch{}navigator.vibrate?.(10)},300):0;
+  if(!touch)try{el.setPointerCapture(e.pointerId)}catch{}
+  const draw=()=>{const B=A+laps*it.lap*1000;el.style.left=((Math.max(w.from,A)-w.from)/w.span*100).toFixed(3)+'%';el.style.width=((Math.min(w.to,B)-Math.max(w.from,A))/w.span*100).toFixed(3)+'%';
+    el.querySelectorAll('.ovl').forEach(x=>x.remove());overlapsOf(P,{s:it.s,A,B}).forEach(o=>{const s=document.createElement('span');s.className='ovl';s.style.left=((o.a-A)/(B-A)*100).toFixed(2)+'%';s.style.width=((o.b-o.a)/(B-A)*100).toFixed(2)+'%';el.appendChild(s)});
+    if(!tip){tip=document.createElement('div');tip.className='gtip';track.appendChild(tip)}tip.style.left=el.style.left;
+    const ov=overlapsOf(P,{s:it.s,A,B});tip.textContent=`${locH(new Date(A),myTz())}–${locH(new Date(B),myTz())} · ${laps} laps${laps===floor&&floor>1?' (fair-share minimum)':''}${ov.length?' · overlaps '+ov.map(o=>first(name(o.x.s.user_id))).join(', '):''}`};
+  const mv=ev=>{const dx=ev.clientX-x0,dy=ev.clientY-y0;if(!moved&&Math.hypot(dx,dy)<6)return;
+    if(!held){clearTimeout(timer);cleanup(false);return}
+    if(!moved){moved=true;BARDRAG=true;busy++;try{el.setPointerCapture(ev.pointerId)}catch{}document.body.classList.add('dragging')}
+    ev.preventDefault();const dms=dx/rc.width*w.span;
+    if(edge)laps=Math.max(floor,Math.max(1,Math.round(it.laps+dms/1000/it.lap)));else A=snapStart(P,Math.max(P.r0,Math.min(P.r1-60000,it.A+dms)),sid,laps*it.lap*1000);draw()};
+  const cleanup=async commit=>{el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',upF);el.removeEventListener('pointercancel',cancelF);clearTimeout(timer);tip?.remove();el.classList.remove('lifted');document.body.classList.remove('dragging');
+    if(moved){busy--;setTimeout(()=>BARDRAG=false,50);if(commit&&(A!==it.A||laps!==it.laps))await commitStint(tid,sid,edge?{laps}:{start:A});else drawGantt(r)}};
+  const upF=()=>cleanup(true),cancelF=()=>cleanup(false);
+  el.addEventListener('pointermove',mv,{passive:false});el.addEventListener('pointerup',upF);el.addEventListener('pointercancel',cancelF)}
+function barClick(e,tid,sid){e.stopPropagation();if(BARDRAG)return;stintSheet(tid,sid)}
+// Keyboard (desktop): ← → move 1 minute, ↑ ↓ one lap; saved after a short pause.
+let KEYED=null;
+function barKey(e,tid,sid){const k=e.key;if(k==='Enter')return stintSheet(tid,sid);if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k))return;e.preventDefault();
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),s=T.ss.find(x=>x.id===sid),lead=canLead(t);if(!(lead||(s.user_id===me.id&&s.status==='pending')))return;
+  if(!KEYED||KEYED.sid!==sid)KEYED={sid,tid,start:+new Date(s.start_utc),laps:s.laps};const floor=fairFloor(r,t,s.user_id,sid);
+  if(k==='ArrowLeft')KEYED.start-=60000;if(k==='ArrowRight')KEYED.start+=60000;if(k==='ArrowUp')KEYED.laps++;if(k==='ArrowDown')KEYED.laps=Math.max(floor,KEYED.laps-1);
+  note(`${locH(new Date(KEYED.start),myTz())} · ${KEYED.laps} laps`);clearTimeout(KEYED.tm);KEYED.tm=setTimeout(async()=>{const kd=KEYED;KEYED=null;await commitStint(kd.tid,kd.sid,{start:kd.start,laps:kd.laps});document.querySelector(`.gbar[data-sid="${kd.sid}"]`)?.focus()},700)}
+// Tap a red overlap: quick fixes.
+function overlapFix(tid,sid,oid){const r=curRace(),t=T.ts.find(x=>x.id===tid),P=planOf(r,t),a=P.items.find(x=>x.s.id===sid),b=P.items.find(x=>x.s.id===oid),tz=myTz();if(!a||!b)return;
+  const canE=it=>canLead(t)||(it.s.user_id===me.id&&it.s.status==='pending'),opts=[];
+  const trim=(it,end)=>{const laps=Math.floor((end-it.A)/1000/it.lap);return laps>=fairFloor(r,t,it.s.user_id,it.s.id)?laps:0};
+  if(canE(a)){if(a.A<b.A){const n=trim(a,b.A);if(n)opts.push([`Trim ${esc(first(name(a.s.user_id)))}’s stint to end at ${locH(new Date(a.A+n*a.lap*1000),tz)} (${n} laps)`,`commitStint(${tid},${sid},{laps:${n}})`])}
+    opts.push([`Start ${esc(first(name(a.s.user_id)))}’s stint after ${esc(first(name(b.s.user_id)))} (${locH(new Date(b.B),tz)})`,`commitStint(${tid},${sid},{start:${b.B}})`])}
+  if(canE(b)){if(b.A<a.A){const n=trim(b,a.A);if(n)opts.push([`Trim ${esc(first(name(b.s.user_id)))}’s stint to end at ${locH(new Date(b.A+n*b.lap*1000),tz)} (${n} laps)`,`commitStint(${tid},${oid},{laps:${n}})`])}
+    opts.push([`Start ${esc(first(name(b.s.user_id)))}’s stint after ${esc(first(name(a.s.user_id)))} (${locH(new Date(a.B),tz)})`,`commitStint(${tid},${oid},{start:${a.B}})`])}
+  const o0=Math.max(a.A,b.A),o1=Math.min(a.B,b.B);
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>Overlap ${locH(new Date(o0),tz)}–${locH(new Date(o1),tz)}</h3><p class="mu" style="margin:0">${esc(name(a.s.user_id))} and ${esc(name(b.s.user_id))} are both planned to drive for ${dur((o1-o0)/1000)}.</p>
+    ${opts.map(([l,f])=>`<button type="button" onclick="closeDlg();${f}">${l}</button>`).join('')||'<p class="mu">Only the team leader can change these stints.</p>'}
+    <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 
 /* ---------- My availability (a list; shown as faint shading in the grid) ---------- */
 function raceSlots(r,tz){const r0=+new Date(r.start_utc),r1=r0+r.length_h*H,out=[];for(let t=Math.floor(r0/HALF)*HALF;t<=r1;t+=HALF)out.push(t);return out}
@@ -886,103 +1032,108 @@ async function allBand(){const r=curRace(),r0=+new Date(r.start_utc);
   await q(sb.from('avail_bands').delete().eq('user_id',me.id).eq('race_id',r.id));BANDS=BANDS.filter(b=>!(b.user_id===me.id&&b.race_id===r.id));await putBand(r0,r0+r.length_h*H,'A')}
 async function delBand(id){await q(sb.from('avail_bands').delete().eq('id',id));await loadRace(curRace());drawGantt(curRace())}
 
-/* ---------- Stint sheet: big − / + lap buttons, move earlier/later, driver ---------- */
-let SHEET=null;
-function stintSheet(tid,sid,uid,atMs){
-  const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=canLead(t),s=sid?T.ss.find(x=>x.id===sid):null,P=planOf(r,t);
-  uid=s?s.user_id:(uid||me.id);
-  const own=uid===me.id,edit=lead||(own&&(!s||s.status==='pending')),lap=lapUse(t,uid)||120;
-  if(!s&&!lapUse(t,uid)){if(own||lead)return lapDlg(tid,uid);return}
-  let laps=s?s.laps:Math.max(1,Math.min(Math.round(7200/lap),Math.ceil(Math.max(0,P.r1-P.end)/1000/lap)||Math.round(7200/lap)));
-  const seq=s?s.seq:seqAt(t,atMs??P.end,0);
-  SHEET={tid,sid,uid,laps,laps0:laps,seq,edit,lead};renderSheet()}
-function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz=myTz(),mems=T.ms.filter(m=>m.team_id===S.tid),s=S.sid?T.ss.find(x=>x.id===S.sid):null;
-  const {P,it}=project(S.tid,S.sid,{user_id:S.uid,laps:S.laps,seq:S.seq}),nxt=P.items[P.items.indexOf(it)+1];
-  const base=s?project(S.tid,S.sid,{}).it:null,shift=base?Math.round((it.B-base.B)/60000):0,idx=P.items.indexOf(it);
-  const btn=(d,l)=>`<button type="button" class="step" onclick="stepLaps(${d})" ${S.edit?'':'disabled'} aria-label="${l}">${d>0?'+':'−'}${Math.abs(d)}</button>`;
-  const fi=fairInfo(r,t,P),mine=(fi?.by||lapsBy(P))[S.uid]||0,lap=it.lap||120,rest=Math.max(1,Math.ceil((P.r1-it.A)/1000/lap));
-  const before=idx>0?P.items[idx-1]:null,presets=[...(fi&&fi.min?[[`Fair share (${fi.min})`,Math.max(1,fi.min-(mine-S.laps))]]:[]),['1 hour',Math.round(3600/lap)],['2 hours',Math.round(7200/lap)],['Rest of race',rest]];
-  const html=`<form onsubmit="saveSheet(event)"><h3>${s?'Stint':'New stint'} ${idx+1} · ${esc(name(S.uid))}</h3>
-    <p class="mu" style="margin:0">${esc(t.name)} · average lap ${it.lap?fmtLap(it.lap):'unknown'}${it.est?' (team’s typical lap)':''}${s?' · '+stL(s.status):''}<br>Starts ${before?`after ${esc(name(before.s.user_id))}’s stint`:'at the race start'}, ${locFull(new Date(it.A),tz)}</p>
-    ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ${fi.est?'≈ ':''}${fi.total} race laps${fi.est?' (estimated until the plan reaches the finish)':''}. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b> laps with this stint${mine<fi.min?` — ${fi.min-mine} more needed`:' ✓'}.`:`<b>Fair share applies</b><br>With only ${fi.n} driver in the team there’s no minimum yet. With 2 drivers each must do 25% of the laps.`}</div>`:''}
-    <div class="lapbox"><div class="mu">Laps</div><div class="steps">${btn(-5,'5 laps fewer')}${btn(-1,'1 lap fewer')}<span class="lapn num">${S.laps}</span>${btn(1,'1 lap more')}${btn(5,'5 laps more')}</div>
+/* ---------- Stint sheet: laps − / +, start − / +, driver, overlaps ---------- */
+let SHEET=null,FIX=null;
+function stintSheet(tid,sid){const r=curRace(),t=T.ts.find(x=>x.id===tid),lead=canLead(t),s=T.ss.find(x=>x.id===sid);if(!s)return;
+  SHEET={tid,sid,uid:s.user_id,laps:s.laps||1,start:+new Date(s.start_utc),edit:lead||(s.user_id===me.id&&s.status==='pending'),lead};renderSheet()}
+function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz=myTz(),mems=T.ms.filter(m=>m.team_id===S.tid),s=T.ss.find(x=>x.id===S.sid);
+  const {P,it}=project(S.tid,S.sid,{user_id:S.uid,laps:S.laps,start:S.start}),fi=fairInfo(r,t,P),mine=(fi?.by||lapsBy(P))[S.uid]||0,floor=fairFloor(r,t,S.uid,S.sid),ov=overlapsOf(P,it),lap=it.lap||120;
+  const btn=(d,l,fn,dis)=>`<button type="button" class="step" onclick="${fn}(${d})" ${S.edit&&!dis?'':'disabled'} aria-label="${l}">${d>0?'+':'−'}${Math.abs(d)}</button>`;
+  const presets=[...(fi&&fi.min?[[`Fair share (${floor})`,floor]]:[]),['1 hour',Math.max(floor,Math.round(3600/lap))],['2 hours',Math.max(floor,Math.round(7200/lap))],['To the finish',Math.max(floor,Math.ceil((P.r1-it.A)/1000/lap))]];
+  const html=`<form onsubmit="saveSheet(event)"><h3>${esc(name(S.uid))} · ${esc(t.name)}</h3>
+    <p class="mu" style="margin:0">Average lap ${fmtLap(lap)}${lapOf(t,S.uid)?'':' (team)'}${s?' · '+stL(s.status):''}</p>
+    ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b>${mine>=fi.min?' ✓':''}.`:`<b>Fair share</b><br>Only one driver in the team, so there’s no minimum.`}</div>`:''}
+    <div class="lapbox"><div class="mu">Laps</div><div class="steps">${btn(-5,'5 laps fewer','stepLaps',S.laps-5<floor&&S.laps<=floor)}${btn(-1,'1 lap fewer','stepLaps',S.laps<=floor)}<span class="lapn num">${S.laps}</span>${btn(1,'1 lap more','stepLaps')}${btn(5,'5 laps more','stepLaps')}</div>
+      ${S.edit?`<div class="presets">${presets.map(([l,n])=>`<button type="button" class="${n===S.laps?'on':''}" onclick="SHEET.laps=${n};renderSheet()">${l}<small>${n} laps</small></button>`).join('')}</div>`:''}
+      <div class="mu" style="margin-top:12px">Start</div><div class="steps">${btn(-5,'5 minutes earlier','stepStart')}${btn(-1,'1 minute earlier','stepStart')}<span class="startn num">${locH(new Date(it.A),tz)}</span>${btn(1,'1 minute later','stepStart')}${btn(5,'5 minutes later','stepStart')}</div>
       <div class="num lapt">${locFull(new Date(it.A),tz)} → ${locDay(new Date(it.B),tz)!==locDay(new Date(it.A),tz)?locFull(new Date(it.B),tz):locH(new Date(it.B),tz)}</div>
-      <div class="mu">${dur((it.B-it.A)/1000)} · ${nxt?`then ${esc(name(nxt.s.user_id))} takes over at ${locH(new Date(it.B),tz)}`:it.B>=P.r1?'takes the chequered flag':`${dur((P.r1-P.end)/1000)} of the race still uncovered`}</div>
-      <div class="shift">${shift?`Later stints move ${Math.abs(shift)} min ${shift>0?'later':'earlier'}`:''}</div>
-      ${S.edit?`<div class="presets">${presets.map(([l,n])=>`<button type="button" class="${n===S.laps?'on':''}" onclick="SHEET.laps=${n};renderSheet()">${l}<small>${n} laps</small></button>`).join('')}</div>`:''}</div>
-    ${S.edit&&s?`<div class="form2"><button type="button" onclick="moveSheet(-1)" ${idx<=0?'disabled':''}>Move earlier</button><button type="button" onclick="moveSheet(1)" ${idx>=P.items.length-1?'disabled':''}>Move later</button></div>`:''}
-    ${S.lead&&mems.length>1?`<label>Driver<select onchange="SHEET.uid=this.value;renderSheet()">${mems.map(m=>opt(m.user_id,name(m.user_id),m.user_id===S.uid)).join('')}</select></label>`:''}
+      <div class="mu">${dur((it.B-it.A)/1000)}${it.B>P.r1?' · runs past the finish':''}</div>
+      ${ov.length?`<div class="ovlist">${ov.map(o=>`<button type="button" onclick="closeDlg();overlapFix(${S.tid},${S.sid},${o.x.s.id})">Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)} · fix…</button>`).join('')}</div>`:''}</div>
+    ${S.lead&&mems.length>1?`<label>Driver<select onchange="SHEET.uid=this.value;SHEET.laps=Math.max(SHEET.laps,fairFloor(curRace(),T.ts.find(x=>x.id===SHEET.tid),this.value,SHEET.sid));renderSheet()">${mems.map(m=>opt(m.user_id,name(m.user_id),m.user_id===S.uid)).join('')}</select></label>`:''}
     ${s&&S.lead&&s.status==='pending'?`<button type="button" onclick="appr(${s.id})">Approve</button>`:''}
     ${!S.edit?'<p class="mu">This stint is approved. Ask the team leader to change it.</p>':''}
-    <div class="row">${S.edit?`<button class="pri">${s?'Done':S.lead?'Add stint':'Request stint'}</button>`:''}<button type="button" onclick="closeDlg()">${S.edit?'Cancel':'Close'}</button><span class="grow"></span>${s&&S.edit?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`;
-  if($('#dlg').open&&$('#dlg .lapbox')){$('#dlg').innerHTML=html+'<div id="dmsg" role="alert"></div>'}else openDlg(html)}
-function stepLaps(d){SHEET.laps=Math.max(1,Math.min(2000,SHEET.laps+d));renderSheet()}
-function moveSheet(dir){const S=SHEET,t=T.ts.find(x=>x.id===S.tid),its=planOf(curRace(),t).items,i=its.findIndex(x=>x.s.id===S.sid),j=i+dir;if(j<0||j>=its.length)return;
-  const a=its[j+(dir>0?1:-1)]?.s.seq??null,b=its[j].s.seq;S.seq=dir>0?seqBetween(b,a):seqBetween(a,b);renderSheet()}
-async function saveSheet(e){e.preventDefault();const S=SHEET,s=S.sid?T.ss.find(x=>x.id===S.sid):null;
-  if(s&&S.laps===s.laps&&S.uid===s.user_id&&S.seq===s.seq)return closeDlg();
-  await commitStint(S.tid,S.sid,{user_id:S.uid,laps:S.laps,seq:S.seq})}
-function stintDlg(tid,sid,uid,pre){return stintSheet(tid,sid,uid,pre?.at)}
+    <div class="row">${S.edit?`<button class="pri">Done</button>`:''}<button type="button" onclick="closeDlg()">${S.edit?'Cancel':'Close'}</button><span class="grow"></span>${s&&S.edit?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`;
+  if($('#dlg').open&&$('#dlg .lapbox')){$('#dlg').innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';wireGrab()}else openDlg(html)}
+function stepLaps(d){const r=curRace(),t=T.ts.find(x=>x.id===SHEET.tid);SHEET.laps=Math.max(fairFloor(r,t,SHEET.uid,SHEET.sid),Math.max(1,Math.min(2000,SHEET.laps+d)));renderSheet()}
+function stepStart(d){SHEET.start+=d*60000;renderSheet()}
+async function saveSheet(e){e.preventDefault();const S=SHEET,s=T.ss.find(x=>x.id===S.sid);
+  if(s&&S.laps===s.laps&&S.uid===s.user_id&&S.start===+new Date(s.start_utc))return closeDlg();
+  await commitStint(S.tid,S.sid,{user_id:S.uid,laps:S.laps,start:S.start})}
+function stintDlg(tid,sid){return sid?stintSheet(tid,sid):addStint(tid)}
 function project(tid,sid,ch){const r=curRace(),t=T.ts.find(x=>x.id===tid),cur=sid?T.ss.find(x=>x.id===sid):null;
-  const tmp={...(cur||{id:-1,team_id:tid,status:canLead(t)?'approved':'pending',start_utc:r.start_utc,end_utc:r.start_utc}),...ch};
+  const tmp={...(cur||{id:-1,team_id:tid,status:canLead(t)?'approved':'pending',start_utc:r.start_utc,end_utc:r.start_utc})};
+  if(ch.user_id)tmp.user_id=ch.user_id;if(ch.laps)tmp.laps=ch.laps;if(ch.start!=null)tmp.start_utc=new Date(ch.start).toISOString();
   const ss=[...T.ss.filter(x=>x.id!==sid),tmp],P=planOf(r,t,ss);return {P,it:P.items.find(x=>x.s===tmp),tmp}}
-
-// Checks a stint (and everything that slides with it) against limits and availability, then saves it.
+// Checks a stint against fair share (a hard minimum), overlaps, availability, rest and limits, then saves it (with Undo).
 async function commitStint(tid,sid,ch){
-  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),lead=canLead(t),{P,it,tmp}=project(tid,sid,ch),uid=tmp.user_id,p=profiles.find(x=>x.id===uid),warn=[];
-  if(!lapOf(t,uid))warn.push(`${name(uid)} hasn’t entered an average lap time, so this uses the team’s typical lap.`);
+  const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),lead=canLead(t),cur=sid?T.ss.find(x=>x.id===sid):null,{P,it,tmp}=project(tid,sid,ch),uid=tmp.user_id,p=profiles.find(x=>x.id===uid),warn=[];
+  const fi=fairInfo(r,t,P),tot=lapsBy(P)[uid]||0;
+  const shrinking=!sid||(ch.user_id&&ch.user_id!==cur.user_id)||(ch.laps&&ch.laps<(cur.laps||0));
+  if(fi&&fi.min&&tot<fi.min&&shrinking){const need=tmp.laps+(fi.min-tot);FIX={tid,sid:sid||0,ch:{user_id:uid,start:it.A,laps:need}};
+    return openDlg(`<form onsubmit="event.preventDefault();closeDlg();commitStint(FIX.tid,FIX.sid,FIX.ch)"><h3>Fair share: at least ${fi.min} laps</h3>
+      <p style="margin:0">${uid===me.id?'Your':esc(name(uid))+'’s'} stints would add up to <b>${tot} laps</b>. With ${fi.n} drivers each must drive at least ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps, so the minimum is <b>${fi.min}</b>.</p>
+      <div class="row"><button class="pri">Set it to ${need} laps</button><button type="button" onclick="closeDlg();drawGantt(curRace())">Cancel</button></div></form>`)}
+  if(it.A<P.r0-60000)warn.push('This stint starts before the race.');if(it.A>=P.r1)warn.push('This stint starts after the finish.');
+  overlapsOf(P,it).forEach(o=>warn.push(`It overlaps ${name(o.x.s.user_id)}’s stint ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)}.`));
   const mineIts=P.items.filter(x=>x.s.user_id===uid&&x!==it),rest=p?.min_rest_h??0;
   if(p&&p.max_stints!=null&&mineIts.length+1>p.max_stints)warn.push(`${p.name} would have ${mineIts.length+1} stints in this race (their max is ${p.max_stints}).`);
   if(rest)mineIts.forEach(x=>{const g=x.A>=it.B?(x.A-it.B)/H:it.A>=x.B?(it.A-x.B)/H:-1;if(g>=0&&g<rest)warn.push(`${name(uid)} only gets ${dur(g*3600)} rest next to their ${locH(new Date(x.A),tz)} stint (wants ${rest}h).`)});
   const av=avRange(r,uid,it.A,it.B);if(av!=='A')warn.push(av==='M'?`${name(uid)} marked part of this time as “maybe”.`:`${name(uid)} hasn’t marked all of this time (${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}) as available.`);
-  P.items.filter(x=>x!==it&&x.A>=it.A&&x.s.user_id!==uid).forEach(x=>{const a=avRange(r,x.s.user_id,x.A,x.B);if(a==='N')warn.push(`Later stints move: ${name(x.s.user_id)} would drive ${locH(new Date(x.A),tz)}–${locH(new Date(x.B),tz)}, outside their availability.`)});
   T.ss.filter(x=>x.team_id!==tid&&x.user_id===uid&&+new Date(x.start_utc)<it.B&&+new Date(x.end_utc)>it.A).forEach(x=>warn.push(`${name(uid)} already drives for ${teamName(x.team_id)} then.`));
-  fairShort(t,P).forEach(x=>warn.push(`Fair share: ${name(x.uid)} would have ${x.laps} laps, minimum is ${x.min}.`));
   if(warn.length&&!confirm([...new Set(warn)].slice(0,6).join('\n')+'\n\nSave anyway?'))return render();
-  await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:teamCar(t)}));
-  const row={team_id:tid,user_id:uid,laps:tmp.laps,seq:tmp.seq,start_utc:new Date(it.A).toISOString(),end_utc:new Date(it.B).toISOString()};
-  if(sid)await q(sb.from('stints').update(row).eq('id',sid));else await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));
-  await loadRace(r);await syncTimes(t);closeDlgIf();render();note(sid?'Stint updated. Later stints moved with it.':lead?'Stint added.':'Stint requested. The team leader will approve it.',1)}
-async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();render()}
-async function delStint(id){if(!confirm('Remove this stint? Later stints move up.'))return;const s=T.ss.find(x=>x.id===id),t=T.ts.find(x=>x.id===s?.team_id);await q(sb.from('stints').delete().eq('id',id));if(t){await loadRace(curRace());await syncTimes(t)}closeDlg();render()}
+  if(!T.ms.some(m=>m.team_id===tid&&m.user_id===uid))await q(sb.from('team_members').upsert({team_id:tid,user_id:uid,car:teamCar(t)}));
+  const row={team_id:tid,user_id:uid,laps:tmp.laps,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString()};
+  if(sid){const prev={user_id:cur.user_id,laps:cur.laps,start_utc:cur.start_utc,end_utc:cur.end_utc};await q(sb.from('stints').update(row).eq('id',sid));
+    closeDlgIf();await loadRace(r);await syncTimes(t);render();undoToast(ch.start!=null&&!ch.laps?'Stint moved.':'Stint changed.',()=>q(sb.from('stints').update(prev).eq('id',sid)))}
+  else{await q(sb.from('stints').insert({...row,status:lead?'approved':'pending'}));closeDlgIf();await loadRace(r);
+    const made=T.ss.filter(x=>x.team_id===tid&&x.user_id===uid&&+new Date(x.start_utc)===it.A).sort((a,b)=>b.id-a.id)[0];render();
+    undoToast(lead?'Stint added.':'Stint requested. The team leader will approve it.',made?()=>q(sb.from('stints').delete().eq('id',made.id)):null)}}
+async function appr(id){await q(sb.from('stints').update({status:'approved'}).eq('id',id));closeDlg();await loadRace(curRace());render()}
+async function delStint(id){const s=T.ss.find(x=>x.id===id);if(!s)return;const t=T.ts.find(x=>x.id===s.team_id),r=curRace(),fi=fairInfo(r,t,planOf(r,t)),left=(lapsBy(planOf(r,t))[s.user_id]||0)-(s.laps||0);
+  if(!confirm(`Remove this stint?${fi&&fi.min&&left<fi.min?`\n${name(s.user_id)} would then have ${left} laps, below the fair-share minimum of ${fi.min}.`:''}`))return;
+  const keep={team_id:s.team_id,user_id:s.user_id,laps:s.laps,start_utc:s.start_utc,end_utc:s.end_utc,status:s.status};
+  await q(sb.from('stints').delete().eq('id',id));closeDlgIf();await loadRace(r);render();undoToast('Stint removed.',()=>q(sb.from('stints').insert(keep)))}
 
 /* ---------- Average lap per driver (before the race; afterwards live times go to Race update) ---------- */
 function lapDlg(tid,uid){const t=T.ts.find(x=>x.id===tid),r=curRace(),cur=lapOf(t,uid);
   if(started(r))return note('The race has started. Post live lap times with Race update; they feed the Suggestion.');
   openDlg(`<form onsubmit="saveLap(event,${tid},'${uid}')"><h3>${uid===me.id?'Your':esc(name(uid))+'’s'} average lap</h3>
-    <p class="mu" style="margin:0">${esc(r.name)} · ${esc(t.name)} · ${esc(teamCar(t))}. Use the 5-lap average LMU shows after a practice run. It sets how long each of ${uid===me.id?'your':'their'} stints lasts in the plan.</p>
+    <p class="mu" style="margin:0">${esc(r.name)} · ${esc(t.name)} · ${esc(teamCar(t))}. Use the 5-lap average LMU shows after a practice run. It sets how long each of ${uid===me.id?'your':'their'} stints lasts.${refLap(t)?` Until then the team’s ≈${fmtLap(refLap(t))} is used.`:''}</p>
     <label>Average lap${lapInput('name="lap" required',cur?fmtLap(cur):'')}</label>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function saveLap(e,tid,uid){e.preventDefault();const v=parseLap(new FormData(e.target).get('lap'));if(!(v>=30&&v<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
   const t=T.ts.find(x=>x.id===tid);await q(sb.from('team_members').update({avg_lap:v}).eq('team_id',tid).eq('user_id',uid));
   await loadRace(curRace());await syncTimes(t);closeDlg();render();note('Average lap saved. The plan’s times follow it.',1)}
 
-/* ---------- Plan stints (fills the race after the current plan) ---------- */
-function makePlan(r,t,stLaps){const P=planOf(r,t),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id),out=[];let c=P.end,last=P.items.at(-1)?.s.user_id||null;
-  const load={},cnt={},lastEnd={},lapsDone=lapsBy(P),estLaps=Math.round(r.length_h*3600/(lapFallback(t)||120)),fmin=r.fair_share&&mem.length>=2?Math.floor(estLaps*fairPct(mem.length)):0;P.items.forEach(it=>{const u=it.s.user_id;load[u]=(load[u]||0)+(it.B-it.A);lastEnd[u]=it.B});T.ss.filter(s=>s.user_id&&s.team_id===t.id).forEach(s=>cnt[s.user_id]=(cnt[s.user_id]||0)+1);
-  for(let g=0;g<300&&c<P.r1-60000;g++){let best=null;
-    for(const uid of mem){const lap=lapUse(t,uid);if(!lap)continue;const p=profiles.find(x=>x.id===uid)||{},need=Math.ceil((P.r1-c)/1000/lap);let laps=need<=stLaps*1.3?need:stLaps;
-      const A=c,B=c+laps*lap*1000,av=avRange(r,uid,A,B),rest=(p.min_rest_h??0)*H,okRest=lastEnd[uid]==null||A>=lastEnd[uid]+rest,cap=p.max_stints==null||(cnt[uid]||0)<p.max_stints;
-      const short=fmin-(lapsDone[uid]||0),cost=(load[uid]||0)/H+(av==='A'?0:av==='M'?6:40)+(uid===last?25:0)+(okRest?0:15)+(cap?0:30)+(lapOf(t,uid)?0:2)-(short>0?12:0);
-      if(!best||cost<best.cost)best={uid,laps,A,B,cost,av,okRest,cap}}
-    if(!best)break;out.push(best);load[best.uid]=(load[best.uid]||0)+(best.B-best.A);cnt[best.uid]=(cnt[best.uid]||0)+1;lastEnd[best.uid]=best.B;lapsDone[best.uid]=(lapsDone[best.uid]||0)+best.laps;last=best.uid;c=best.B}
-  return {P,steps:out}}
+/* ---------- Plan stints: fills the gaps (no driver) with stints, fair share respected ---------- */
+function makePlan(r,t,stLaps){const P=planOf(r,t),mem=T.ms.filter(m=>m.team_id===t.id).map(m=>m.user_id),out=[],cv=covOf(P),fi=fairInfo(r,t,P);
+  const load={},cnt={},lastEnd={},tot=lapsBy(P);P.items.forEach(it=>{const u=it.s.user_id;load[u]=(load[u]||0)+(it.B-it.A);lastEnd[u]=Math.max(lastEnd[u]||0,it.B);cnt[u]=(cnt[u]||0)+1});
+  let last=null;
+  for(const [g0,g1] of cv.gaps){let c=g0;
+    for(let k=0;k<100&&c<g1-60000;k++){let best=null;
+      for(const uid of mem){const lap=lapUse(t,uid);if(!lap)continue;const p=profiles.find(x=>x.id===uid)||{},room=Math.floor((g1-c)/1000/lap),need=fi&&fi.min?Math.max(0,fi.min-(tot[uid]||0)):0;
+        let laps=room<=stLaps*1.3?Math.max(1,room):stLaps;if(need>laps)laps=Math.min(need,Math.max(laps,room));if(laps<1)continue;
+        const A=c,B=c+laps*lap*1000,av=avRange(r,uid,A,B),okRest=lastEnd[uid]==null||A>=lastEnd[uid]+(p.min_rest_h??0)*H||A<(lastEnd[uid]||0)-1,cap=p.max_stints==null||(cnt[uid]||0)<p.max_stints;
+        const cost=(load[uid]||0)/H+(av==='A'?0:av==='M'?6:40)+(uid===last?25:0)+(okRest?0:15)+(cap?0:30)-(need>0?12:0);
+        if(!best||cost<best.cost)best={uid,laps,A,B,cost,av,okRest,cap}}
+      if(!best)break;out.push(best);load[best.uid]=(load[best.uid]||0)+(best.B-best.A);cnt[best.uid]=(cnt[best.uid]||0)+1;lastEnd[best.uid]=best.B;tot[best.uid]=(tot[best.uid]||0)+best.laps;last=best.uid;c=best.B}}
+  return {P,steps:out,tot,fi}}
 function planDlg(tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),mem=T.ms.filter(m=>m.team_id===tid);
   if(!mem.length)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Plan stints · ${esc(t.name)}</h3><p>Add drivers to the team first.</p><div class="row"><button class="pri">OK</button></div></form>`);
-  const lap=lapFallback(t);if(!lap)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Plan stints · ${esc(t.name)}</h3><p>No driver has entered an average lap time yet. The plan needs at least one to work out stint times.</p><div class="row"><button class="pri">OK</button></div></form>`);
+  const lap=lapFallback(t);if(!lap)return openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>Plan stints · ${esc(t.name)}</h3><p>Set the team’s approximate lap time first (Edit team).</p><div class="row"><button class="pri">OK</button></div></form>`);
   openDlg(`<form onsubmit="applyPlan(event,${tid})" oninput="planPrev(this,${tid})"><h3>Plan stints · ${esc(t.name)}</h3>
-    <p class="mu" style="margin:0">Fills the race after the current plan, picking drivers by availability, rest time, max stints and fair share. Existing stints stay.</p>
+    <p class="mu" style="margin:0">Fills every stretch with no driver, picking drivers by availability, rest time, max stints, fair share and fair load. Existing stints stay where they are.</p>
     <label>Laps per stint<input name="laps" type="number" min="1" max="500" value="${Math.max(1,Math.round(7200/lap))}" inputmode="numeric"></label><div id="pprev"></div>
     <div class="row"><button class="pri" id="papply">Add stints</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`);planPrev($('#dlg form'),tid)}
-function planPrev(form,tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),n=Math.max(1,+form.querySelector('[name=laps]').value||1),{P,steps}=makePlan(r,t,n);PLAN={tid,steps,P};
+function planPrev(form,tid){const r=curRace(),t=T.ts.find(x=>x.id===tid),tz=myTz(),n=Math.max(1,+form.querySelector('[name=laps]').value||1),{steps,tot,fi}=makePlan(r,t,n);PLAN={tid,steps};
   const lab=(A,B)=>`${locDay(new Date(A),tz)} ${locH(new Date(A),tz)}–${locH(new Date(B),tz)}`;
-  $('#pprev').innerHTML=steps.length?`<p class="mu" style="margin:0">≈ ${dur(n*lapFallback(t))} per stint at a typical lap.</p><div class="scroll"><table class="plan"><tbody>${steps.map(s=>`<tr><td><b>${esc(name(s.uid))}</b></td><td class="num">${lab(s.A,s.B)}</td><td>${s.laps} laps</td><td>${s.av!=='A'?`<span class="chip ${s.av==='M'?'warn':'bad'}">${s.av==='M'?'maybe':'not available'}</span>`:''}${!s.okRest?'<span class="chip warn">short rest</span>':''}</td></tr>`).join('')}</tbody></table></div>`:'<p>The plan already reaches the finish.</p>';
-  if(r.fair_share&&steps.length){const tot=lapsBy(P);steps.forEach(s=>tot[s.uid]=(tot[s.uid]||0)+s.laps);const ds=Object.keys(tot).filter(u=>tot[u]>0),n=ds.length,sum=ds.reduce((a,u)=>a+tot[u],0),mn=n>=2?Math.floor(sum*fairPct(n)):0,sh=ds.filter(u=>tot[u]<mn);
-    $('#pprev').insertAdjacentHTML('beforeend',sh.length?`<div class="banner warn"><span>Fair share (${n} drivers, ${mn} laps each): ${sh.map(u=>`${esc(name(u))} ${tot[u]}/${mn}`).join(', ')}. Shorter stints or more stints for them would fix it.</span></div>`:`<div class="banner ok"><span>Fair share met: ${n} drivers, everyone reaches ${mn} laps (${(fairPct(n)*100).toFixed(1)}% of ${sum}).</span></div>`)}
+  $('#pprev').innerHTML=steps.length?`<div class="scroll"><table class="plan"><tbody>${steps.map(s=>`<tr><td><b>${esc(name(s.uid))}</b></td><td class="num">${lab(s.A,s.B)}</td><td>${s.laps} laps</td><td>${s.av!=='A'?`<span class="chip ${s.av==='M'?'warn':'bad'}">${s.av==='M'?'maybe':'not available'}</span>`:''}${!s.okRest?'<span class="chip warn">short rest</span>':''}</td></tr>`).join('')}</tbody></table></div>`:'<p>Every minute of the race already has a driver.</p>';
+  if(fi&&fi.min){const sh=T.ms.filter(m=>m.team_id===tid).filter(m=>(tot[m.user_id]||0)<fi.min);
+    $('#pprev').insertAdjacentHTML('beforeend',sh.length?`<div class="banner warn"><span>Fair share (${fi.min} laps each): ${sh.map(m=>`${esc(name(m.user_id))} ${tot[m.user_id]||0}`).join(', ')}. Give them a stint first.</span></div>`:`<div class="banner ok"><span>Fair share met: everyone reaches ${fi.min} laps.</span></div>`)}
   $('#papply').textContent=steps.length?`Add ${steps.length} stints`:'OK'}
-async function applyPlan(e,tid){e.preventDefault();const P=PLAN;if(!P||!P.steps.length)return closeDlg();const t=T.ts.find(x=>x.id===tid);let seq=Math.max(0,...P.P.items.map(x=>x.s.seq||0));
-  await q(sb.from('stints').insert(P.steps.map(s=>({team_id:tid,user_id:s.uid,laps:s.laps,seq:++seq,start_utc:new Date(s.A).toISOString(),end_utc:new Date(s.B).toISOString(),status:'approved'}))));
-  await loadRace(curRace());await syncTimes(t);closeDlg();render();note(`${P.steps.length} stints added. Drag a bar’s end to adjust laps.`,1)}
+async function applyPlan(e,tid){e.preventDefault();const P=PLAN;if(!P||!P.steps.length)return closeDlg();const t=T.ts.find(x=>x.id===tid);
+  await q(sb.from('stints').insert(P.steps.map(s=>({team_id:tid,user_id:s.uid,laps:s.laps,start_utc:new Date(s.A).toISOString(),end_utc:new Date(s.B).toISOString(),status:'approved'}))));
+  await loadRace(curRace());closeDlg();render();note(`${P.steps.length} stints added.`,1)}
 
 /* ---------- Suggestion (strategy tool): an alternative schedule; never changes the plan by itself ----------
    Uses the team's figures, overridden by the newest race updates (fuel/energy per lap, each driver's live
@@ -1027,9 +1178,8 @@ async function useSug(tid,from){const r=curRace(),t=T.ts.find(x=>x.id===tid),S=s
   const drop=P.items.filter(it=>it.A>=start-60000);
   if(!confirm(`Replace ${drop.length} planned stint${drop.length===1?'':'s'} from ${locH(new Date(start),myTz())} on with ${S.items.length-from} suggested stint${S.items.length-from===1?'':'s'}?`))return;
   if(drop.length)await q(sb.from('stints').delete().in('id',drop.map(x=>x.s.id)));
-  let seq=Math.max(0,...P.items.filter(x=>!drop.includes(x)).map(x=>x.s.seq||0));
-  await q(sb.from('stints').insert(S.items.slice(from).map(it=>({team_id:tid,user_id:it.uid,laps:it.laps,seq:++seq,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString(),status:'approved'}))));
-  GTAB[tid]='plan';await loadRace(r);await syncTimes(t);render();note('Suggestion copied into the plan.',1)}
+  await q(sb.from('stints').insert(S.items.slice(from).map(it=>({team_id:tid,user_id:it.uid,laps:it.laps,start_utc:new Date(it.A).toISOString(),end_utc:new Date(Math.max(it.B,it.A+60000)).toISOString(),status:'approved'}))));
+  GTAB[tid]='plan';await loadRace(r);render();note('Suggestion copied into the plan.',1)}
 
 /* ---------- Race update: anyone in the team, any time ---------- */
 function updDlg(tid){const t=T.ts.find(x=>x.id===tid),tz=myTz(),mem=T.ms.filter(m=>m.team_id===tid),U=(T.up||[]).filter(u=>u.team_id===tid).sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,6);
@@ -1122,14 +1272,17 @@ function teamDlg(id){
     <label>Team name<input name="name" required maxlength="40" value="${esc(t?.name||'')}" placeholder="e.g. ARION #7"></label>
     <label>Class<select name="cls" onchange="carOpts(this)">${Object.keys(CARS).map(c=>opt(c,c,cls===c)).join('')}</select></label>
     <label>Car<select name="car">${CARS[cls].map(c=>opt(c,c,teamCar(t)===c)).join('')}</select></label>
+    <label>Approximate lap time for this race${lapInput('name="ref" required',t?.ref_lap?fmtLap(+t.ref_lap):'')}</label>
+    <p class="mu" style="margin:-6px 0 0">Drivers use it until they enter their own${curRace().fair_share?'; fair share is worked out from it':''}. ≈ race laps = ${curRace().length_h}h ÷ this lap.</p>
     <p class="mu" style="margin:0">${t?'Every driver in the team drives this car.':'The team starts with the race. You become its leader; add drivers or let them join.'}</p>
     <div class="row"><button class="pri">${t?'Save changes':'Create team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t?`<button type="button" class="danger" onclick="delTeam(${t.id})">Delete team</button>`:''}</div></form>`)}
 function carOpts(sel){const c=sel.form.querySelector('[name=car]');c.innerHTML=CARS[sel.value].map(x=>opt(x,x)).join('')}
-async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),row={name:f.get('name').trim(),class:f.get('cls'),car:f.get('car')};
+async function saveTeam(e,id){e.preventDefault();const f=new FormData(e.target),ref=parseLap(f.get('ref'));if(!(ref>=30&&ref<=900))return note('Enter the approximate lap time, e.g. 159 for 1:59.0.');const row={name:f.get('name').trim(),class:f.get('cls'),car:f.get('car'),ref_lap:ref};
   if(id)await q(sb.from('teams').update(row).eq('id',id));
   else{let strategy=null;try{const prev=await q(sb.from('teams').select('*').eq('car',row.car)),tr=curRace().track;
       const same=prev.filter(x=>x.strategy&&(races.find(r=>r.id===x.race_id)?.track||'')===(tr||'')).sort((x,y)=>y.id-x.id)[0];strategy=same?.strategy||null}catch{}
     await q(sb.from('teams').insert({...row,race_id:raceId,start_utc:curRace().start_utc,leader_id:me.id,...(strategy?{strategy}:{})}));
+    if(!joined(me.id))try{await sb.from('race_entries').insert({race_id:raceId})}catch{}
     if(strategy)note(`Strategy figures copied from the last ${row.car} team at this track. Check them under Edit figures.`,1)}
   closeDlg();render()}
 async function delTeam(id){if(!confirm('Delete this team and all its stints?'))return;await q(sb.from('teams').delete().eq('id',id));closeDlg();render()}
@@ -1276,6 +1429,34 @@ function readPicker(form,tz){const d=form.querySelector('[name=pday]:checked')?.
   return {ms:+fromInput(`${d}T${String(+m[1]).padStart(2,'0')}:${m[2]}`,tz)}}
 const nextDays=(n,from=Date.now(),tz=myTz())=>{const out=[];for(let i=0;i<n;i++)out.push(toInput(new Date(from+i*86400000),tz).slice(0,10));return [...new Set(out)]};
 
+/* ---------- Phone sheets: drag the handle up for full screen, down to shrink or close ---------- */
+const sheetGrab=()=>'<div class="grab" aria-hidden="true"></div>';
+function wireGrab(){const d=$('#dlg'),g=d.querySelector('.grab');if(!g||innerWidth>720)return;let y0=null,dy=0;
+  g.onpointerdown=e=>{y0=e.clientY;dy=0;g.setPointerCapture(e.pointerId);d.style.transition='none'};
+  g.onpointermove=e=>{if(y0==null)return;dy=e.clientY-y0;if(dy>0)d.style.transform=`translateY(${dy}px)`};
+  g.onpointerup=g.onpointercancel=()=>{if(y0==null)return;y0=null;d.style.transition='';d.style.transform='';
+    if(dy<-40)d.classList.add('full');else if(dy>60){if(d.classList.contains('full'))d.classList.remove('full');else closeDlg()}}}
+/* ---------- Who's online (admins only) ----------
+   Everyone announces themselves on the private channel "ec-online"; Supabase only lets admins
+   receive the list (RLS policies on realtime.messages). */
+let ONLINE=new Set(),PRES=null;
+function startPresence(){if(PRES||!sb.channel)return;try{
+  PRES=sb.channel('ec-online',{config:{private:true,presence:{key:me.id}}});
+  if(!PRES.on||!PRES.track){PRES=null;return}
+  PRES.on('presence',{event:'sync'},()=>{try{ONLINE=new Set(Object.keys(PRES.presenceState()||{}))}catch{ONLINE=new Set()}showOnline()})
+    .subscribe(async st=>{if(st==='SUBSCRIBED'){try{await PRES.track({name:prof?.name||'',at:new Date().toISOString()})}catch{}}})}catch{PRES=null}}
+function showOnline(){let el=$('#online');const on=isAdm()&&innerWidth>=1280;document.body.classList.toggle('has-online',on);
+  if(!on){if(el)el.hidden=true}else{if(!el){el=document.createElement('aside');el.id='online';el.setAttribute('aria-label','Online now');document.body.appendChild(el)}el.hidden=false;
+    const ids=[...ONLINE],ppl=ids.map(id=>profiles.find(p=>p.id===id)||{id,name:'Unknown'}).sort((a,b)=>a.name.localeCompare(b.name));
+    el.innerHTML=`<div class="ohead">Admins only</div><h3>Online now <span class="on">${ppl.length}</span></h3>${ppl.map(p=>`<div class="orow"><i class="odot on"></i>${esc(p.name)}</div>`).join('')||'<p class="mu">Nobody right now.</p>'}<div class="mu" style="margin-top:12px">${Math.max(0,profiles.length-ppl.length)} offline</div>`}
+  document.querySelectorAll('.odot[data-uid]').forEach(d=>{const o=ONLINE.has(d.dataset.uid);d.classList.toggle('on',o);d.title=o?'Online now':'Offline'})}
+addEventListener('resize',()=>{clearTimeout(window.__rz);window.__rz=setTimeout(showOnline,200)});
+/* ---------- Calendar file for a stint ---------- */
+function icsStint(title,A,B){const f=d=>new Date(d).toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');
+  const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ARION Endurance Crew//EN','BEGIN:VEVENT',`UID:${A}-${Math.random().toString(36).slice(2)}@arion`,`DTSTAMP:${f(Date.now())}`,`DTSTART:${f(A)}`,`DTEND:${f(B)}`,`SUMMARY:${title.replace(/[,;]/g,' ')}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Stint in 30 minutes','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download='stint.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+const countdown=ms=>{const d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/H),m=Math.floor(ms%H/60000);return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m} min`};
+
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
 // The editable driver settings, shared by "Your profile" and the admin's edit window.
@@ -1288,7 +1469,7 @@ let ROSTER=[],EMAILS={};
 async function rosterView(){
   const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
-  const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
+  const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${adm?`<i class="odot${ONLINE.has(p.id)?' on':''}" data-uid="${p.id}" role="img" aria-label="${ONLINE.has(p.id)?'Online now':'Offline'}" title="${ONLINE.has(p.id)?'Online now':'Offline'}"></i>`:''}${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
     <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}
     ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
