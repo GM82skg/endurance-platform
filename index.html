@@ -125,7 +125,8 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
-.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.card.notes{padding:4px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}.rh{font-size:13px;font-weight:700;color:var(--tint);margin-bottom:4px}
+.card.notes{padding:12px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
 textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
 .empty{color:var(--label2);font-size:14px;margin:12px 0 0}
 
@@ -427,7 +428,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.11',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.12',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -716,7 +717,7 @@ async function raceView(){
   {const cs=clockSummary(d,r.length_h);if(cs)ban+=`<div class="banner"><span>${cs}</span></div>`}
   $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'My races':'Calendar'}</button>
     <div class="head"><h1 class="lt" style="margin-top:6px">${esc(r.name)}</h1><button class="gdots big" onclick="raceMenu()" aria-label="Race options">⋯</button></div>
-    <p class="lt-sub">${r.length_h} hours${r.track?' · '+esc(r.track):''} · <b class="wk">${d.toLocaleDateString('en-GB',{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(d,tz)} → <b class="wk">${e.toLocaleDateString('en-GB',{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(e,tz)}</p>${r.fair_share?`<p class="mu" style="margin:-12px 0 12px"><span class="chip warn">Fair share applies</span> each driver must drive 50% ÷ drivers of the team’s laps</p>`:''}${r.notes?`<details class="card notes"><summary>Race info</summary><p class="mu">${esc(r.notes)}</p></details>`:''}${ban}
+    <p class="lt-sub">${r.length_h} hours${r.track?' · '+esc(r.track):''} · <b class="wk">${d.toLocaleDateString('en-GB',{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(d,tz)} → <b class="wk">${e.toLocaleDateString('en-GB',{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(e,tz)}</p>${r.fair_share?`<p class="mu" style="margin:-12px 0 12px"><span class="chip warn">Fair share applies</span> each driver must drive 50% ÷ drivers of the team’s laps</p>`:''}${r.notes?`<div class="card notes"><div class="rh">Race info</div><p class="mu">${esc(r.notes)}</p></div>`:''}${ban}
     <div id="sub"></div>`;
   drawGantt(r);
 }
@@ -1247,7 +1248,7 @@ function eventsHtml(tz){const up=LMUEV.filter(e=>evWeekEnd(e)>Date.now());
       <button class="pri" onclick="evCreateDlg(${e.id})">${mine.length?'Add another start':'Create race'}</button></div>
       <div class="mu" style="margin-top:8px">${esc(e.classes||'')}</div>
       ${mine.length?`<div class="chips">${mine.map(r=>`<button class="chip ok evrace" onclick="go('race',${r.id})">${locFull(new Date(r.start_utc),tz)} · open</button>`).join('')}</div>`:''}
-      ${e.rules?`<details><summary>Rules</summary><p class="mu" style="white-space:pre-line;margin:0">${esc(e.rules)}</p></details>`:''}</div>`}).join('');
+      ${e.rules?`<div class="rules"><div class="rh">Rules</div><p>${esc(e.rules)}</p></div>`:''}</div>`}).join('');
   return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">Upcoming LMU team events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
     ${cards||'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
 function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz(),days=evDays(e);
