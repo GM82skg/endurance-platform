@@ -336,6 +336,8 @@ dialog.sheet,.menu button{width:100%}.menu{gap:10px}.menu>button{min-height:46px
 .subl{display:flex;gap:6px;align-items:baseline;white-space:nowrap;overflow:hidden}.subl .lapline{flex:none}
 .fair{font-size:11px;font-weight:600;color:var(--green-ink);font-variant-numeric:tabular-nums}.fair.short{color:var(--red-ink)}
 .lapecho{font-size:12px;font-weight:500;margin-top:2px;font-variant-numeric:tabular-nums}.lapecho.bad{color:var(--red-ink)}
+.fairbox{background:color-mix(in srgb,var(--green) 12%,transparent);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.4}.fairbox.short{background:color-mix(in srgb,var(--yellow) 18%,transparent)}
+.presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-top:12px}.presets button{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;font-size:14px;color:var(--label);background:var(--fill2)}.presets button small{font-size:11px;color:var(--label2);font-weight:500}.presets button.on{background:var(--tint);color:var(--tint-ink)}.presets button.on small{color:var(--tint-ink)}
 .lapbox{background:var(--fill);border-radius:14px;padding:14px;text-align:center}.steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
 .step{width:56px;min-height:52px;font-size:17px;font-weight:600;color:var(--label);background:var(--fill2)}.lapn{width:80px;font-size:40px;font-weight:700}
 .lapt{font-size:17px;font-weight:600;margin-top:10px}.shift{min-height:18px;margin-top:6px;font-size:13px;font-weight:600;color:var(--tint)}
@@ -425,7 +427,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.4.10',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.4.11',H=3600000,STINTS=[2,3],$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -741,6 +743,12 @@ const lapsBy=(P)=>{const o={};P.items.forEach(it=>o[it.s.user_id]=(o[it.s.user_i
 const fairPct=n=>n>=2?0.5/n:0;
 function fairMin(r,t,P){if(!r?.fair_share)return null;const by=lapsBy(P),drivers=Object.keys(by).filter(u=>by[u]>0),n=drivers.length,total=P.items.reduce((a,x)=>a+x.laps,0);
   if(n<2)return {n,total,min:0,pct:0};return {n,total,pct:fairPct(n),min:Math.floor(total*fairPct(n))}}
+// What each driver needs, shown from the very first stint: until the plan reaches the finish it
+// estimates the race laps from the team's typical lap and counts every driver in the team.
+function fairInfo(r,t,P){if(!r?.fair_share)return null;const mem=T.ms.filter(m=>m.team_id===t.id),by=lapsBy(P),done=P.end>=P.r1-60000;
+  const drivers=done?Object.keys(by).filter(u=>by[u]>0).length:Math.max(mem.length,Object.keys(by).filter(u=>by[u]>0).length);
+  const total=done?P.items.reduce((a,x)=>a+x.laps,0):Math.round(r.length_h*3600/(lapFallback(t)||120));
+  return {n:drivers,total,est:!done,pct:fairPct(drivers),min:drivers>=2?Math.floor(total*fairPct(drivers)):0,by}}
 function fairShort(t,P,ms=T.ms){const f=fairMin(curRace(),t,P);if(!f||!f.min)return [];const by=lapsBy(P);return Object.keys(by).filter(u=>by[u]>0&&by[u]<f.min).map(uid=>({uid,laps:by[uid],min:f.min}))}
 const seqBetween=(a,b)=>a==null&&b==null?1:a==null?b-1:b==null?a+1:(a+b)/2;
 // Running-order position for a time: between the stints whose middles are before/after it.
@@ -767,8 +775,9 @@ function gToggle(tid){GOPEN[tid]=GOPEN[tid]===false;drawGantt(curRace())}
 function gTab(tid,v){GTAB[tid]=v;closeDlgIf();drawGantt(curRace())}
 const first=n=>String(n||'').trim().split(/\s+/)[0];
 function teamStatus(r,t,P,tz){const mem=T.ms.filter(m=>m.team_id===t.id),need=mem.filter(m=>!m.avg_lap).length;
-  if(!mem.length)return ['No drivers yet','bad'];if(!P.items.length)return [need?`${need} lap time${need>1?'s':''} missing`:'No stints yet','bad'];
-  if(P.end<P.r1-60000)return [`${dur((P.r1-P.end)/1000)} uncovered`,'bad'];const fs=fairShort(t,P);if(fs.length)return [`Fair share: ${fs.length} driver${fs.length>1?'s':''} short`,'bad'];
+  const fi=fairInfo(r,t,P),fsTxt=fi&&fi.min?` · fair share ≈${fi.min} laps each`:'';
+  if(!mem.length)return ['No drivers yet','bad'];if(!P.items.length)return [need?`${need} lap time${need>1?'s':''} missing`:'No stints yet'+fsTxt,'bad'];
+  if(P.end<P.r1-60000)return [`${dur((P.r1-P.end)/1000)} uncovered${fsTxt}`,'bad'];const fs=fairShort(t,P);if(fs.length)return [`Fair share: ${fs.length} driver${fs.length>1?'s':''} short`,'bad'];
   return [need?`Covered · ${need} lap time${need>1?'s':''} missing`:fairMin(r,t,P)?.min?'Covered · fair share OK':'Covered','ok']}
 function drawGantt(r){
   const tz=myTz(),w=gWin(r),{from,to,span}=w,pc=ms=>((Math.max(from,Math.min(to,ms))-from)/span*100).toFixed(3)+'%',wd=(a,b)=>((Math.min(to,b)-Math.max(from,a))/span*100).toFixed(3)+'%',vis=(a,b)=>b>from&&a<to;
@@ -780,7 +789,7 @@ function drawGantt(r){
   const now=Date.now(),nowLine=now>from&&now<to?`<span class="gnow" style="left:${pc(now)}"></span>`:'';
   const inTeam=new Set(T.ms.map(m=>m.user_id));
   const shade=uid=>BANDS.filter(b=>b.user_id===uid&&b.race_id===r.id).map(b=>{const a=+new Date(b.start_utc),e=+new Date(b.end_utc);return vis(a,e)?`<span class="gshade ${b.kind}" style="left:${pc(a)};width:${wd(a,e)}"></span>`:''}).join('');
-  const row=(t,uid,bars)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),pl=t?lapsBy(planOf(r,t))[uid]||0:0,fm=t?(fairMin(r,t,planOf(r,t))?.min||0):0;
+  const row=(t,uid,bars)=>{const lead=t&&canLead(t),mine=uid===me.id,lap=t?lapOf(t,uid):null,can=t&&(mine||lead),pl=t?lapsBy(planOf(r,t))[uid]||0:0,fm=t?(fairInfo(r,t,planOf(r,t))?.min||0):0;
     return `<div class="grw${mine?' me':''}"><div class="gname">${t?`<span class="grip" data-uid="${uid}" data-tid="${t.id}" onpointerdown="dragStart(event)" aria-hidden="true">${ICON.grip}</span>`:''}<span class="nm"><button class="${mine?'am':''}" onclick="${t?`memberDlg(${t.id},'${uid}')`:`freeDlg('${uid}')`}">${esc(name(uid))}</button>${t?`<span class="subl"><button class="lapline${lap?'':' need'}" onclick="${can&&!started(r)?`lapDlg(${t.id},'${uid}')`:''}" ${can&&!started(r)?'':'tabindex="-1"'}>${lap?fmtLap(lap):'Lap time needed'}</button>${fm?`<span class="fair${pl<fm?' short':''}" title="Fair share: ${pl} laps planned, minimum ${fm}">${pl}/${fm}<span class="lw"> laps</span></span>`:''}</span>`:''}</span></div>
       <div class="gtrack${can?' edit':''}" data-tid="${t?t.id:0}" data-uid="${uid}" ${can?`onclick="trackTap(event,${t.id},'${uid}')"`:''}>${lines}${shade(uid)}${bars||''}${nowLine}</div></div>`};
   const barHtml=(t,it,sug)=>{if(!vis(it.A,it.B))return '';const uid=it.uid||it.s.user_id,can=!sug&&(canLead(t)||(uid===me.id&&it.s.status==='pending')),txt=`${locH(new Date(it.A),tz)}–${locH(new Date(it.B),tz)}`,
@@ -890,12 +899,16 @@ function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz
   const {P,it}=project(S.tid,S.sid,{user_id:S.uid,laps:S.laps,seq:S.seq}),nxt=P.items[P.items.indexOf(it)+1];
   const base=s?project(S.tid,S.sid,{}).it:null,shift=base?Math.round((it.B-base.B)/60000):0,idx=P.items.indexOf(it);
   const btn=(d,l)=>`<button type="button" class="step" onclick="stepLaps(${d})" ${S.edit?'':'disabled'} aria-label="${l}">${d>0?'+':'−'}${Math.abs(d)}</button>`;
-  const html=`<form onsubmit="saveSheet(event)"><h3>${esc(name(S.uid))} · ${esc(t.name)}</h3>
-    <p class="mu" style="margin:0">Average lap ${it.lap?fmtLap(it.lap):'unknown'}${it.est?' (team’s typical lap)':''}${s?' · '+stL(s.status):''}${(()=>{const f=fairMin(r,t,P);return f&&f.min?` · <span class="fair${(lapsBy(P)[S.uid]||0)<f.min?' short':''}">${lapsBy(P)[S.uid]||0}/${f.min} fair-share laps</span>`:''})()}</p>
+  const fi=fairInfo(r,t,P),mine=(fi?.by||lapsBy(P))[S.uid]||0,lap=it.lap||120,rest=Math.max(1,Math.ceil((P.r1-it.A)/1000/lap));
+  const before=idx>0?P.items[idx-1]:null,presets=[...(fi&&fi.min?[[`Fair share (${fi.min})`,Math.max(1,fi.min-(mine-S.laps))]]:[]),['1 hour',Math.round(3600/lap)],['2 hours',Math.round(7200/lap)],['Rest of race',rest]];
+  const html=`<form onsubmit="saveSheet(event)"><h3>${s?'Stint':'New stint'} ${idx+1} · ${esc(name(S.uid))}</h3>
+    <p class="mu" style="margin:0">${esc(t.name)} · average lap ${it.lap?fmtLap(it.lap):'unknown'}${it.est?' (team’s typical lap)':''}${s?' · '+stL(s.status):''}<br>Starts ${before?`after ${esc(name(before.s.user_id))}’s stint`:'at the race start'}, ${locFull(new Date(it.A),tz)}</p>
+    ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ${fi.est?'≈ ':''}${fi.total} race laps${fi.est?' (estimated until the plan reaches the finish)':''}. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b> laps with this stint${mine<fi.min?` — ${fi.min-mine} more needed`:' ✓'}.`:`<b>Fair share applies</b><br>With only ${fi.n} driver in the team there’s no minimum yet. With 2 drivers each must do 25% of the laps.`}</div>`:''}
     <div class="lapbox"><div class="mu">Laps</div><div class="steps">${btn(-5,'5 laps fewer')}${btn(-1,'1 lap fewer')}<span class="lapn num">${S.laps}</span>${btn(1,'1 lap more')}${btn(5,'5 laps more')}</div>
       <div class="num lapt">${locFull(new Date(it.A),tz)} → ${locDay(new Date(it.B),tz)!==locDay(new Date(it.A),tz)?locFull(new Date(it.B),tz):locH(new Date(it.B),tz)}</div>
       <div class="mu">${dur((it.B-it.A)/1000)} · ${nxt?`then ${esc(name(nxt.s.user_id))} takes over at ${locH(new Date(it.B),tz)}`:it.B>=P.r1?'takes the chequered flag':`${dur((P.r1-P.end)/1000)} of the race still uncovered`}</div>
-      <div class="shift">${shift?`Later stints move ${Math.abs(shift)} min ${shift>0?'later':'earlier'}`:''}</div></div>
+      <div class="shift">${shift?`Later stints move ${Math.abs(shift)} min ${shift>0?'later':'earlier'}`:''}</div>
+      ${S.edit?`<div class="presets">${presets.map(([l,n])=>`<button type="button" class="${n===S.laps?'on':''}" onclick="SHEET.laps=${n};renderSheet()">${l}<small>${n} laps</small></button>`).join('')}</div>`:''}</div>
     ${S.edit&&s?`<div class="form2"><button type="button" onclick="moveSheet(-1)" ${idx<=0?'disabled':''}>Move earlier</button><button type="button" onclick="moveSheet(1)" ${idx>=P.items.length-1?'disabled':''}>Move later</button></div>`:''}
     ${S.lead&&mems.length>1?`<label>Driver<select onchange="SHEET.uid=this.value;renderSheet()">${mems.map(m=>opt(m.user_id,name(m.user_id),m.user_id===S.uid)).join('')}</select></label>`:''}
     ${s&&S.lead&&s.status==='pending'?`<button type="button" onclick="appr(${s.id})">Approve</button>`:''}
