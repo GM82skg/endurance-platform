@@ -533,6 +533,31 @@ label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk inp
 .adrow{flex-wrap:wrap}.adthumb{width:120px;height:40px;border-radius:6px;background:var(--fill);overflow:hidden;flex:none}.adthumb img{width:100%;height:100%;object-fit:cover}
 .adnum{display:flex;gap:10px;font-size:13px;align-items:baseline;flex-wrap:wrap}.adposlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 16px}
 .tblwrap{overflow-x:auto}.rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th,.rtab td{padding:8px 10px;border-bottom:.5px solid var(--sep);text-align:left}.rtab .num{text-align:right;font-variant-numeric:tabular-nums}.rtab tr.tot td{font-weight:700}
+/* ---------- v0.6.8 professional forms ---------- */
+.sform{display:flex;flex-direction:column;gap:16px;padding-bottom:8px}
+.ssec{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.ssech{padding:16px 20px 12px;border-bottom:.5px solid var(--sep)}.ssech h3{margin:0;font-size:17px}.ssech p{margin:3px 0 0;font-size:13px}
+.ssecb{padding:16px 20px 20px;display:flex;flex-direction:column;gap:10px}
+.pairh{font-size:13px;font-weight:600;color:var(--label2);margin-top:6px}.pairh:first-child{margin-top:0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pf{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--label2);position:relative;min-width:0}
+.pf input,.pf textarea{width:100%;box-sizing:border-box}.pf textarea{resize:vertical;min-height:90px;line-height:1.45}
+.pf .lt2{position:absolute;top:8px;right:10px;z-index:1;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--label3);pointer-events:none}
+.pf input+.lt2,.pf .lt2+input{padding-right:40px}.pf .lt2~input{padding-right:40px}.pf .lt2~textarea{padding-right:40px}
+.pf.one{max-width:420px}
+.linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.swlist{gap:0;padding-top:4px;padding-bottom:4px}.swlist .swrow{border-bottom:.5px solid var(--sep)}.swlist .swrow:last-child{border-bottom:0}
+.swrow{display:flex!important;flex-direction:row!important;align-items:center;gap:16px;min-height:52px;cursor:pointer;padding:6px 0}.swtx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}.swtx b{font-weight:600;font-size:15px}.swtx .mu{font-size:13px;font-weight:400}
+input.switch{appearance:none;-webkit-appearance:none;flex:none;width:51px;height:31px;min-height:0;margin:0;padding:0;border:0;border-radius:16px;background:var(--fill);position:relative;cursor:pointer;transition:background .2s}
+input.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .2s}
+input.switch:checked{background:var(--green)}input.switch:checked::after{transform:translateX(20px)}input.switch:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){input.switch,input.switch::after{transition:none}}
+.savebar{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:4;display:flex;align-items:center;gap:14px;justify-content:flex-end;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.savebar.inl{position:static;box-shadow:none;background:none;padding:12px 20px 18px;backdrop-filter:none}
+.savebar .savest{font-size:13px}.savebar .savest.chg{color:var(--orange-ink,var(--tint));font-weight:600}.savebar button{min-width:160px}
+.profsite .swrow{padding:10px 20px;border-bottom:.5px solid var(--sep)}.profgrid{display:grid;grid-template-columns:240px 1fr;gap:20px;padding:18px 20px 0}.profdet{display:flex;flex-direction:column;gap:10px}
+.profgrid .imgpick{grid-template-columns:1fr}.profgrid .imgpick .ipbox{width:100%;height:180px;grid-row:auto}
+@media (max-width:720px){.pair,.linkgrid,.profgrid{grid-template-columns:1fr}.savebar{bottom:calc(env(safe-area-inset-bottom,0px) + 74px)}.savebar button{flex:1}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -610,7 +635,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.8',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.9',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1921,6 +1946,11 @@ const EL={
  'The end date can’t be before the start date.':'Η ημερομηνία λήξης δεν μπορεί να είναι πριν την έναρξη.','Share: a whole number from 1 to 10.':'Μερίδιο: ακέραιος από 1 έως 10.','Month':'Μήνας','Views':'Προβολές','Clicks':'Κλικ','Click rate':'Ποσοστό κλικ','Total':'Σύνολο',
  'Views: the banner was at least half on screen for a second. Reloads count again. No cookies or visitor data are used.':'Προβολή: το banner ήταν τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο. Οι ανανεώσεις μετρούν ξανά. Δεν χρησιμοποιούνται cookies ούτε δεδομένα επισκεπτών.',
  'No numbers for this sponsor yet.':'Δεν υπάρχουν ακόμα στοιχεία για αυτόν τον χορηγό.','Download (CSV)':'Λήψη (CSV)','Ad positions':'Θέσεις διαφημίσεων','Untick a position to keep it free of ads everywhere.':'Ξετσέκαρε μια θέση για να μην εμφανίζονται ποτέ διαφημίσεις εκεί.',
+ 'The big slogan and the line under it, at the top of the home page.':'Το μεγάλο σύνθημα και η γραμμή κάτω από αυτό, στην κορυφή της αρχικής σελίδας.','Slogan':'Σύνθημα','Line under the slogan':'Γραμμή κάτω από το σύνθημα',
+ 'The story at the top of the team page.':'Η ιστορία στην κορυφή της σελίδας ομάδας.','Team story':'Ιστορία ομάδας','What a sponsor reads first, and your stream audience.':'Τι διαβάζει πρώτα ένας χορηγός, και το κοινό των streams σας.',
+ 'Partner pitch':'Κείμενο για συνεργάτες','Stream audience':'Κοινό streams','e.g. 1,200 followers':'π.χ. 1.200 followers','Shown in the footer of every page. Leave empty to hide.':'Εμφανίζονται στο υποσέλιδο κάθε σελίδας. Άφησε κενό για απόκρυψη.',
+ 'Switch a position off to keep it free of ads everywhere.':'Απενεργοποίησε μια θέση για να μην εμφανίζονται ποτέ διαφημίσεις εκεί.','No changes':'Καμία αλλαγή','Unsaved changes':'Μη αποθηκευμένες αλλαγές',
+ 'Show me on the team page':'Εμφάνισέ με στη σελίδα ομάδας','Country':'Χώρα','Short bio':'Σύντομο βιογραφικό','Shown on the website between its dates.':'Εμφανίζεται στην ιστοσελίδα ανάμεσα στις ημερομηνίες της.',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2109,7 +2139,7 @@ function galDlg(kind,id){const L=kind==='liveries',x=id?SITE[kind].find(y=>y.id=
       <div class="form2"><label>Car<input name="car" maxlength="80" value="${esc(x?.car||'')}"></label><label>Class<select name="class">${opt('','—',!x?.class)}${SCLASSES.map(c=>opt(c,c,x?.class===c)).join('')}</select></label></div>
       ${imgField('img',x?.image_url,'liveries','Image')}`
      :`<label>Name<input name="name" maxlength="80" required value="${esc(x?.name||'')}"></label><label>Website<input name="link" type="url" maxlength="300" value="${esc(x?.link||'')}" placeholder="https://"></label>${imgField('img',x?.logo_url,'partners','Logo')}`}
-    <label class="chk"><input type="checkbox" name="visible" ${x?.visible===false?'':'checked'}> Show on the website</label>
+    ${swRow('visible','Show on the website',x?.visible!==false)}
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button>${x?`<button type="button" class="danger" onclick="delGal('${kind}',${id})">Delete</button>`:''}</div></form>`)}
 async function saveGal(e,kind,id){e.preventDefault();const L=kind==='liveries',f=new FormData(e.target),img=String(f.get('img')||'');let row;
   if(L){if(!img)return note('Add an image of the livery.');row={title:String(f.get('title')).trim(),car:String(f.get('car')||'').trim()||null,class:f.get('class')||null,image_url:img,visible:!!f.get('visible')}}
@@ -2134,17 +2164,26 @@ async function saveResult(e,tid){e.preventDefault();const f=new FormData(e.targe
   await q(sb.from('race_results').upsert(row,{onConflict:'team_id'}));await render();note('Result saved.',1)}
 
 // ---- Settings: texts and links
-const SFIELDS=[['Home page',[['slogan_el','Slogan (Greek)',80],['slogan_en','Slogan (English)',80],['sub_el','Line under the slogan (Greek)',160],['sub_en','Line under the slogan (English)',160]]],
-  ['Team page',[['story_el','Team story (Greek)',600,1],['story_en','Team story (English)',600,1]]],
-  ['Partners page',[['partner_el','Partner pitch (Greek)',600,1],['partner_en','Partner pitch (English)',600,1],['audience','Stream audience (e.g. 1,200 followers)',60]]],
-  ['Links',[['discord','Discord invite',200],['twitch','Twitch',200],['youtube','YouTube',200],['instagram','Instagram',200],['facebook','Facebook',200],['tiktok','TikTok',200],['email','Contact email',120]]]];
-function siteSettings(){const d=SITE.settings;
-  return `<form class="card form" onsubmit="saveSettings(event)">${SFIELDS.map(([h,fs])=>`<div class="sg-h">${h}</div>${fs.map(([k,l,m,big])=>big?`<label>${l}<textarea name="${k}" rows="3" maxlength="${m}">${esc(d[k]||'')}</textarea></label>`:`<label>${l}<input name="${k}" maxlength="${m}" value="${esc(d[k]||'')}" ${k==='email'?'type="email"':['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)?'type="url" placeholder="https://"':''}></label>`).join('')}`).join('')}
-    <div class="sg-h">Ad positions</div><p class="mu" style="margin:-4px 0 0">Untick a position to keep it free of ads everywhere.</p>
-    <div class="adposlist">${ADPOS.map(([k,l])=>`<label class="chk"><input type="checkbox" name="adpos" value="${k}" ${(d.ads_off||[]).includes(k)?'':'checked'}> ${l}</label>`).join('')}</div>
-    <button class="pri">Save settings</button></form>`}
+// Settings, grouped as on the website. Greek and English sit side by side.
+const SSECT=[
+  ['Home page','The big slogan and the line under it, at the top of the home page.',[['pair','slogan','Slogan',80],['pair','sub','Line under the slogan',160]]],
+  ['Team page','The story at the top of the team page.',[['pair','story','Team story',600,1]]],
+  ['Partners page','What a sponsor reads first, and your stream audience.',[['pair','partner','Partner pitch',600,1],['one','audience','Stream audience','e.g. 1,200 followers',60]]],
+  ['Links','Shown in the footer of every page. Leave empty to hide.',[['links']]]];
+const SLINKS=[['discord','Discord invite'],['twitch','Twitch'],['youtube','YouTube'],['instagram','Instagram'],['facebook','Facebook'],['tiktok','TikTok']];
+const langPair=(k,label,max,big,d)=>`<div class="pairh">${label}</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span>${big?`<textarea name="${k}_${l}" rows="4" maxlength="${max}" aria-label="${label} (${l==='el'?'Greek':'English'})">${esc(d[k+'_'+l]||'')}</textarea>`:`<input name="${k}_${l}" maxlength="${max}" value="${esc(d[k+'_'+l]||'')}" aria-label="${label} (${l==='el'?'Greek':'English'})">`}</label>`).join('')}</div>`;
+const swRow=(name,label,on,hint,val)=>`<label class="swrow"><span class="swtx"><b>${label}</b>${hint?`<span class="mu">${hint}</span>`:''}</span><input type="checkbox" role="switch" class="switch" name="${name}" ${val?`value="${val}"`:''} ${on?'checked':''}></label>`;
+function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
+  return `<form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">
+    ${SSECT.map(([h,hint,fs])=>`<section class="ssec"><div class="ssech"><h3>${h}</h3><p class="mu">${hint}</p></div><div class="ssecb">${fs.map(f=>f[0]==='pair'?langPair(f[1],f[2],f[3],f[4],d)
+      :f[0]==='one'?`<label class="pf one">${f[2]}<input name="${f[1]}" maxlength="${f[4]}" value="${esc(d[f[1]]||'')}" placeholder="${f[3]}"></label>`
+      :`<div class="linkgrid">${SLINKS.map(([k,l])=>`<label class="pf">${l}<input name="${k}" type="url" maxlength="200" value="${esc(d[k]||'')}" placeholder="https://"></label>`).join('')}<label class="pf">Contact email<input name="email" type="email" maxlength="120" value="${esc(d.email||'')}"></label></div>`).join('')}</div></section>`).join('')}
+    <section class="ssec"><div class="ssech"><h3>Ad positions</h3><p class="mu">Switch a position off to keep it free of ads everywhere.</p></div><div class="ssecb swlist">${ADPOS.map(([k,l])=>swRow('adpos',l,!off.includes(k),'',k)).join('')}</div></section>
+    <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save settings</button></div></form>`}
+function markDirty(f){const st=f.querySelector(".savest");if(st){st.textContent="Unsaved changes";st.classList.add("chg")}}
 async function saveSettings(e){e.preventDefault();const f=new FormData(e.target),data={...SITE.settings};
-  for(const [,fs] of SFIELDS)for(const [k] of fs){const v=String(f.get(k)||'').trim();if(v&&['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
+  const keys=[...SSECT.flatMap(x=>x[2]).flatMap(f=>f[0]==='pair'?[f[1]+'_el',f[1]+'_en']:f[0]==='one'?[f[1]]:[]),...SLINKS.map(x=>x[0]),'email'];
+  for(const k of keys){const v=String(f.get(k)||'').trim();if(v&&SLINKS.some(x=>x[0]===k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
   const on=f.getAll('adpos');data.ads_off=ADPOS.map(p=>p[0]).filter(k=>!on.includes(k));
   await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));await render();note('Settings saved.',1)}
 
@@ -2187,7 +2226,7 @@ function adDlg(id){const a=id?SITE.ads.find(x=>x.id===id):null,pos=a?.placement|
     <div class="form2"><label>Image description (Greek)<input name="alt_el" maxlength="160" value="${esc(a?.alt_el||'')}"></label><label>Image description (English)<input name="alt_en" maxlength="160" value="${esc(a?.alt_en||'')}"></label></div>
     <div class="form2"><label>From<input name="starts_on" type="date" value="${a?.starts_on||''}"></label><label>Until<input name="ends_on" type="date" value="${a?.ends_on||''}"></label></div>
     <label>Share when ads take turns (1–10)<input name="weight" inputmode="numeric" maxlength="2" value="${a?.weight||1}"></label>
-    <label class="chk"><input type="checkbox" name="active" ${a?.active===false?'':'checked'}> Active</label>
+    ${swRow('active','Active',a?.active!==false,'Shown on the website between its dates.')}
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button>${a?`<button type="button" class="danger" onclick="delAd(${id})">Delete</button>`:''}</div></form>`);adSizes($('#dlg [name=placement]'))}
 function adSizes(sel){const p=ADPOS.find(x=>x[0]===sel.value);sel.form.querySelector('.adsz').textContent=`Best size: ${p[2]} px on computers, ${p[3]} px on phones.`}
 async function saveAd(e,id){e.preventDefault();const f=new FormData(e.target),g=k=>String(f.get(k)||'').trim(),w=parseInt(g('weight'),10);
@@ -2213,13 +2252,12 @@ function adReportCsv(pid){const p=SITE.partners.find(x=>x.id===pid),lines=[['Spo
 
 // ---- My website profile (every driver) and editors (admins)
 function siteProfCard(){const p=prof;
-  return `<h3>On the website</h3><form class="card form" onsubmit="saveSiteProf(event)">
-    <label class="chk"><input type="checkbox" name="site_public" ${p.site_public?'checked':''}> Show me on the team page of the website</label>
-    <p class="mu" style="margin:-6px 0 0">Only your name, photo, country, short bio and number of events are shown. Never your email or availability.</p>
-    ${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}
-    <label>Country (2 letters, e.g. GR)<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" autocomplete="off" style="text-transform:uppercase"></label>
-    <div class="form2"><label>Short bio (Greek)<textarea name="site_bio_el" rows="3" maxlength="400">${esc(p.site_bio_el||'')}</textarea></label><label>Short bio (English)<textarea name="site_bio_en" rows="3" maxlength="400">${esc(p.site_bio_en||'')}</textarea></label></div>
-    <button class="pri">Save website profile</button></form>`}
+  return `<h3>On the website</h3><form class="ssec profsite" onsubmit="saveSiteProf(event)" oninput="markDirty(this)" onchange="markDirty(this)">
+    ${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio and number of events are shown. Never your email or availability.')}
+    <div class="profgrid"><div>${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}</div>
+      <div class="profdet"><label class="pf one">Country<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" placeholder="GR" autocomplete="off" style="text-transform:uppercase;max-width:90px"></label>
+        <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div></div></div>
+    <div class="savebar inl"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save website profile</button></div></form>`}
 async function saveSiteProf(e){e.preventDefault();const f=new FormData(e.target),c=String(f.get('site_country')||'').trim().toUpperCase();if(c&&!/^[A-Z]{2}$/.test(c))return note('Country: two letters, e.g. GR.');
   await q(sb.from('profiles').update({site_public:!!f.get('site_public'),site_photo:String(f.get('site_photo')||'')||null,site_country:c||null,site_bio_el:String(f.get('site_bio_el')||'').trim()||null,site_bio_en:String(f.get('site_bio_en')||'').trim()||null}).eq('id',me.id));
   await start();note('Website profile saved.',1)}
