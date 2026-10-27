@@ -530,6 +530,9 @@ form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:1
 .stat.chip.ed{background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue)}
 a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;font-weight:600;text-decoration:none}a.btn.pri{background:var(--tint);color:var(--tint-ink)}
 label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk input{width:20px;height:20px;min-height:0}
+.adrow{flex-wrap:wrap}.adthumb{width:120px;height:40px;border-radius:6px;background:var(--fill);overflow:hidden;flex:none}.adthumb img{width:100%;height:100%;object-fit:cover}
+.adnum{display:flex;gap:10px;font-size:13px;align-items:baseline;flex-wrap:wrap}.adposlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 16px}
+.tblwrap{overflow-x:auto}.rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th,.rtab td{padding:8px 10px;border-bottom:.5px solid var(--sep);text-align:left}.rtab .num{text-align:right;font-variant-numeric:tabular-nums}.rtab tr.tot td{font-weight:700}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -607,7 +610,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.8',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1906,6 +1909,18 @@ const EL={
  'Photo':'Φωτογραφία','Country (2 letters, e.g. GR)':'Χώρα (2 γράμματα, π.χ. GR)','Short bio (Greek)':'Σύντομο βιογραφικό (Ελληνικά)','Short bio (English)':'Σύντομο βιογραφικό (Αγγλικά)','Save website profile':'Αποθήκευση προφίλ ιστοσελίδας',
  'Website profile saved.':'Το προφίλ ιστοσελίδας αποθηκεύτηκε.','Country: two letters, e.g. GR.':'Χώρα: δύο γράμματα, π.χ. GR.','Editor':'Συντάκτης','Make editor':'Ορισμός ως συντάκτη','Remove editor':'Αφαίρεση συντάκτη',
  'Filter':'Φίλτρο','Inbox (1)':'Εισερχόμενα (1)',
+ 'Ads':'Διαφημίσεις','+ New ad':'+ Νέα διαφήμιση','New ad':'Νέα διαφήμιση','Edit ad':'Επεξεργασία διαφήμισης','Sponsor report':'Αναφορά χορηγού','Sponsor':'Χορηγός','No sponsor':'Χωρίς χορηγό','Position':'Θέση',
+ 'At most one ad per position and two per page are shown; several ads in one position take turns. Views and clicks are daily totals, with no cookies and nothing stored about visitors. A reload counts as a new view.':'Εμφανίζεται έως μία διαφήμιση ανά θέση και έως δύο ανά σελίδα· όταν μια θέση έχει πολλές, εναλλάσσονται. Οι προβολές και τα κλικ είναι ημερήσια σύνολα, χωρίς cookies και χωρίς να αποθηκεύεται τίποτα για τους επισκέπτες. Μια ανανέωση της σελίδας μετράει ως νέα προβολή.',
+ 'Home · under the hero':'Αρχική · κάτω από την κεντρική εικόνα','Home · between sections':'Αρχική · ανάμεσα στις ενότητες','News · between posts':'Νέα · ανάμεσα στις αναρτήσεις','Inside a race report':'Μέσα σε αναφορά αγώνα','Results · above the table':'Αποτελέσματα · πάνω από τον πίνακα',
+ 'Team · after the drivers':'Ομάδα · μετά τους οδηγούς','Liveries · between rows':'Liveries · ανάμεσα στις σειρές','Live · under the stream':'Live · κάτω από το stream','Footer of every page':'Υποσέλιδο κάθε σελίδας',
+ 'Position off':'Θέση ανενεργή','Running':'Ενεργή τώρα','Scheduled / ended':'Προγραμματισμένη / έληξε','Off':'Ανενεργή','views':'προβολές','clicks':'κλικ','last 30 days':'τελευταίες 30 μέρες','all time':'συνολικά',
+ 'No ads yet. Add a partner first (Partners), then press + New ad.':'Δεν υπάρχουν διαφημίσεις ακόμα. Πρόσθεσε πρώτα έναν συνεργάτη (Συνεργάτες) και μετά πάτα «+ Νέα διαφήμιση».',
+ 'Image for computers':'Εικόνα για υπολογιστές','Image for phones (optional)':'Εικόνα για κινητά (προαιρετικό)','Link':'Σύνδεσμος','Image description (Greek)':'Περιγραφή εικόνας (Ελληνικά)','Image description (English)':'Περιγραφή εικόνας (Αγγλικά)',
+ 'Share when ads take turns (1–10)':'Μερίδιο όταν εναλλάσσονται (1–10)','Active':'Ενεργή','Ad saved.':'Η διαφήμιση αποθηκεύτηκε.','Ad deleted.':'Η διαφήμιση διαγράφηκε.','Delete ad':'Διαγραφή διαφήμισης',
+ 'Delete this ad and its numbers for good?':'Να διαγραφεί οριστικά η διαφήμιση και τα στατιστικά της;','Add the image for computers.':'Πρόσθεσε την εικόνα για υπολογιστές.','The link must start with https://':'Ο σύνδεσμος πρέπει να ξεκινά με https://',
+ 'The end date can’t be before the start date.':'Η ημερομηνία λήξης δεν μπορεί να είναι πριν την έναρξη.','Share: a whole number from 1 to 10.':'Μερίδιο: ακέραιος από 1 έως 10.','Month':'Μήνας','Views':'Προβολές','Clicks':'Κλικ','Click rate':'Ποσοστό κλικ','Total':'Σύνολο',
+ 'Views: the banner was at least half on screen for a second. Reloads count again. No cookies or visitor data are used.':'Προβολή: το banner ήταν τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο. Οι ανανεώσεις μετρούν ξανά. Δεν χρησιμοποιούνται cookies ούτε δεδομένα επισκεπτών.',
+ 'No numbers for this sponsor yet.':'Δεν υπάρχουν ακόμα στοιχεία για αυτόν τον χορηγό.','Download (CSV)':'Λήψη (CSV)','Ad positions':'Θέσεις διαφημίσεων','Untick a position to keep it free of ads everywhere.':'Ξετσέκαρε μια θέση για να μην εμφανίζονται ποτέ διαφημίσεις εκεί.',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -1986,7 +2001,7 @@ const RX=[
  [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
  [/^, and paste it here\. The team events under “Special Events \(Team\)” are picked out\.$/,', και επικόλλησέ το εδώ. Θα βρεθούν τα team events κάτω από «Special Events (Team)».'],
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
@@ -2017,15 +2032,16 @@ const isEd=()=>isAdm()||!!prof?.site_editor;
 let SITE=null,SITETAB='news',INBOXF='all';
 const SCLASSES=['Hypercar','LMP2','LMP3','LMGT3','GT3','GTE'];
 async function loadSite(){const adm=isAdm();
-  const [st,news,liv,par,res,inbox,tms]=await Promise.all([
+  const [st,news,liv,par,res,inbox,tms,ads,adstats]=await Promise.all([
     adm?q(sb.from('site_settings').select('*').eq('id',1).maybeSingle()):null,
     q(sb.from('site_news').select('*').order('created_at',{ascending:false})),
     adm?q(sb.from('site_liveries').select('*').order('sort').order('id')):[],
     adm?q(sb.from('site_partners').select('*').order('sort').order('id')):[],
     adm?q(sb.from('race_results').select('*')):[],
     adm?q(sb.from('site_inbox').select('*').order('created_at',{ascending:false})):[],
-    adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[]]);
-  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now())}}
+    adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[],
+    adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?q(sb.from('site_ad_stats').select('*')):[]]);
+  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[]}}
 // Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
 async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
@@ -2046,8 +2062,8 @@ const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join(''
 
 async function siteView(){if(!isEd()){view='my';return render()}await loadSite();const adm=isAdm();if(!adm)SITETAB='news';
   const newIn=SITE.inbox.filter(x=>x.status==='new').length;
-  const tabs=adm?[['news','News'],['liveries','Liveries'],['partners','Partners'],['results','Results'],['settings','Settings'],['inbox',`Inbox${newIn?` (${newIn})`:''}`]]:[['news','News']];
-  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():siteInbox();
+  const tabs=adm?[['news','News'],['liveries','Liveries'],['partners','Partners'],['ads','Ads'],['results','Results'],['settings','Settings'],['inbox',`Inbox${newIn?` (${newIn})`:''}`]]:[['news','News']];
+  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():siteInbox();
   $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub">What you publish here appears on the public website about a minute later.</p>
     ${tabs.length>1?`<div class="seg sitetabs" role="tablist" aria-label="Website sections">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
     <div class="sitebody">${body}</div>`}
@@ -2124,9 +2140,12 @@ const SFIELDS=[['Home page',[['slogan_el','Slogan (Greek)',80],['slogan_en','Slo
   ['Links',[['discord','Discord invite',200],['twitch','Twitch',200],['youtube','YouTube',200],['instagram','Instagram',200],['facebook','Facebook',200],['tiktok','TikTok',200],['email','Contact email',120]]]];
 function siteSettings(){const d=SITE.settings;
   return `<form class="card form" onsubmit="saveSettings(event)">${SFIELDS.map(([h,fs])=>`<div class="sg-h">${h}</div>${fs.map(([k,l,m,big])=>big?`<label>${l}<textarea name="${k}" rows="3" maxlength="${m}">${esc(d[k]||'')}</textarea></label>`:`<label>${l}<input name="${k}" maxlength="${m}" value="${esc(d[k]||'')}" ${k==='email'?'type="email"':['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)?'type="url" placeholder="https://"':''}></label>`).join('')}`).join('')}
+    <div class="sg-h">Ad positions</div><p class="mu" style="margin:-4px 0 0">Untick a position to keep it free of ads everywhere.</p>
+    <div class="adposlist">${ADPOS.map(([k,l])=>`<label class="chk"><input type="checkbox" name="adpos" value="${k}" ${(d.ads_off||[]).includes(k)?'':'checked'}> ${l}</label>`).join('')}</div>
     <button class="pri">Save settings</button></form>`}
 async function saveSettings(e){e.preventDefault();const f=new FormData(e.target),data={...SITE.settings};
   for(const [,fs] of SFIELDS)for(const [k] of fs){const v=String(f.get(k)||'').trim();if(v&&['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
+  const on=f.getAll('adpos');data.ads_off=ADPOS.map(p=>p[0]).filter(k=>!on.includes(k));
   await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));await render();note('Settings saved.',1)}
 
 // ---- Inbox: website forms
@@ -2143,6 +2162,54 @@ function inboxDlg(id){const x=SITE.inbox.find(y=>y.id===id),tz=myTz();if(!x)retu
     <button type="button" onclick="closeDlg()">Close</button><button type="button" class="danger" onclick="inboxDel(${id})">Delete</button></div></form>`)}
 async function inboxSet(id,status){await q(sb.from('site_inbox').update({status}).eq('id',id));closeDlg();await render();note('Saved.',1)}
 async function inboxDel(id){if(!await askO({ok:'Delete',danger:true})('Delete this message for good?'))return;await q(sb.from('site_inbox').delete().eq('id',id));closeDlg();await render();note('Deleted.',1)}
+
+// ---- Sponsor ads (admins): own banners in fixed positions, with dates and daily view/click totals.
+const ADPOS=[['home_top','Home · under the hero','1200 × 200','640 × 320'],['home_mid','Home · between sections','1200 × 200','640 × 320'],['news_list','News · between posts','1200 × 200','640 × 320'],
+  ['article','Inside a race report','800 × 250','640 × 320'],['results','Results · above the table','1200 × 200','640 × 320'],['team','Team · after the drivers','1200 × 200','640 × 320'],
+  ['liveries','Liveries · between rows','1200 × 200','640 × 320'],['live','Live · under the stream','800 × 250','640 × 320'],['footer','Footer of every page','970 × 90','640 × 160']];
+const posLabel=k=>(ADPOS.find(p=>p[0]===k)||[k,k])[1];
+const adStat=(id,days)=>{const from=days?new Date(Date.now()-days*864e5).toISOString().slice(0,10):'0000';return SITE.adstats.filter(x=>x.ad_id===id&&x.day>=from).reduce((a,x)=>({v:a.v+x.views,c:a.c+x.clicks}),{v:0,c:0})};
+const ctr=s=>s.v?(s.c/s.v*100).toFixed(1)+'%':'–';
+const adRunning=a=>{const t=new Date().toISOString().slice(0,10);return a.active&&(!a.starts_on||a.starts_on<=t)&&(!a.ends_on||a.ends_on>=t)};
+function siteAds(){const off=SITE.settings.ads_off||[],list=SITE.ads;
+  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="adDlg()">+ New ad</button>${SITE.partners.length?`<button onclick="adReportDlg()">Sponsor report</button>`:''}</div>
+  <p class="mu" style="margin-top:0">At most one ad per position and two per page are shown; several ads in one position take turns. Views and clicks are daily totals, with no cookies and nothing stored about visitors. A reload counts as a new view.</p>
+  ${ADPOS.map(([k])=>{const ads=list.filter(a=>a.placement===k);if(!ads.length)return '';return `<h3>${posLabel(k)}${off.includes(k)?' <span class="stat chip pending">Position off</span>':''}</h3><div class="card flush">${ads.map(a=>{const s30=adStat(a.id,30),all=adStat(a.id);
+    return `<div class="li adrow"><div class="adthumb">${a.image_desktop?`<img src="${esc(a.image_desktop)}" alt="">`:''}</div><div class="who2"><b>${esc(SITE.partners.find(p=>p.id===a.partner_id)?.name||'No sponsor')}</b><span class="mu">${a.starts_on||'…'} → ${a.ends_on||'…'}</span></div>
+      <div class="adnum"><span><b>${s30.v}</b> views</span><span><b>${s30.c}</b> clicks</span><span>${ctr(s30)}</span><span class="mu">last 30 days</span></div><div class="adnum mu"><span>${all.v} / ${all.c}</span><span>all time</span></div>
+      <span class="stat chip ${adRunning(a)?'approved':'pending'}">${adRunning(a)?'Running':a.active?'Scheduled / ended':'Off'}</span><div class="acts"><button class="ghost" onclick="adDlg(${a.id})">Edit</button></div></div>`}).join('')}</div>`}).join('')||'<p class="mu">No ads yet. Add a partner first (Partners), then press + New ad.</p>'}`}
+function adDlg(id){const a=id?SITE.ads.find(x=>x.id===id):null,pos=a?.placement||'home_top';
+  openDlg(`<form onsubmit="saveAd(event,${id||0})"><h3>${a?'Edit ad':'New ad'}</h3>
+    <label>Sponsor<select name="partner_id">${opt('','No sponsor',!a?.partner_id)}${SITE.partners.map(p=>opt(String(p.id),p.name,a?.partner_id===p.id)).join('')}</select></label>
+    <label>Position<select name="placement" onchange="adSizes(this)">${ADPOS.map(([k,l])=>opt(k,l,k===pos)).join('')}</select></label><p class="mu adsz" style="margin:-4px 0 0"></p>
+    ${imgField('image_desktop',a?.image_desktop,'ads','Image for computers')}${imgField('image_mobile',a?.image_mobile,'ads','Image for phones (optional)')}
+    <label>Link<input name="link" type="url" required maxlength="500" value="${esc(a?.link||'')}" placeholder="https://"></label>
+    <div class="form2"><label>Image description (Greek)<input name="alt_el" maxlength="160" value="${esc(a?.alt_el||'')}"></label><label>Image description (English)<input name="alt_en" maxlength="160" value="${esc(a?.alt_en||'')}"></label></div>
+    <div class="form2"><label>From<input name="starts_on" type="date" value="${a?.starts_on||''}"></label><label>Until<input name="ends_on" type="date" value="${a?.ends_on||''}"></label></div>
+    <label>Share when ads take turns (1–10)<input name="weight" inputmode="numeric" maxlength="2" value="${a?.weight||1}"></label>
+    <label class="chk"><input type="checkbox" name="active" ${a?.active===false?'':'checked'}> Active</label>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button>${a?`<button type="button" class="danger" onclick="delAd(${id})">Delete</button>`:''}</div></form>`);adSizes($('#dlg [name=placement]'))}
+function adSizes(sel){const p=ADPOS.find(x=>x[0]===sel.value);sel.form.querySelector('.adsz').textContent=`Best size: ${p[2]} px on computers, ${p[3]} px on phones.`}
+async function saveAd(e,id){e.preventDefault();const f=new FormData(e.target),g=k=>String(f.get(k)||'').trim(),w=parseInt(g('weight'),10);
+  if(!g('image_desktop'))return note('Add the image for computers.');if(!/^https:\/\//.test(g('link')))return note('The link must start with https://');
+  if(g('starts_on')&&g('ends_on')&&g('ends_on')<g('starts_on'))return note('The end date can’t be before the start date.');if(!(w>=1&&w<=10))return note('Share: a whole number from 1 to 10.');
+  const row={partner_id:g('partner_id')?+g('partner_id'):null,placement:g('placement'),image_desktop:g('image_desktop'),image_mobile:g('image_mobile')||null,link:g('link'),alt_el:g('alt_el'),alt_en:g('alt_en'),starts_on:g('starts_on')||null,ends_on:g('ends_on')||null,weight:w,active:!!f.get('active')};
+  if(id)await q(sb.from('site_ads').update(row).eq('id',id));else await q(sb.from('site_ads').insert(row));closeDlg();await render();note('Ad saved.',1)}
+async function delAd(id){if(!await askO({ok:'Delete ad',danger:true})('Delete this ad and its numbers for good?'))return;await q(sb.from('site_ads').delete().eq('id',id));closeDlg();await render();note('Ad deleted.',1)}
+// The sponsor report: per ad and per month, ready to copy or download.
+function adReportDlg(pid){const ps=SITE.partners,p=ps.find(x=>x.id===pid)||ps[0];if(!p)return;const ads=SITE.ads.filter(a=>a.partner_id===p.id),rows=[];
+  ads.forEach(a=>{const by={};SITE.adstats.filter(x=>x.ad_id===a.id).forEach(x=>{const m=x.day.slice(0,7);by[m]=by[m]||{v:0,c:0};by[m].v+=x.views;by[m].c+=x.clicks});Object.keys(by).sort().forEach(m=>rows.push([posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])]))});
+  const tot=rows.reduce((a,r)=>({v:a.v+r[2],c:a.c+r[3]}),{v:0,c:0});
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="wide"><h3>Sponsor report</h3>
+    <label>Sponsor<select onchange="closeDlg();adReportDlg(+this.value)">${ps.map(x=>opt(String(x.id),x.name,x.id===p.id)).join('')}</select></label>
+    ${rows.length?`<div class="tblwrap"><table class="rtab"><thead><tr><th>Position</th><th>Month</th><th>Views</th><th>Clicks</th><th>Click rate</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td><td class="num">${r[4]}</td></tr>`).join('')}
+      <tr class="tot"><td>Total</td><td></td><td class="num">${tot.v}</td><td class="num">${tot.c}</td><td class="num">${ctr(tot)}</td></tr></tbody></table></div>
+      <p class="mu" style="margin:0">Views: the banner was at least half on screen for a second. Reloads count again. No cookies or visitor data are used.</p>`:'<p class="mu">No numbers for this sponsor yet.</p>'}
+    <div class="row">${rows.length?`<button type="button" class="pri" onclick="adReportCsv(${p.id})">Download (CSV)</button>`:''}<button type="button" onclick="closeDlg()">Close</button></div></form>`)}
+function adReportCsv(pid){const p=SITE.partners.find(x=>x.id===pid),lines=[['Sponsor','Position','Month','Views','Clicks','Click rate'].join(',')];
+  SITE.ads.filter(a=>a.partner_id===pid).forEach(a=>{const by={};SITE.adstats.filter(x=>x.ad_id===a.id).forEach(x=>{const m=x.day.slice(0,7);by[m]=by[m]||{v:0,c:0};by[m].v+=x.views;by[m].c+=x.clicks});
+    Object.keys(by).sort().forEach(m=>lines.push([p.name,posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')))});
+  const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'})),aEl=document.createElement('a');aEl.href=url;aEl.download=`ARION-report-${slugify(p.name)||'sponsor'}.csv`;document.body.appendChild(aEl);aEl.click();aEl.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 
 // ---- My website profile (every driver) and editors (admins)
 function siteProfCard(){const p=prof;
