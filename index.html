@@ -526,7 +526,7 @@ form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:1
 .galgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.galcard{border-radius:14px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
 .galcard.hid{opacity:.6}.galimg{height:140px;background:var(--fill)}.galimg img{width:100%;height:100%;object-fit:cover}.galimg.logo img{object-fit:contain;padding:16px;box-sizing:border-box}
 .galtx{display:flex;flex-direction:column;gap:2px;padding:10px 12px 0}.galcard .acts{padding:8px 10px 10px;display:flex;gap:6px}
-.li.resrow{display:flex!important;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}.resrow .who2{flex:1 1 180px;min-width:0}.resrow label.grow{flex:1 1 200px}.resrow button{flex:none;min-height:40px;width:auto}.resrow label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--label2)}.resrow input:not([type=checkbox]){height:40px;width:70px}.resrow label.grow input{width:100%}.resrow label.chk{flex-direction:row;align-items:center;min-height:40px}
+.li.resrow{display:flex!important;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}.resrow .who2{flex:1 1 180px;min-width:0}.resrow label.grow{flex:1 1 200px}.resrow button{flex:none;min-height:40px;width:auto}.resrow label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--label2)}.resrow input:not([type=checkbox]){height:40px;width:110px}.resrow label{white-space:nowrap}.resrow label .notr{font:inherit;color:inherit}.resrow label.grow input{width:100%}.resrow label.chk{flex-direction:row;align-items:center;min-height:40px}
 .stat.chip.ed{background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue)}
 a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;font-weight:600;text-decoration:none}a.btn.pri{background:var(--tint);color:var(--tint-ink)}
 label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk input{width:20px;height:20px;min-height:0}
@@ -635,7 +635,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.9',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.11',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1951,6 +1951,10 @@ const EL={
  'Partner pitch':'Κείμενο για συνεργάτες','Stream audience':'Κοινό streams','e.g. 1,200 followers':'π.χ. 1.200 followers','Shown in the footer of every page. Leave empty to hide.':'Εμφανίζονται στο υποσέλιδο κάθε σελίδας. Άφησε κενό για απόκρυψη.',
  'Switch a position off to keep it free of ads everywhere.':'Απενεργοποίησε μια θέση για να μην εμφανίζονται ποτέ διαφημίσεις εκεί.','No changes':'Καμία αλλαγή','Unsaved changes':'Μη αποθηκευμένες αλλαγές',
  'Show me on the team page':'Εμφάνισέ με στη σελίδα ομάδας','Country':'Χώρα','Short bio':'Σύντομο βιογραφικό','Shown on the website between its dates.':'Εμφανίζεται στην ιστοσελίδα ανάμεσα στις ημερομηνίες της.',
+ 'Overall position':'Γενική θέση','Position in':'Θέση στην','e.g. 12':'π.χ. 12','e.g. 3':'π.χ. 3',
+ 'After each event, type where each team finished: overall, and within its own class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε πού τερμάτισε κάθε ομάδα: στη γενική κατάταξη και μέσα στην κατηγορία της. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Position':'Θέση','After each event, type where each team finished in its class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε σε ποια θέση τερμάτισε κάθε ομάδα στην κατηγορία της. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'The position is a whole number from 1 to 200.':'Η θέση είναι ακέραιος από 1 έως 200.',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2031,7 +2035,7 @@ const RX=[
  [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
  [/^, and paste it here\. The team events under “Special Events \(Team\)” are picked out\.$/,', και επικόλλησέ το εδώ. Θα βρεθούν τα team events κάτω από «Special Events (Team)».'],
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
@@ -2153,14 +2157,15 @@ async function galMove(kind,id,dir){const list=SITE[kind],i=list.findIndex(x=>x.
 // ---- Results: every team that has raced; one line each
 function siteResults(){const tz=myTz(),byRace={};SITE.teams.forEach(t=>(byRace[t.race_id]=byRace[t.race_id]||[]).push(t));const rids=Object.keys(byRace).map(Number).sort((a,b)=>+new Date(byRace[b][0].start_utc)-+new Date(byRace[a][0].start_utc));
   if(!rids.length)return '<p class="mu">Results can be entered once a team has raced.</p>';
-  return `<p class="mu" style="margin-top:0">Type the positions after each event. Empty = not shown on the website.</p>`+rids.map(rid=>{const r=races.find(x=>x.id===rid);return `<h3>${esc(r?.name||'Event')}<span class="mu" style="font-weight:500"> · ${esc(r?.track||'')}</span></h3><div class="card flush">${byRace[rid].map(t=>{const x=SITE.results.find(y=>y.team_id===t.id)||{};
+  return `<p class="mu" style="margin-top:0">After each event, type where each team finished in its class. Empty = not shown on the website.</p>`+rids.map(rid=>{const r=races.find(x=>x.id===rid);return `<h3>${esc(r?.name||'Event')}<span class="mu" style="font-weight:500"> · ${esc(r?.track||'')}</span></h3><div class="card flush">${byRace[rid].map(t=>{const x=SITE.results.find(y=>y.team_id===t.id)||{};
     return `<form class="li resrow" onsubmit="saveResult(event,${t.id})"><div class="who2"><b>${esc(t.name)}</b><span class="mu">${esc(t.class)} · ${locDay(new Date(t.start_utc),tz)} ${locH(new Date(t.start_utc),tz)}</span></div>
-      <label>Overall<input name="position" inputmode="numeric" maxlength="3" value="${x.position??''}" aria-label="Overall position, ${esc(t.name)}"></label><label>Class<input name="class_position" inputmode="numeric" maxlength="3" value="${x.class_position??''}" aria-label="Class position, ${esc(t.name)}"></label>
+      <label>Position<input name="class_position" inputmode="numeric" maxlength="3" value="${x.class_position??''}" placeholder="e.g. 3" aria-label="Position, ${esc(t.name)}"></label>
       <label class="chk"><input type="checkbox" name="dnf" ${x.dnf?'checked':''}> DNF</label><label class="grow">Note<input name="note" maxlength="200" value="${esc(x.note||'')}"></label><button class="pri">Save</button></form>`}).join('')}</div>`}).join('')}
 async function saveResult(e,tid){e.preventDefault();const f=new FormData(e.target),n=k=>{const v=String(f.get(k)||'').trim();if(!v)return null;const x=parseInt(v,10);return x>=1&&x<=200?x:NaN};
-  const row={team_id:tid,position:n('position'),class_position:n('class_position'),dnf:!!f.get('dnf'),note:String(f.get('note')||'').trim()||null};
-  if(Number.isNaN(row.position)||Number.isNaN(row.class_position))return note('Positions are whole numbers from 1 to 200.');
-  if(row.position==null&&row.class_position==null&&!row.dnf&&!row.note){await q(sb.from('race_results').delete().eq('team_id',tid));await render();return note('Result cleared.',1)}
+  // One position: where the team finished within its class (the overall position is not used).
+  const row={team_id:tid,position:null,class_position:n('class_position'),dnf:!!f.get('dnf'),note:String(f.get('note')||'').trim()||null};
+  if(Number.isNaN(row.class_position))return note('The position is a whole number from 1 to 200.');
+  if(row.class_position==null&&!row.dnf&&!row.note){await q(sb.from('race_results').delete().eq('team_id',tid));await render();return note('Result cleared.',1)}
   await q(sb.from('race_results').upsert(row,{onConflict:'team_id'}));await render();note('Result saved.',1)}
 
 // ---- Settings: texts and links
