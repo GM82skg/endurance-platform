@@ -513,6 +513,23 @@ dialog .askbar{margin:0 0 4px}
 .langcard{display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:12px}.langcard .seg button{min-width:90px}
 .langsw{position:absolute;top:16px;right:16px;display:flex;gap:4px;padding:2px;border-radius:9px;background:var(--fill)}.langsw button{min-height:30px;padding:0 10px;border-radius:7px;background:none;color:var(--label);font-size:13px;font-weight:600}.langsw button.on{background:var(--seg-on)}
 .auth{position:relative}
+/* ---------- v0.6.7 website tab ---------- */
+.sitetabs{display:flex;flex-wrap:wrap;margin:6px 0 18px;max-width:100%;overflow-x:auto}.sitetabs button{padding:0 14px}
+.sitebody h3{margin-top:22px}
+.imgpick{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}.imgpick .iplab{grid-column:1/-1;font-size:13px;font-weight:600;color:var(--label2)}
+.imgpick .ipbox{grid-row:span 3;width:150px;height:96px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px}
+.imgpick .ipbox img{width:100%;height:100%;object-fit:cover}.imgpick .ghostbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--fill);color:var(--tint);font-weight:600;font-size:14px;cursor:pointer;justify-self:start}
+.imgpick .ghostbtn:focus-within{outline:2px solid var(--tint)}.imgpick .ipst{font-size:12px}
+form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:620px){.form2{grid-template-columns:1fr}}
+.nprev summary{cursor:pointer;font-weight:600;color:var(--tint);min-height:36px;display:flex;align-items:center}.npv{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px;border-radius:12px;background:var(--fill)}@media (max-width:620px){.npv{grid-template-columns:1fr}}
+.npv h3{margin:4px 0 8px}.npv p{margin:0 0 10px;line-height:1.5}
+.galgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.galcard{border-radius:14px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.galcard.hid{opacity:.6}.galimg{height:140px;background:var(--fill)}.galimg img{width:100%;height:100%;object-fit:cover}.galimg.logo img{object-fit:contain;padding:16px;box-sizing:border-box}
+.galtx{display:flex;flex-direction:column;gap:2px;padding:10px 12px 0}.galcard .acts{padding:8px 10px 10px;display:flex;gap:6px}
+.li.resrow{display:flex!important;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}.resrow .who2{flex:1 1 180px;min-width:0}.resrow label.grow{flex:1 1 200px}.resrow button{flex:none;min-height:40px;width:auto}.resrow label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--label2)}.resrow input:not([type=checkbox]){height:40px;width:70px}.resrow label.grow input{width:100%}.resrow label.chk{flex-direction:row;align-items:center;min-height:40px}
+.stat.chip.ed{background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue)}
+a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;font-weight:600;text-decoration:none}a.btn.pri{background:var(--tint);color:var(--tint-ink)}
+label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk input{width:20px;height:20px;min-height:0}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -590,7 +607,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.6',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -688,6 +705,7 @@ const ICON={
   mark:'<svg viewBox="0 0 24 24" fill="none"><path d="M5 20 12 4l7 16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.2 14h7.6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
   my:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="10.5"/><path d="M14 8v6l4 2.5"/></svg>',
   cal:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="4"/><path d="M4 11.5h20M9.5 3.5v5M18.5 3.5v5"/></svg>',
+  site:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="10.5"/><path d="M3.5 14h21M14 3.5c3 3 4.4 6.5 4.4 10.5S17 21.5 14 24.5C11 21.5 9.6 18 9.6 14S11 6.5 14 3.5z"/></svg>',
   roster:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="10" r="4"/><path d="M3.5 23c.8-4.2 3.8-6.5 7.5-6.5s6.7 2.3 7.5 6.5"/><circle cx="20" cy="10.5" r="3.2"/><path d="M19.5 16.6c2.7.2 4.6 2.2 5.1 5.4"/></svg>',
   grip:'<svg viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="3" r="1.5"/><circle cx="7.5" cy="3" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><circle cx="7.5" cy="8" r="1.5"/><circle cx="2.5" cy="13" r="1.5"/><circle cx="7.5" cy="13" r="1.5"/></svg>',
   strat:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v18"/><path d="M5 24h15"/><path d="M18 11h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V10l-3-3"/><path d="M10 9h5"/></svg>',
@@ -724,7 +742,7 @@ async function start(){
   if(prof&&prof.must_change_pw)return pwView();
   if(!prof||!prof.approved)return pendingView();
   await loadBase();
-  const navs=[['my','My races'],['cal','Calendar'],['strat','Strategy'],['roster','Roster']];
+  const navs=[['my','My races'],['cal','Calendar'],['strat','Strategy'],...(isEd()?[['site','Website']]:[]),['roster','Roster']];
   $('#app').innerHTML=`<header class="bar"><div class="brand">${mark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
     <nav class="seg" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${l}</button>`).join('')}</nav>
     <div class="me-box"><span id="live" class="live" title="Connecting"><i></i><span>Connecting</span></span>
@@ -787,7 +805,7 @@ async function render(){setTimeout(showOnline,0);
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
   $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
   tzBanner();
-  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else await rosterView();
+  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else if(view==='site')await siteView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
 }
 function tzBanner(){
@@ -1857,6 +1875,37 @@ const EL={
  'The two passwords don’t match.':'Οι δύο κωδικοί δεν ταιριάζουν.','Password changed.':'Ο κωδικός άλλαξε.',
  'Invalid login credentials':'Λάθος email ή κωδικός.','User already registered':'Υπάρχει ήδη λογαριασμός με αυτό το email.','Email not confirmed':'Το email δεν έχει επιβεβαιωθεί ακόμα.','Failed to fetch':'Δεν υπάρχει σύνδεση. Δοκίμασε ξανά.',
  'Password should be at least 6 characters.':'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.','Something went wrong. Try again.':'Κάτι πήγε στραβά. Δοκίμασε ξανά.',
+ 'Website':'Ιστοσελίδα','What you publish here appears on the public website about a minute later.':'Ό,τι δημοσιεύεις εδώ εμφανίζεται στη δημόσια ιστοσελίδα περίπου σε ένα λεπτό.',
+ 'Website sections':'Ενότητες ιστοσελίδας','News':'Νέα','Liveries':'Liveries','Partners':'Συνεργάτες','Results':'Αποτελέσματα','Settings':'Ρυθμίσεις','Inbox':'Εισερχόμενα',
+ '+ New post':'+ Νέα ανάρτηση','New post':'Νέα ανάρτηση','Edit post':'Επεξεργασία ανάρτησης','(untitled)':'(χωρίς τίτλο)','Published':'Δημοσιευμένο','Draft':'Πρόχειρο',
+ 'No posts yet. Press + New post to write the first race report.':'Δεν υπάρχουν αναρτήσεις ακόμα. Πάτα «+ Νέα ανάρτηση» για την πρώτη αναφορά αγώνα.',
+ 'Title (Greek)':'Τίτλος (Ελληνικά)','Title (English)':'Τίτλος (Αγγλικά)','Text (Greek)':'Κείμενο (Ελληνικά)','Text (English)':'Κείμενο (Αγγλικά)',
+ 'Empty line = new paragraph · **bold** · *italic* · # heading · - list · [text](https://link). If the English is empty, the English site shows the Greek.':'Κενή γραμμή = νέα παράγραφος · **έντονα** · *πλάγια* · # επικεφαλίδα · - λίστα · [κείμενο](https://σύνδεσμος). Αν το αγγλικό μείνει κενό, η αγγλική σελίδα δείχνει το ελληνικό.',
+ 'Cover image':'Εικόνα εξωφύλλου','Event (optional)':'Event (προαιρετικό)','None':'Κανένα','Link name':'Όνομα συνδέσμου','made from the title':'φτιάχνεται από τον τίτλο','Preview':'Προεπισκόπηση',
+ 'Update':'Ενημέρωση','Unpublish':'Απόσυρση','Publish':'Δημοσίευση','Save draft':'Αποθήκευση πρόχειρου','Delete':'Διαγραφή','Delete post':'Διαγραφή ανάρτησης',
+ 'Delete this post for good?':'Να διαγραφεί οριστικά αυτή η ανάρτηση;','Post published.':'Η ανάρτηση δημοσιεύτηκε.','Post updated.':'Η ανάρτηση ενημερώθηκε.','Post unpublished. It’s a draft again.':'Η ανάρτηση αποσύρθηκε. Είναι ξανά πρόχειρο.',
+ 'Draft saved.':'Το πρόχειρο αποθηκεύτηκε.','Post deleted.':'Η ανάρτηση διαγράφηκε.','The link name can only use a–z, 0–9 and dashes.':'Το όνομα συνδέσμου μπορεί να έχει μόνο a–z, 0–9 και παύλες.',
+ 'Please fill in “Title (Greek)”.':'Συμπλήρωσε τον «Τίτλο (Ελληνικά)».','No image yet':'Χωρίς εικόνα ακόμα','Choose image':'Επιλογή εικόνας','Change image':'Αλλαγή εικόνας','Remove image':'Αφαίρεση εικόνας',
+ 'Uploading…':'Ανέβασμα…','Uploaded.':'Ανέβηκε.','Upload failed.':'Το ανέβασμα απέτυχε.','Choose an image file.':'Διάλεξε αρχείο εικόνας.',
+ '+ Add livery':'+ Προσθήκη livery','+ Add partner':'+ Προσθήκη συνεργάτη','New livery':'Νέα livery','Edit livery':'Επεξεργασία livery','New partner':'Νέος συνεργάτης','Edit partner':'Επεξεργασία συνεργάτη',
+ 'Hidden':'Κρυφό','Move earlier':'Μετακίνηση πιο πάνω','Move later':'Μετακίνηση πιο κάτω','Image':'Εικόνα','Logo':'Λογότυπο','e.g. ARION #7':'π.χ. ARION #7','Show on the website':'Εμφάνιση στην ιστοσελίδα',
+ 'No liveries yet. Add your car designs; the website shows them large and sharp.':'Δεν υπάρχουν liveries ακόμα. Πρόσθεσε τα σχέδια των αυτοκινήτων σας· η ιστοσελίδα τα δείχνει μεγάλα και καθαρά.',
+ 'No partners yet. The partner logos section stays hidden on the website until you add one.':'Δεν υπάρχουν συνεργάτες ακόμα. Η ενότητα με τα λογότυπα μένει κρυφή στην ιστοσελίδα μέχρι να προσθέσεις έναν.',
+ 'Add an image of the livery.':'Πρόσθεσε μια εικόνα της livery.','The website must start with https://':'Η διεύθυνση πρέπει να ξεκινά με https://','Saved.':'Αποθηκεύτηκε.','Deleted.':'Διαγράφηκε.','Delete this for good?':'Να διαγραφεί οριστικά;',
+ 'Results can be entered once a team has raced.':'Τα αποτελέσματα μπαίνουν αφού τρέξει μια ομάδα.','Type the positions after each event. Empty = not shown on the website.':'Γράψε τις θέσεις μετά από κάθε event. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Overall':'Γενική','DNF':'DNF','Note':'Σημείωση','Result saved.':'Το αποτέλεσμα αποθηκεύτηκε.','Result cleared.':'Το αποτέλεσμα διαγράφηκε.','Positions are whole numbers from 1 to 200.':'Οι θέσεις είναι ακέραιοι από 1 έως 200.',
+ 'Home page':'Αρχική σελίδα','Slogan (Greek)':'Σύνθημα (Ελληνικά)','Slogan (English)':'Σύνθημα (Αγγλικά)','Line under the slogan (Greek)':'Γραμμή κάτω από το σύνθημα (Ελληνικά)','Line under the slogan (English)':'Γραμμή κάτω από το σύνθημα (Αγγλικά)',
+ 'Team page':'Σελίδα ομάδας','Team story (Greek)':'Ιστορία ομάδας (Ελληνικά)','Team story (English)':'Ιστορία ομάδας (Αγγλικά)','Partners page':'Σελίδα συνεργατών','Partner pitch (Greek)':'Κείμενο για συνεργάτες (Ελληνικά)',
+ 'Partner pitch (English)':'Κείμενο για συνεργάτες (Αγγλικά)','Stream audience (e.g. 1,200 followers)':'Κοινό streams (π.χ. 1.200 followers)','Links':'Σύνδεσμοι','Discord invite':'Πρόσκληση Discord','Contact email':'Email επικοινωνίας',
+ 'Save settings':'Αποθήκευση ρυθμίσεων','Settings saved.':'Οι ρυθμίσεις αποθηκεύτηκαν.','Links must start with https://':'Οι σύνδεσμοι πρέπει να ξεκινούν με https://',
+ 'All':'Όλα','Join us':'Γίνε μέλος','Partner':'Συνεργάτης','New':'Νέο','Replied':'Απαντήθηκε','Company':'Εταιρεία','SR / DR':'SR / DR','Availability':'Διαθεσιμότητα','Reply by email':'Απάντηση με email',
+ 'Mark replied':'Σήμανση ως απαντημένο','Mark done':'Σήμανση ως ολοκληρωμένο','Mark new':'Σήμανση ως νέο','Delete this message for good?':'Να διαγραφεί οριστικά αυτό το μήνυμα;',
+ 'Nothing here yet. Messages from the website’s Join us and Partner forms arrive here.':'Τίποτα ακόμα. Εδώ έρχονται τα μηνύματα από τις φόρμες «Γίνε μέλος» και «Συνεργασία» της ιστοσελίδας.',
+ 'On the website':'Στην ιστοσελίδα','Show me on the team page of the website':'Εμφάνισέ με στη σελίδα ομάδας της ιστοσελίδας',
+ 'Only your name, photo, country, short bio and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό και ο αριθμός των events σου. Ποτέ το email ή η διαθεσιμότητά σου.',
+ 'Photo':'Φωτογραφία','Country (2 letters, e.g. GR)':'Χώρα (2 γράμματα, π.χ. GR)','Short bio (Greek)':'Σύντομο βιογραφικό (Ελληνικά)','Short bio (English)':'Σύντομο βιογραφικό (Αγγλικά)','Save website profile':'Αποθήκευση προφίλ ιστοσελίδας',
+ 'Website profile saved.':'Το προφίλ ιστοσελίδας αποθηκεύτηκε.','Country: two letters, e.g. GR.':'Χώρα: δύο γράμματα, π.χ. GR.','Editor':'Συντάκτης','Make editor':'Ορισμός ως συντάκτη','Remove editor':'Αφαίρεση συντάκτη',
+ 'Filter':'Φίλτρο','Inbox (1)':'Εισερχόμενα (1)',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -1937,7 +1986,7 @@ const RX=[
  [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
  [/^, and paste it here\. The team events under “Special Events \(Team\)” are picked out\.$/,', και επικόλλησέ το εδώ. Θα βρεθούν τα team events κάτω από «Special Events (Team)».'],
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
@@ -1962,6 +2011,153 @@ function startTr(){document.documentElement.lang=LANG==='el'?'el':'en';if(LANG!=
   TROBS.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label']})}
 async function setLang(v){LANG=v;try{localStorage.setItem('ec-lang',v)}catch{}try{if(me)await sb.from('profiles').update({lang:v}).eq('id',me.id)}catch{}location.reload()}
 
+/* ---------- Website tab: the control panel for the public site ----------
+   Admins manage everything; editors manage news only. The public site reads site_public(). */
+const isEd=()=>isAdm()||!!prof?.site_editor;
+let SITE=null,SITETAB='news',INBOXF='all';
+const SCLASSES=['Hypercar','LMP2','LMP3','LMGT3','GT3','GTE'];
+async function loadSite(){const adm=isAdm();
+  const [st,news,liv,par,res,inbox,tms]=await Promise.all([
+    adm?q(sb.from('site_settings').select('*').eq('id',1).maybeSingle()):null,
+    q(sb.from('site_news').select('*').order('created_at',{ascending:false})),
+    adm?q(sb.from('site_liveries').select('*').order('sort').order('id')):[],
+    adm?q(sb.from('site_partners').select('*').order('sort').order('id')):[],
+    adm?q(sb.from('race_results').select('*')):[],
+    adm?q(sb.from('site_inbox').select('*').order('created_at',{ascending:false})):[],
+    adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[]]);
+  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now())}}
+// Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
+async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
+async function uploadImage(file,folder){if(!file)return null;if(!/^image\//.test(file.type))throw new Error('Choose an image file.');const blob=await shrinkImage(file),ext=blob.type==='image/webp'?'webp':'jpg';
+  const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;const {error}=await sb.storage.from('site').upload(path,blob,{contentType:blob.type,upsert:false});if(error)throw error;return sb.storage.from('site').getPublicUrl(path).data.publicUrl}
+const imgField=(name,url,folder,label)=>`<div class="imgpick" data-folder="${folder}"><span class="iplab">${label}</span><div class="ipbox">${url?`<img src="${esc(url)}" alt="">`:'<span class="mu">No image yet</span>'}</div>
+  <input type="hidden" name="${name}" value="${esc(url||'')}"><label class="ghostbtn">${url?'Change image':'Choose image'}<input type="file" accept="image/*" onchange="pickImg(this)" hidden></label>${url?`<button type="button" class="ghost" onclick="clearImg(this)">Remove image</button>`:''}<span class="ipst mu" aria-live="polite"></span></div>`;
+async function pickImg(inp){const box=inp.closest('.imgpick'),st=box.querySelector('.ipst'),f=inp.files[0];if(!f)return;st.textContent='Uploading…';
+  try{const url=await uploadImage(f,box.dataset.folder);box.querySelector('input[type=hidden]').value=url;box.querySelector('.ipbox').innerHTML=`<img src="${esc(url)}" alt="">`;st.textContent='Uploaded.';box.closest('form')?.dispatchEvent(new Event('input',{bubbles:true}))}
+  catch(e){st.textContent='';note(e.message||'Upload failed.')}}
+function clearImg(b){const box=b.closest('.imgpick');box.querySelector('input[type=hidden]').value='';box.querySelector('.ipbox').innerHTML='<span class="mu">No image yet</span>';b.remove()}
+// Very small markdown for news: # headings, **bold**, *italic*, [links](https://…), - lists, paragraphs.
+function mdLite(t){const inl=x=>esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return String(t||'').split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return '';if(/^## /.test(b))return `<h4>${inl(b.slice(3))}</h4>`;if(/^# /.test(b))return `<h3>${inl(b.slice(2))}</h3>`;
+    if(b.split('\n').every(l=>/^- /.test(l)))return `<ul>${b.split('\n').map(l=>`<li>${inl(l.slice(2))}</li>`).join('')}</ul>`;return `<p>${inl(b).replace(/\n/g,'<br>')}</p>`}).join('')}
+const GRL={α:'a',ά:'a',β:'v',γ:'g',δ:'d',ε:'e',έ:'e',ζ:'z',η:'i',ή:'i',θ:'th',ι:'i',ί:'i',ϊ:'i',ΐ:'i',κ:'k',λ:'l',μ:'m',ν:'n',ξ:'x',ο:'o',ό:'o',π:'p',ρ:'r',σ:'s',ς:'s',τ:'t',υ:'y',ύ:'y',ϋ:'y',ΰ:'y',φ:'f',χ:'ch',ψ:'ps',ω:'o',ώ:'o'};
+const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join('').normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70);
+
+async function siteView(){if(!isEd()){view='my';return render()}await loadSite();const adm=isAdm();if(!adm)SITETAB='news';
+  const newIn=SITE.inbox.filter(x=>x.status==='new').length;
+  const tabs=adm?[['news','News'],['liveries','Liveries'],['partners','Partners'],['results','Results'],['settings','Settings'],['inbox',`Inbox${newIn?` (${newIn})`:''}`]]:[['news','News']];
+  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():siteInbox();
+  $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub">What you publish here appears on the public website about a minute later.</p>
+    ${tabs.length>1?`<div class="seg sitetabs" role="tablist" aria-label="Website sections">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
+    <div class="sitebody">${body}</div>`}
+
+// ---- News
+function siteNews(){const tz=myTz();
+  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="newsDlg()">+ New post</button></div>
+  ${SITE.news.length?`<div class="card flush">${SITE.news.map(n=>`<div class="li"><div class="who2"><b>${esc(n.title_el||n.title_en||'(untitled)')}</b><span class="mu">${n.status==='published'&&n.published_at?locFull(new Date(n.published_at),tz):'Draft · '+locFull(new Date(n.updated_at),tz)}</span></div>
+    <span class="stat chip ${n.status==='published'?'approved':'pending'}">${n.status==='published'?'Published':'Draft'}</span><div class="acts"><button class="ghost" onclick="newsDlg(${n.id})">Edit</button></div></div>`).join('')}</div>`:'<p class="mu">No posts yet. Press + New post to write the first race report.</p>'}`}
+function newsDlg(id){const n=id?SITE.news.find(x=>x.id===id):null,rs=[...races].sort((a,b)=>+new Date(b.start_utc)-+new Date(a.start_utc)).slice(0,40);
+  openDlg(`<form class="wide" onsubmit="saveNews(event,${id||0},'draft')" oninput="newsPrev(this)"><h3>${n?'Edit post':'New post'}</h3>
+    <div class="form2"><label>Title (Greek)<input name="title_el" maxlength="140" value="${esc(n?.title_el||'')}" required></label><label>Title (English)<input name="title_en" maxlength="140" value="${esc(n?.title_en||'')}"></label></div>
+    <div class="form2"><label>Text (Greek)<textarea name="body_el" rows="10" maxlength="20000">${esc(n?.body_el||'')}</textarea></label><label>Text (English)<textarea name="body_en" rows="10" maxlength="20000">${esc(n?.body_en||'')}</textarea></label></div>
+    <p class="mu" style="margin:-4px 0 0">Empty line = new paragraph · **bold** · *italic* · # heading · - list · [text](https://link). If the English is empty, the English site shows the Greek.</p>
+    ${imgField('cover',n?.cover_url,'news','Cover image')}
+    <label>Event (optional)<select name="race_id">${opt('','None',!n?.race_id)}${rs.map(r=>opt(String(r.id),r.name+' · '+locDay(new Date(r.start_utc),myTz())+' '+new Date(r.start_utc).toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'}),n?.race_id===r.id)).join('')}</select></label>
+    <label>Link name<input name="slug" maxlength="80" value="${esc(n?.slug||'')}" placeholder="made from the title" pattern="[a-z0-9]+(-[a-z0-9]+)*"></label>
+    <details class="nprev"><summary>Preview</summary><div class="npv"></div></details>
+    <div class="row">${n?.status==='published'?`<button type="button" class="pri" onclick="saveNews(event,${id},'published')">Update</button><button type="button" onclick="saveNews(event,${id},'draft')">Unpublish</button>`:`<button type="button" class="pri" onclick="saveNews(event,${id||0},'published')">Publish</button><button type="submit">Save draft</button>`}<button type="button" onclick="closeDlg()">Cancel</button>${n?`<button type="button" class="danger" onclick="delNews(${id})">Delete</button>`:''}</div></form>`);
+  newsPrev($('#dlg form'))}
+function newsPrev(f){const v=f.querySelector('.npv');if(!v)return;const g=k=>f.querySelector(`[name=${k}]`).value;v.innerHTML=`<div class="npcol"><div class="mu">ΕΛ</div><h3>${esc(g('title_el'))}</h3>${mdLite(g('body_el'))}</div><div class="npcol"><div class="mu">EN</div><h3>${esc(g('title_en')||g('title_el'))}</h3>${mdLite(g('body_en')||g('body_el'))}</div>`}
+async function saveNews(e,id,status){e.preventDefault();const f=e.target.closest('form'),g=k=>String(f.querySelector(`[name=${k}]`).value||'').trim();
+  if(!g('title_el'))return note('Please fill in “Title (Greek)”.');let slug=g('slug')||slugify(g('title_en')||g('title_el'))||('post-'+Date.now());
+  if(!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug))return note('The link name can only use a–z, 0–9 and dashes.');
+  if(SITE.news.some(x=>x.slug===slug&&x.id!==id))slug=slug+'-'+Date.now().toString(36).slice(-4);
+  const old=id?SITE.news.find(x=>x.id===id):null;
+  const row={slug,title_el:g('title_el'),title_en:g('title_en'),body_el:g('body_el'),body_en:g('body_en'),cover_url:g('cover')||null,race_id:g('race_id')?+g('race_id'):null,status,updated_at:new Date().toISOString(),
+    published_at:status==='published'?(old?.published_at||new Date().toISOString()):(old?.published_at||null)};
+  if(id)await q(sb.from('site_news').update(row).eq('id',id));else await q(sb.from('site_news').insert(row));
+  closeDlg();await render();note(status==='published'?(old?.status==='published'?'Post updated.':'Post published.'):(old?.status==='published'?'Post unpublished. It’s a draft again.':'Draft saved.'),1)}
+async function delNews(id){if(!await askO({ok:'Delete post',danger:true})('Delete this post for good?'))return;await q(sb.from('site_news').delete().eq('id',id));closeDlg();await render();note('Post deleted.',1)}
+
+// ---- Liveries and partners (same shape)
+function siteGallery(kind){const L=kind==='liveries',list=SITE[kind];
+  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="galDlg('${kind}')">${L?'+ Add livery':'+ Add partner'}</button></div>
+  ${list.length?`<div class="galgrid">${list.map((x,i)=>`<div class="galcard${x.visible?'':' hid'}"><div class="galimg${L?'':' logo'}">${(L?x.image_url:x.logo_url)?`<img src="${esc(L?x.image_url:x.logo_url)}" alt="">`:''}</div>
+    <div class="galtx"><b>${esc(L?x.title:x.name)}</b><span class="mu">${L?esc([x.car,x.class].filter(Boolean).join(' · ')):esc(x.link||'')}</span>${x.visible?'':'<span class="stat chip pending">Hidden</span>'}</div>
+    <div class="acts"><button class="ghost" aria-label="Move earlier" onclick="galMove('${kind}',${x.id},-1)" ${i===0?'disabled':''}>↑</button><button class="ghost" aria-label="Move later" onclick="galMove('${kind}',${x.id},1)" ${i===list.length-1?'disabled':''}>↓</button><button class="ghost" onclick="galDlg('${kind}',${x.id})">Edit</button></div></div>`).join('')}</div>`
+   :`<p class="mu">${L?'No liveries yet. Add your car designs; the website shows them large and sharp.':'No partners yet. The partner logos section stays hidden on the website until you add one.'}</p>`}`}
+function galDlg(kind,id){const L=kind==='liveries',x=id?SITE[kind].find(y=>y.id===id):null;
+  openDlg(`<form onsubmit="saveGal(event,'${kind}',${id||0})"><h3>${L?(x?'Edit livery':'New livery'):(x?'Edit partner':'New partner')}</h3>
+    ${L?`<label>Name<input name="title" maxlength="80" required value="${esc(x?.title||'')}" placeholder="e.g. ARION #7"></label>
+      <div class="form2"><label>Car<input name="car" maxlength="80" value="${esc(x?.car||'')}"></label><label>Class<select name="class">${opt('','—',!x?.class)}${SCLASSES.map(c=>opt(c,c,x?.class===c)).join('')}</select></label></div>
+      ${imgField('img',x?.image_url,'liveries','Image')}`
+     :`<label>Name<input name="name" maxlength="80" required value="${esc(x?.name||'')}"></label><label>Website<input name="link" type="url" maxlength="300" value="${esc(x?.link||'')}" placeholder="https://"></label>${imgField('img',x?.logo_url,'partners','Logo')}`}
+    <label class="chk"><input type="checkbox" name="visible" ${x?.visible===false?'':'checked'}> Show on the website</label>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button>${x?`<button type="button" class="danger" onclick="delGal('${kind}',${id})">Delete</button>`:''}</div></form>`)}
+async function saveGal(e,kind,id){e.preventDefault();const L=kind==='liveries',f=new FormData(e.target),img=String(f.get('img')||'');let row;
+  if(L){if(!img)return note('Add an image of the livery.');row={title:String(f.get('title')).trim(),car:String(f.get('car')||'').trim()||null,class:f.get('class')||null,image_url:img,visible:!!f.get('visible')}}
+  else{const link=String(f.get('link')||'').trim();if(link&&!/^https:\/\//.test(link))return note('The website must start with https://');row={name:String(f.get('name')).trim(),link:link||null,logo_url:img||null,visible:!!f.get('visible')}}
+  const tb=L?'site_liveries':'site_partners';if(id)await q(sb.from(tb).update(row).eq('id',id));else await q(sb.from(tb).insert({...row,sort:(SITE[kind].reduce((m,x)=>Math.max(m,x.sort),0)||0)+1}));
+  closeDlg();await render();note('Saved.',1)}
+async function delGal(kind,id){if(!await askO({ok:'Delete',danger:true})('Delete this for good?'))return;await q(sb.from(kind==='liveries'?'site_liveries':'site_partners').delete().eq('id',id));closeDlg();await render();note('Deleted.',1)}
+async function galMove(kind,id,dir){const list=SITE[kind],i=list.findIndex(x=>x.id===id),j=i+dir;if(j<0||j>=list.length)return;const tb=kind==='liveries'?'site_liveries':'site_partners';
+  const a=list[i],b=list[j];await Promise.all(list.map((x,k)=>{const s=x===a?j:x===b?i:k;return x.sort===s+1?null:q(sb.from(tb).update({sort:s+1}).eq('id',x.id))}));await render()}
+
+// ---- Results: every team that has raced; one line each
+function siteResults(){const tz=myTz(),byRace={};SITE.teams.forEach(t=>(byRace[t.race_id]=byRace[t.race_id]||[]).push(t));const rids=Object.keys(byRace).map(Number).sort((a,b)=>+new Date(byRace[b][0].start_utc)-+new Date(byRace[a][0].start_utc));
+  if(!rids.length)return '<p class="mu">Results can be entered once a team has raced.</p>';
+  return `<p class="mu" style="margin-top:0">Type the positions after each event. Empty = not shown on the website.</p>`+rids.map(rid=>{const r=races.find(x=>x.id===rid);return `<h3>${esc(r?.name||'Event')}<span class="mu" style="font-weight:500"> · ${esc(r?.track||'')}</span></h3><div class="card flush">${byRace[rid].map(t=>{const x=SITE.results.find(y=>y.team_id===t.id)||{};
+    return `<form class="li resrow" onsubmit="saveResult(event,${t.id})"><div class="who2"><b>${esc(t.name)}</b><span class="mu">${esc(t.class)} · ${locDay(new Date(t.start_utc),tz)} ${locH(new Date(t.start_utc),tz)}</span></div>
+      <label>Overall<input name="position" inputmode="numeric" maxlength="3" value="${x.position??''}" aria-label="Overall position, ${esc(t.name)}"></label><label>Class<input name="class_position" inputmode="numeric" maxlength="3" value="${x.class_position??''}" aria-label="Class position, ${esc(t.name)}"></label>
+      <label class="chk"><input type="checkbox" name="dnf" ${x.dnf?'checked':''}> DNF</label><label class="grow">Note<input name="note" maxlength="200" value="${esc(x.note||'')}"></label><button class="pri">Save</button></form>`}).join('')}</div>`}).join('')}
+async function saveResult(e,tid){e.preventDefault();const f=new FormData(e.target),n=k=>{const v=String(f.get(k)||'').trim();if(!v)return null;const x=parseInt(v,10);return x>=1&&x<=200?x:NaN};
+  const row={team_id:tid,position:n('position'),class_position:n('class_position'),dnf:!!f.get('dnf'),note:String(f.get('note')||'').trim()||null};
+  if(Number.isNaN(row.position)||Number.isNaN(row.class_position))return note('Positions are whole numbers from 1 to 200.');
+  if(row.position==null&&row.class_position==null&&!row.dnf&&!row.note){await q(sb.from('race_results').delete().eq('team_id',tid));await render();return note('Result cleared.',1)}
+  await q(sb.from('race_results').upsert(row,{onConflict:'team_id'}));await render();note('Result saved.',1)}
+
+// ---- Settings: texts and links
+const SFIELDS=[['Home page',[['slogan_el','Slogan (Greek)',80],['slogan_en','Slogan (English)',80],['sub_el','Line under the slogan (Greek)',160],['sub_en','Line under the slogan (English)',160]]],
+  ['Team page',[['story_el','Team story (Greek)',600,1],['story_en','Team story (English)',600,1]]],
+  ['Partners page',[['partner_el','Partner pitch (Greek)',600,1],['partner_en','Partner pitch (English)',600,1],['audience','Stream audience (e.g. 1,200 followers)',60]]],
+  ['Links',[['discord','Discord invite',200],['twitch','Twitch',200],['youtube','YouTube',200],['instagram','Instagram',200],['facebook','Facebook',200],['tiktok','TikTok',200],['email','Contact email',120]]]];
+function siteSettings(){const d=SITE.settings;
+  return `<form class="card form" onsubmit="saveSettings(event)">${SFIELDS.map(([h,fs])=>`<div class="sg-h">${h}</div>${fs.map(([k,l,m,big])=>big?`<label>${l}<textarea name="${k}" rows="3" maxlength="${m}">${esc(d[k]||'')}</textarea></label>`:`<label>${l}<input name="${k}" maxlength="${m}" value="${esc(d[k]||'')}" ${k==='email'?'type="email"':['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)?'type="url" placeholder="https://"':''}></label>`).join('')}`).join('')}
+    <button class="pri">Save settings</button></form>`}
+async function saveSettings(e){e.preventDefault();const f=new FormData(e.target),data={...SITE.settings};
+  for(const [,fs] of SFIELDS)for(const [k] of fs){const v=String(f.get(k)||'').trim();if(v&&['discord','twitch','youtube','instagram','facebook','tiktok'].includes(k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
+  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));await render();note('Settings saved.',1)}
+
+// ---- Inbox: website forms
+function siteInbox(){const tz=myTz(),list=SITE.inbox.filter(x=>INBOXF==='all'||x.kind===INBOXF);
+  return `<div class="seg" role="group" aria-label="Filter" style="margin-bottom:12px">${[['all','All'],['join','Join us'],['partner','Partners']].map(([k,l])=>`<button class="${INBOXF===k?'on':''}" onclick="INBOXF='${k}';render()">${l}</button>`).join('')}</div>
+  ${list.length?`<div class="card flush">${list.map(x=>`<div class="li"><div class="who2"><b>${esc(x.name)}${x.company?' · '+esc(x.company):''}</b><span class="mu">${x.kind==='join'?'Join us':'Partner'} · ${locFull(new Date(x.created_at),tz)}</span></div>
+    <span class="stat chip ${x.status==='new'?'pending':x.status==='done'?'approved':''}">${x.status==='new'?'New':x.status==='replied'?'Replied':'Done'}</span><div class="acts"><button class="ghost" onclick="inboxDlg(${x.id})">Open</button></div></div>`).join('')}</div>`
+   :'<p class="mu">Nothing here yet. Messages from the website’s Join us and Partner forms arrive here.</p>'}`}
+function inboxDlg(id){const x=SITE.inbox.find(y=>y.id===id),tz=myTz();if(!x)return;const row=(l,v)=>v?`<div class="bitem"><span class="grow mu">${l}</span><b style="text-align:right;white-space:pre-wrap">${esc(v)}</b></div>`:'';
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>${esc(x.name)}</h3><p class="mu" style="margin:0">${x.kind==='join'?'Join us':'Partner'} · ${locFull(new Date(x.created_at),tz)}</p>
+    <div class="blist">${row('Email',x.email)}${row('Company',x.company)}${row('Discord',x.discord)}${row('SR / DR',x.rating)}${row('Availability',x.availability)}</div>
+    ${x.message?`<div class="card" style="white-space:pre-wrap;margin:0">${esc(x.message)}</div>`:''}
+    <div class="row"><a class="btn pri" href="mailto:${encodeURIComponent(x.email)}">Reply by email</a>${x.status!=='replied'?`<button type="button" onclick="inboxSet(${id},'replied')">Mark replied</button>`:''}${x.status!=='done'?`<button type="button" onclick="inboxSet(${id},'done')">Mark done</button>`:''}${x.status!=='new'?`<button type="button" onclick="inboxSet(${id},'new')">Mark new</button>`:''}
+    <button type="button" onclick="closeDlg()">Close</button><button type="button" class="danger" onclick="inboxDel(${id})">Delete</button></div></form>`)}
+async function inboxSet(id,status){await q(sb.from('site_inbox').update({status}).eq('id',id));closeDlg();await render();note('Saved.',1)}
+async function inboxDel(id){if(!await askO({ok:'Delete',danger:true})('Delete this message for good?'))return;await q(sb.from('site_inbox').delete().eq('id',id));closeDlg();await render();note('Deleted.',1)}
+
+// ---- My website profile (every driver) and editors (admins)
+function siteProfCard(){const p=prof;
+  return `<h3>On the website</h3><form class="card form" onsubmit="saveSiteProf(event)">
+    <label class="chk"><input type="checkbox" name="site_public" ${p.site_public?'checked':''}> Show me on the team page of the website</label>
+    <p class="mu" style="margin:-6px 0 0">Only your name, photo, country, short bio and number of events are shown. Never your email or availability.</p>
+    ${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}
+    <label>Country (2 letters, e.g. GR)<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" autocomplete="off" style="text-transform:uppercase"></label>
+    <div class="form2"><label>Short bio (Greek)<textarea name="site_bio_el" rows="3" maxlength="400">${esc(p.site_bio_el||'')}</textarea></label><label>Short bio (English)<textarea name="site_bio_en" rows="3" maxlength="400">${esc(p.site_bio_en||'')}</textarea></label></div>
+    <button class="pri">Save website profile</button></form>`}
+async function saveSiteProf(e){e.preventDefault();const f=new FormData(e.target),c=String(f.get('site_country')||'').trim().toUpperCase();if(c&&!/^[A-Z]{2}$/.test(c))return note('Country: two letters, e.g. GR.');
+  await q(sb.from('profiles').update({site_public:!!f.get('site_public'),site_photo:String(f.get('site_photo')||'')||null,site_country:c||null,site_bio_el:String(f.get('site_bio_el')||'').trim()||null,site_bio_en:String(f.get('site_bio_en')||'').trim()||null}).eq('id',me.id));
+  await start();note('Website profile saved.',1)}
+async function setEditor(uid,on){const {error}=await sb.rpc('set_editor',{uid,on_off:on});if(error)return note(error.message);await render();note(on?`${name(uid)} can now write news.`:`${name(uid)} is no longer an editor.`,1)}
+
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
 // The editable driver settings, shared by "Your profile" and the admin's edit window.
@@ -1975,11 +2171,12 @@ async function rosterView(){
   const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
   const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${adm?`<i class="odot${ONLINE.has(p.id)?' on':''}" data-uid="${p.id}" role="img" aria-label="${ONLINE.has(p.id)?'Online now':'Offline'}" title="${ONLINE.has(p.id)?'Online now':'Offline'}"></i>`:''}${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
-    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}
-    ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button><button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
+    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}
+    ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>${p.role!=='admin'?`<button class="ghost" onclick="setEditor('${p.id}',${!p.site_editor})">${p.site_editor?'Remove editor':'Make editor'}</button>`:''}<button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><div class="card langcard"><span class="grow">Language · Γλώσσα</span><div class="seg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
     ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
     <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
+    ${siteProfCard()}
     <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and these buttons. Suspend blocks a driver but keeps their account (approve again to undo). Remove deletes the driver for good.</p>':''}
     <div class="row" style="margin-top:28px"><button onclick="pwDlg()">Change password</button><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
 async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.target));
