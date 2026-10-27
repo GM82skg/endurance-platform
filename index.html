@@ -563,6 +563,10 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .pubtx{flex:1 1 260px;font-size:14px}.pubbar.bad .pubtx{color:var(--red-ink)}.ghostlink{font-weight:600;font-size:14px;white-space:nowrap;color:var(--tint);text-decoration:none}.ghostlink:visited{color:var(--tint)}.ghostlink:hover{text-decoration:underline}.pubbar button{min-height:40px}
 .appfoot{text-align:center;margin-top:40px}.appfoot .ghostlink{font-size:inherit}
 .sech2{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.sech2 h3{flex:1}
+.pageimgs{gap:18px}.pimg{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start;padding-bottom:18px;border-bottom:.5px solid var(--sep)}.pimg:last-child{border-bottom:0;padding-bottom:0}
+.pimgh{display:flex;flex-direction:column;gap:4px}.pimgh b{font-size:15px}.pimgh .mu{font-size:13px;line-height:1.45}
+.pimg .imgpick .iplab{display:none}.pimg .imgpick .ipbox{width:100%;height:150px;grid-row:auto}.pimg .imgpick{grid-template-columns:1fr auto}
+@media (max-width:720px){.pimg{grid-template-columns:1fr}}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -640,7 +644,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.13',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.14',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1967,6 +1971,10 @@ const EL={
  'Daily limit of 40 updates reached. Changes go out tomorrow, or after the nightly update.':'Συμπληρώθηκε το ημερήσιο όριο των 40 ενημερώσεων. Οι αλλαγές θα βγουν αύριο ή με τη νυχτερινή ενημέρωση.','The deploy hook is missing. Paste it in the step 4 database patch.':'Λείπει το deploy hook. Βάλ’ το στο patch της βάσης του βήματος 4.',
  'Nothing new to publish.':'Δεν υπάρχει κάτι νέο για δημοσίευση.','Only admins and editors can publish the website.':'Μόνο οι διαχειριστές και οι συντάκτες μπορούν να δημοσιεύσουν την ιστοσελίδα.',
  'Website ↗':'Ιστοσελίδα ↗','See the team page ↗':'Δες τη σελίδα της ομάδας ↗',
+ 'Page images':'Εικόνες σελίδων','Leave one empty and the website uses your first livery instead.':'Αν μια εικόνα μείνει κενή, η ιστοσελίδα χρησιμοποιεί την πρώτη σας livery.',
+ 'Home page · large background image':'Αρχική · μεγάλη εικόνα φόντου','Team page · image next to the story':'Σελίδα ομάδας · εικόνα δίπλα στην ιστορία','Partners page · image next to the pitch':'Σελίδα συνεργατών · εικόνα δίπλα στο κείμενο',
+ '2400 × 1300 px, landscape. Works best with the subject on the right and a darker area on the left, behind the headline.':'2400 × 1300 px, οριζόντια. Ιδανικά με το θέμα δεξιά και πιο σκούρο σημείο αριστερά, πίσω από τον τίτλο.',
+ '1600 × 1200 px. A team photo, a car on track, or a livery.':'1600 × 1200 px. Φωτογραφία ομάδας, αυτοκίνητο στην πίστα ή livery.','1600 × 1200 px. Ideally a car showing where a sponsor logo would go.':'1600 × 1200 px. Ιδανικά ένα αυτοκίνητο που δείχνει πού θα μπει το λογότυπο ενός χορηγού.',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2105,12 +2113,12 @@ async function loadSite(){const adm=isAdm();
 // Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
 async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
-async function uploadImage(file,folder){if(!file)return null;if(!/^image\//.test(file.type))throw new Error('Choose an image file.');const blob=await shrinkImage(file),ext=blob.type==='image/webp'?'webp':'jpg';
+async function uploadImage(file,folder,max=1600){if(!file)return null;if(!/^image\//.test(file.type))throw new Error('Choose an image file.');const blob=await shrinkImage(file,max),ext=blob.type==='image/webp'?'webp':'jpg';
   const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;const {error}=await sb.storage.from('site').upload(path,blob,{contentType:blob.type,upsert:false});if(error)throw error;return sb.storage.from('site').getPublicUrl(path).data.publicUrl}
-const imgField=(name,url,folder,label)=>`<div class="imgpick" data-folder="${folder}"><span class="iplab">${label}</span><div class="ipbox">${url?`<img src="${esc(url)}" alt="">`:'<span class="mu">No image yet</span>'}</div>
+const imgField=(name,url,folder,label,max)=>`<div class="imgpick" data-folder="${folder}"${max?` data-max="${max}"`:''}><span class="iplab">${label}</span><div class="ipbox">${url?`<img src="${esc(url)}" alt="">`:'<span class="mu">No image yet</span>'}</div>
   <input type="hidden" name="${name}" value="${esc(url||'')}"><label class="ghostbtn">${url?'Change image':'Choose image'}<input type="file" accept="image/*" onchange="pickImg(this)" hidden></label>${url?`<button type="button" class="ghost" onclick="clearImg(this)">Remove image</button>`:''}<span class="ipst mu" aria-live="polite"></span></div>`;
 async function pickImg(inp){const box=inp.closest('.imgpick'),st=box.querySelector('.ipst'),f=inp.files[0];if(!f)return;st.textContent='Uploading…';
-  try{const url=await uploadImage(f,box.dataset.folder);box.querySelector('input[type=hidden]').value=url;box.querySelector('.ipbox').innerHTML=`<img src="${esc(url)}" alt="">`;st.textContent='Uploaded.';box.closest('form')?.dispatchEvent(new Event('input',{bubbles:true}))}
+  try{const url=await uploadImage(f,box.dataset.folder,+box.dataset.max||1600);box.querySelector('input[type=hidden]').value=url;box.querySelector('.ipbox').innerHTML=`<img src="${esc(url)}" alt="">`;st.textContent='Uploaded.';box.closest('form')?.dispatchEvent(new Event('input',{bubbles:true}))}
   catch(e){st.textContent='';note(e.message||'Upload failed.')}}
 function clearImg(b){const box=b.closest('.imgpick');box.querySelector('input[type=hidden]').value='';box.querySelector('.ipbox').innerHTML='<span class="mu">No image yet</span>';b.remove()}
 // Very small markdown for news: # headings, **bold**, *italic*, [links](https://…), - lists, paragraphs.
@@ -2204,8 +2212,14 @@ const SSECT=[
 const SLINKS=[['discord','Discord invite'],['twitch','Twitch'],['youtube','YouTube'],['instagram','Instagram'],['facebook','Facebook'],['tiktok','TikTok']];
 const langPair=(k,label,max,big,d)=>`<div class="pairh">${label}</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span>${big?`<textarea name="${k}_${l}" rows="4" maxlength="${max}" aria-label="${label} (${l==='el'?'Greek':'English'})">${esc(d[k+'_'+l]||'')}</textarea>`:`<input name="${k}_${l}" maxlength="${max}" value="${esc(d[k+'_'+l]||'')}" aria-label="${label} (${l==='el'?'Greek':'English'})">`}</label>`).join('')}</div>`;
 const swRow=(name,label,on,hint,val)=>`<label class="swrow"><span class="swtx"><b>${label}</b>${hint?`<span class="mu">${hint}</span>`:''}</span><input type="checkbox" role="switch" class="switch" name="${name}" ${val?`value="${val}"`:''} ${on?'checked':''}></label>`;
+// Page images: the home hero and the side images of the Team and Partners pages. Empty = the first livery is used.
+const PAGEIMGS=[['hero_image','Home page · large background image','2400 × 1300 px, landscape. Works best with the subject on the right and a darker area on the left, behind the headline.',2400],
+  ['team_image','Team page · image next to the story','1600 × 1200 px. A team photo, a car on track, or a livery.',1600],
+  ['partners_image','Partners page · image next to the pitch','1600 × 1200 px. Ideally a car showing where a sponsor logo would go.',1600]];
 function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
   return `<form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">
+    <section class="ssec"><div class="ssech"><h3>Page images</h3><p class="mu">Leave one empty and the website uses your first livery instead.</p></div><div class="ssecb pageimgs">
+      ${PAGEIMGS.map(([k,l,hint,max])=>`<div class="pimg"><div class="pimgh"><b>${l}</b><span class="mu">${hint}</span></div>${imgField(k,d[k],'pages',l,max)}</div>`).join('')}</div></section>
     ${SSECT.map(([h,hint,fs])=>`<section class="ssec"><div class="ssech"><h3>${h}</h3><p class="mu">${hint}</p></div><div class="ssecb">${fs.map(f=>f[0]==='pair'?langPair(f[1],f[2],f[3],f[4],d)
       :f[0]==='one'?`<label class="pf one">${f[2]}<input name="${f[1]}" maxlength="${f[4]}" value="${esc(d[f[1]]||'')}" placeholder="${f[3]}"></label>`
       :`<div class="linkgrid">${SLINKS.map(([k,l])=>`<label class="pf">${l}<input name="${k}" type="url" maxlength="200" value="${esc(d[k]||'')}" placeholder="https://"></label>`).join('')}<label class="pf">Contact email<input name="email" type="email" maxlength="120" value="${esc(d.email||'')}"></label></div>`).join('')}</div></section>`).join('')}
@@ -2213,7 +2227,7 @@ function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
     <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save settings</button></div></form>`}
 function markDirty(f){const st=f.querySelector(".savest");if(st){st.textContent="Unsaved changes";st.classList.add("chg")}}
 async function saveSettings(e){e.preventDefault();const f=new FormData(e.target),data={...SITE.settings};
-  const keys=[...SSECT.flatMap(x=>x[2]).flatMap(f=>f[0]==='pair'?[f[1]+'_el',f[1]+'_en']:f[0]==='one'?[f[1]]:[]),...SLINKS.map(x=>x[0]),'email'];
+  const keys=[...SSECT.flatMap(x=>x[2]).flatMap(f=>f[0]==='pair'?[f[1]+'_el',f[1]+'_en']:f[0]==='one'?[f[1]]:[]),...SLINKS.map(x=>x[0]),'email',...PAGEIMGS.map(x=>x[0])];
   for(const k of keys){const v=String(f.get(k)||'').trim();if(v&&SLINKS.some(x=>x[0]===k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
   const on=f.getAll('adpos');data.ads_off=ADPOS.map(p=>p[0]).filter(k=>!on.includes(k));
   await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));await render();note('Settings saved.',1)}
