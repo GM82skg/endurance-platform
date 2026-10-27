@@ -590,7 +590,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.5',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.6.6',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1770,7 +1770,8 @@ let INVT=0;document.addEventListener('invalid',e=>{e.preventDefault();if(Date.no
    appears (exact phrases first, then patterns for texts with numbers/names). LMU's own names and the
    imported rules, plus team, driver, event and car names, are never translated.
    Terminology: stint, Event (το event), fair share, split, pit stop, DR/SR stay as in LMU. */
-let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en')return v}catch{}return /^el\b/i.test(navigator.language||'')?'el':'en'})();
+// Greek is the default; a member's own choice (saved in their profile and on the device) wins.
+let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en')return v}catch{}return 'el'})();
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
