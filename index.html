@@ -580,6 +580,9 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .brandprev img{max-height:48px;max-width:220px;width:auto;height:auto}.brandprev b{font-weight:800;letter-spacing:.08em;font-size:20px}.phmark{width:36px;height:36px;border-radius:8px;background:#FF9F0A;color:#0B0B0D;display:grid;place-items:center;font-weight:800;font-size:22px}
 .brandact{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.iconprev{display:flex;align-items:flex-end;gap:12px;min-width:260px}.iconprev img{border-radius:12px}.iconprev img+img{border-radius:6px}.iconprev img+img+img{border-radius:3px}
 .brandimg{height:32px;width:auto;max-width:160px;object-fit:contain}
+.li .rtags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-self:start}.li .rtags .stat{grid-row:auto;grid-column:auto;justify-self:auto}
+@media (max-width:720px){.li .rtags{grid-row:1;grid-column:2;justify-self:end;justify-content:flex-end;max-width:180px}}
+.spstats{margin-bottom:16px}.sphead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}.sphead>div{flex:1;min-width:220px}.spstats .tblwrap{padding:4px 12px 0}.spstats .ssecb{padding-top:0}.spstats>p{padding:4px 20px 16px}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -657,7 +660,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.2',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.3',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -851,12 +854,17 @@ async function refresh(){
 let backTo='cal';
 function go(v,id){if(v==='race'&&view!=='race')backTo=view==='my'?'my':'cal';view=v;raceId=id??null;window.scrollTo(0,0);render()}
 async function render(){setTimeout(showOnline,0);
-  const key=view+'|'+raceId,sx=key===lastKey?$$('.scroll').map(e=>e.scrollLeft):[];lastKey=key;
+  // Redrawing the same page keeps you exactly where you were: the page keeps its height while it redraws
+  // (otherwise the browser jumps to the top), then the scroll position is put back. Opening another page starts at the top.
+  const key=view+'|'+raceId,same=key===lastKey,sx=same?$$('.scroll').map(e=>e.scrollLeft):[],y0=same?scrollY:null,mainEl=$('#main');lastKey=key;
+  if(same&&mainEl)mainEl.style.minHeight=mainEl.offsetHeight+'px';
+  try{
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
   $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
   tzBanner();
   if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else if(view==='site')await siteView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
+  }finally{if(mainEl)mainEl.style.minHeight='';if(y0!=null&&Math.abs(scrollY-y0)>1)window.scrollTo(0,y0)}
 }
 function tzBanner(){
   const b=$('#tzb');if(!b)return;
@@ -2016,6 +2024,8 @@ const EL={
  'Made from the logo, or upload a simple square version.':'Φτιάχνεται από το λογότυπο, ή ανέβασε μια απλή τετράγωνη εκδοχή.','Choose square icon':'Επιλογή τετράγωνου εικονιδίου','Change icon':'Αλλαγή εικονιδίου','Use the logo instead':'Χρήση του λογότυπου',
  'Show the name ARION next to the logo':'Εμφάνιση του ονόματος ARION δίπλα στο λογότυπο','Switch off if your logo already contains the name.':'Απενεργοποίησέ το αν το λογότυπο περιέχει ήδη το όνομα.','Also use the logo in the crew app':'Χρήση του λογότυπου και στο crew app',
  'Preparing…':'Προετοιμασία…','Logo ready. Press Save appearance to put it on the website.':'Το λογότυπο είναι έτοιμο. Πάτα «Αποθήκευση εμφάνισης» για να μπει στην ιστοσελίδα.','This file can’t be read as an image.':'Αυτό το αρχείο δεν διαβάζεται ως εικόνα.',
+ 'Sponsor statistics':'Στατιστικά χορηγών','Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.':'Προβολές και κλικ των banners ανά χορηγό. Μια προβολή μετρά όταν το banner είναι τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο· οι ανανεώσεις μετρούν ξανά.',
+ 'Banners':'Banners','Views · 30 days':'Προβολές · 30 μέρες','Clicks · 30 days':'Κλικ · 30 μέρες','Views · all':'Προβολές · σύνολο','Clicks · all':'Κλικ · σύνολο','Banners: running now / total.':'Banners: ενεργά τώρα / σύνολο.','No sponsor':'Χωρίς χορηγό',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2213,8 +2223,20 @@ async function saveNews(e,id,status){e.preventDefault();const f=e.target.closest
 async function delNews(id){if(!await askO({ok:'Delete post',danger:true})('Delete this post for good?'))return;await q(sb.from('site_news').delete().eq('id',id));closeDlg();await render();note('Post deleted.',1)}
 
 // ---- Liveries and partners (same shape)
+// All sponsors at a glance (admins): banners, views, clicks and click rate, last 30 days and all time.
+function sponsorRows(){const rows=SITE.partners.map(p=>({name:p.name,ads:SITE.ads.filter(a=>a.partner_id===p.id)}));const none=SITE.ads.filter(a=>!a.partner_id||!SITE.partners.some(p=>p.id===a.partner_id));if(none.length)rows.push({name:'No sponsor',ads:none,none:true});
+  return rows.map(r=>{const sum=d=>r.ads.reduce((a,x)=>{const s=adStat(x.id,d);return {v:a.v+s.v,c:a.c+s.c}},{v:0,c:0});return {...r,running:r.ads.filter(adRunning).length,m:sum(30),all:sum(0)}})}
+function sponsorStats(){const rows=sponsorRows();if(!rows.length)return '';const tot=rows.reduce((a,r)=>({v30:a.v30+r.m.v,c30:a.c30+r.m.c,v:a.v+r.all.v,c:a.c+r.all.c,b:a.b+r.ads.length,run:a.run+r.running}),{v30:0,c30:0,v:0,c:0,b:0,run:0});
+  return `<section class="ssec spstats"><div class="ssech sphead"><div><h3>Sponsor statistics</h3><p class="mu">Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.</p></div><button type="button" onclick="sponsorStatsCsv()">Download (CSV)</button></div>
+    <div class="tblwrap"><table class="rtab"><thead><tr><th>Sponsor</th><th class="num">Banners</th><th class="num">Views · 30 days</th><th class="num">Clicks · 30 days</th><th class="num">Click rate</th><th class="num">Views · all</th><th class="num">Clicks · all</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td>${r.none?'<i>No sponsor</i>':esc(r.name)}</td><td class="num">${r.running} / ${r.ads.length}</td><td class="num">${r.m.v}</td><td class="num">${r.m.c}</td><td class="num">${ctr(r.m)}</td><td class="num">${r.all.v}</td><td class="num">${r.all.c}</td></tr>`).join('')}
+    <tr class="tot"><td>Total</td><td class="num">${tot.run} / ${tot.b}</td><td class="num">${tot.v30}</td><td class="num">${tot.c30}</td><td class="num">${ctr({v:tot.v30,c:tot.c30})}</td><td class="num">${tot.v}</td><td class="num">${tot.c}</td></tr></tbody></table></div>
+    <p class="mu" style="margin:0">Banners: running now / total.</p></section>`}
+function sponsorStatsCsv(){const q=v=>`"${String(v).replace(/"/g,'""')}"`,lines=[['Sponsor','Banners running','Banners total','Views 30 days','Clicks 30 days','Click rate 30 days','Views all time','Clicks all time'].join(',')];
+  sponsorRows().forEach(r=>lines.push([r.name,r.running,r.ads.length,r.m.v,r.m.c,ctr(r.m),r.all.v,r.all.c].map(q).join(',')));
+  const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'})),a=document.createElement('a');a.href=url;a.download=`ARION-sponsors-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 function siteGallery(kind){const L=kind==='liveries',list=SITE[kind];
-  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="galDlg('${kind}')">${L?'+ Add livery':'+ Add sponsor'}</button></div>
+  return `${!L&&isAdm()?sponsorStats():''}<div class="row" style="margin-bottom:12px"><button class="pri" onclick="galDlg('${kind}')">${L?'+ Add livery':'+ Add sponsor'}</button></div>
   ${list.length?`<div class="galgrid">${list.map((x,i)=>`<div class="galcard${x.visible?'':' hid'}"><div class="galimg${L?'':' logo'}">${(L?x.image_url:x.logo_url)?`<img src="${esc(L?x.image_url:x.logo_url)}" alt="">`:''}</div>
     <div class="galtx"><b>${esc(L?x.title:x.name)}</b><span class="mu">${L?esc([x.car,x.class].filter(Boolean).join(' · ')):esc(x.link||'')}</span>${x.visible?'':'<span class="stat chip pending">Hidden</span>'}</div>
     <div class="acts"><button class="ghost" aria-label="Move earlier" onclick="galMove('${kind}',${x.id},-1)" ${i===0?'disabled':''}>↑</button><button class="ghost" aria-label="Move later" onclick="galMove('${kind}',${x.id},1)" ${i===list.length-1?'disabled':''}>↓</button><button class="ghost" onclick="galDlg('${kind}',${x.id})">Edit</button></div></div>`).join('')}</div>`
@@ -2458,7 +2480,7 @@ async function rosterView(){
   const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
   const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${adm?`<i class="odot${ONLINE.has(p.id)?' on':''}" data-uid="${p.id}" role="img" aria-label="${ONLINE.has(p.id)?'Online now':'Offline'}" title="${ONLINE.has(p.id)?'Online now':'Offline'}"></i>`:''}${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
-    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}
+    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div><span class="rtags">${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}</span>
     ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>${p.role!=='admin'?`<button class="ghost" onclick="setEditor('${p.id}',${!p.site_editor})">${p.site_editor?'Remove editor':'Make editor'}</button>`:''}<button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
   $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><div class="card langcard"><span class="grow">Language · Γλώσσα</span><div class="seg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
     ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
