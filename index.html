@@ -518,8 +518,8 @@ dialog .askbar{margin:0 0 4px}
 .sitebody h3{margin-top:22px}
 .imgpick{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}.imgpick .iplab{grid-column:1/-1;font-size:13px;font-weight:600;color:var(--label2)}
 .imgpick .ipbox{grid-row:span 3;width:150px;height:96px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px}
-.imgpick .ipbox img{width:100%;height:100%;object-fit:cover}.imgpick .ghostbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--fill);color:var(--tint);font-weight:600;font-size:14px;cursor:pointer;justify-self:start}
-.imgpick .ghostbtn:focus-within{outline:2px solid var(--tint)}.imgpick .ipst{font-size:12px}
+.imgpick .ipbox img{width:100%;height:100%;object-fit:cover}.ghostbtn,.imgpick .ghostbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--fill);color:var(--tint);font-weight:600;font-size:14px;cursor:pointer;justify-self:start}
+.ghostbtn:focus-within{outline:2px solid var(--tint)}.imgpick .ipst{font-size:12px}
 form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:620px){.form2{grid-template-columns:1fr}}
 .nprev summary{cursor:pointer;font-weight:600;color:var(--tint);min-height:36px;display:flex;align-items:center}.npv{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px;border-radius:12px;background:var(--fill)}@media (max-width:620px){.npv{grid-template-columns:1fr}}
 .npv h3{margin:4px 0 8px}.npv p{margin:0 0 10px;line-height:1.5}
@@ -576,6 +576,10 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .hnum{width:26px;height:26px;border-radius:13px;background:var(--fill);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}.hrow .ghost{min-width:40px}
 .txtop{display:flex;flex-direction:column;gap:6px}.txsearch{max-width:520px}.txrow{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:.5px solid var(--sep)}.txrow:last-child{border-bottom:0;padding-bottom:0}.txkey{font-size:11px;font-family:ui-monospace,Menlo,monospace}
 .savebar button:not(.pri){min-width:0}
+.brandrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.brandprev{display:flex;align-items:center;gap:12px;min-width:260px;min-height:76px;padding:14px 20px;border-radius:12px;color:#F5F5F7}
+.brandprev img{max-height:48px;max-width:220px;width:auto;height:auto}.brandprev b{font-weight:800;letter-spacing:.08em;font-size:20px}.phmark{width:36px;height:36px;border-radius:8px;background:#FF9F0A;color:#0B0B0D;display:grid;place-items:center;font-weight:800;font-size:22px}
+.brandact{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.iconprev{display:flex;align-items:flex-end;gap:12px;min-width:260px}.iconprev img{border-radius:12px}.iconprev img+img{border-radius:6px}.iconprev img+img+img{border-radius:3px}
+.brandimg{height:32px;width:auto;max-width:160px;object-fit:contain}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -653,7 +657,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.2',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -797,7 +801,7 @@ async function start(){
     <main><div id="tzb"></div><div id="main"></div><p class="mu appfoot">ARION Endurance Crew v${VERSION}<span aria-hidden="true"> · </span><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}" target="_blank" rel="noopener">Website ↗</a></p></main>
     <nav class="tabbar" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${ICON[v]}<span>${l}</span></button>`).join('')}</nav>
     <div id="toast" role="status" hidden></div>`;
-  startLive();
+  startLive();loadBrand().then(applyBrand);
   if(view==='race'&&!curRace())view='my';
   render();
 }
@@ -2007,6 +2011,11 @@ const EL={
  'No text matches your search.':'Κανένα κείμενο δεν ταιριάζει με την αναζήτηση.','Back to all defaults':'Επαναφορά όλων στα αρχικά','Save texts':'Αποθήκευση κειμένων','Reset all':'Επαναφορά όλων',
  'Put every text back to the website’s default?':'Να επιστρέψουν όλα τα κείμενα στα αρχικά της ιστοσελίδας;','Texts saved. The website updates in a couple of minutes.':'Τα κείμενα αποθηκεύτηκαν. Η ιστοσελίδα ενημερώνεται σε λίγα λεπτά.',
  'Menu':'Μενού','Forms':'Φόρμες','Numbers':'Αριθμοί','Results table':'Πίνακας αποτελεσμάτων','Sponsors page':'Σελίδα χορηγών','Join us page':'Σελίδα «Γίνε μέλος»','Team page':'Σελίδα ομάδας','News':'Νέα','Live page':'Σελίδα Live','Privacy':'Απόρρητο','Page not found':'Η σελίδα δεν βρέθηκε','Home page and general':'Αρχική και γενικά',
+ 'Logo':'Λογότυπο','Best: SVG, or PNG with a transparent background. Leave empty to keep the placeholder “A ARION”.':'Ιδανικά SVG ή PNG με διάφανο φόντο. Αν μείνει κενό, μένει το προσωρινό «A ARION».',
+ 'Choose logo':'Επιλογή λογότυπου','Change logo':'Αλλαγή λογότυπου','Remove logo':'Αφαίρεση λογότυπου','Icon for the browser tab and phone home screen':'Εικονίδιο για την καρτέλα του browser και την αρχική οθόνη του κινητού',
+ 'Made from the logo, or upload a simple square version.':'Φτιάχνεται από το λογότυπο, ή ανέβασε μια απλή τετράγωνη εκδοχή.','Choose square icon':'Επιλογή τετράγωνου εικονιδίου','Change icon':'Αλλαγή εικονιδίου','Use the logo instead':'Χρήση του λογότυπου',
+ 'Show the name ARION next to the logo':'Εμφάνιση του ονόματος ARION δίπλα στο λογότυπο','Switch off if your logo already contains the name.':'Απενεργοποίησέ το αν το λογότυπο περιέχει ήδη το όνομα.','Also use the logo in the crew app':'Χρήση του λογότυπου και στο crew app',
+ 'Preparing…':'Προετοιμασία…','Logo ready. Press Save appearance to put it on the website.':'Το λογότυπο είναι έτοιμο. Πάτα «Αποθήκευση εμφάνισης» για να μπει στην ιστοσελίδα.','This file can’t be read as an image.':'Αυτό το αρχείο δεν διαβάζεται ως εικόνα.',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2087,7 +2096,7 @@ const RX=[
  [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^The logo is hard to see on this background \(contrast (.+):1\)\. A light version of the logo, or another background, would read better\.$/,'Το λογότυπο φαίνεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1). Μια ανοιχτόχρωμη εκδοχή του λογότυπου ή άλλο φόντο θα φαίνεται καλύτερα.'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
  [/^This accent is hard to read on this background \(contrast (.+):1, at least 3:1 is recommended\)\. Choose a lighter or stronger colour\.$/,'Αυτό το χρώμα διαβάζεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1, συνιστάται τουλάχιστον 3:1). Διάλεξε πιο φωτεινό ή πιο έντονο χρώμα.'],
  [/^Show (.+)$/,(m,a)=>'Εμφάνιση: '+tr(a)],[/^Couldn’t read the list of texts from the website \((.+)\)\. Publish the latest website version first, then open this tab again\.$/,'Δεν διαβάστηκε η λίστα κειμένων από την ιστοσελίδα ($1). Ανέβασε πρώτα την τελευταία έκδοση της ιστοσελίδας και άνοιξε ξανά αυτή την καρτέλα.'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
@@ -2117,6 +2126,11 @@ async function setLang(v){LANG=v;try{localStorage.setItem('ec-lang',v)}catch{}tr
 /* ---------- Website tab: the control panel for the public site ----------
    Admins manage everything; editors manage news only. The public site reads site_public(). */
 const isEd=()=>isAdm()||!!prof?.site_editor;
+let BRAND=null;
+async function loadBrand(){try{const {data}=await sb.from('site_settings').select('data').eq('id',1).maybeSingle();BRAND=data?.data?.brand||null}catch{BRAND=null}}
+function applyBrand(){const b=BRAND,box=document.querySelector('header.bar .brand');if(!box)return;const m=box.querySelector('.mark,.brandimg');
+  if(b&&b.logo&&b.in_app!==false){const img=`<img class="brandimg" src="${esc(b.logo)}" alt="ARION">`;if(m)m.outerHTML=img;const nm=box.querySelector('.brand-name');if(nm)nm.style.display=b.show_name===false?'none':''}
+  if(b&&b.icon192&&b.in_app!==false){let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.href=b.icon192}}
 const SITE_PUBLIC_URL='https://arion-webpage.pages.dev/';
 let PUB=null;
 async function loadPub(){const {data,error}=await sb.rpc('publish_status');PUB=error?{error:error.message}:data}
@@ -2338,10 +2352,10 @@ const lumOf=c=>{const [r,g,b]=[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)/255).ma
 const contrast=(a,b)=>{const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
 let LOOK=null;
 function lookState(){const d=SITE.settings,saved=(d.home_order||[]).filter(x=>SHOME.some(h=>h[0]===x.id));
-  return {accent:(d.colors||{}).accent||'#FF9F0A',background:(d.colors||{}).background||'dark',pages_off:[...(d.pages_off||[])],
+  return {accent:(d.colors||{}).accent||'#FF9F0A',background:(d.colors||{}).background||'dark',pages_off:[...(d.pages_off||[])],brand:{...(d.brand||{})},
     home:[...saved,...SHOME.filter(h=>!saved.some(x=>x.id===h[0])).map(h=>({id:h[0],on:true}))]}}
 function siteLook(){if(!LOOK)LOOK=lookState();const L=LOOK,bg=(BGOPTS.find(b=>b[0]===L.background)||BGOPTS[0])[2],ink=lumOf(L.accent)>.35?'#0B0B0D':'#FFFFFF',cr=contrast(L.accent,bg);
-  return `<div class="sform">
+  return `<div class="sform">${brandCard()}
   <section class="ssec"><div class="ssech"><h3>Colours</h3><p class="mu">The accent is used for buttons, links and highlights. Text on buttons switches to black or white automatically.</p></div><div class="ssecb">
     <div class="pairh">Accent</div><div class="swatches">${ACCENTS.map(([c,l])=>`<button type="button" class="swatch${L.accent.toUpperCase()===c?' on':''}" style="--c:${c}" aria-label="${l}" aria-pressed="${L.accent.toUpperCase()===c}" onclick="LOOK.accent='${c}';lookRender()"></button>`).join('')}
       <label class="swcustom"><span>Other</span><input type="color" value="${esc(L.accent)}" onchange="LOOK.accent=this.value.toUpperCase();lookRender()" aria-label="Choose any colour"></label></div>
@@ -2356,13 +2370,46 @@ function siteLook(){if(!LOOK)LOOK=lookState();const L=LOOK,bg=(BGOPTS.find(b=>b[
       <button type="button" class="ghost" aria-label="Move up" onclick="lookMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button type="button" class="ghost" aria-label="Move down" onclick="lookMove(${i},1)" ${i===L.home.length-1?'disabled':''}>↓</button>
       <input type="checkbox" role="switch" class="switch" ${h.on?'checked':''} onchange="LOOK.home[${i}].on=this.checked;lookRender()" aria-label="Show ${(SHOME.find(x=>x[0]===h.id)||['',h.id])[1]}"></div>`).join('')}</div></section>
   <div class="savebar"><span class="savest mu ${lookDirty()?'chg':''}" aria-live="polite">${lookDirty()?'Unsaved changes':'No changes'}</span><button type="button" onclick="LOOK=null;lookRender()" ${lookDirty()?'':'disabled'}>Undo changes</button><button type="button" class="pri" onclick="saveLook()">Save appearance</button></div></div>`}
-function lookDirty(){if(!LOOK)return false;const a=JSON.stringify(LOOK),b=JSON.stringify(lookState());return a!==b}
+function lookDirty(){if(!LOOK)return false;const strip=o=>({...o,brand:{...o.brand,warn:undefined}});return JSON.stringify(strip(LOOK))!==JSON.stringify(strip(lookState()))}
 function lookRender(){const y=scrollY;$('.sitebody').innerHTML=siteLook();scrollTo(0,y)}
 function lookPage(k,on){LOOK.pages_off=on?LOOK.pages_off.filter(x=>x!==k):[...new Set([...LOOK.pages_off,k])];lookRender()}
 function lookMove(i,d){const h=LOOK.home,j=i+d;if(j<0||j>=h.length)return;[h[i],h[j]]=[h[j],h[i]];lookRender()}
 async function saveLook(){const L=LOOK||lookState();if(L.pages_off.length===SPAGES.length&&!await askO({ok:'Save anyway'})('All pages are switched off. The website will only have its home page. Continue?'))return;
-  const data={...SITE.settings,colors:{accent:L.accent,background:L.background},pages_off:L.pages_off,home_order:L.home};
-  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));LOOK=null;await render();note('Appearance saved. The website updates in a couple of minutes.',1)}
+  const {warn,...brand}=L.brand||{};const data={...SITE.settings,colors:{accent:L.accent,background:L.background},pages_off:L.pages_off,home_order:L.home,brand};
+  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));LOOK=null;BRAND=data.brand;applyBrand();await render();note('Appearance saved. The website updates in a couple of minutes.',1)}
+
+// ---- Logo: main logo (header/footer), square icon (browser tab, phone home screen). Stored in site settings → brand.
+// SVG is drawn into a transparent PNG in the browser (safe, and the storage accepts it). Icons get the needed sizes.
+async function fileToImage(file){const url=URL.createObjectURL(file);try{const im=new Image();im.decoding='async';await new Promise((ok,no)=>{im.onload=ok;im.onerror=()=>no(new Error('This file can’t be read as an image.'));im.src=url});return im}finally{setTimeout(()=>URL.revokeObjectURL(url),5000)}}
+const canvasBlob=(c,type='image/png')=>new Promise(r=>c.toBlob(r,type));
+async function putBrand(blob,name){const path=`brand/${Date.now()}-${name}.png`;const {error}=await sb.storage.from('site').upload(path,blob,{contentType:'image/png',upsert:false});if(error)throw error;return sb.storage.from('site').getPublicUrl(path).data.publicUrl}
+// Main logo: keep proportions, max 1200 × 600, transparent background.
+async function makeLogo(file){const im=await fileToImage(file),w=im.naturalWidth||im.width||1200,h=im.naturalHeight||im.height||400,k=Math.min(1200/w,600/h,/svg/.test(file.type)?99:1);
+  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);return {blob:await canvasBlob(c),canvas:c}}
+// Icon: square, logo centred with a margin on the site background (phones show transparent icons on black).
+async function makeIcon(file,size,bg){const im=await fileToImage(file),w=im.naturalWidth||im.width||512,h=im.naturalHeight||im.height||512,c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+  x.fillStyle=bg;x.fillRect(0,0,size,size);const pad=size*.14,k=Math.min((size-2*pad)/w,(size-2*pad)/h);x.drawImage(im,(size-w*k)/2,(size-h*k)/2,w*k,h*k);return canvasBlob(c)}
+// How visible is the logo on a background? Average brightness of its visible pixels vs the background.
+function logoContrast(canvas,bg){const x=canvas.getContext('2d'),d=x.getImageData(0,0,canvas.width,canvas.height).data;let s=0,n=0;for(let i=0;i<d.length;i+=16){if(d[i+3]>40){const L=lumOf('#'+[d[i],d[i+1],d[i+2]].map(v=>v.toString(16).padStart(2,'0')).join(''));s+=L;n++}}
+  if(!n)return 21;const L=s/n,B=lumOf(bg);return (Math.max(L,B)+.05)/(Math.min(L,B)+.05)}
+function brandCard(){const b=LOOK.brand||{},bg=(BGOPTS.find(x=>x[0]===LOOK.background)||BGOPTS[0])[2];
+  const prev=b.logo?`<img src="${esc(b.logo)}" alt="">`:`<span class="phmark">A</span>`;
+  return `<section class="ssec"><div class="ssech"><h3>Logo</h3><p class="mu">Best: SVG, or PNG with a transparent background. Leave empty to keep the placeholder “A ARION”.</p></div><div class="ssecb">
+    <div class="brandrow"><div class="brandprev" style="background:${bg}">${prev}${b.show_name!==false?'<b>ARION</b>':''}</div>
+      <div class="brandact"><label class="ghostbtn">${b.logo?'Change logo':'Choose logo'}<input type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" onchange="pickBrand(this,'logo')" hidden></label>${b.logo?'<button type="button" class="ghost" onclick="LOOK.brand={...LOOK.brand,logo:null};lookRender()">Remove logo</button>':''}<span class="ipst mu brandst" aria-live="polite"></span></div></div>
+    ${b.warn?`<p class="lookwarn">${esc(b.warn)}</p>`:''}
+    <div class="pairh">Icon for the browser tab and phone home screen</div>
+    <div class="brandrow"><div class="iconprev">${b.icon192?`<img src="${esc(b.icon192)}" alt="" width="64" height="64"><img src="${esc(b.icon192)}" alt="" width="32" height="32"><img src="${esc(b.icon192)}" alt="" width="16" height="16">`:'<span class="mu">Made from the logo, or upload a simple square version.</span>'}</div>
+      <div class="brandact"><label class="ghostbtn">${b.icon_own?'Change icon':'Choose square icon'}<input type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" onchange="pickBrand(this,'icon')" hidden></label>${b.icon_own?'<button type="button" class="ghost" onclick="LOOK.brand={...LOOK.brand,icon_own:false,icon180:null,icon192:null,icon512:null};lookRender()">Use the logo instead</button>':''}</div></div>
+    ${swRow('brand_name','Show the name ARION next to the logo',b.show_name!==false,'Switch off if your logo already contains the name.').replace('<input','<input onchange="LOOK.brand={...LOOK.brand,show_name:this.checked};lookRender()"')}
+    ${swRow('brand_app','Also use the logo in the crew app',b.in_app!==false).replace('<input','<input onchange="LOOK.brand={...LOOK.brand,in_app:this.checked};lookRender()"')}
+  </div></section>`}
+async function pickBrand(inp,kind){const f=inp.files[0];if(!f)return;const st=$('.brandst');if(st)st.textContent='Preparing…';const bgc=(BGOPTS.find(x=>x[0]===LOOK.background)||BGOPTS[0])[2];
+  try{const b={...(LOOK.brand||{})};
+    if(kind==='logo'){const {blob,canvas}=await makeLogo(f);b.logo=await putBrand(blob,'logo');const cr=logoContrast(canvas,bgc);b.warn=cr<2.2?`The logo is hard to see on this background (contrast ${cr.toFixed(1)}:1). A light version of the logo, or another background, would read better.`:'';}
+    if(kind==='icon'||!b.icon_own){const [i512,i192,i180]=await Promise.all([512,192,180].map(s=>makeIcon(f,s,bgc)));[b.icon512,b.icon192,b.icon180]=await Promise.all([putBrand(i512,'icon-512'),putBrand(i192,'icon-192'),putBrand(i180,'icon-180')]);if(kind==='icon')b.icon_own=true}
+    LOOK.brand=b;lookRender();note('Logo ready. Press Save appearance to put it on the website.',1)}
+  catch(e){if(st)st.textContent='';note(e.message||'Upload failed.')}}
 
 // ---- Texts: every label of the website in ΕΛ/EN. The list and defaults come from the website itself.
 let TXDEF=null,TXQ='',TXEDIT=null;
