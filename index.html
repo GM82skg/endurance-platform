@@ -567,6 +567,15 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .pimgh{display:flex;flex-direction:column;gap:4px}.pimgh b{font-size:15px}.pimgh .mu{font-size:13px;line-height:1.45}
 .pimg .imgpick .iplab{display:none}.pimg .imgpick .ipbox{width:100%;height:150px;grid-row:auto}.pimg .imgpick{grid-template-columns:1fr auto}
 @media (max-width:720px){.pimg{grid-template-columns:1fr}}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.swatch{width:40px;height:40px;min-height:0;padding:0;border-radius:50%;background:var(--c);border:3px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+.swatch.on{border-color:var(--label);box-shadow:0 0 0 2px var(--surface) inset}.swcustom{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--label2)}.swcustom input{width:44px;height:40px;padding:0;border:0;background:none}
+.bgseg{display:flex;flex-wrap:wrap}.bgseg i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.lookprev{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:18px 20px;border-radius:14px;color:#F5F5F7}.lpk{font-weight:800;letter-spacing:.08em}.lookprev b{flex:1;min-width:160px}.lpb{padding:8px 16px;border-radius:10px;font-weight:700}.lpl{font-weight:600}
+.lookwarn{margin:0;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-ink);font-size:14px}
+.homeord{gap:0}.hrow{display:flex;align-items:center;gap:10px;min-height:54px;border-bottom:.5px solid var(--sep)}.hrow:last-child{border-bottom:0}.hrow.off .grow{color:var(--label3);text-decoration:line-through}
+.hnum{width:26px;height:26px;border-radius:13px;background:var(--fill);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}.hrow .ghost{min-width:40px}
+.txtop{display:flex;flex-direction:column;gap:6px}.txsearch{max-width:520px}.txrow{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:.5px solid var(--sep)}.txrow:last-child{border-bottom:0;padding-bottom:0}.txkey{font-size:11px;font-family:ui-monospace,Menlo,monospace}
+.savebar button:not(.pri){min-width:0}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -644,7 +653,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.6.15',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1984,6 +1993,20 @@ const EL={
  'No banners yet. Add a sponsor first (Sponsors), then press + New banner.':'Δεν υπάρχουν banners ακόμα. Πρόσθεσε πρώτα έναν χορηγό (Χορηγοί) και μετά πάτα «+ Νέο banner».',
  'At most one banner per position and two per page are shown; several banners in one position take turns. Views and clicks are daily totals, with no cookies and nothing stored about visitors. A reload counts as a new view.':'Εμφανίζεται έως ένα banner ανά θέση και έως δύο ανά σελίδα· όταν μια θέση έχει πολλά, εναλλάσσονται. Οι προβολές και τα κλικ είναι ημερήσια σύνολα, χωρίς cookies και χωρίς να αποθηκεύεται τίποτα για τους επισκέπτες. Μια ανανέωση της σελίδας μετράει ως νέα προβολή.',
  'Banner positions':'Θέσεις banners','Switch a position off to keep it free of sponsor banners everywhere.':'Απενεργοποίησε μια θέση για να μην εμφανίζονται ποτέ banners χορηγών εκεί.',
+ 'Appearance':'Εμφάνιση','Texts':'Κείμενα','Colours':'Χρώματα','Accent':'Χρώμα έμφασης','Background':'Φόντο','Other':'Άλλο','Choose any colour':'Επίλεξε οποιοδήποτε χρώμα','Button':'Κουμπί','Link →':'Σύνδεσμος →',
+ 'The accent is used for buttons, links and highlights. Text on buttons switches to black or white automatically.':'Το χρώμα έμφασης χρησιμοποιείται σε κουμπιά, συνδέσμους και τονισμούς. Το κείμενο στα κουμπιά γίνεται αυτόματα μαύρο ή λευκό.',
+ 'Orange (ARION)':'Πορτοκαλί (ARION)','Red':'Κόκκινο','Green':'Πράσινο','Blue':'Μπλε','Purple':'Μωβ','Yellow':'Κίτρινο','Cyan':'Γαλάζιο','White':'Λευκό','Dark (default)':'Σκούρο (προεπιλογή)','Black':'Μαύρο','Navy':'Σκούρο μπλε','Graphite':'Γραφίτης',
+ 'Pages':'Σελίδες','A page switched off disappears from the menu, and its address leads to the home page. Privacy always stays.':'Μια σελίδα που απενεργοποιείς φεύγει από το μενού και η διεύθυνσή της οδηγεί στην αρχική. Η πολιτική απορρήτου μένει πάντα.',
+ 'Calendar & Results':'Πρόγραμμα & Αποτελέσματα','Live':'Live','Join us':'Γίνε μέλος','Team':'Ομάδα',
+ 'Home page sections':'Ενότητες αρχικής σελίδας','The big image with the slogan always comes first. Then these, in this order. Sponsor banners go after the 1st and 3rd shown section.':'Η μεγάλη εικόνα με το σύνθημα είναι πάντα πρώτη. Μετά ακολουθούν αυτές, με αυτή τη σειρά. Τα banners χορηγών μπαίνουν μετά την 1η και την 3η ενότητα που εμφανίζεται.',
+ 'Next event and countdown':'Επόμενο event και αντίστροφη μέτρηση','Numbers (events, hours, laps, drivers)':'Αριθμοί (events, ώρες, γύροι, οδηγοί)','Latest news':'Τελευταία νέα','Live / Sponsors / Join us boxes':'Πλαίσια Live / Χορηγοί / Γίνε μέλος',
+ 'Move up':'Μετακίνηση πάνω','Move down':'Μετακίνηση κάτω','Undo changes':'Αναίρεση αλλαγών','Save appearance':'Αποθήκευση εμφάνισης','Save anyway':'Αποθήκευση έτσι κι αλλιώς',
+ 'All pages are switched off. The website will only have its home page. Continue?':'Όλες οι σελίδες είναι απενεργοποιημένες. Η ιστοσελίδα θα έχει μόνο την αρχική. Συνέχεια;',
+ 'Appearance saved. The website updates in a couple of minutes.':'Η εμφάνιση αποθηκεύτηκε. Η ιστοσελίδα ενημερώνεται σε λίγα λεπτά.',
+ 'Loading the website’s texts…':'Φόρτωση των κειμένων της ιστοσελίδας…','Search texts (Greek or English)':'Αναζήτηση κειμένων (ελληνικά ή αγγλικά)','Search texts':'Αναζήτηση κειμένων',
+ 'No text matches your search.':'Κανένα κείμενο δεν ταιριάζει με την αναζήτηση.','Back to all defaults':'Επαναφορά όλων στα αρχικά','Save texts':'Αποθήκευση κειμένων','Reset all':'Επαναφορά όλων',
+ 'Put every text back to the website’s default?':'Να επιστρέψουν όλα τα κείμενα στα αρχικά της ιστοσελίδας;','Texts saved. The website updates in a couple of minutes.':'Τα κείμενα αποθηκεύτηκαν. Η ιστοσελίδα ενημερώνεται σε λίγα λεπτά.',
+ 'Menu':'Μενού','Forms':'Φόρμες','Numbers':'Αριθμοί','Results table':'Πίνακας αποτελεσμάτων','Sponsors page':'Σελίδα χορηγών','Join us page':'Σελίδα «Γίνε μέλος»','Team page':'Σελίδα ομάδας','News':'Νέα','Live page':'Σελίδα Live','Privacy':'Απόρρητο','Page not found':'Η σελίδα δεν βρέθηκε','Home page and general':'Αρχική και γενικά',
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
 };
 const RX=[
@@ -2064,7 +2087,9 @@ const RX=[
  [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
+ [/^This accent is hard to read on this background \(contrast (.+):1, at least 3:1 is recommended\)\. Choose a lighter or stronger colour\.$/,'Αυτό το χρώμα διαβάζεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1, συνιστάται τουλάχιστον 3:1). Διάλεξε πιο φωτεινό ή πιο έντονο χρώμα.'],
+ [/^Show (.+)$/,(m,a)=>'Εμφάνιση: '+tr(a)],[/^Couldn’t read the list of texts from the website \((.+)\)\. Publish the latest website version first, then open this tab again\.$/,'Δεν διαβάστηκε η λίστα κειμένων από την ιστοσελίδα ($1). Ανέβασε πρώτα την τελευταία έκδοση της ιστοσελίδας και άνοιξε ξανά αυτή την καρτέλα.'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
  [/^, and paste it here\. The team events under “Special Events \(Team\)” are picked out\.$/,', και επικόλλησέ το εδώ. Θα βρεθούν τα team events κάτω από «Special Events (Team)».'],
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
@@ -2077,11 +2102,11 @@ function tr(s){if(LANG!=='el'||s==null)return s;const raw=String(s),k=raw.replac
   if(v==null&&k.includes(' · ')){const parts=k.split(' · '),t=parts.map(x=>{const y=tr(x);return y});if(t.some((y,i)=>y!==parts[i]))v=t.join(' · ')}
   if(v==null)return s;const lead=raw.match(/^\s*/)[0],trail=raw.match(/\s*$/)[0];return lead+v+trail}
 // Translate what appears on screen (text, placeholders, tooltips, labels). Names, LMU text and data are skipped.
-const NOTR='.notr,.rules p,.card.notes p,.tn,.nm .nl>button,.freechip,input,textarea,script,style,.clsb,code,select[name=uid],#ad0';
+const NOTR='.notr,.rules p,.card.notes p,.tn,.nm .nl>button,.freechip,input,textarea,script,style,.clsb,code,select[name=uid],#ad0,.txrow .pf,.lookprev b';
 function trTree(root){if(LANG!=='el'||!root)return;const skip=n=>{const p=n.nodeType===3?n.parentElement:n;return !p||!!p.closest(NOTR)};
   if(root.nodeType===3){if(!skip(root)){const v=tr(root.nodeValue);if(v!==root.nodeValue)root.nodeValue=v}return}
   const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=tw.nextNode()){if(skip(n))continue;const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}
-  (root.querySelectorAll?root.querySelectorAll('[placeholder],[title],[aria-label]'):[]).forEach(e=>{if(e.closest('.notr'))return;['placeholder','title','aria-label'].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}})});
+  (root.querySelectorAll?root.querySelectorAll('[placeholder],[title],[aria-label]'):[]).forEach(e=>{if(e.closest('.notr,.txrow .pf,.lookprev'))return;['placeholder','title','aria-label'].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}})});
   if(root.nodeType===1)['placeholder','title','aria-label'].forEach(a=>{const v=root.getAttribute&&root.getAttribute(a);if(v){const t=tr(v);if(t!==v)root.setAttribute(a,t)}})}
 let TROBS=null;
 function startTr(){document.documentElement.lang=LANG==='el'?'el':'en';if(LANG!=='el'||TROBS)return;trTree(document.body);
@@ -2139,8 +2164,8 @@ const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join(''
 
 async function siteView(){if(!isEd()){view='my';return render()}await Promise.all([loadSite(),loadPub()]);const adm=isAdm();if(!adm)SITETAB='news';
   const newIn=SITE.inbox.filter(x=>x.status==='new').length;
-  const tabs=adm?[['news','News'],['liveries','Liveries'],['partners','Sponsors'],['ads','Sponsor banners'],['results','Results'],['settings','Settings'],['inbox',`Inbox${newIn?` (${newIn})`:''}`]]:[['news','News']];
-  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():siteInbox();
+  const tabs=adm?[['news','News'],['liveries','Liveries'],['partners','Sponsors'],['ads','Sponsor banners'],['results','Results'],['settings','Settings'],['look','Appearance'],['texts','Texts'],['inbox',`Inbox${newIn?` (${newIn})`:''}`]]:[['news','News']];
+  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():SITETAB==='look'?siteLook():SITETAB==='texts'?siteTexts():siteInbox();
   $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub">What you publish here appears on the public website a couple of minutes later.</p>${pubBar()}
     ${tabs.length>1?`<div class="seg sitetabs" role="tablist" aria-label="Website sections">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
     <div class="sitebody">${body}</div>`}
@@ -2303,6 +2328,62 @@ function adReportCsv(pid){const p=SITE.partners.find(x=>x.id===pid),lines=[['Spo
   SITE.ads.filter(a=>a.partner_id===pid).forEach(a=>{const by={};SITE.adstats.filter(x=>x.ad_id===a.id).forEach(x=>{const m=x.day.slice(0,7);by[m]=by[m]||{v:0,c:0};by[m].v+=x.views;by[m].c+=x.clicks});
     Object.keys(by).sort().forEach(m=>lines.push([p.name,posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')))});
   const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'})),aEl=document.createElement('a');aEl.href=url;aEl.download=`ARION-report-${slugify(p.name)||'sponsor'}.csv`;document.body.appendChild(aEl);aEl.click();aEl.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+
+// ---- Appearance: colours, pages on/off, Home section order (stored in site settings; the website reads them)
+const ACCENTS=[['#FF9F0A','Orange (ARION)'],['#FF453A','Red'],['#30D158','Green'],['#0A84FF','Blue'],['#BF5AF2','Purple'],['#FFD60A','Yellow'],['#64D2FF','Cyan'],['#F5F5F7','White']];
+const BGOPTS=[['dark','Dark (default)','#0B0B0D'],['black','Black','#000000'],['navy','Navy','#0A0F1A'],['graphite','Graphite','#16171A']];
+const SPAGES=[['team','Team'],['results','Calendar & Results'],['news','News'],['liveries','Liveries'],['live','Live'],['sponsors','Sponsors'],['join','Join us']];
+const SHOME=[['next','Next event and countdown'],['stats','Numbers (events, hours, laps, drivers)'],['news','Latest news'],['liveries','Liveries'],['panels','Live / Sponsors / Join us boxes']];
+const lumOf=c=>{const [r,g,b]=[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*r+.7152*g+.0722*b};
+const contrast=(a,b)=>{const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+let LOOK=null;
+function lookState(){const d=SITE.settings,saved=(d.home_order||[]).filter(x=>SHOME.some(h=>h[0]===x.id));
+  return {accent:(d.colors||{}).accent||'#FF9F0A',background:(d.colors||{}).background||'dark',pages_off:[...(d.pages_off||[])],
+    home:[...saved,...SHOME.filter(h=>!saved.some(x=>x.id===h[0])).map(h=>({id:h[0],on:true}))]}}
+function siteLook(){if(!LOOK)LOOK=lookState();const L=LOOK,bg=(BGOPTS.find(b=>b[0]===L.background)||BGOPTS[0])[2],ink=lumOf(L.accent)>.35?'#0B0B0D':'#FFFFFF',cr=contrast(L.accent,bg);
+  return `<div class="sform">
+  <section class="ssec"><div class="ssech"><h3>Colours</h3><p class="mu">The accent is used for buttons, links and highlights. Text on buttons switches to black or white automatically.</p></div><div class="ssecb">
+    <div class="pairh">Accent</div><div class="swatches">${ACCENTS.map(([c,l])=>`<button type="button" class="swatch${L.accent.toUpperCase()===c?' on':''}" style="--c:${c}" aria-label="${l}" aria-pressed="${L.accent.toUpperCase()===c}" onclick="LOOK.accent='${c}';lookRender()"></button>`).join('')}
+      <label class="swcustom"><span>Other</span><input type="color" value="${esc(L.accent)}" onchange="LOOK.accent=this.value.toUpperCase();lookRender()" aria-label="Choose any colour"></label></div>
+    <div class="pairh">Background</div><div class="seg bgseg" role="group" aria-label="Background">${BGOPTS.map(([k,l,c])=>`<button type="button" class="${L.background===k?'on':''}" onclick="LOOK.background='${k}';lookRender()"><i style="background:${c}"></i>${l}</button>`).join('')}</div>
+    <div class="lookprev" style="background:${bg}"><span class="lpk" style="color:${L.accent}">ARION</span><b>${esc(SITE.settings.slogan_el||'Αντοχή. Ακρίβεια. Ομάδα.')}</b><span class="lpb" style="background:${L.accent};color:${ink}">Button</span><span class="lpl" style="color:${L.accent}">Link →</span></div>
+    ${cr<3?`<p class="lookwarn">This accent is hard to read on this background (contrast ${cr.toFixed(1)}:1, at least 3:1 is recommended). Choose a lighter or stronger colour.</p>`:''}
+  </div></section>
+  <section class="ssec"><div class="ssech"><h3>Pages</h3><p class="mu">A page switched off disappears from the menu, and its address leads to the home page. Privacy always stays.</p></div><div class="ssecb swlist">
+    ${SPAGES.map(([k,l])=>swRow('pg_'+k,l,!L.pages_off.includes(k),'',k).replace('<input',`<input onchange="lookPage('${k}',this.checked)"`)).join('')}</div></section>
+  <section class="ssec"><div class="ssech"><h3>Home page sections</h3><p class="mu">The big image with the slogan always comes first. Then these, in this order. Sponsor banners go after the 1st and 3rd shown section.</p></div><div class="ssecb homeord">
+    ${L.home.map((h,i)=>`<div class="hrow${h.on?'':' off'}"><span class="hnum">${i+1}</span><span class="grow">${(SHOME.find(x=>x[0]===h.id)||['',h.id])[1]}</span>
+      <button type="button" class="ghost" aria-label="Move up" onclick="lookMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button type="button" class="ghost" aria-label="Move down" onclick="lookMove(${i},1)" ${i===L.home.length-1?'disabled':''}>↓</button>
+      <input type="checkbox" role="switch" class="switch" ${h.on?'checked':''} onchange="LOOK.home[${i}].on=this.checked;lookRender()" aria-label="Show ${(SHOME.find(x=>x[0]===h.id)||['',h.id])[1]}"></div>`).join('')}</div></section>
+  <div class="savebar"><span class="savest mu ${lookDirty()?'chg':''}" aria-live="polite">${lookDirty()?'Unsaved changes':'No changes'}</span><button type="button" onclick="LOOK=null;lookRender()" ${lookDirty()?'':'disabled'}>Undo changes</button><button type="button" class="pri" onclick="saveLook()">Save appearance</button></div></div>`}
+function lookDirty(){if(!LOOK)return false;const a=JSON.stringify(LOOK),b=JSON.stringify(lookState());return a!==b}
+function lookRender(){const y=scrollY;$('.sitebody').innerHTML=siteLook();scrollTo(0,y)}
+function lookPage(k,on){LOOK.pages_off=on?LOOK.pages_off.filter(x=>x!==k):[...new Set([...LOOK.pages_off,k])];lookRender()}
+function lookMove(i,d){const h=LOOK.home,j=i+d;if(j<0||j>=h.length)return;[h[i],h[j]]=[h[j],h[i]];lookRender()}
+async function saveLook(){const L=LOOK||lookState();if(L.pages_off.length===SPAGES.length&&!await askO({ok:'Save anyway'})('All pages are switched off. The website will only have its home page. Continue?'))return;
+  const data={...SITE.settings,colors:{accent:L.accent,background:L.background},pages_off:L.pages_off,home_order:L.home};
+  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));LOOK=null;await render();note('Appearance saved. The website updates in a couple of minutes.',1)}
+
+// ---- Texts: every label of the website in ΕΛ/EN. The list and defaults come from the website itself.
+let TXDEF=null,TXQ='',TXEDIT=null;
+async function loadTextDefaults(){if(TXDEF)return TXDEF;try{const r=await fetch(SITE_PUBLIC_URL+'text-defaults.json',{cache:'no-store'});if(!r.ok)throw 0;TXDEF=(await r.json()).texts}catch{TXDEF=false}return TXDEF}
+const TXGROUPS=[['nav.','Menu'],['f.','Forms'],['stats.','Numbers'],['th.','Results table'],['offers','Sponsors page'],['partner','Sponsors page'],['partners','Sponsors page'],['our_partners','Sponsors page'],['join','Join us page'],['team','Team page'],['drivers','Team page'],['results','Calendar & Results'],['upcoming','Calendar & Results'],['no_upcoming','Calendar & Results'],['no_results','Calendar & Results'],['news','News'],['no_news','News'],['live','Live page'],['player','Live page'],['load_player','Live page'],['watch_on','Live page'],['no_channels','Live page'],['liveries','Liveries'],['no_liveries','Liveries'],['privacy','Privacy'],['nf_','Page not found'],['home_link','Page not found']];
+const txGroup=k=>(TXGROUPS.find(([p])=>k.startsWith(p))||[,'Home page and general'])[1];
+function siteTexts(){if(TXDEF===null){loadTextDefaults().then(()=>{if(SITETAB==='texts')render()});return '<p class="mu">Loading the website’s texts…</p>'}
+  if(!TXDEF)return `<p class="lookwarn">Couldn’t read the list of texts from the website (${esc(SITE_PUBLIC_URL)}text-defaults.json). Publish the latest website version first, then open this tab again.</p>`;
+  if(!TXEDIT)TXEDIT=JSON.parse(JSON.stringify(SITE.settings.texts||{el:{},en:{}}));TXEDIT.el=TXEDIT.el||{};TXEDIT.en=TXEDIT.en||{};
+  const keys=Object.keys(TXDEF.el),qq=TXQ.trim().toLowerCase(),shown=keys.filter(k=>!qq||k.toLowerCase().includes(qq)||(TXDEF.el[k]||'').toLowerCase().includes(qq)||(TXDEF.en[k]||'').toLowerCase().includes(qq)||(TXEDIT.el[k]||'').toLowerCase().includes(qq)||(TXEDIT.en[k]||'').toLowerCase().includes(qq));
+  const changed=keys.filter(k=>(TXEDIT.el[k]||'').trim()||(TXEDIT.en[k]||'').trim()).length,groups={};shown.forEach(k=>(groups[txGroup(k)]=groups[txGroup(k)]||[]).push(k));
+  const multi=k=>/^(offers|join_list)$/.test(k)||(TXDEF.el[k]||'').length>90;
+  return `<div class="sform"><div class="txtop"><input type="search" class="txsearch" placeholder="Search texts (Greek or English)" value="${esc(TXQ)}" oninput="TXQ=this.value;clearTimeout(window.__txq);window.__txq=setTimeout(()=>{const y=scrollY;$('.sitebody').innerHTML=siteTexts();const s=$('.txsearch');s.focus();s.setSelectionRange(s.value.length,s.value.length);scrollTo(0,y)},250)" aria-label="Search texts">
+    <span class="mu">${changed} of ${keys.length} changed · empty = the website’s default (shown in grey)</span></div>
+    ${Object.entries(groups).map(([g,ks])=>`<section class="ssec"><div class="ssech"><h3>${g}</h3></div><div class="ssecb">${ks.map(k=>`<div class="txrow"><div class="txkey mu">${esc(k)}${k==='offers'?' · one per line: Title — description':k==='join_list'?' · one per line':''}</div><div class="pair">${['el','en'].map(l=>{const v=TXEDIT[l][k]||'',ph=TXDEF[l][k]||'';
+      return `<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span>${multi(k)?`<textarea rows="${Math.min(6,Math.max(2,ph.split('\n').length+1))}" placeholder="${esc(ph)}" oninput="TXEDIT.${l}['${k}']=this.value;txMark()" aria-label="${esc(k)} (${l==='el'?'Greek':'English'})">${esc(v)}</textarea>`:`<input value="${esc(v)}" placeholder="${esc(ph)}" oninput="TXEDIT.${l}['${k}']=this.value;txMark()" aria-label="${esc(k)} (${l==='el'?'Greek':'English'})">`}</label>`}).join('')}</div></div>`).join('')}</div></section>`).join('')||'<p class="mu">No text matches your search.</p>'}
+    <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button type="button" onclick="txResetAll()" ${changed?'':'disabled'}>Back to all defaults</button><button type="button" class="pri" onclick="saveTexts()">Save texts</button></div></div>`}
+function txMark(){const st=$('.savest');if(st){st.textContent='Unsaved changes';st.classList.add('chg')}}
+async function txResetAll(){if(!await askO({ok:'Reset all',danger:true})('Put every text back to the website’s default?'))return;TXEDIT={el:{},en:{}};await saveTexts()}
+async function saveTexts(){const clean={el:{},en:{}};for(const l of ['el','en'])for(const [k,v] of Object.entries(TXEDIT?.[l]||{}))if(typeof v==='string'&&v.trim()&&TXDEF&&k in TXDEF[l])clean[l][k]=v.trim();
+  const data={...SITE.settings,texts:clean};await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));TXEDIT=null;await render();note('Texts saved. The website updates in a couple of minutes.',1)}
 
 // ---- My website profile (every driver) and editors (admins)
 function siteProfCard(){const p=prof;
