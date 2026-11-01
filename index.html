@@ -678,7 +678,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.8',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1975,7 +1975,17 @@ const EL={
  'No posts yet. Press + New post to write the first race report.':'Δεν υπάρχουν αναρτήσεις ακόμα. Πάτα «+ Νέα ανάρτηση» για την πρώτη αναφορά αγώνα.',
  'Title (Greek)':'Τίτλος (Ελληνικά)','Title (English)':'Τίτλος (Αγγλικά)','Text (Greek)':'Κείμενο (Ελληνικά)','Text (English)':'Κείμενο (Αγγλικά)',
  'Use the buttons above the text, or type: empty line = new paragraph · **bold** · *italic* · # heading · ## subheading · - list · [text](https://link). Photos sit in their own paragraph. If the English is empty, the English site shows the Greek.':'Χρησιμοποίησε τα κουμπιά πάνω από το κείμενο ή γράψε: κενή γραμμή = νέα παράγραφος · **έντονα** · *πλάγια* · # επικεφαλίδα · ## υποεπικεφαλίδα · - λίστα · [κείμενο](https://σύνδεσμος). Οι φωτογραφίες μπαίνουν σε δική τους παράγραφο. Αν το αγγλικό μείνει κενό, η αγγλική σελίδα δείχνει το ελληνικό.',
- 'Formatting':'Μορφοποίηση','Bold':'Έντονα','Italic':'Πλάγια','Heading':'Επικεφαλίδα','Subheading':'Υποεπικεφαλίδα','List':'Λίστα','Link address':'Διεύθυνση συνδέσμου','Add link':'Προσθήκη συνδέσμου',
+ 'Formatting':'Μορφοποίηση',
+ 'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό, τα κανάλια σου και ο αριθμός των events. Ποτέ το email ή η διαθεσιμότητά σου.',
+ 'Your channels':'Τα κανάλια σου','Shown on the website’s Live page, with a LIVE mark while you stream.':'Εμφανίζονται στη σελίδα Live της ιστοσελίδας, με την ένδειξη ΖΩΝΤΑΝΑ όσο μεταδίδεις.',
+ 'YouTube: paste your channel address, e.g. https://www.youtube.com/@name':'YouTube: βάλε τη διεύθυνση του καναλιού σου, π.χ. https://www.youtube.com/@name','Twitch: paste your channel address, e.g. https://www.twitch.tv/name':'Twitch: βάλε τη διεύθυνση του καναλιού σου, π.χ. https://www.twitch.tv/name',
+ 'Run migration 29 in Supabase first.':'Τρέξε πρώτα το migration 29 στο Supabase.','Only admins can see this.':'Μόνο οι διαχειριστές το βλέπουν.',
+ 'Not set up':'Δεν έχει ρυθμιστεί','Working':'Λειτουργεί','Working, with a problem':'Λειτουργεί, με πρόβλημα','No answer yet':'Καμία απάντηση ακόμα','No check yet':'Κανένας έλεγχος ακόμα','Refresh':'Ανανέωση',
+ 'Every 2 minutes the website checks who is live on YouTube and Twitch: the team channels (Links, below) and the drivers’ own channels.':'Κάθε 2 λεπτά η ιστοσελίδα ελέγχει ποιος μεταδίδει ζωντανά στο YouTube και στο Twitch: τα κανάλια της ομάδας (Σύνδεσμοι, παρακάτω) και τα κανάλια των οδηγών.',
+ 'Not live':'Δεν μεταδίδει','No channels yet. Add the team’s YouTube or Twitch in Links below; drivers add theirs in their profile.':'Δεν υπάρχουν κανάλια ακόμα. Πρόσθεσε το YouTube ή το Twitch της ομάδας στους Συνδέσμους παρακάτω· οι οδηγοί προσθέτουν τα δικά τους στο προφίλ τους.',
+ 'We’re live now':'Είμαστε live τώρα','If the automatic check is late, paste the link of the stream. The website shows the team as live for 12 hours or until you stop it.':'Αν ο αυτόματος έλεγχος αργεί, βάλε τον σύνδεσμο της μετάδοσης. Η ιστοσελίδα δείχνει την ομάδα live για 12 ώρες ή μέχρι να το σταματήσεις.',
+ 'Stop':'Διακοπή','Last check':'Τελευταίος έλεγχος','Twitch not connected':'Το Twitch δεν έχει συνδεθεί','YouTube channel not found':'Το κανάλι YouTube δεν βρέθηκε','Address not recognised':'Η διεύθυνση δεν αναγνωρίστηκε','YouTube key missing':'Λείπει το κλειδί YouTube','Link of the stream':'Σύνδεσμος της μετάδοσης','YouTube today':'YouTube σήμερα','On until':'Ενεργό μέχρι','Stopped.':'Σταμάτησε.','The website shows the team as live.':'Η ιστοσελίδα δείχνει την ομάδα live.',
+ 'Paste the link of the stream on YouTube or Twitch (it starts with https://).':'Βάλε τον σύνδεσμο της μετάδοσης στο YouTube ή στο Twitch (ξεκινά με https://).','Bold':'Έντονα','Italic':'Πλάγια','Heading':'Επικεφαλίδα','Subheading':'Υποεπικεφαλίδα','List':'Λίστα','Link address':'Διεύθυνση συνδέσμου','Add link':'Προσθήκη συνδέσμου',
  'Links must start with https://.':'Οι σύνδεσμοι πρέπει να ξεκινούν με https://.','Photo added. Type a short description in place of the selected word.':'Η φωτογραφία προστέθηκε. Γράψε μια σύντομη περιγραφή στη θέση της επιλεγμένης λέξης.',
  'Cover image':'Εικόνα εξωφύλλου','Event (optional)':'Event (προαιρετικό)','None':'Κανένα','Link name':'Όνομα συνδέσμου','made from the title':'φτιάχνεται από τον τίτλο','Preview':'Προεπισκόπηση',
  'Update':'Ενημέρωση','Unpublish':'Απόσυρση','Publish':'Δημοσίευση','Save draft':'Αποθήκευση πρόχειρου','Delete':'Διαγραφή','Delete post':'Διαγραφή ανάρτησης',
@@ -2306,7 +2316,7 @@ async function siteView(){if(!isEd()){view='my';return render()}await Promise.al
   const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():SITETAB==='look'?siteLook():SITETAB==='texts'?siteTexts():siteInbox();
   $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub">What you publish here appears on the public website a couple of minutes later.</p>${pubBar()}
     ${tabs.length>1?`<div class="seg sitetabs" role="tablist" aria-label="Website sections">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
-    <div class="sitebody">${body}</div>`}
+    <div class="sitebody">${body}</div>`;if(SITETAB==='settings'&&adm)liveBox()}
 
 // ---- News
 function siteNews(){const tz=myTz();
@@ -2426,7 +2436,7 @@ function numbersCard(d){const o=d.stats_override||{},a=SITE.autoStats||{};
   return `<section class="ssec"><div class="ssech"><h3>Numbers</h3><p class="mu">The website’s counter. Empty = counted automatically from results; type a number to show yours instead.</p></div><div class="ssecb numgrid">
     ${[['events','Events'],['hours','Hours'],['laps','Laps']].map(([k,l])=>`<label class="pf">${l}<input name="ov_${k}" inputmode="numeric" maxlength="7" value="${o[k]??''}" placeholder="${a[k]??'–'}"><span class="mu numauto">Automatic now: ${a[k]??'–'}</span></label>`).join('')}</div></section>`}
 function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
-  return `<form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">${numbersCard(d)}
+  return `<section class="ssec livesec" id="livebox" aria-live="polite"><div class="ssech"><h3>Live</h3><p class="mu">Loading…</p></div></section><form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">${numbersCard(d)}
     <section class="ssec"><div class="ssech"><h3>Page images</h3><p class="mu">Leave one empty and the website uses your first livery instead.</p></div><div class="ssecb pageimgs">
       ${PAGEIMGS.map(([k,l,hint,max])=>`<div class="pimg"><div class="pimgh"><b>${l}</b><span class="mu">${hint}</span></div>${imgField(k,d[k],'pages',l,max)}</div>`).join('')}</div></section>
     ${SSECT.map(([h,hint,fs])=>`<section class="ssec"><div class="ssech"><h3>${h}</h3><p class="mu">${hint}</p></div><div class="ssecb">${fs.map(f=>f[0]==='pair'?langPair(f[1],f[2],f[3],f[4],d)
@@ -2434,6 +2444,22 @@ function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
       :`<div class="linkgrid">${SLINKS.map(([k,l])=>`<label class="pf">${l}<input name="${k}" type="url" maxlength="200" value="${esc(d[k]||'')}" placeholder="https://"></label>`).join('')}<label class="pf">Contact email<input name="email" type="email" maxlength="120" value="${esc(d.email||'')}"></label></div>`).join('')}</div></section>`).join('')}
     <section class="ssec"><div class="ssech"><h3>Banner positions</h3><p class="mu">Switch a position off to keep it free of sponsor banners everywhere.</p></div><div class="ssecb swlist">${ADPOS.map(([k,l])=>swRow('adpos',l,!off.includes(k),'',k)).join('')}</div></section>
     <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save settings</button></div></form>`}
+// ---- Live: the automatic check of who is live, and the manual "We're live now" switch (admins).
+async function liveBox(){const box=$('#livebox');if(!box)return;const tz=myTz(),{data:L,error}=await sb.rpc('live_status');
+  if(!$('#livebox'))return;
+  if(error||!L){box.innerHTML=`<div class="ssech"><h3>Live</h3><p class="mu">${error?'Run migration 29 in Supabase first.':'Only admins can see this.'}</p></div>`;return}
+  const fresh=L.reported_at&&Date.now()-new Date(L.reported_at)<10*60e3,ov=L.override;
+  const state=!L.set_up?'<span class="stat chip pending">Not set up</span>':fresh&&!L.last_error?'<span class="stat chip approved">Working</span>':fresh?'<span class="stat chip pending">Working, with a problem</span>':'<span class="stat chip pending">No answer yet</span>';
+  box.innerHTML=`<div class="ssech"><h3>Live</h3><p class="mu">Every 2 minutes the website checks who is live on YouTube and Twitch: the team channels (Links, below) and the drivers’ own channels.</p></div><div class="ssecb">
+    <div class="row">${state}<span class="mu">${L.reported_at?`<span>Last check</span> <span class="notr">${locFull(new Date(L.reported_at),tz)}</span>`:'No check yet'}${L.set_up?` · <span>YouTube today</span> <span class="notr">${(L.units_today||0).toLocaleString(LOC())} / ${(10000).toLocaleString(LOC())}</span>`:''}</span><button type="button" class="ghost" onclick="liveBox()">Refresh</button></div>
+    ${L.last_error?`<p class="mu" style="color:var(--red);margin:0"><span class="notr">${esc(L.last_error)}</span></p>`:''}
+    ${(L.channels||[]).length?`<div class="card flush">${L.channels.map(c=>`<div class="li"><div class="who2"><b><span class="notr">${esc(c.name)}</span> · ${c.platform==='youtube'?'YouTube':'Twitch'}</b><span class="mu notr">${esc(c.url)}</span>${c.error?`<span class="mu" style="display:block;color:var(--red)">${esc(c.error)}</span>`:''}</div><span class="stat chip ${c.live?'approved':''}">${c.live?'Live':'Not live'}</span></div>`).join('')}</div>`:'<p class="mu" style="margin:0">No channels yet. Add the team’s YouTube or Twitch in Links below; drivers add theirs in their profile.</p>'}
+    <div class="pairh">We’re live now</div><p class="mu" style="margin:0">If the automatic check is late, paste the link of the stream. The website shows the team as live for 12 hours or until you stop it.</p>
+    ${ov?`<div class="row"><span class="stat chip approved"><span>On until</span>&nbsp;<span class="notr">${locFull(new Date(ov.until),tz)}</span></span><span class="mu notr">${esc(ov.url)}</span><button type="button" onclick="liveOverride(null)">Stop</button></div>`
+      :`<div class="row"><input id="liveurl" type="text" inputmode="url" spellcheck="false" aria-label="Link of the stream" maxlength="200" placeholder="https://www.youtube.com/watch?v=…" style="flex:1 1 260px;min-width:0" onkeydown="if(event.key==='Enter'){event.preventDefault();liveOverride($('#liveurl').value)}"><button type="button" class="pri" onclick="liveOverride($('#liveurl').value)">We’re live now</button></div>`}
+  </div>`;trTree(box)}
+async function liveOverride(url){if(url!==null&&!/^https:\/\//.test(String(url||'').trim()))return note('Paste the link of the stream on YouTube or Twitch (it starts with https://).');
+  const {error}=await sb.rpc('set_live_override',{p_url:url,p_hours:12});if(error)return note(error.message);await liveBox();note(url?'The website shows the team as live.':'Stopped.',1)}
 function markDirty(f){const st=f.querySelector(".savest");if(st){st.textContent="Unsaved changes";st.classList.add("chg")}}
 async function saveSettings(e){e.preventDefault();const f=new FormData(e.target),data={...SITE.settings};
   const keys=[...SSECT.flatMap(x=>x[2]).flatMap(f=>f[0]==='pair'?[f[1]+'_el',f[1]+'_en']:f[0]==='one'?[f[1]]:[]),...SLINKS.map(x=>x[0]),'email',...PAGEIMGS.map(x=>x[0])];
@@ -2605,13 +2631,22 @@ async function saveTexts(){const clean={el:{},en:{}};for(const l of ['el','en'])
 // ---- My website profile (every driver) and editors (admins)
 function siteProfCard(){const p=prof;
   return `<div class="sech2"><h3>On the website</h3><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}team/" target="_blank" rel="noopener">See the team page ↗</a></div><form class="ssec profsite" onsubmit="saveSiteProf(event)" oninput="markDirty(this)" onchange="markDirty(this)">
-    ${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio and number of events are shown. Never your email or availability.')}
+    ${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.')}
     <div class="profgrid"><div>${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}</div>
       <div class="profdet"><label class="pf one">Country<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" placeholder="GR" autocomplete="off" style="text-transform:uppercase;max-width:90px"></label>
-        <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div></div></div>
+        <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div>
+        <div class="pairh">Your channels</div><div class="pair"><label class="pf">YouTube<input name="site_youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_youtube||'')}" placeholder="https://www.youtube.com/@name" autocomplete="off"></label><label class="pf">Twitch<input name="site_twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_twitch||'')}" placeholder="https://www.twitch.tv/name" autocomplete="off"></label></div>
+        <p class="mu" style="margin:0;font-size:12px">Shown on the website’s Live page, with a LIVE mark while you stream.</p></div></div>
     <div class="savebar inl"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save website profile</button></div></form>`}
+// Channel addresses: accepts a pasted link (with or without https://, extra ?si=… parts) and keeps the clean address.
+function ytUrl(v){v=String(v||'').trim();if(!v)return '';try{v=decodeURIComponent(v)}catch{}if(/^@[^\s/?#]{3,100}$/.test(v))v='https://www.youtube.com/'+v;v=v.replace(/^(https?:\/\/)?(www\.|m\.)?youtube\.com/i,'https://www.youtube.com').split(/[?#]/)[0].replace(/\/+$/,'').replace(/\/(featured|videos|streams|live|about)$/i,'');
+  return /^https:\/\/www\.youtube\.com\/(@[^\/?#\s]{3,100}|channel\/UC[\w-]{22})$/.test(v)?v:null}
+function twUrl(v){v=String(v||'').trim();if(!v)return '';v=v.replace(/^(https?:\/\/)?(www\.|m\.)?twitch\.tv/i,'https://www.twitch.tv').split(/[?#]/)[0].replace(/\/+$/,'');
+  return /^https:\/\/www\.twitch\.tv\/[A-Za-z0-9_]{3,25}$/.test(v)?v:null}
 async function saveSiteProf(e){e.preventDefault();const f=new FormData(e.target),c=String(f.get('site_country')||'').trim().toUpperCase();if(c&&!/^[A-Z]{2}$/.test(c))return note('Country: two letters, e.g. GR.');
-  await q(sb.from('profiles').update({site_public:!!f.get('site_public'),site_photo:String(f.get('site_photo')||'')||null,site_country:c||null,site_bio_el:String(f.get('site_bio_el')||'').trim()||null,site_bio_en:String(f.get('site_bio_en')||'').trim()||null}).eq('id',me.id));
+  const yt=ytUrl(f.get('site_youtube')),tw=twUrl(f.get('site_twitch'));
+  if(yt===null)return note('YouTube: paste your channel address, e.g. https://www.youtube.com/@name');if(tw===null)return note('Twitch: paste your channel address, e.g. https://www.twitch.tv/name');
+  await q(sb.from('profiles').update({site_public:!!f.get('site_public'),site_photo:String(f.get('site_photo')||'')||null,site_country:c||null,site_bio_el:String(f.get('site_bio_el')||'').trim()||null,site_bio_en:String(f.get('site_bio_en')||'').trim()||null,site_youtube:yt||null,site_twitch:tw||null}).eq('id',me.id));
   await start();note('Website profile saved.',1)}
 // ---- Lineups (admins): named groups of drivers; a lineup's cars are only for its drivers
 function lineupsCard(){return `<div class="sech2"><h3>Lineups</h3><button class="pri" onclick="lineupDlg()">+ New lineup</button></div>
