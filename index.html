@@ -675,6 +675,18 @@ dialog form>button,dialog .menu>button,.form>button{white-space:normal;height:au
 .npv figure{margin:0 0 10px}.npv img{display:block;max-width:100%;height:auto;border-radius:8px}
 @media (min-width:721px){#dlg:has(.mded){width:min(900px,calc(100vw - 48px))}} /* the post editor gets room for two texts side by side */
 @media (max-width:620px){.mdbar button{min-width:44px;height:44px;min-height:44px}.mdlink button{height:44px;min-height:44px}.mdlink input{min-height:44px}}
+/* v0.8.2: profile button, team rows, member menu, profile page, sign-in modes */
+.mebtn{display:flex;align-items:center;gap:10px;min-height:38px;padding:3px 4px 3px 12px;border-radius:999px;background:none;color:var(--label);text-align:left;font-weight:400}
+.mebtn:hover{background:var(--fill)}.mebtn.on{background:var(--fill)}.mebtn.on .avatar{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--tint)}
+.li.drv{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto 44px}.li.drv .acts,.li.wait .acts{grid-row:auto;grid-column:auto;margin:0;justify-content:flex-end;flex-wrap:nowrap}
+.li.wait{grid-template-columns:minmax(0,1fr) auto}.li.wait .acts{gap:6px}
+.li .who2 b .odot{margin-right:8px;vertical-align:middle}
+.menudanger{display:flex;flex-direction:column;gap:6px;margin-top:4px;padding-top:14px;border-top:.5px solid var(--sep)}.menudanger p{margin:0 0 6px;font-size:12px}
+.meform{display:flex;flex-direction:column;gap:16px}.meform .savebar{margin-top:0}#main>.ssec{margin-top:16px}
+.langseg{align-self:flex-start}.langseg button{min-width:110px}
+.authseg{display:flex;margin:6px 0 14px}.authseg button{flex:1}.auth .hint{font-size:12px;font-weight:400;color:var(--label2)}
+.odot{background:var(--label3)}
+@media (max-width:720px){.mebtn{padding:3px}.li.drv{grid-template-columns:minmax(0,1fr) 40px;gap:6px 10px}.li.drv .who2{grid-row:1;grid-column:1}.li.drv .acts{grid-row:1;grid-column:2;align-self:start}.li.drv .rtags{grid-row:2;grid-column:1;justify-self:start;justify-content:flex-start;max-width:none}.li.drv .meta{grid-row:3;grid-column:1}}
 </style>
 </head>
 <body>
@@ -692,7 +704,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.2',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -787,8 +799,8 @@ const isAdm=()=>prof?.role==='admin',curRace=()=>races.find(x=>x.id===raceId);
 const cl=c=>c==='-'?'u':c,name=id=>profiles.find(p=>p.id===id)?.name||'Unknown';
 const canLead=t=>isAdm()||t.leader_id===me.id;
 const ICON={
-  mark:'<svg viewBox="0 0 24 24" fill="none"><path d="M5 20 12 4l7 16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.2 14h7.6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
-  my:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="10.5"/><path d="M14 8v6l4 2.5"/></svg>',
+  mark:'<svg viewBox="0 0 24 24" fill="none"><path d="M5 20 12 4l7 16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.2 14h7.6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  my:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 14 5l9.5 7.5"/><path d="M7 10.8V22.5h14V10.8"/><path d="M11.5 22.5v-6h5v6"/></svg>',
   cal:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="4"/><path d="M4 11.5h20M9.5 3.5v5M18.5 3.5v5"/></svg>',
   site:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="10.5"/><path d="M3.5 14h21M14 3.5c3 3 4.4 6.5 4.4 10.5S17 21.5 14 24.5C11 21.5 9.6 18 9.6 14S11 6.5 14 3.5z"/></svg>',
   roster:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="10" r="4"/><path d="M3.5 23c.8-4.2 3.8-6.5 7.5-6.5s6.7 2.3 7.5 6.5"/><circle cx="20" cy="10.5" r="3.2"/><path d="M19.5 16.6c2.7.2 4.6 2.2 5.1 5.4"/></svg>',
@@ -843,12 +855,11 @@ async function start(){
   if(!prof||!prof.approved)return pendingView();
   if((prof.coc_version||0)<COC_VERSION)return cocView();
   await loadBase();
-  const navs=[['my','My races'],['cal','Calendar'],['strat','Strategy'],...(isEd()?[['site','Website']]:[]),['roster','Roster']];
+  const navs=[['my','Home'],['cal','Races'],['strat','Strategy'],['roster','Team'],...(isEd()?[['site','Website']]:[])];
   $('#app').innerHTML=`<header class="bar"><div class="brand">${mark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
     <nav class="seg" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${l}</button>`).join('')}</nav>
     <div class="me-box"><button type="button" id="live" title="Connecting" aria-label="Connecting" aria-haspopup="dialog" aria-expanded="false" onclick="connPop(event)"><i></i><span class="lcount notr"></span></button>
-      <span class="me-text"><b>${esc(prof.name)}</b><span>${esc(prof.tz)}${isAdm()?' · Admin':''}</span></span>
-      <span class="avatar" title="${esc(prof.name)}">${esc(initials(prof.name))}</span><button class="ghost signout-top" onclick="sb.auth.signOut()">Sign out</button></div></header>
+      <button type="button" class="mebtn" data-v="me" onclick="go('me')" aria-label="My profile" title="My profile"><span class="me-text"><b class="notr">${esc(prof.name)}</b><span><span class="notr">${esc(prof.tz)}</span>${isAdm()?' · <span>Admin</span>':''}</span></span><span class="avatar notr">${esc(initials(prof.name))}</span></button></div></header>
     <main><div id="tzb"></div><div id="main"></div><p class="mu appfoot">ARION Endurance Crew v${VERSION}<span aria-hidden="true"> · </span><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}" target="_blank" rel="noopener">Website ↗</a></p></main>
     <nav class="tabbar" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${ICON[v]}<span>${l}</span></button>`).join('')}</nav>
     <div id="toast" role="status" hidden></div>`;
@@ -877,8 +888,14 @@ const luOf=id=>LINEUPS.find(l=>l.id===id);
 const inLineup=(uid,lid)=>!!luOf(lid)?.members.includes(uid);
 // Who may be in a car: open cars → everyone; lineup cars → that lineup's drivers (admins can still place anyone).
 const mayJoin=(t,uid)=>!t.lineup_id||inLineup(uid,t.lineup_id);
-function loginView(){
-  $('#app').innerHTML=`<div class="auth"><div class="langsw notr"><button type="button" class="${LANG==='en'?'on':''}" onclick="LANG='en';try{localStorage.setItem('ec-lang','en')}catch{}location.reload()">EN</button><button type="button" class="${LANG==='el'?'on':''}" onclick="LANG='el';try{localStorage.setItem('ec-lang','el')}catch{}location.reload()">ΕΛ</button></div>${mark()}<h1>ARION Endurance Crew</h1><p class="sub">Sign in to plan your stints.</p><form onsubmit="return signin(event)"><label>Email<input id="em" type="email" required autocomplete="email"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="current-password"></label><label><span>Your name <span style="font-weight:400">(new accounts only)</span></span><input id="nm" maxlength="40" autocomplete="nickname" placeholder="e.g. George M."></label><div class="row"><button class="pri">Sign in</button><button type="button" onclick="signup()">Create account</button></div><p id="msg" class="mu" role="status"></p></form></div>`}
+let AUTHMODE='in',AUTHEM='';
+function loginView(){const up=AUTHMODE==='up';
+  $('#app').innerHTML=`<div class="auth"><div class="langsw notr"><button type="button" class="${LANG==='en'?'on':''}" onclick="LANG='en';try{localStorage.setItem('ec-lang','en')}catch{}location.reload()">EN</button><button type="button" class="${LANG==='el'?'on':''}" onclick="LANG='el';try{localStorage.setItem('ec-lang','el')}catch{}location.reload()">ΕΛ</button></div>${mark()}<h1>ARION Endurance Crew</h1>
+  <div class="seg authseg" role="tablist" aria-label="Account"><button type="button" role="tab" aria-selected="${!up}" class="${up?'':'on'}" onclick="AUTHMODE='in';loginView()">Sign in</button><button type="button" role="tab" aria-selected="${up}" class="${up?'on':''}" onclick="AUTHMODE='up';loginView()">New account</button></div>
+  <p class="sub">${up?'An admin approves new accounts before you see the schedule.':'Sign in to plan your stints.'}</p>
+  <form onsubmit="return ${up?'signupGo(event)':'signin(event)'}">${up?'<label>Your name<input id="nm" maxlength="40" required autocomplete="nickname" placeholder="e.g. George M."><span class="hint">Your teammates see this name.</span></label>':''}<label>Email<input id="em" type="email" required autocomplete="email" oninput="AUTHEM=this.value"></label><label>Password<input id="pw" type="password" minlength="6" required autocomplete="${up?'new-password':'current-password'}"></label><button class="pri">${up?'Create account':'Sign in'}</button><p id="msg" class="mu" role="status"></p></form></div>`;
+  $('#em').value=AUTHEM}
+function signupGo(e){e.preventDefault();signup();return false}
 async function signin(e){e.preventDefault();const {error}=await sb.auth.signInWithPassword({email:$('#em').value,password:$('#pw').value});if(error)note(error.message);return false}
 async function signup(){const f=$('.auth form');if(!f.reportValidity())return;const nm=$('#nm').value.trim();if(!nm){$('#nm').focus();return note('Enter your name to create an account. Your teammates see this name.')}
   const {error}=await sb.auth.signUp({email:$('#em').value,password:$('#pw').value,options:{data:{name:nm}}});note(error?error.message:'Account created. If email confirmation is on, confirm your email, then sign in. An admin must approve you before you see the schedule.')}
@@ -922,9 +939,9 @@ async function render(){setTimeout(showOnline,0);
   if(same&&mainEl)mainEl.style.minHeight=mainEl.offsetHeight+'px';
   try{
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
-  $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Roster, ${WAITING} waiting for approval`:'Roster');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
+  $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Team, ${WAITING} waiting for approval`:'Team');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
   tzBanner();
-  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else if(view==='site')await siteView();else await rosterView();
+  if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else if(view==='site')await siteView();else if(view==='me')meView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
   }finally{if(mainEl)mainEl.style.minHeight='';if(y0!=null&&Math.abs(scrollY-y0)>1)window.scrollTo(0,y0)}
 }
@@ -967,7 +984,7 @@ async function myView(){
     const cn=clockNotes(d,r.length_h).length;
     return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${locFull(d,tz)} · ${rel(d)}</div></div></div>
       <div class="chips">${avChip}${cn?'<span class="chip warn">Clock change during race</span>':''}</div>${stl+noStint||'<p class="empty">No stints yet. Tap to set your availability and request a stint.</p>'}</div>`}).join('');
-  $('#main').innerHTML=`<h1 class="lt">My races</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>${eventsHtml(tz)}<h3 style="margin:22px 0 10px">Your races</h3>
+  $('#main').innerHTML=`<h1 class="lt">Home</h1><p class="lt-sub">Times shown in ${esc(tz)}</p>${eventsHtml(tz)}<h3 style="margin:22px 0 10px">Your races</h3>
     ${next&&nextR?`<div class="banner ok nextst"><span>Your next stint: <b>${locFull(new Date(next.start_utc),tz)}</b>, ${esc(nextR.name)} · ${next.laps||'?'} laps${next.status==='pending'?' (pending)':''}<br><b class="cd">${+new Date(next.start_utc)>now?'in '+countdown(+new Date(next.start_utc)-now):'driving now'}</b></span><button type="button" onclick="icsStint(${JSON.stringify(nextR.name+' – stint').replace(/"/g,'&quot;')},${+new Date(next.start_utc)},${+new Date(next.end_utc)})">Add to calendar</button></div>`:''}
     ${cards||'<div class="card"><p class="empty" style="margin:0">No upcoming races yet. They’ll appear here once an admin adds them to the calendar.</p></div>'}`;
 }
@@ -977,7 +994,7 @@ function calView(){
   const adm=isAdm(),tz=myTz(),now=Date.now();
   const card=r=>{const d=new Date(r.start_utc),cn=clockNotes(d,r.length_h).length;return `<div class="card click" role="link" tabindex="0" onclick="go('race',${r.id})" onkeydown="cardKey(event)" aria-label="Open ${esc(r.name)}"><div class="race-top">${lenBadge(r)}<div class="grow"><div class="title">${esc(r.name)}</div><div class="mu">${esc(r.track||'')}${r.track?' · ':''}${multiDay(r)?dayRange(r,tz)+' · teams pick their start':locFull(d,tz)+' · '+utcFull(d)}</div>${cn?'<div class="chips" style="margin-top:8px"><span class="chip warn">Clock change during race</span></div>':''}</div>${adm?`<button class="ghost" onclick="event.stopPropagation();raceDlg(${r.id})">Edit</button>`:''}</div></div>`};
   const up=races.filter(r=>evEndR(r)>now),past=races.filter(r=>evEndR(r)<=now).reverse();
-  $('#main').innerHTML=`<div class="head"><h1 class="lt">Calendar</h1>${adm?'<button class="ghost" onclick="importDlg()">Import LMU schedule</button><button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
+  $('#main').innerHTML=`<div class="head"><h1 class="lt">Races</h1>${adm?'<button class="ghost" onclick="importDlg()">Import LMU schedule</button><button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
     ${up.map(card).join('')||`<div class="card"><p class="empty" style="margin:0">No upcoming races.${adm?' Use Add race to create one.':''}</p></div>`}${past.length?`<details><summary>Past races (${past.length})</summary>${past.map(card).join('')}</details>`:''}`;
 }
 function raceDlg(id){
@@ -1027,7 +1044,7 @@ async function raceView(){
   if(r.start_changed_at&&mine.length&&(!last||new Date(last)<new Date(r.start_changed_at)))ban+=`<div class="banner warn"><span>The race start was moved since you marked your availability. Check your bands still fit.</span></div>`;
   else if(!mine.length&&e>Date.now())ban+=`<div class="banner"><span>Show when you can drive: press <b>My availability</b>.</span></div>`;
   {const cs=clockSummary(d,r.length_h);if(cs)ban+=`<div class="banner"><span>${cs}</span></div>`}
-  $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'My races':'Calendar'}</button>
+  $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'Home':'Races'}</button>
     <div class="head"><h1 class="lt" style="margin-top:6px">${esc(r.name)}</h1><button class="gdots big" onclick="raceMenu()" aria-label="Race options">⋯</button></div>
     <p class="lt-sub">${r.length_h} hours${r.track?' · '+esc(r.track):''} · ${multiDay(r)?`<b class="wk">${dayRange(r,tz)}</b> · each team picks its own start`:`<b class="wk">${d.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(d,tz)} → <b class="wk">${e.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(e,tz)}`}</p>${r.fair_share?`<p class="mu" style="margin:-12px 0 12px"><span class="chip warn">Fair share applies</span> each driver must drive 50% ÷ drivers of the team’s laps</p>`:''}${r.notes?`<div class="card notes"><div class="rh">Race info</div><p class="mu">${esc(r.notes)}</p></div>`:''}${ban}
     <div id="sub"></div>`;
@@ -1930,6 +1947,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Home':'Αρχική','Races':'Αγώνες','My profile':'Το προφίλ μου','Account':'Λογαριασμός','Your teammates see this name. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.','Changes right away, on all your devices.':'Αλλάζει αμέσως, σε όλες τις συσκευές σου.','Password and sign-out':'Κωδικός και αποσύνδεση','Enter your name.':'Γράψε το όνομά σου.','New account':'Νέος λογαριασμός','An admin approves new accounts before you see the schedule.':'Ένας διαχειριστής εγκρίνει τους νέους λογαριασμούς πριν δεις το πρόγραμμα.','Your teammates see this name.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα.','Edit profile':'Επεξεργασία προφίλ','More':'Περισσότερα','Blocks access but keeps the account. Approve again to undo.':'Κόβει την πρόσβαση αλλά κρατά τον λογαριασμό. Με «Έγκριση» αναιρείται.','Deletes the login, availability, car places and stints. Can’t be undone.':'Διαγράφει τον λογαριασμό, τη διαθεσιμότητα, τις θέσεις σε αυτοκίνητα και τα stints. Δεν αναιρείται.','New accounts and suspended drivers. Approve gives them access to the app.':'Νέοι λογαριασμοί και οδηγοί σε αναστολή. Η «Έγκριση» τους δίνει πρόσβαση στο app.','Only admins see emails, who accepted the code of conduct, and the ⋯ menu.':'Μόνο οι διαχειριστές βλέπουν τα email, ποιος αποδέχτηκε τον κώδικα συμπεριφοράς και το μενού ⋯.','No drivers yet.':'Δεν υπάρχουν οδηγοί ακόμα.',
  'Connected':'Συνδεδεμένο','Not connected':'Εκτός σύνδεσης','Connecting':'Σύνδεση…','Connection':'Σύνδεση','Changes by other drivers appear by themselves.':'Οι αλλαγές των άλλων οδηγών εμφανίζονται αμέσως.','Reload the page to see changes by other drivers.':'Ανανέωσε τη σελίδα για να δεις τις αλλαγές των άλλων οδηγών.','Connecting to the server…':'Σύνδεση με τον διακομιστή…','Reload':'Ανανέωση','plan issue':'θέμα στο πλάνο','plan issues':'θέματα στο πλάνο','Joined this race, not in a team yet.':'Έχει δηλώσει συμμετοχή, χωρίς αυτοκίνητο ακόμα.','No team you can add them to.':'Δεν υπάρχει αυτοκίνητο όπου μπορείς να τον προσθέσεις.','Fill in what you know; everything is optional. The Suggestion re-plans from it.':'Συμπλήρωσε ό,τι ξέρεις· όλα είναι προαιρετικά. Η πρόταση ξαναϋπολογίζεται με βάση αυτά.','Current lap':'Τρέχων γύρος','In the car':'Στο αυτοκίνητο','Their 5-lap average':'Μέσος όρος 5 γύρων του οδηγού','Laps since last stop':'Γύροι από το τελευταίο pit stop','Laps on these tyres':'Γύροι με αυτά τα ελαστικά','Tyres':'Ελαστικά','Dropping off':'Πέφτουν','Gone':'Τελείωσαν','Post update':'Καταχώρηση ενημέρωσης','Latest updates':'Τελευταίες ενημερώσεις','Nothing yet. Add the times you can drive.':'Τίποτα ακόμα. Πρόσθεσε τις ώρες που μπορείς να οδηγήσεις.','Set the team’s approximate lap time first (Edit team).':'Βάλε πρώτα τον εκτιμώμενο χρόνο γύρου του αυτοκινήτου (Επεξεργασία αυτοκινήτου).','Your team’s race has started. Post live lap times with Race update; they feed the Suggestion.':'Ο αγώνας του αυτοκινήτου σου ξεκίνησε. Καταχώρησε ζωντανούς χρόνους γύρου από την «Ενημέρωση αγώνα»· τροφοδοτούν την πρόταση.','not set':'δεν έχει οριστεί','(no date found)':'(δεν βρέθηκε ημερομηνία)','Add a driver to the team first.':'Πρόσθεσε πρώτα έναν οδηγό στο αυτοκίνητο.','Add strategy figures to get a suggestion.':'Συμπλήρωσε τα στοιχεία στρατηγικής για να πάρεις πρόταση.','Approved stints stay until the team leader removes them.':'Τα εγκεκριμένα stints μένουν μέχρι να τα αφαιρέσει ο υπεύθυνος του αυτοκινήτου.','Average lap saved. The plan’s times follow it.':'Ο μέσος χρόνος γύρου αποθηκεύτηκε. Οι ώρες του πλάνου προσαρμόστηκαν.','Banners running':'Ενεργά banners','Banners total':'Σύνολο banners','Click rate 30 days':'Ποσοστό κλικ 30 ημερών','Clicks 30 days':'Κλικ 30 ημερών','Clicks all time':'Κλικ συνολικά','Views 30 days':'Προβολές 30 ημερών','Views all time':'Προβολές συνολικά','Choose a day':'Διάλεξε μέρα','Delete this race with all its teams, stints and availability?':'Διαγραφή του αγώνα μαζί με όλα τα αυτοκίνητα, τα stints και τη διαθεσιμότητα;','Delete this team and all its stints?':'Διαγραφή του αυτοκινήτου και όλων των stints του;','Energy':'Ενέργεια','Fuel':'Καύσιμο','Fuel + tyres':'Καύσιμο + ελαστικά','Fuel only':'Μόνο καύσιμο','Enter energy per lap, or fuel per lap and tank size.':'Συμπλήρωσε ενέργεια ανά γύρο, ή καύσιμο ανά γύρο και μέγεθος ρεζερβουάρ.','Fill in at least one thing.':'Συμπλήρωσε τουλάχιστον ένα στοιχείο.','Fold':'Σύμπτυξη','Greek':'Ελληνικά','I accept':'Αποδέχομαι','LMU team events saved. Crew members can now create races from them on My races.':'Τα team events του LMU αποθηκεύτηκαν. Τα μέλη μπορούν πλέον να φτιάξουν αγώνες από αυτά στο «Οι αγώνες μου».','Leave it empty if you don’t know it yet.':'Άφησέ το κενό αν δεν το ξέρεις ακόμα.','Leave race':'Αποχώρηση από τον αγώνα','No events found under “Special Events (Team)”. Check the whole post was copied.':'Δεν βρέθηκαν events κάτω από το «Special Events (Team)». Έλεγξε ότι αντιγράφηκε όλο το post.','No lap times yet. Drivers need an average lap first.':'Δεν υπάρχουν ακόμα χρόνοι γύρου. Οι οδηγοί χρειάζονται πρώτα μέσο χρόνο γύρου.','Not saved. Run the latest database update so admins can edit drivers.':'Δεν αποθηκεύτηκε. Τρέξε την τελευταία ενημέρωση της βάσης ώστε οι διαχειριστές να μπορούν να επεξεργάζονται οδηγούς.','Only admins, team leaders or the driver can add them to a team.':'Μόνο οι διαχειριστές, οι υπεύθυνοι αυτοκινήτων ή ο ίδιος ο οδηγός μπορούν να τον βάλουν σε αυτοκίνητο.','Overlaps':'Επικαλύψεις','Pick who is in the car for that lap time.':'Διάλεξε ποιος οδηγούσε σε αυτόν τον χρόνο γύρου.','Race time':'Χρόνος αγώνα','Remove strategy':'Αφαίρεση στρατηγικής','Replace':'Αντικατάσταση','Shorten race':'Συντόμευση αγώνα','Strategy saved. Tap a lane to place stints between pit stops.':'Η στρατηγική αποθηκεύτηκε. Πάτα μια γραμμή για να βάλεις stints ανάμεσα στα pit stops.','Suggestion copied into the plan.':'Η πρόταση αντιγράφηκε στο πλάνο.','That’s less than one lap per stint. Check the figures.':'Βγαίνει λιγότερο από έναν γύρο ανά stint. Έλεγξε τα στοιχεία.','The move wasn’t allowed. Ask an admin or the leader of both teams.':'Η μετακίνηση δεν επιτράπηκε. Ζήτα από έναν διαχειριστή ή από τον υπεύθυνο και των δύο αυτοκινήτων.','The shortest driver stint can’t be longer than the longest.':'Το συντομότερο stint οδηγού δεν μπορεί να είναι μεγαλύτερο από το μεγαλύτερο.','Unknown':'Άγνωστος','Update posted. The Suggestion has been re-planned.':'Η ενημέρωση καταχωρήθηκε. Η πρόταση ξαναϋπολογίστηκε.','Your time':'Η ώρα σου',
  'My races':'Οι αγώνες μου','Calendar':'Ημερολόγιο','Strategy':'Στρατηγική','Roster':'Μέλη','Sign out':'Αποσύνδεση','Live':'Live',
  'Live: other drivers’ changes appear by themselves':'Live: οι αλλαγές των άλλων οδηγών εμφανίζονται αυτόματα','Sections':'Ενότητες',
@@ -2233,7 +2251,8 @@ const RX=[
  [/^Please fill in “(.+)”\.$/,(m,f)=>`Συμπλήρωσε το πεδίο «${tr(f)}».`],
  [/^“(.+)” already exists for those days\. Open it and add a team instead\.$/,'Το «$1» υπάρχει ήδη για αυτές τις μέρες. Άνοιξέ το και πρόσθεσε ένα αυτοκίνητο.'],
  [/^Fill the gap (.+)$/,'Κάλυψε το κενό $1'],[/^Add to (.+)$/,'Προσθήκη στο $1'],[/^Average lap · (.+)$/,'Μέσος χρόνος γύρου · $1'],
- [/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^Hand over to (.+)$/,'Παράδοση σε $1'],[/^\? laps · (.+)$/,'? γύροι · $1']
+ [/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^Hand over to (.+)$/,'Παράδοση σε $1'],[/^\? laps · (.+)$/,'? γύροι · $1'],
+ [/^More for (.+)$/,'Περισσότερα για $1'],[/^Team, (\d+) waiting for approval$/,'Ομάδα, $1 σε αναμονή έγκρισης']
 ];
 function tr(s){if(LANG==='en')return trEn(s);if(LANG!=='el'||s==null)return s;const raw=String(s),k=raw.replace(/\s+/g,' ').trim();if(!k||!/[A-Za-z]/.test(k))return s;
   let v=EL[k];if(v==null)for(const [r,rep] of RX){if(r.test(k)){v=k.replace(r,rep);break}}
@@ -2303,7 +2322,7 @@ const imgField=(name,url,folder,label,max)=>`<div class="imgpick" data-folder="$
 async function pickImg(inp){const box=inp.closest('.imgpick'),st=box.querySelector('.ipst'),f=inp.files[0];if(!f)return;st.textContent='Uploading…';
   try{const url=await uploadImage(f,box.dataset.folder,+box.dataset.max||1600);box.querySelector('input[type=hidden]').value=url;box.querySelector('.ipbox').innerHTML=`<img src="${esc(url)}" alt="">`;st.textContent='Uploaded.';box.closest('form')?.dispatchEvent(new Event('input',{bubbles:true}))}
   catch(e){st.textContent='';note(e.message||'Upload failed.')}}
-function clearImg(b){const box=b.closest('.imgpick');box.querySelector('input[type=hidden]').value='';box.querySelector('.ipbox').innerHTML='<span class="mu">No image yet</span>';b.remove()}
+function clearImg(b){const box=b.closest('.imgpick');box.querySelector('input[type=hidden]').value='';box.querySelector('.ipbox').innerHTML='<span class="mu">No image yet</span>';const f=box.closest('form');b.remove();f?.dispatchEvent(new Event('input',{bubbles:true}))}
 // Very small markdown for news: # headings, **bold**, *italic*, [links](https://…), - lists, paragraphs,
 // and photos ![description](url) in their own paragraph (only from the team's own image storage).
 const MDIMG=/^!\[([^\]]*)\]\((https:\/\/[^)\s]+)\)$/,mdImgOk=u=>u.startsWith(CFG.url+'/storage/v1/object/public/site/');
@@ -2709,16 +2728,14 @@ async function saveTexts(){const clean={el:{},en:{}};for(const l of ['el','en'])
   const data={...SITE.settings,texts:clean};await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));TXEDIT=null;await render();note('Texts saved. The website updates in a couple of minutes.',1)}
 
 // ---- My website profile (every driver) and editors (admins)
-function siteProfCard(){const p=prof;
-  return `<div class="sech2"><h3>On the website</h3><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}team/" target="_blank" rel="noopener">See the team page ↗</a></div><form class="ssec profsite" onsubmit="saveSiteProf(event)" oninput="markDirty(this)" onchange="markDirty(this)">
-    ${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.')}
+// ---- My profile page parts: the website fields (saved with the rest of the profile) and the "I'm live" box.
+const siteProfFields=p=>`${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.')}
     <div class="profgrid"><div>${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}</div>
       <div class="profdet"><label class="pf one">Country<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" placeholder="GR" autocomplete="off" style="text-transform:uppercase;max-width:90px"></label>
         <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div>
         <div class="pairh">Your channels</div><div class="pair"><label class="pf">YouTube<input name="site_youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_youtube||'')}" placeholder="https://www.youtube.com/@name" autocomplete="off"></label><label class="pf">Twitch<input name="site_twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_twitch||'')}" placeholder="https://www.twitch.tv/name" autocomplete="off"></label></div>
-        <p class="mu" style="margin:0;font-size:12px">Shown on the website’s Live page.</p></div></div>
-    <div class="savebar inl"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save website profile</button></div></form>
-  <div class="ssec profsite mylive"><div class="ssech"><h3>I’m live</h3><p class="mu">Streaming now? Paste the link of your stream and choose how long. The website shows you as live on the Live page until then, or until you stop it.${p.site_public?'':' Turn on “Show me on the team page” first, or the website won’t show you.'}</p></div>
+        <p class="mu" style="margin:0;font-size:12px">Shown on the website’s Live page.</p></div></div>`;
+function myLiveCard(){const p=prof;return `<div class="ssec profsite mylive"><div class="ssech"><h3>I’m live</h3><p class="mu">Streaming now? Paste the link of your stream and choose how long. The website shows you as live on the Live page until then, or until you stop it.${p.site_public?'':' Turn on “Show me on the team page” first, or the website won’t show you.'}</p></div>
     <div class="ssecb">${(m=>m?liveOn(m,true):liveForm(false))(LIVEMARKS.find(m=>m.user_id===me.id))}</div></div>`}
 // Channel addresses: accepts a pasted link (with or without https://, extra ?si=… parts) and keeps the clean address.
 function ytUrl(v){v=String(v||'').trim();if(!v)return '';try{v=decodeURIComponent(v)}catch{}if(/^@[^\s/?#]{3,100}$/.test(v))v='https://www.youtube.com/'+v;v=v.replace(/^(https?:\/\/)?(www\.|m\.)?youtube\.com/i,'https://www.youtube.com').split(/[?#]/)[0].replace(/\/+$/,'').replace(/\/(featured|videos|streams|live|about)$/i,'');
@@ -2761,16 +2778,44 @@ let ROSTER=[],EMAILS={};
 async function rosterView(){
   const adm=isAdm();ROSTER=await q(sb.from('profiles').select('*').order('name'));
   EMAILS={};if(adm){const r=await sb.rpc('admin_emails');(r.data||[]).forEach(x=>EMAILS[x.id]=x.email)}
-  const rows=ROSTER.map(p=>`<div class="li"><div class="who2"><b>${adm?`<i class="odot${ONLINE.has(p.id)?' on':''}" data-uid="${p.id}" role="img" aria-label="${ONLINE.has(p.id)?'Online now':'Offline'}" title="${ONLINE.has(p.id)?'Online now':'Offline'}"></i>`:''}${esc(p.name)}</b>${adm&&EMAILS[p.id]?`<span class="mu">${esc(EMAILS[p.id])}</span>`:''}</div>
-    <div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div><span class="rtags">${adm&&p.approved?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge&&p.approved?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.approved?'approved':'pending'}">${p.approved?(p.role==='admin'?'Admin':'Driver'):'Waiting'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}</span>
-    ${adm?`<div class="acts">${p.approved?'':`<button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>`}<button class="ghost" onclick="profDlg('${p.id}')">Edit</button>${p.id!==me.id&&p.approved?`<button class="ghost" onclick="setUser('${p.id}',true,'${p.role==='admin'?'driver':'admin'}')">${p.role==='admin'?'Make driver':'Make admin'}</button>${p.role!=='admin'?`<button class="ghost" onclick="setEditor('${p.id}',${!p.site_editor})">${p.site_editor?'Remove editor':'Make editor'}</button>`:''}<button class="ghost" onclick="setUser('${p.id}',false,'driver')" title="Blocks access but keeps the account; approve again to undo">Suspend</button>`:''}${p.id!==me.id?`<button class="danger" onclick="delUser('${p.id}')">Remove</button>`:''}</div>`:''}</div>`).join('');
-  $('#main').innerHTML=`<h1 class="lt">Roster</h1><p class="lt-sub">${ROSTER.filter(p=>p.approved).length} drivers${ROSTER.some(p=>!p.approved)?` · ${ROSTER.filter(p=>!p.approved).length} waiting for approval`:''}</p><h3>Your profile</h3><div class="card langcard"><span class="grow">Language · Γλώσσα</span><div class="seg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div><form id="pf" class="card form" onsubmit="saveProf(event)" oninput="this.dataset.changed=1" onchange="this.dataset.changed=1">
-    ${profFields(prof)}<button class="pri">Save profile</button>${DEV_TZ!==prof.tz?`<button type="button" onclick="this.form.querySelector('[name=tz]').value='${esc(DEV_TZ)}';this.form.dataset.changed=1">Use this device’s zone (${esc(DEV_TZ)})</button>`:''}</form>
-    <p class="mu">Your time zone is taken from your device on first login. Change it here if it’s wrong.</p>
-    ${siteProfCard()}
-    ${isAdm()?lineupsCard():''}
-    <h3>Drivers</h3><div class="card flush">${rows}</div>${adm?'<p class="mu">Only admins see emails and these buttons. Suspend blocks a driver but keeps their account (approve again to undo). Remove deletes the driver for good.</p>':''}
-    <div class="row" style="margin-top:28px"><button onclick="pwDlg()">Change password</button><button class="danger" onclick="sb.auth.signOut()">Sign out</button></div>`}
+  const on=p=>ONLINE.has(p.id),dot=p=>adm?`<i class="odot${on(p)?' on':''}" data-uid="${p.id}" role="img" aria-label="${on(p)?'Online now':'Offline'}" title="${on(p)?'Online now':'Offline'}"></i>`:'';
+  const who=p=>`<div class="who2"><b>${dot(p)}<span class="notr">${esc(p.name)}</span></b>${adm&&EMAILS[p.id]?`<span class="mu notr">${esc(EMAILS[p.id])}</span>`:''}</div>`;
+  const more=p=>`<button type="button" class="gdots" onclick="memberMenu('${p.id}')" aria-label="More for ${esc(p.name)}" title="More">⋯</button>`;
+  const tags=p=>`<span class="rtags">${adm?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip approved">${p.role==='admin'?'Admin':'Driver'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}</span>`;
+  const drv=ROSTER.filter(p=>p.approved),wait=ROSTER.filter(p=>!p.approved);
+  const rows=drv.map(p=>`<div class="li drv">${who(p)}<div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${tags(p)}${adm?`<div class="acts">${more(p)}</div>`:''}</div>`).join('');
+  const wrows=wait.map(p=>`<div class="li wait">${who(p)}<div class="acts"><button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>${more(p)}</div></div>`).join('');
+  $('#main').innerHTML=`<h1 class="lt">Team</h1><p class="lt-sub">${drv.length} drivers</p>
+    ${adm&&wait.length?`<h3>Waiting for approval</h3><div class="card flush waitcard">${wrows}</div><p class="mu">New accounts and suspended drivers. Approve gives them access to the app.</p>`:''}
+    <h3>Drivers</h3><div class="card flush">${rows||'<p class="mu" style="margin:0;padding:14px 16px">No drivers yet.</p>'}</div>${adm?'<p class="mu">Only admins see emails, who accepted the code of conduct, and the ⋯ menu.</p>':''}
+    ${adm?lineupsCard():''}`}
+// One menu per driver (admins). Everyday actions first; suspending and removing sit apart, each with what it does.
+function memberMenu(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const self=id===me.id,adm=p.role==='admin';
+  openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3 class="notr">${esc(p.name)}</h3>${EMAILS[id]?`<p class="mu notr" style="margin:-8px 0 0">${esc(EMAILS[id])}</p>`:''}
+    ${p.approved?'':`<button type="button" class="pri" onclick="closeDlg();setUser('${id}',true,'driver')">Approve</button>`}
+    <button type="button" onclick="closeDlg();profDlg('${id}')">Edit profile</button>
+    ${!self&&p.approved?`<button type="button" onclick="closeDlg();setUser('${id}',true,'${adm?'driver':'admin'}')">${adm?'Make driver':'Make admin'}</button>${adm?'':`<button type="button" onclick="closeDlg();setEditor('${id}',${!p.site_editor})">${p.site_editor?'Remove editor':'Make editor'}</button>`}`:''}
+    ${self?'':`<div class="menudanger">${p.approved?`<button type="button" onclick="closeDlg();setUser('${id}',false,'driver')">Suspend</button><p class="mu">Blocks access but keeps the account. Approve again to undo.</p>`:''}<button type="button" class="danger" onclick="closeDlg();delUser('${id}')">Remove permanently</button><p class="mu">Deletes the login, availability, car places and stints. Can’t be undone.</p></div>`}
+    <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
+// ---- My profile: account, language, website profile and live box in one place; one save for the form.
+function meView(){const p=prof;
+  $('#main').innerHTML=`<h1 class="lt">My profile</h1><p class="lt-sub notr">${esc(me.email||'')}</p>
+  <form id="pf" class="meform" onsubmit="saveMe(event)" oninput="this.dataset.changed=1;markDirty(this)" onchange="this.dataset.changed=1;markDirty(this)">
+    <section class="ssec"><div class="ssech"><h3>Account</h3><p class="mu">Your teammates see this name. The app shows times in your time zone.</p></div>
+      <div class="ssecb"><div class="form">${profFields(p)}</div>${DEV_TZ!==p.tz?`<div><button type="button" onclick="const f=this.form;f.querySelector('[name=tz]').value='${esc(DEV_TZ)}';f.dispatchEvent(new Event('input',{bubbles:true}))">Use this device’s zone (${esc(DEV_TZ)})</button></div>`:''}</div></section>
+    <section class="ssec"><div class="ssech"><h3>Language</h3><p class="mu">Changes right away, on all your devices.</p></div>
+      <div class="ssecb"><div class="seg langseg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div></section>
+    <section class="ssec profsite"><div class="ssech sech2"><h3>On the website</h3><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}team/" target="_blank" rel="noopener">See the team page ↗</a></div>${siteProfFields(p)}<div style="height:18px"></div></section>
+    <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save changes</button></div></form>
+  ${myLiveCard()}
+  <section class="ssec mesec"><div class="ssech"><h3>Password and sign-out</h3></div><div class="ssecb"><div class="row"><button type="button" onclick="pwDlg()">Change password</button><button type="button" class="danger" onclick="sb.auth.signOut()">Sign out</button></div></div></section>`}
+async function saveMe(e){e.preventDefault();const f=new FormData(e.target),c=String(f.get('site_country')||'').trim().toUpperCase();
+  if(!String(f.get('name')||'').trim())return note('Enter your name.');
+  if(c&&!/^[A-Z]{2}$/.test(c))return note('Country: two letters, e.g. GR.');
+  const yt=ytUrl(f.get('site_youtube')),tw=twUrl(f.get('site_twitch'));
+  if(yt===null)return note('YouTube: paste your channel address, e.g. https://www.youtube.com/@name');if(tw===null)return note('Twitch: paste your channel address, e.g. https://www.twitch.tv/name');
+  const row={...profRow(f),site_public:!!f.get('site_public'),site_photo:String(f.get('site_photo')||'')||null,site_country:c||null,site_bio_el:String(f.get('site_bio_el')||'').trim()||null,site_bio_en:String(f.get('site_bio_en')||'').trim()||null,site_youtube:yt||null,site_twitch:tw||null};
+  await q(sb.from('profiles').update(row).eq('id',me.id));store.set('nameok:'+me.id,row.name);delete e.target.dataset.changed;await start();note('Profile saved.',1)}
 async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.target));
   await q(sb.from('profiles').update(row).eq('id',me.id));store.set('nameok:'+me.id,row.name);
   delete e.target.dataset.changed;await start();note('Profile saved.',1)}
