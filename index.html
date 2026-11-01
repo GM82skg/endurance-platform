@@ -705,6 +705,16 @@ dialog form>button,dialog .menu>button,.form>button{white-space:normal;height:au
 .lgq{margin-left:auto;width:30px;min-width:30px;min-height:30px!important;height:30px;padding:0!important;border-radius:50%;font-weight:700}
 .gcard .gca{display:flex;gap:6px;margin-top:8px;pointer-events:auto}.gcard .gca button{min-height:30px;height:30px;padding:0 12px;font-size:13px}.gcard .gca .gdots{width:36px;padding:0;background:var(--fill)}
 @media (max-width:720px){.gantt{order:2}.mystat:not(.need){order:3}.legend{order:4}.plantip{order:5}.nowgrid{grid-template-columns:1fr}.mystat .msb{width:100%}.mystat .msb button{flex:1}}
+/* v0.8.4: lap time read-back, strategy layout, race update, stint editor */
+.lapecho.ok{color:var(--green-ink);font-weight:600}
+details.practice{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px;margin:0 0 16px;font-size:14px}details.practice summary{cursor:pointer;font-weight:600}details.practice p{margin:8px 0 2px;color:var(--label2);line-height:1.45}
+@media (min-width:721px){.sp-out{position:sticky;top:72px}}
+@media (max-width:720px){.sp-out{order:-1}}
+.updf .sgroup+.sgroup{margin-top:4px}.updf .seg{margin-top:2px}
+input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-size:20px;font-weight:700;padding:0 6px;background:var(--fill)}input.startn::-webkit-calendar-picker-indicator{display:none}
+.glhead b{flex:1 0 auto}
+.rmst{align-self:flex-start;min-height:36px;padding:0 4px;background:none}
+.presets button{white-space:normal;line-height:1.2}
 </style>
 </head>
 <body>
@@ -722,7 +732,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.3',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.4',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -775,9 +785,11 @@ const parseLap=v=>{const s=String(v??'').trim();if(!s)return NaN;let m;
   if((m=s.match(/^(\d{2,3})[.,](\d{1,3})$/)))return +m[1]+ +('0.'+m[2]);
   return NaN};
 // A lap-time box: number pad, live “= 1:58.5” read-back so you see what was understood.
-const lapInput=(attrs,val)=>`<input ${attrs} value="${esc(val||'')}" placeholder="e.g. 1585 for 1:58.5" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)"><span class="lapecho mu">${val?'= '+esc(val):'Type the digits: 1585 = 1:58.5'}</span>`;
-function lapEcho(el){const v=parseLap(el.value),o=el.nextElementSibling;if(!o)return;if(!el.value.trim()){o.textContent='Type the digits: 1585 = 1:58.5';o.classList.remove('bad');return}
-  const ok=v>=30&&v<=900;o.textContent=ok?'= '+fmtLap(v):'Not a lap time yet';o.classList.toggle('bad',!ok)}
+const lapInput=(attrs,val)=>`<input ${attrs} value="${esc(val||'')}" placeholder="e.g. 1:58.5" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)" onblur="lapFix(this)"><span class="lapecho mu${val?' ok':''}">${val?'✓ '+esc(val):'Like 1:58.5. On a phone, 1585 works too.'}</span>`;
+function lapEcho(el){const v=parseLap(el.value),o=el.nextElementSibling;if(!o)return;if(!el.value.trim()){o.textContent='Like 1:58.5. On a phone, 1585 works too.';o.classList.remove('bad','ok');return}
+  const ok=v>=30&&v<=900;o.textContent=ok?'✓ '+fmtLap(v):'Not a lap time yet';o.classList.toggle('bad',!ok);o.classList.toggle('ok',ok)}
+// Leaving the box writes the time out in full (1585 → 1:58.5), so what you see is what is saved.
+function lapFix(el){const v=parseLap(el.value);if(v>=30&&v<=900&&el.value.trim()!==fmtLap(v)){el.value=fmtLap(v);lapEcho(el);el.dispatchEvent(new Event('input',{bubbles:true}))}}
 const fmtLap=s=>`${Math.floor(s/60)}:${(s%60).toFixed(1).padStart(4,'0')}`;
 const dur=sec=>{sec=Math.round(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m ${String(s).padStart(2,'0')}s`};
 const SDEF={lap:'',ve:'',veMax:100,fuel:'',tank:'',margin:0.5,lane:'',refill:'',tyreAdd:'',tyreLife:'',tyreSets:'',min:2,max:3};
@@ -1306,7 +1318,7 @@ function teamMenu(tid){const t=T.ts.find(x=>x.id===tid),lead=canLead(t),mem=T.ms
     ${lead?`<button type="button" onclick="closeDlg();stratDlg(${tid})">${t.strategy?'Strategy figures':'Add strategy'}</button><button type="button" onclick="closeDlg();teamDlg(${tid})">Edit team</button>`:''}
     ${lead&&free.length?`<div class="addblk"><div class="sg-h">Add a driver</div>
       <label>Driver<select id="ad${tid}">${free.map(p=>opt(p.id,p.name+(joined(p.id)?'':' · joins the race'))).join('')}</select></label>
-      <label><span>Their own lap time <span class="mu">· optional, else the team’s ≈${fmtLap(lapFallback(t)||120)}</span></span><input id="al${tid}" placeholder="e.g. 1585" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)"><span class="lapecho mu">Type the digits: 1585 = 1:58.5</span></label>
+      <label><span>Their own lap time <span class="mu">· optional, else the team’s ≈${fmtLap(lapFallback(t)||120)}</span></span><input id="al${tid}" placeholder="e.g. 1:58.5" inputmode="decimal" autocomplete="off" oninput="lapEcho(this)" onblur="lapFix(this)"><span class="lapecho mu">Like 1:58.5. On a phone, 1585 works too.</span></label>
       <button type="button" class="pri" onclick="addMember(${tid}).then(closeDlgIf)">Add to team</button></div>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 function fairDlg(tid){const t=T.ts.find(x=>x.id===tid),r=curRace(),P=planOf(r,t),f=fairInfo(r,t,P),mem=T.ms.filter(m=>m.team_id===tid);
@@ -1493,7 +1505,7 @@ function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz
     ${fi?`<div class="fairbox${fi.min&&mine<fi.min?' short':''}">${fi.min?`<b>Fair share: at least ${fi.min} laps per driver</b><br>${fi.n} drivers → ${(fi.pct*100).toFixed(1)}% of ≈ ${fi.total} race laps, combined over all their stints. ${esc(first(name(S.uid)))}: <b>${mine}/${fi.min}</b>${mine>=fi.min?' ✓':` · ${fi.min-mine} more needed`}.`:`<b>Fair share</b><br>Only one driver in the team, so there’s no minimum.`}</div>`:''}
     <div class="lapbox"><div class="mu">Laps</div><div class="steps">${btn(-5,'5 laps fewer','stepLaps',S.laps-5<floor&&S.laps<=floor)}${btn(-1,'1 lap fewer','stepLaps',S.laps<=floor)}<span class="lapn num">${S.laps}</span>${btn(1,'1 lap more','stepLaps')}${btn(5,'5 laps more','stepLaps')}</div>
       ${S.edit?`<div class="presets">${presets.map(([l,n])=>`<button type="button" class="${n===S.laps?'on':''}" onclick="SHEET.laps=${n};renderSheet()">${l}<small>${n} laps</small></button>`).join('')}</div>`:''}
-      <div class="mu" style="margin-top:12px">Start</div><div class="steps">${btn(-5,'5 minutes earlier','stepStart')}${btn(-1,'1 minute earlier','stepStart')}<span class="startn num">${locH(new Date(it.A),tz)}</span>${btn(1,'1 minute later','stepStart')}${btn(5,'5 minutes later','stepStart')}</div>
+      <div class="mu" style="margin-top:12px">Start</div><div class="steps"><input type="time" class="startn num" value="${locH(new Date(it.A),tz)}" ${S.edit?'':'disabled'} onchange="setStartTime(this.value)" aria-label="Start time"></div><div class="steps">${btn(-5,'5 minutes earlier','stepStart')}${btn(-1,'1 minute earlier','stepStart')}${btn(1,'1 minute later','stepStart')}${btn(5,'5 minutes later','stepStart')}</div>
       <div class="num lapt">${locFull(new Date(it.A),tz)} → ${locDay(new Date(it.B),tz)!==locDay(new Date(it.A),tz)?locFull(new Date(it.B),tz):locH(new Date(it.B),tz)}</div>
       <div class="mu">${dur((it.B-it.A)/1000)}${it.B>P.r1?' · runs past the finish':''}</div>
       ${ov.length?`<div class="ovlist">${ov.map(o=>`<button type="button" onclick="closeDlg();overlapFix(${S.tid},${S.sid},${o.x.s.id})">Overlaps ${esc(name(o.x.s.user_id))} ${locH(new Date(o.a),tz)}–${locH(new Date(o.b),tz)} · fix…</button>`).join('')}</div>`:''}</div>
@@ -1501,10 +1513,14 @@ function renderSheet(){const S=SHEET,r=curRace(),t=T.ts.find(x=>x.id===S.tid),tz
     ${s&&S.lead&&s.status==='pending'?`<button type="button" onclick="appr(${s.id})">Approve</button>`:''}
     ${!S.edit?'<p class="mu">Only the driver or the team leader can change this stint.</p>':!S.lead&&s&&s.status==='approved'?'<p class="mu">Changing it sends it back to the leader for approval.</p>':''}
     ${(()=>{const l=stintIssues(r,t,P,it).filter(x=>!x.startsWith('Overlaps'));return l.length?`<div class="banner warn"><span>To check: ${l.map(esc).join(' · ')}</span></div>`:''})()}
-    <div class="row">${S.edit?`<button class="pri">Done</button>`:''}<button type="button" onclick="closeDlg()">${S.edit?'Cancel':'Close'}</button><span class="grow"></span>${s&&S.edit?`<button type="button" class="danger" onclick="delStint(${s.id})">Remove stint</button>`:''}</div></form>`;
-  if($('#dlg').open&&$('#dlg .lapbox')){$('#dlg').innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';wireGrab()}else openDlg(html)}
+    ${s&&S.edit?`<button type="button" class="danger rmst" onclick="delStint(${s.id})">Remove stint</button>`:''}
+    <div class="row">${S.edit?`<button class="pri">Done</button>`:''}<button type="button" onclick="closeDlg()">${S.edit?'Cancel':'Close'}</button></div></form>`;
+  if($('#dlg').open&&$('#dlg .lapbox')){const d=$('#dlg');d.innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';const f=d.querySelector('form>.row:last-child');if(f)f.prepend(d.querySelector('#dmsg'));wireGrab()}else openDlg(html)}
 function stepLaps(d){const r=curRace(),t=T.ts.find(x=>x.id===SHEET.tid);SHEET.laps=Math.max(fairFloor(r,t,SHEET.uid,SHEET.sid),Math.max(1,Math.min(2000,SHEET.laps+d)));renderSheet()}
 function stepStart(d){SHEET.start+=d*60000;renderSheet()}
+// A typed start time moves the stint to that clock time, the nearest one (within 12 hours) to where it was.
+function setStartTime(v){const m=String(v||'').match(/^(\d{1,2}):(\d{2})/);if(!m)return renderSheet();const tz=myTz(),cur=locH(new Date(SHEET.start),tz).split(':');
+  let d=(+m[1]*60+ +m[2])-(+cur[0]*60+ +cur[1]);if(d>720)d-=1440;if(d<-720)d+=1440;SHEET.start+=d*60000;renderSheet()}
 async function saveSheet(e){e.preventDefault();const S=SHEET,s=T.ss.find(x=>x.id===S.sid);
   if(s&&S.laps===s.laps&&S.uid===s.user_id&&S.start===+new Date(s.start_utc))return closeDlg();
   await commitStint(S.tid,S.sid,{user_id:S.uid,laps:S.laps,start:S.start})}
@@ -1561,7 +1577,7 @@ function lapDlg(tid,uid){const t=T.ts.find(x=>x.id===tid),r=curRace(),cur=lapOf(
     <p class="mu" style="margin:0">${esc(r.name)} · ${esc(t.name)} · ${esc(teamCar(t))}. Use the 5-lap average LMU shows after a practice run. It sets how long each of ${uid===me.id?'your':'their'} stints lasts.${refLap(t)?` Until then the team’s ≈${fmtLap(refLap(t))} is used.`:''}</p>
     <label>Average lap${lapInput('name="lap" required',cur?fmtLap(cur):'')}</label>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
-async function saveLap(e,tid,uid){e.preventDefault();const v=parseLap(new FormData(e.target).get('lap'));if(!(v>=30&&v<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
+async function saveLap(e,tid,uid){e.preventDefault();const v=parseLap(new FormData(e.target).get('lap'));if(!(v>=30&&v<=900))return note('That isn’t a lap time. Write it like 1:58.5 (or 1585).');
   const t=T.ts.find(x=>x.id===tid);await q(sb.from('team_members').update({avg_lap:v}).eq('team_id',tid).eq('user_id',uid));
   await loadRace(curRace());await syncTimes(t);closeDlg();render();note('Average lap saved. The plan’s times follow it.',1)}
 
@@ -1644,17 +1660,19 @@ async function useSug(tid,from){const r=curRace(),t=T.ts.find(x=>x.id===tid),S=s
 
 /* ---------- Race update: anyone in the team, any time ---------- */
 function updDlg(tid){const t=T.ts.find(x=>x.id===tid),tz=myTz(),mem=T.ms.filter(m=>m.team_id===tid),U=(T.up||[]).filter(u=>u.team_id===tid).sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,6);
-  const ve=+t.strategy?.ve>0,fu=+t.strategy?.fuel>0||!ve;
-  openDlg(`<form onsubmit="saveUpd(event,${tid})"><h3>Race update · ${esc(t.name)}</h3><p class="mu" style="margin:0">Fill in what you know; everything is optional. The Suggestion re-plans from it.</p>
-    <div class="form2"><label>Current lap<input name="lap" type="number" min="0" inputmode="numeric"></label><label>In the car<select name="driver">${opt('','–')}${mem.map(m=>opt(m.user_id,name(m.user_id))).join('')}</select></label>
-      <label>Their 5-lap average${lapInput('name="avg5"','')}</label>
-      ${ve?`<label>Energy per lap (%)<input name="ve" inputmode="decimal" placeholder="e.g. 7.2"></label>`:''}${fu?`<label>Fuel per lap (L)<input name="fuel" inputmode="decimal" placeholder="e.g. 3.1"></label>`:''}
-      <label>Laps since last stop<input name="stop" type="number" min="0" inputmode="numeric"></label><label>Laps on these tyres<input name="tyres" type="number" min="0" inputmode="numeric"></label>
-      <label>Tyres<select name="ts">${opt('','–')}${opt('ok','OK')}${opt('dropping','Dropping off')}${opt('gone','Gone')}</select></label></div>
+  const ve=+t.strategy?.ve>0,fu=+t.strategy?.fuel>0||!ve,now=Date.now();
+  let curU='';try{const it=planOf(curRace(),t).items.find(x=>now>=x.A&&now<x.B);curU=it?it.s.user_id:''}catch{}
+  const seg=(k,v,l,on)=>`<label class="segr"><input type="radio" name="${k}" value="${v}"${on?' checked':''}><span>${l}</span></label>`;
+  openDlg(`<form onsubmit="saveUpd(event,${tid})" class="updf"><h3>Race update · ${esc(t.name)}</h3><p class="mu" style="margin:0">Fill in what you know; everything is optional. The Suggestion re-plans from it.</p>
+    <div class="sgroup"><div class="sg-h">On track</div><div class="form2"><label>Current lap<input name="lap" type="number" min="0" inputmode="numeric"></label><label>In the car<select name="driver">${opt('','–',!curU)}${mem.map(m=>opt(m.user_id,name(m.user_id),m.user_id===curU)).join('')}</select></label>
+      <label style="grid-column:1 / -1">Their 5-lap average${lapInput('name="avg5"','')}</label></div></div>
+    <div class="sgroup"><div class="sg-h">Use per lap</div><div class="form2">${ve?`<label>Energy per lap (%)<input name="ve" inputmode="decimal" placeholder="e.g. 7.2"></label>`:''}${fu?`<label>Fuel per lap (L)<input name="fuel" inputmode="decimal" placeholder="e.g. 3.1"></label>`:''}</div></div>
+    <div class="sgroup"><div class="sg-h">Tyres</div><div class="form2"><label>Laps since last stop<input name="stop" type="number" min="0" inputmode="numeric"></label><label>Laps on these tyres<input name="tyres" type="number" min="0" inputmode="numeric"></label></div>
+      <div class="seg" style="display:flex" role="radiogroup" aria-label="Tyres">${seg('ts','','–',1)}${seg('ts','ok','OK')}${seg('ts','dropping','Dropping off')}${seg('ts','gone','Gone')}</div></div>
     ${U.length?`<details><summary>Latest updates</summary><table class="plan"><tbody>${U.map(u=>`<tr><td class="num">${locH(new Date(u.at),tz)}</td><td>${esc(name(u.by_user).split(' ')[0])}</td><td class="mu">${[u.lap!=null?'lap '+u.lap:'',u.avg5?esc(name(u.driver).split(' ')[0])+' '+fmtLap(+u.avg5):'',u.ve_lap?u.ve_lap+'%/lap':'',u.fuel_lap?u.fuel_lap+' L/lap':'',u.tyre_state||''].filter(Boolean).join(' · ')}</td></tr>`).join('')}</tbody></table></details>`:''}
     <div class="row"><button class="pri">Post update</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function saveUpd(e,tid){e.preventDefault();const f=new FormData(e.target),n=k=>{const v=String(f.get(k)??'').trim().replace(',','.');return v===''?null:+v};
-  const avg=String(f.get('avg5')||'').trim(),a5=avg?parseLap(avg):null;if(avg&&!(a5>=30&&a5<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
+  const avg=String(f.get('avg5')||'').trim(),a5=avg?parseLap(avg):null;if(avg&&!(a5>=30&&a5<=900))return note('That isn’t a lap time. Write it like 1:58.5 (or 1585).');
   if(a5&&!f.get('driver'))return note('Pick who is in the car for that lap time.');
   const row={team_id:tid,lap:n('lap'),driver:f.get('driver')||null,avg5:a5,ve_lap:n('ve'),fuel_lap:n('fuel'),stop_laps:n('stop'),tyre_laps:n('tyres'),tyre_state:f.get('ts')||null};
   if(Object.entries(row).every(([k,v])=>k==='team_id'||v==null))return note('Fill in at least one thing.');
@@ -1717,7 +1735,7 @@ function dragStart(e){
   const tick=()=>{if(!DRAG)return;const y=DRAG.y,edge=y<100?-1:y>innerHeight-120?1:0;
     if(edge){window.scrollBy(0,edge*12);move({clientX:DRAG.x,clientY:y})}requestAnimationFrame(tick)};
   g.addEventListener('pointermove',move);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);move(e);requestAnimationFrame(tick)}
-async function addMember(tid){const t=T.ts.find(x=>x.id===tid),v=($('#al'+tid)?.value||'').trim(),l=v?parseLap(v):null;if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5, or leave it empty.');
+async function addMember(tid){const t=T.ts.find(x=>x.id===tid),v=($('#al'+tid)?.value||'').trim(),l=v?parseLap(v):null;if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Write it like 1:58.5 (or 1585), or leave it empty.');
   await q(sb.from('team_members').upsert({team_id:tid,user_id:$('#ad'+tid).value,car:teamCar(t),...(l?{avg_lap:l}:{})}));render()}
 function joinTeam(tid){const t=T.ts.find(x=>x.id===tid),r=curRace();
   openDlg(`<form onsubmit="doJoin(event,${tid})"><h3>Join ${esc(t.name)}</h3><p class="mu" style="margin:0">${esc(t.class)} · ${esc(teamCar(t))}${refLap(t)?` · team lap ≈${fmtLap(refLap(t))}`:''}</p>
@@ -1725,7 +1743,7 @@ function joinTeam(tid){const t=T.ts.find(x=>x.id===tid),r=curRace();
     <p class="mu" style="margin:-4px 0 0">${refLap(t)?`Leave it empty to use the team’s ≈${fmtLap(refLap(t))}.`:'Leave it empty if you don’t know it yet.'} You can add or change it any time before the race by tapping your lap time under your name.</p>
     <div class="row"><button class="pri">Join team</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 async function doJoin(e,tid){e.preventDefault();const t=T.ts.find(x=>x.id===tid),v=String(new FormData(e.target).get('lap')||'').trim(),l=v?parseLap(v):null;
-  if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.');
+  if(v&&!(l>=30&&l<=900))return note('That isn’t a lap time. Write it like 1:58.5 (or 1585).');
   await q(sb.from('team_members').upsert({team_id:tid,user_id:me.id,car:teamCar(t),...(l?{avg_lap:l}:{})}));closeDlg();render();note(`You joined ${t.name}${l?'':refLap(t)?` (using the team’s ≈${fmtLap(refLap(t))} lap)`:''}. Press + Add stint on the team to add your first stint.`,1)}
 
 function teamDlg(id){
@@ -1780,7 +1798,7 @@ let SP=null,SPALL=false;
 function spLoad(){if(SP)return SP;let s=null;try{s=JSON.parse(store.get('strat')||'null')}catch{}SP={len:24,race:'',...SDEF,...(s||{})};return SP}
 function stratView(){
   const f=spLoad(),up=races.filter(r=>evEndR(r)>Date.now());
-  $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p><div class="banner practice"><span><b>Practice first.</b> These figures decide every stint, so get them from your own running before the race: do a practice session of at least 10 clean laps in race trim and note your average lap, fuel or energy used per lap, and how many laps the tyres last before they drop off. Update the figures if conditions change.</span></div>
+  $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p><details class="practice"><summary>Where the figures come from</summary><p>These figures decide every stint, so get them from your own running before the race: do a practice session of at least 10 clean laps in race trim and note your average lap, fuel or energy used per lap, and how many laps the tyres last before they drop off. Update the figures if conditions change.</p></details>
     <div class="sp-grid"><form id="spf" class="sp-in" oninput="spCalc()" onchange="spCalc()" onsubmit="event.preventDefault()">
       <div class="sgroup card"><div class="sg-h">Race</div><div class="form2">
         <label style="grid-column:1 / -1">Race<select name="race">${opt('','No race, just a length',!f.race)}${up.map(r=>opt(r.id,`${r.name} · ${r.length_h}h`,String(r.id)===String(f.race))).join('')}</select></label>
@@ -1805,7 +1823,7 @@ function spCalc(){const form=$('#spf');if(!form)return;const f={...readStrat(for
       <div><b>≈ ${P.laps} laps</b><span>incl. the lap after time runs out</span></div>
       <div><b>${P.sets?P.sets+(P.setsMax?' / '+P.setsMax:''):'–'}</b><span>${P.sets?'tyre sets used':'tyre life not set'}</span></div></div>
     ${P.setsMax&&P.sets>P.setsMax?`<div class="banner warn"><span>The plan needs ${P.sets} tyre sets but only ${P.setsMax} are allowed.</span></div>`:''}${P.tyreShort?'<div class="banner warn"><span>Tyres don’t last a full stint with these figures.</span></div>':''}
-    <div class="card"><div class="row" style="margin-bottom:10px"><b class="grow" style="font-size:17px">Race at a glance</b><span class="mu">${P.stints.length} stints · dot = new tyres</span></div><div class="segs">${segs}</div>
+    <div class="card"><div class="row glhead" style="margin-bottom:10px"><b class="grow" style="font-size:17px">Race at a glance</b><span class="mu">${P.stints.length} stints · dot = new tyres</span></div><div class="segs">${segs}</div>
       <div class="segs-lab mu num"><span>${t0?when(0):'Start'}</span><span>${t0?when(P.race):'+'+f.len+'h'}</span></div></div>
     ${P.stops.length?`<div class="card flush"><div class="scroll"><table class="list stops"><thead><tr><td>Stop</td><td>${t0?'Your time':'Race time'}</td><td>After lap</td><td>Service</td><td class="r">Time lost</td></tr></thead><tbody>${stops}</tbody></table></div>
       ${P.stops.length>9?`<button class="ghost" style="width:100%" onclick="SPALL=!SPALL;spCalc()">${SPALL?'Show fewer':'Show all '+P.stops.length+' stops'}</button>`:''}</div>`:'<div class="card"><p class="empty" style="margin:0">No pit stops needed.</p></div>'}`}
@@ -1982,6 +2000,8 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'After lap':'Μετά τον γύρο','Race at a glance':'Ο αγώνας με μια ματιά','Service':'Σέρβις','Time lost':'Χαμένος χρόνος','Tyres don’t last a full stint with these figures.':'Με αυτά τα στοιχεία τα ελαστικά δεν αντέχουν ολόκληρο stint.','incl. the lap after time runs out':'μαζί με τον γύρο μετά τη λήξη του χρόνου','per stint on track':'ανά stint στην πίστα','spent in the pits':'στα pit','tyre sets used':'σετ ελαστικών','tyre life not set':'χωρίς όριο ελαστικών','Energy runs out first.':'Πρώτα τελειώνει η ενέργεια.','Fuel runs out first.':'Πρώτα τελειώνει το καύσιμο.','per stint':'ανά stint','energy runs out first':'πρώτα τελειώνει η ενέργεια','fuel runs out first':'πρώτα τελειώνει το καύσιμο','Show fewer':'Λιγότερες','Suggested':'Προτεινόμενο','Strategy saved. Existing stints weren’t moved; check they still start and end at pit stops.':'Η στρατηγική αποθηκεύτηκε. Τα υπάρχοντα stints δεν μετακινήθηκαν· έλεγξε ότι ξεκινούν και τελειώνουν σε pit stop.',
+ 'Like 1:58.5. On a phone, 1585 works too.':'π.χ. 1:58.5 · στο κινητό αρκεί και 1585','e.g. 1:58.5':'π.χ. 1:58.5','That isn’t a lap time. Write it like 1:58.5 (or 1585).':'Αυτό δεν είναι χρόνος γύρου. Γράψ’ τον όπως 1:58.5 (ή 1585).','That isn’t a lap time. Write it like 1:58.5 (or 1585), or leave it empty.':'Αυτό δεν είναι χρόνος γύρου. Γράψ’ τον όπως 1:58.5 (ή 1585), ή άφησέ το κενό.','Where the figures come from':'Από πού βγαίνουν τα στοιχεία','On track':'Στην πίστα','Use per lap':'Κατανάλωση ανά γύρο',
  'Racing now':'Αγώνας σε εξέλιξη','Driving now':'Οδηγεί τώρα','Your next stint':'Το επόμενο stint σου','You’re driving':'Οδηγείς εσύ','None planned':'Κανένα στο πλάνο','Open race':'Άνοιγμα αγώνα','Set your availability':'Δήλωσε διαθεσιμότητα','You haven’t joined this race yet':'Δεν έχεις δηλώσει συμμετοχή ακόμα','Set availability':'Δήλωση διαθεσιμότητας','Change availability':'Αλλαγή διαθεσιμότητας','No cars yet.':'Δεν υπάρχουν αυτοκίνητα ακόμα.','No cars yet. Each car picks its own day and start time.':'Δεν υπάρχουν αυτοκίνητα ακόμα. Κάθε αυτοκίνητο διαλέγει τη δική του μέρα και ώρα εκκίνησης.','Tap a stint to see it and its buttons. Tap it twice to edit, press and hold to move it. Tap + in a gap to fill it.':'Πάτα ένα stint για να δεις τα στοιχεία και τα κουμπιά του. Πάτα το δύο φορές για επεξεργασία, κράτα το πατημένο για μετακίνηση. Πάτα + σε ένα κενό για να το καλύψεις.','Click a stint to see it and its buttons. Double-click to edit, drag to move, drag its ends to resize, right-click for more. + in a gap fills it.':'Κλικ σε ένα stint για να δεις τα στοιχεία και τα κουμπιά του. Διπλό κλικ για επεξεργασία, σύρε για μετακίνηση, σύρε τις άκρες για αλλαγή μεγέθους, δεξί κλικ για περισσότερα. Το + σε ένα κενό το καλύπτει.','Got it':'Εντάξει','How the plan works':'Πώς δουλεύει το πλάνο','Details':'Στοιχεία',
  'Home':'Αρχική','Races':'Αγώνες','My profile':'Το προφίλ μου','Account':'Λογαριασμός','Your teammates see this name. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.','Changes right away, on all your devices.':'Αλλάζει αμέσως, σε όλες τις συσκευές σου.','Password and sign-out':'Κωδικός και αποσύνδεση','Enter your name.':'Γράψε το όνομά σου.','New account':'Νέος λογαριασμός','An admin approves new accounts before you see the schedule.':'Ένας διαχειριστής εγκρίνει τους νέους λογαριασμούς πριν δεις το πρόγραμμα.','Your teammates see this name.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα.','Edit profile':'Επεξεργασία προφίλ','More':'Περισσότερα','Blocks access but keeps the account. Approve again to undo.':'Κόβει την πρόσβαση αλλά κρατά τον λογαριασμό. Με «Έγκριση» αναιρείται.','Deletes the login, availability, car places and stints. Can’t be undone.':'Διαγράφει τον λογαριασμό, τη διαθεσιμότητα, τις θέσεις σε αυτοκίνητα και τα stints. Δεν αναιρείται.','New accounts and suspended drivers. Approve gives them access to the app.':'Νέοι λογαριασμοί και οδηγοί σε αναστολή. Η «Έγκριση» τους δίνει πρόσβαση στο app.','Only admins see emails, who accepted the code of conduct, and the ⋯ menu.':'Μόνο οι διαχειριστές βλέπουν τα email, ποιος αποδέχτηκε τον κώδικα συμπεριφοράς και το μενού ⋯.','No drivers yet.':'Δεν υπάρχουν οδηγοί ακόμα.',
  'Connected':'Συνδεδεμένο','Not connected':'Εκτός σύνδεσης','Connecting':'Σύνδεση…','Connection':'Σύνδεση','Changes by other drivers appear by themselves.':'Οι αλλαγές των άλλων οδηγών εμφανίζονται αμέσως.','Reload the page to see changes by other drivers.':'Ανανέωσε τη σελίδα για να δεις τις αλλαγές των άλλων οδηγών.','Connecting to the server…':'Σύνδεση με τον διακομιστή…','Reload':'Ανανέωση','plan issue':'θέμα στο πλάνο','plan issues':'θέματα στο πλάνο','Joined this race, not in a team yet.':'Έχει δηλώσει συμμετοχή, χωρίς αυτοκίνητο ακόμα.','No team you can add them to.':'Δεν υπάρχει αυτοκίνητο όπου μπορείς να τον προσθέσεις.','Fill in what you know; everything is optional. The Suggestion re-plans from it.':'Συμπλήρωσε ό,τι ξέρεις· όλα είναι προαιρετικά. Η πρόταση ξαναϋπολογίζεται με βάση αυτά.','Current lap':'Τρέχων γύρος','In the car':'Στο αυτοκίνητο','Their 5-lap average':'Μέσος όρος 5 γύρων του οδηγού','Laps since last stop':'Γύροι από το τελευταίο pit stop','Laps on these tyres':'Γύροι με αυτά τα ελαστικά','Tyres':'Ελαστικά','Dropping off':'Πέφτουν','Gone':'Τελείωσαν','Post update':'Καταχώρηση ενημέρωσης','Latest updates':'Τελευταίες ενημερώσεις','Nothing yet. Add the times you can drive.':'Τίποτα ακόμα. Πρόσθεσε τις ώρες που μπορείς να οδηγήσεις.','Set the team’s approximate lap time first (Edit team).':'Βάλε πρώτα τον εκτιμώμενο χρόνο γύρου του αυτοκινήτου (Επεξεργασία αυτοκινήτου).','Your team’s race has started. Post live lap times with Race update; they feed the Suggestion.':'Ο αγώνας του αυτοκινήτου σου ξεκίνησε. Καταχώρησε ζωντανούς χρόνους γύρου από την «Ενημέρωση αγώνα»· τροφοδοτούν την πρόταση.','not set':'δεν έχει οριστεί','(no date found)':'(δεν βρέθηκε ημερομηνία)','Add a driver to the team first.':'Πρόσθεσε πρώτα έναν οδηγό στο αυτοκίνητο.','Add strategy figures to get a suggestion.':'Συμπλήρωσε τα στοιχεία στρατηγικής για να πάρεις πρόταση.','Approved stints stay until the team leader removes them.':'Τα εγκεκριμένα stints μένουν μέχρι να τα αφαιρέσει ο υπεύθυνος του αυτοκινήτου.','Average lap saved. The plan’s times follow it.':'Ο μέσος χρόνος γύρου αποθηκεύτηκε. Οι ώρες του πλάνου προσαρμόστηκαν.','Banners running':'Ενεργά banners','Banners total':'Σύνολο banners','Click rate 30 days':'Ποσοστό κλικ 30 ημερών','Clicks 30 days':'Κλικ 30 ημερών','Clicks all time':'Κλικ συνολικά','Views 30 days':'Προβολές 30 ημερών','Views all time':'Προβολές συνολικά','Choose a day':'Διάλεξε μέρα','Delete this race with all its teams, stints and availability?':'Διαγραφή του αγώνα μαζί με όλα τα αυτοκίνητα, τα stints και τη διαθεσιμότητα;','Delete this team and all its stints?':'Διαγραφή του αυτοκινήτου και όλων των stints του;','Energy':'Ενέργεια','Fuel':'Καύσιμο','Fuel + tyres':'Καύσιμο + ελαστικά','Fuel only':'Μόνο καύσιμο','Enter energy per lap, or fuel per lap and tank size.':'Συμπλήρωσε ενέργεια ανά γύρο, ή καύσιμο ανά γύρο και μέγεθος ρεζερβουάρ.','Fill in at least one thing.':'Συμπλήρωσε τουλάχιστον ένα στοιχείο.','Fold':'Σύμπτυξη','Greek':'Ελληνικά','I accept':'Αποδέχομαι','LMU team events saved. Crew members can now create races from them on My races.':'Τα team events του LMU αποθηκεύτηκαν. Τα μέλη μπορούν πλέον να φτιάξουν αγώνες από αυτά στο «Οι αγώνες μου».','Leave it empty if you don’t know it yet.':'Άφησέ το κενό αν δεν το ξέρεις ακόμα.','Leave race':'Αποχώρηση από τον αγώνα','No events found under “Special Events (Team)”. Check the whole post was copied.':'Δεν βρέθηκαν events κάτω από το «Special Events (Team)». Έλεγξε ότι αντιγράφηκε όλο το post.','No lap times yet. Drivers need an average lap first.':'Δεν υπάρχουν ακόμα χρόνοι γύρου. Οι οδηγοί χρειάζονται πρώτα μέσο χρόνο γύρου.','Not saved. Run the latest database update so admins can edit drivers.':'Δεν αποθηκεύτηκε. Τρέξε την τελευταία ενημέρωση της βάσης ώστε οι διαχειριστές να μπορούν να επεξεργάζονται οδηγούς.','Only admins, team leaders or the driver can add them to a team.':'Μόνο οι διαχειριστές, οι υπεύθυνοι αυτοκινήτων ή ο ίδιος ο οδηγός μπορούν να τον βάλουν σε αυτοκίνητο.','Overlaps':'Επικαλύψεις','Pick who is in the car for that lap time.':'Διάλεξε ποιος οδηγούσε σε αυτόν τον χρόνο γύρου.','Race time':'Χρόνος αγώνα','Remove strategy':'Αφαίρεση στρατηγικής','Replace':'Αντικατάσταση','Shorten race':'Συντόμευση αγώνα','Strategy saved. Tap a lane to place stints between pit stops.':'Η στρατηγική αποθηκεύτηκε. Πάτα μια γραμμή για να βάλεις stints ανάμεσα στα pit stops.','Suggestion copied into the plan.':'Η πρόταση αντιγράφηκε στο πλάνο.','That’s less than one lap per stint. Check the figures.':'Βγαίνει λιγότερο από έναν γύρο ανά stint. Έλεγξε τα στοιχεία.','The move wasn’t allowed. Ask an admin or the leader of both teams.':'Η μετακίνηση δεν επιτράπηκε. Ζήτα από έναν διαχειριστή ή από τον υπεύθυνο και των δύο αυτοκινήτων.','The shortest driver stint can’t be longer than the longest.':'Το συντομότερο stint οδηγού δεν μπορεί να είναι μεγαλύτερο από το μεγαλύτερο.','Unknown':'Άγνωστος','Update posted. The Suggestion has been re-planned.':'Η ενημέρωση καταχωρήθηκε. Η πρόταση ξαναϋπολογίστηκε.','Your time':'Η ώρα σου',
@@ -2200,6 +2220,12 @@ const EL={
  'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στο αυτοκίνητο','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(αυτοκίνητο)','your time':'η ώρα σου'
 };
 const RX=[
+ [/^Show all (\d+) stops$/,'Όλες οι $1 στάσεις'],[/^(\d+) stops?$/,(m,n)=>`${n} ${gr(n,'στάση','στάσεις')}`],[/^(\d+) with new tyres$/,'$1 με καινούργια ελαστικά'],
+ [/^(\d+) stints · dot = new tyres$/,'$1 stints · τελεία = καινούργια ελαστικά'],[/^Stint (\d+): (\d+) laps?( · new tyres)?$/,(m,i,n,t)=>`Stint ${i}: ${n} ${gr(n,'γύρος','γύροι')}${t?' · καινούργια ελαστικά':''}`],
+ [/^≈ (\d+) laps$/,'≈ $1 γύροι'],[/^per stint · (energy|fuel) runs out first$/,(m,b)=>`ανά stint · πρώτα τελειώνει ${b==='energy'?'η ενέργεια':'το καύσιμο'}`],
+ [/^The plan needs (\d+) tyre sets but only (\d+) are allowed\.$/,'Το πλάνο χρειάζεται $1 σετ ελαστικών, αλλά επιτρέπονται μόνο $2.'],
+ [/^(.+) in the pits$/,'$1 στα pit'],[/^(\d+m \d+s|\d+h \d+m) per stint$/,'$1 ανά stint'],
+ [/^Based on (\d+) laps per fuel stint \((energy|fuel) runs out first\)\. The plan isn’t changed unless you use this\.$/,(m,n,b)=>`Με βάση ${n} γύρους ανά stint καυσίμου (πρώτα τελειώνει ${b==='energy'?'η ενέργεια':'το καύσιμο'}). Το πλάνο δεν αλλάζει αν δεν το χρησιμοποιήσεις.`],
  [/^(\d+) laps?$/,(m,n)=>`${n} ${gr(n,'γύρος','γύροι')}`],
  [/^\[(\d+) laps\]$/,(m,n)=>`[${n} ${gr(n,'γύρος','γύροι')}]`],
  [/^\[(\d+)\/~(\d+) laps\]$/,'[$1/~$2 γύροι]'],[/^(\d+)\/~?(\d+) laps$/,(m)=>m.replace('laps','γύροι')],[/^(\d+)\/~(\d+)$/,'$1/~$2'],
