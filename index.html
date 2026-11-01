@@ -12,7 +12,7 @@
 <style>
 /* ARION Endurance Crew — design tokens (light + dark follow the system setting) */
 :root{color-scheme:light dark;
-  --tint:#FF9500;--tint-ink:#fff;
+  --tint:#FF9500;--tint-ink:#000;--tint-t:#995900;
   --bg:#F2F2F7;--surface:#fff;--raised:#fff;--seg-on:#fff;
   --fill:rgba(120,120,128,.12);--fill2:rgba(120,120,128,.2);
   --sep:rgba(60,60,67,.16);--label:#000;--label2:rgba(60,60,67,.62);--label3:rgba(60,60,67,.3);
@@ -26,7 +26,7 @@
   --r:16px;--rs:10px;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 @media (prefers-color-scheme:dark){:root{
-  --tint:#FF9F0A;--tint-ink:#000;
+  --tint:#FF9F0A;--tint-ink:#000;--tint-t:#FF9F0A;
   --bg:#000;--surface:#1C1C1E;--raised:#2C2C2E;--seg-on:#636366;
   --fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.34);
   --sep:rgba(84,84,88,.6);--label:#fff;--label2:rgba(235,235,245,.6);--label3:rgba(235,235,245,.28);
@@ -41,7 +41,7 @@
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--label);font:15px/1.4 var(--font);letter-spacing:-.011em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.grow{flex:1;min-width:0}.mu{color:var(--label2);font-size:13px;letter-spacing:-.005em}.am{color:var(--tint)}
+.grow{flex:1;min-width:0}.mu{color:var(--label2);font-size:13px;letter-spacing:-.005em}.am{color:var(--tint-t)}
 p{margin:0 0 8px}
 .num{font-variant-numeric:tabular-nums}
 
@@ -50,15 +50,20 @@ header.bar{position:sticky;top:0;z-index:20;height:56px;display:grid;grid-templa
   padding:0 max(24px,env(safe-area-inset-right)) 0 max(24px,env(safe-area-inset-left));background:var(--bar);
   -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep)}
 .brand{display:flex;align-items:center;gap:10px;min-width:0;white-space:nowrap}
-.mark{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;background:linear-gradient(160deg,#FFB340,#FF8A00);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08)}
+.mark{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;background:var(--tint);color:var(--tint-ink);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08)}
 .mark svg{width:18px;height:18px;display:block}
 .brand-name{font-size:15px;font-weight:600;letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis}
 .brand-name b{font-weight:700;letter-spacing:.04em;margin-right:4px}
 .me-box{justify-self:end;display:flex;align-items:center;gap:12px;min-width:0}
 .avatar{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(160deg,#8E8E93,#636366)}
 .me-text{display:flex;flex-direction:column;line-height:1.2;min-width:0}.me-text b{font-size:13px;font-weight:600}.me-text span{font-size:11px;color:var(--label2)}
-.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--label2);white-space:nowrap}
-.live i{width:8px;height:8px;border-radius:50%;background:var(--label3)}.live.on i{background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 22%,transparent)}
+#live{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:36px;min-height:32px;padding:0 10px;border-radius:999px;background:none;font-size:13px;font-weight:600;color:var(--label2);white-space:nowrap}
+#live:hover{background:var(--fill)}#live:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+#live i,#connpop .cpdot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--label3)}#live.on i,#connpop .cpdot.on{background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 22%,transparent)}#live.off i,#connpop .cpdot.off{background:var(--red)}
+#connpop{position:fixed;top:calc(62px + env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:40;width:min(300px,calc(100vw - 24px));max-height:min(70vh,520px);overflow:auto;background:var(--raised);color:var(--label);border-radius:14px;padding:14px 16px;box-shadow:var(--pop)}
+#connpop .cphead{display:flex;align-items:center;gap:10px;font-size:15px}#connpop p{margin:6px 0 0}#connpop>button{margin-top:12px;width:100%}
+#connpop .cpsec{margin-top:14px;padding-top:12px;border-top:.5px solid var(--sep)}#connpop .cpt{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--label2);margin-bottom:4px}
+#connpop .orow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:.5px solid var(--sep);font-size:14px;font-weight:600}
 
 /* segmented control */
 .seg{display:inline-flex;padding:2px;border-radius:9px;background:var(--fill);gap:2px}
@@ -71,25 +76,25 @@ header.bar{position:sticky;top:0;z-index:20;height:56px;display:grid;grid-templa
 [data-v="roster"].has-dot::after{content:"";position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--tint)}
 .tabbar [data-v="roster"].has-dot::after{top:5px;right:calc(50% - 17px);width:9px;height:9px;box-shadow:0 0 0 2px var(--bar)}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:50px;padding:4px 0 0;background:none;color:var(--label2);font-size:10px;font-weight:500;letter-spacing:.01em;border-radius:0}
-.tabbar button:hover{background:none}.tabbar button.on{color:var(--tint)}.tabbar svg{width:25px;height:25px;display:block}
+.tabbar button:hover{background:none}.tabbar button.on{color:var(--tint-t)}.tabbar svg{width:25px;height:25px;display:block}
 
 /* ---------- page ---------- */
 main{max-width:1080px;margin:0 auto;padding:8px max(24px,env(safe-area-inset-right)) 64px max(24px,env(safe-area-inset-left))}
 h1.lt{font-size:34px;line-height:41px;font-weight:700;letter-spacing:-.025em;margin:24px 0 2px}
 .lt-sub{color:var(--label2);font-size:15px;margin:0 0 20px}
-.head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}.head .lt{flex:1;min-width:0}
+.head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}.head .lt,.head>h2.grow,.head>h3.grow{flex:1 0 auto;max-width:100%}
 .head button{margin-bottom:4px}
 h3{font-size:20px;line-height:25px;font-weight:600;letter-spacing:-.02em;margin:28px 0 10px}
-.back{background:none;color:var(--tint);padding:0 4px 0 0;margin:16px 0 0 -2px;font-size:17px;font-weight:400;display:inline-flex;align-items:center;gap:2px;min-height:32px}
+.back{background:none;color:var(--tint-t);padding:0 4px 0 0;margin:16px 0 0 -2px;font-size:17px;font-weight:400;display:inline-flex;align-items:center;gap:2px;min-height:32px}
 .back:hover{background:none;opacity:.7}.back svg{width:12px;height:20px}
 
 /* ---------- controls ---------- */
 button,select,input{font:inherit;color:inherit;letter-spacing:inherit}
-button{cursor:pointer;border:0;border-radius:var(--rs);min-height:36px;padding:0 16px;font-size:15px;font-weight:500;background:var(--fill);color:var(--tint);
+button{cursor:pointer;border:0;border-radius:var(--rs);min-height:36px;padding:0 16px;font-size:15px;font-weight:500;background:var(--fill);color:var(--tint-t);
   transition:background-color .15s,opacity .15s,transform .15s;white-space:nowrap}
 button:hover{background:var(--fill2)}button:active{opacity:.55}
 button.pri{background:var(--tint);color:var(--tint-ink);font-weight:600}button.pri:hover{background:var(--tint);filter:brightness(1.07)}
-button.ghost{background:none;color:var(--tint)}button.ghost:hover{background:var(--fill)}
+button.ghost{background:none;color:var(--tint-t)}button.ghost:hover{background:var(--fill)}
 button.danger{background:none;color:var(--red)}button.danger:hover{background:color-mix(in srgb,var(--red) 12%,transparent)}
 button:disabled{opacity:.35;cursor:default}
 input,select{min-height:36px;border:0;border-radius:var(--rs);background:var(--fill);color:var(--label);padding:0 12px;font-size:15px;width:100%;outline:none;transition:box-shadow .15s}
@@ -112,7 +117,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .card.click:hover{background:color-mix(in srgb,var(--surface) 94%,var(--label))}
 .card.click:active{transform:scale(.992)}
 .race-top{display:flex;gap:14px;align-items:center}
-.len{flex:none;width:52px;height:52px;border-radius:13px;display:flex;align-items:baseline;justify-content:center;padding-top:13px;background:color-mix(in srgb,var(--tint) 15%,transparent);color:var(--tint);font-size:20px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.len{flex:none;width:52px;height:52px;border-radius:13px;display:flex;align-items:baseline;justify-content:center;padding-top:13px;background:color-mix(in srgb,var(--tint) 15%,transparent);color:var(--tint-t);font-size:20px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .len small{font-size:12px;font-weight:600;margin-left:1px}
 .title{font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
@@ -125,7 +130,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
-.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}.rh{font-size:13px;font-weight:700;color:var(--tint);margin-bottom:4px}
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
 .card.notes{padding:12px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
 textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
 .empty{color:var(--label2);font-size:14px;margin:12px 0 0}
@@ -148,7 +153,7 @@ table{border-collapse:separate;border-spacing:0}
 .list td button{min-height:30px;padding:0 12px;font-size:14px}
 .legend{display:flex;gap:6px;margin:14px 0;flex-wrap:wrap;align-items:center}
 .legend .mu{margin:0 4px 0 6px}.legend .acts-r{margin-left:auto;display:flex;gap:6px}
-details{margin-top:10px}details summary{cursor:pointer;color:var(--tint);font-size:15px;padding:8px 0;list-style:none;font-weight:500}
+details{margin-top:10px}details summary{cursor:pointer;color:var(--tint-t);font-size:15px;padding:8px 0;list-style:none;font-weight:500}
 details summary::-webkit-details-marker{display:none}details summary::before{content:"›";display:inline-block;width:14px;transition:transform .2s}details[open] summary::before{transform:rotate(90deg)}
 
 /* ---------- availability grid ---------- */
@@ -159,10 +164,10 @@ details summary::-webkit-details-marker{display:none}details summary::before{con
 .av td:first-child,.av th:first-child{text-align:left;width:160px;min-width:150px;max-width:150px;position:sticky;left:0;z-index:1;background:var(--surface);padding:0 12px 0 16px}
 .av td:first-child{font-size:14px;font-weight:600;line-height:1.25;white-space:normal}
 .av td:first-child .mu{font-weight:400;font-size:11px}
-.av tr.me td:first-child{color:var(--tint)}
+.av tr.me td:first-child{color:var(--tint-t)}
 .n{text-align:center;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums;height:30px}.n.zero{color:var(--red)}.n .mu{font-size:11px;margin-left:1px}
-.day{display:block;color:var(--tint);font-weight:600;font-size:11px}
-.dst{box-shadow:inset 2px 0 0 var(--tint)}.dstl{display:block;color:var(--tint);font-weight:700;font-size:10px}
+.day{display:block;color:var(--tint-t);font-weight:600;font-size:11px}
+.dst{box-shadow:inset 2px 0 0 var(--tint)}.dstl{display:block;color:var(--tint-t);font-weight:700;font-size:10px}
 .cell{display:block;width:100%;min-width:0;height:32px;min-height:0;padding:0;border:0;border-radius:8px}
 button.cell:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--label) 30%,transparent);background-color:inherit}
 .A{background:var(--cA)}.M{background:var(--cM)}.N{background:var(--cN)}.u{background:var(--cU)}
@@ -170,7 +175,7 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .av-wrap{padding:0;overflow:hidden}
 .av-phone{display:none}
 .ph-head{display:flex;align-items:baseline;gap:10px;margin:22px 2px 8px}.ph-head h3{margin:0;font-size:17px;flex:1}
-.day-h{font-size:12px;font-weight:600;color:var(--tint);margin:12px 2px 6px}.day-h:first-child{margin-top:0}
+.day-h{font-size:12px;font-weight:600;color:var(--tint-t);margin:12px 2px 6px}.day-h:first-child{margin-top:0}
 .chips6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .tchip{min-height:44px;height:44px;padding:0;border-radius:10px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#000;letter-spacing:-.02em}
 .tchip.A{background:var(--cA)}.tchip.M{background:var(--cM)}.tchip.N{background:var(--cN);color:#fff}.tchip.u{background:var(--cU);color:var(--label2)}
@@ -205,7 +210,7 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .tl .nm>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tl .who{position:sticky;left:0;background:var(--surface);z-index:3;padding-right:10px;display:flex;flex-direction:column;justify-content:center;min-height:38px;overflow:hidden;font-size:14px;line-height:1.25}
 .tl .who button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label)}
-.tl .who button.am{color:var(--tint)}.tl .who .mu{font-size:11px}
+.tl .who button.am{color:var(--tint-t)}.tl .who .mu{font-size:11px}
 .tl .ax{font-size:11px;font-weight:500;color:var(--label2);text-align:center;align-self:end;padding-bottom:2px;font-variant-numeric:tabular-nums}
 .tl .h{min-height:38px;border:0;border-radius:7px;padding:0}
 .tl .h.A{background:var(--lA)}.tl .h.M{background:var(--lM)}.tl .h.N{background:var(--lN)}.tl .h.u{background:var(--lU)}
@@ -255,13 +260,13 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .gsum .gname{padding-left:16px}
 .gname{display:flex;align-items:center;gap:6px;padding:0 16px 3px 10px;min-width:0;font-size:14px;line-height:1.25}.gname:empty{display:none}
 .gname .nm{display:flex;align-items:baseline;gap:8px;min-width:0}.gname .nm>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gname button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label)}.gname button.am,.gname b.am{color:var(--tint)}
+.gname button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label)}.gname button.am,.gname b.am{color:var(--tint-t)}
 .gname .mu{font-size:11px}
 .gtrack{position:relative;height:40px;margin-right:16px;border-radius:8px;background:color-mix(in srgb,var(--label) 4%,transparent);touch-action:pan-y}
 .gtrack.edit{cursor:crosshair}.gtrack.axis{height:40px;background:none;touch-action:auto}.gtrack.sum{height:18px;background:none;touch-action:auto}
 .ghdr{border-bottom:.5px solid var(--sep);padding-bottom:4px}
 .gtick{position:absolute;bottom:2px;transform:translateX(-50%);font-size:11px;color:var(--label2);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;line-height:1.2}
-.gtick b{display:block;height:13px;font-size:10px;color:var(--tint)}.gtick em{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:700;color:var(--tint)}
+.gtick b{display:block;height:13px;font-size:10px;color:var(--tint-t)}.gtick em{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:700;color:var(--tint-t)}
 .gtick.start{transform:none}.gtick.end{transform:translateX(-100%)}.gtick.end em{left:auto;right:0;transform:none}
 .gtick.dst::after{content:"";position:absolute;left:50%;top:0;bottom:-6px;width:2px;background:var(--tint)}
 .ggroup{border-top:.5px solid var(--sep);margin-top:4px;transition:box-shadow .15s}.ggroup.drop{box-shadow:inset 0 0 0 2.5px var(--tint);border-radius:12px}.ggroup.nodrop{box-shadow:inset 0 0 0 2.5px var(--red);border-radius:12px}
@@ -306,7 +311,7 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .gname{display:flex;align-items:center;gap:4px;padding:0 8px 0 10px;min-width:0}
 .gname .nm{display:flex;flex-direction:column;min-width:0;line-height:1.2}
 .gname .nm button{min-height:0;height:auto;padding:0;background:none;text-align:left;font-weight:600;font-size:14px;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.gname .nm button.am{color:var(--tint)}
+.gname .nm button.am{color:var(--tint-t)}
 .gname .nm .lapline{font-size:11px;font-weight:500;color:var(--label2);font-variant-numeric:tabular-nums}.gname .nm .lapline.need{color:var(--red-ink)}
 .gnav{gap:4px}.gnav button{min-height:30px;height:30px;padding:0 9px;font-size:13px}
 .gtrack{position:relative;height:auto;min-height:44px;margin:0;border-radius:0;background:none;touch-action:auto}
@@ -315,12 +320,12 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .gnow{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--red);z-index:3}
 .gshade{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--green) 13%,transparent)}.gshade.M{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--yellow) 16%,transparent) 0 4px,transparent 4px 8px)}
 .gtick{position:absolute;bottom:4px;transform:translateX(-50%);font-size:11px;color:var(--label2);white-space:nowrap;line-height:1.25;text-align:center}
-.gtick b{display:block;height:13px;font-size:11px;color:var(--tint)}.gtick .t{display:block;min-height:14px}.gtick.start{transform:translateX(3px);text-align:left}.gtick.end{transform:translateX(calc(-100% - 3px));text-align:right}
+.gtick b{display:block;height:13px;font-size:11px;color:var(--tint-t)}.gtick .t{display:block;min-height:14px}.gtick.start{transform:translateX(3px);text-align:left}.gtick.end{transform:translateX(calc(-100% - 3px));text-align:right}
 .ggroup{border-top:0;margin:0}.ggroup.drop{box-shadow:inset 0 0 0 2.5px var(--tint)}.ggroup.nodrop{box-shadow:inset 0 0 0 2.5px var(--red)}
 .gteam{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 6px 0 4px;background:color-mix(in srgb,var(--fill) 70%,transparent);border-bottom:.5px solid var(--sep)}
 .gteam .tn{font-size:15px;font-weight:700;white-space:nowrap}.gteam .ts{font-size:12px;color:var(--label2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tstat{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap}.tstat.ok{color:var(--green-ink);background:color-mix(in srgb,var(--green) 16%,transparent)}.tstat.bad{color:var(--red-ink);background:color-mix(in srgb,var(--red) 14%,transparent)}
-.gdots{min-height:36px;width:40px;padding:0;background:none;color:var(--tint);font-size:20px;font-weight:700;flex:none}.gdots.big{width:44px;min-height:44px;background:var(--fill);margin-bottom:4px}
+.gdots{min-height:36px;width:40px;padding:0;background:none;color:var(--tint-t);font-size:20px;font-weight:700;flex:none}.gdots.big{width:44px;min-height:44px;background:var(--fill);margin-bottom:4px}
 .gbar{position:absolute;top:7px;bottom:7px;z-index:2;display:flex;align-items:center;min-height:0;height:auto;padding:0 6px;border:0;border-radius:6px;background:var(--green);color:#000;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .gbar.pending{background:var(--yellow)}.gbar.sug{background:color-mix(in srgb,var(--blue) 85%,#fff);color:#fff}
 .gbar .hr{position:absolute;right:0;top:0;bottom:0;width:10px;cursor:ew-resize}.gbar .hr::after{content:"";position:absolute;right:3px;top:30%;bottom:30%;width:3px;border-radius:2px;background:rgba(0,0,0,.3)}
@@ -341,7 +346,7 @@ dialog.sheet,.menu button{width:100%}.menu{gap:10px}.menu>button{min-height:46px
 .presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-top:12px}.presets button{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;font-size:14px;color:var(--label);background:var(--fill2)}.presets button small{font-size:11px;color:var(--label2);font-weight:500}.presets button.on{background:var(--tint);color:var(--tint-ink)}.presets button.on small{color:var(--tint-ink)}
 .lapbox{background:var(--fill);border-radius:14px;padding:14px;text-align:center}.steps{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
 .step{width:56px;min-height:52px;font-size:17px;font-weight:600;color:var(--label);background:var(--fill2)}.lapn{width:80px;font-size:40px;font-weight:700}
-.lapt{font-size:17px;font-weight:600;margin-top:10px}.shift{min-height:18px;margin-top:6px;font-size:13px;font-weight:600;color:var(--tint)}
+.lapt{font-size:17px;font-weight:600;margin-top:10px}.shift{min-height:18px;margin-top:6px;font-size:13px;font-weight:600;color:var(--tint-t)}
 .blist{background:var(--fill);border-radius:12px;overflow:hidden}.bitem{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:.5px solid var(--sep);font-size:14px}.bitem:last-child{border-bottom:0}
 .bitem i{width:10px;height:10px;border-radius:50%;flex:none;background:var(--green)}.bitem i.M{background:var(--yellow)}.bitem button{min-height:36px;width:auto;min-width:40px;padding:0 12px;flex:none}
 .daylist{display:flex;flex-direction:column;gap:6px}.dayopt input,.topt input{position:absolute;opacity:0;pointer-events:none}
@@ -367,7 +372,7 @@ b.wk{color:var(--label)}
 .gbar.placing>span:first-child{overflow:hidden;text-overflow:ellipsis}.gbar .hr.big{width:30px;right:-15px}.gbar .hr.big::after{right:7px;top:50%;bottom:auto;width:16px;height:16px;margin-top:-8px;border-radius:50%;background:var(--label);box-shadow:0 2px 6px rgba(0,0,0,.5)}
 body.placing{overflow:hidden;overscroll-behavior:none}body.placing .gantt .gtrack{touch-action:none}
 .plbanner{position:sticky;top:56px;z-index:30;display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0 0 10px;border-radius:14px;background:var(--tint);color:var(--tint-ink);box-shadow:var(--shadow)}
-.plbanner button{min-height:40px;padding:0 12px;background:rgba(0,0,0,.15);color:var(--tint-ink);font-weight:700;flex:none}.plbanner button.pri{background:#000;color:var(--tint)}
+.plbanner button{min-height:40px;padding:0 12px;background:rgba(0,0,0,.15);color:var(--tint-ink);font-weight:700;flex:none}.plbanner button.pri{background:#000;color:var(--tint-t)}
 .plinfo{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px;line-height:1.3;text-align:center}.plinfo .ovt{color:#7a0000;font-weight:700}.plinfo .okt{font-weight:600}
 .legend .lg.ov{background:var(--red)}.legend .lg.gap{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--label) 38%,transparent) 0 3px,color-mix(in srgb,var(--label) 8%,transparent) 3px 6px)}
 .startn{width:80px;font-size:24px;font-weight:700}.ovlist{display:flex;flex-direction:column;gap:6px;margin-top:10px}.ovlist button{min-height:40px;background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red-ink);font-size:13px}
@@ -482,7 +487,7 @@ dialog .askbar{margin:0 0 4px}
 .gcard b{font-size:12.5px}.gcn{color:var(--label2);font-weight:600;margin-top:2px}
 .gplus{position:absolute;top:50%;width:36px;height:36px;min-height:36px;margin:-18px 0 0 -18px;padding:0;border-radius:18px;z-index:6;background:var(--tint);color:var(--tint-ink);font-size:24px;font-weight:500;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.4),0 0 0 3px color-mix(in srgb,var(--tint) 25%,transparent);cursor:pointer}
 .gplus:hover{transform:scale(1.08)}.gplus.hov{pointer-events:auto}
-.bgpill{position:absolute;bottom:9px;transform:translateX(-50%);z-index:5;min-height:22px;height:22px;padding:0 10px;border-radius:11px;background:var(--fill);color:var(--tint);font-size:11px;font-weight:700;white-space:nowrap;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tint) 45%,transparent)}
+.bgpill{position:absolute;bottom:9px;transform:translateX(-50%);z-index:5;min-height:22px;height:22px;padding:0 10px;border-radius:11px;background:var(--fill);color:var(--tint-t);font-size:11px;font-weight:700;white-space:nowrap;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tint) 45%,transparent)}
 .bgpill:hover{background:var(--tint);color:var(--tint-ink)}
 .gantt{background:none;box-shadow:none;overflow:visible}
 .grw.ghdr{background:var(--surface);border-radius:16px;margin-bottom:12px;box-shadow:var(--shadow)}
@@ -507,7 +512,7 @@ dialog .askbar{margin:0 0 4px}
 .dayopt,.topt{position:relative;display:block}.dayopt input,.topt input{width:1px!important;height:1px!important;min-height:0!important;padding:0!important;margin:0;left:8px;top:8px}
 .tstart{font-size:13px;font-weight:700;color:var(--label);margin-top:2px}.livet{color:var(--green-ink)}
 .grw.ghdr.tax{border-radius:0;margin:0;box-shadow:none;background:color-mix(in srgb,var(--cls) 7%,var(--surface));border-bottom:.5px solid var(--sep)}
-.freelist{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px}.freechip{min-height:34px;padding:0 12px;border-radius:17px;background:var(--fill);color:var(--label);font-weight:600;font-size:14px}.freechip.me{color:var(--tint)}
+.freelist{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px}.freechip{min-height:34px;padding:0 12px;border-radius:17px;background:var(--fill);color:var(--label);font-weight:600;font-size:14px}.freechip.me{color:var(--tint-t)}
 .presets2{display:flex;flex-wrap:wrap;gap:8px}.presetbtn{display:flex;flex-direction:column;align-items:flex-start;min-height:48px;padding:6px 12px;border-radius:12px;background:var(--fill);color:var(--label);line-height:1.25}
 .presetbtn small{font-size:12px;color:var(--label2);font-weight:500}.presetbtn.on{background:color-mix(in srgb,var(--tint) 18%,transparent);box-shadow:inset 0 0 0 2px var(--tint)}
 .langcard{display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:12px}.langcard .seg button{min-width:90px}
@@ -518,10 +523,10 @@ dialog .askbar{margin:0 0 4px}
 .sitebody h3{margin-top:22px}
 .imgpick{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}.imgpick .iplab{grid-column:1/-1;font-size:13px;font-weight:600;color:var(--label2)}
 .imgpick .ipbox{grid-row:span 3;width:150px;height:96px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px}
-.imgpick .ipbox img{width:100%;height:100%;object-fit:cover}.ghostbtn,.imgpick .ghostbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--fill);color:var(--tint);font-weight:600;font-size:14px;cursor:pointer;justify-self:start}
+.imgpick .ipbox img{width:100%;height:100%;object-fit:cover}.ghostbtn,.imgpick .ghostbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;background:var(--fill);color:var(--tint-t);font-weight:600;font-size:14px;cursor:pointer;justify-self:start}
 .ghostbtn:focus-within{outline:2px solid var(--tint)}.imgpick .ipst{font-size:12px}
 form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:620px){.form2{grid-template-columns:1fr}}
-.nprev summary{cursor:pointer;font-weight:600;color:var(--tint);min-height:36px;display:flex;align-items:center}.npv{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px;border-radius:12px;background:var(--fill)}@media (max-width:620px){.npv{grid-template-columns:1fr}}
+.nprev summary{cursor:pointer;font-weight:600;color:var(--tint-t);min-height:36px;display:flex;align-items:center}.npv{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px;border-radius:12px;background:var(--fill)}@media (max-width:620px){.npv{grid-template-columns:1fr}}
 .npv h3{margin:4px 0 8px}.npv p{margin:0 0 10px;line-height:1.5}
 .galgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.galcard{border-radius:14px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
 .galcard.hid{opacity:.6}.galimg{height:140px;background:var(--fill)}.galimg img{width:100%;height:100%;object-fit:cover}.galimg.logo img{object-fit:contain;padding:16px;box-sizing:border-box}
@@ -562,7 +567,7 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 @media (max-width:720px){.savebar{flex-wrap:wrap;gap:8px 10px}.savebar .savest{flex:1 1 100%}.savebar button{flex:1 1 0;min-width:0;height:auto;min-height:44px;padding:8px 12px;white-space:normal;line-height:1.2}}
 .pubbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin:4px 0 16px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
 .pubdot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}.pubbar.pend .pubdot{background:var(--tint)}.pubbar.warn .pubdot{background:var(--label3)}.pubbar.bad .pubdot{background:var(--red)}
-.pubtx{flex:1 1 260px;font-size:14px}.pubbar.bad .pubtx{color:var(--red-ink)}.ghostlink{font-weight:600;font-size:14px;white-space:nowrap;color:var(--tint);text-decoration:none}.ghostlink:visited{color:var(--tint)}.ghostlink:hover{text-decoration:underline}.pubbar button{min-height:40px}
+.pubtx{flex:1 1 260px;font-size:14px}.pubbar.bad .pubtx{color:var(--red-ink)}.ghostlink{font-weight:600;font-size:14px;white-space:nowrap;color:var(--tint-t);text-decoration:none}.ghostlink:visited{color:var(--tint-t)}.ghostlink:hover{text-decoration:underline}.pubbar button{min-height:40px}
 .appfoot{text-align:center;margin-top:40px}.appfoot .ghostlink{font-size:inherit}
 .sech2{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.sech2 h3{flex:1}
 .pageimgs{gap:18px}.pimg{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;align-items:start;padding-bottom:18px;border-bottom:.5px solid var(--sep)}.pimg:last-child{border-bottom:0;padding-bottom:0}
@@ -581,7 +586,7 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .brandrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.brandprev{display:flex;align-items:center;gap:12px;min-width:260px;min-height:76px;padding:14px 20px;border-radius:12px;color:#F5F5F7}
 .brandprev img{max-height:48px;max-width:220px;width:auto;height:auto}.brandprev b{font-weight:800;letter-spacing:.08em;font-size:20px}.phmark{width:36px;height:36px;border-radius:8px;background:#FF9F0A;color:#0B0B0D;display:grid;place-items:center;font-weight:800;font-size:22px}
 .brandact{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.iconprev{display:flex;align-items:flex-end;gap:12px;min-width:260px}.iconprev img{border-radius:12px}.iconprev img+img{border-radius:6px}.iconprev img+img+img{border-radius:3px}
-.brandimg{height:32px;width:auto;max-width:160px;object-fit:contain}
+.brandimg{height:32px;width:auto;max-width:160px;object-fit:contain}.auth .brandimg{display:block;height:64px;max-width:240px;margin:0 auto 18px}
 .li .rtags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-self:start}.li .rtags .stat{grid-row:auto;grid-column:auto;justify-self:auto}
 @media (max-width:720px){.li .rtags{grid-row:1;grid-column:2;justify-self:end;justify-content:flex-end;max-width:180px}}
 .spstats{margin-bottom:16px}.sphead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}.sphead>div{flex:1;min-width:220px}.spstats .tblwrap{padding:4px 12px 0}.spstats .ssecb{padding-top:0}.spstats>p{padding:4px 20px 16px}
@@ -617,6 +622,10 @@ dialog .row{margin-top:4px}
 dialog .row button{min-height:40px}
 dialog .form{grid-template-columns:1fr 1fr}
 #dmsg{color:var(--red);font-size:13px;margin-top:10px}#dmsg:empty{display:none}
+dialog form>.row:last-child{position:sticky;bottom:-22px;z-index:6;margin:4px -22px -22px;padding:12px 22px 22px;background:var(--surface);border-top:.5px solid var(--sep)}
+.row>#dmsg{flex-basis:100%;margin:0;order:-1}
+dialog form>button,dialog .menu>button,.form>button{white-space:normal;height:auto;line-height:1.25;padding-top:9px;padding-bottom:9px}
+
 .plan{width:100%;font-size:14px}.plan td{padding:9px 6px;border-bottom:.5px solid var(--sep);white-space:nowrap}.plan tr:last-child td{border-bottom:0}
 @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 @keyframes rise{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
@@ -650,6 +659,7 @@ dialog .form{grid-template-columns:1fr 1fr}
   dialog[open]{animation:sheet .32s cubic-bezier(.2,.8,.2,1)}
   dialog::before{content:"";display:block;width:36px;height:5px;border-radius:3px;background:var(--label3);margin:0 auto 14px}
   dialog .row{flex-direction:column-reverse;align-items:stretch}dialog .row .grow{display:none}
+  dialog form>.row:last-child{bottom:calc(-22px - env(safe-area-inset-bottom));margin:4px -18px calc(-22px - env(safe-area-inset-bottom));padding:12px 18px calc(22px + env(safe-area-inset-bottom))}.row>#dmsg{order:99}
 }
 @media (pointer:coarse){button,input,select{min-height:44px}input,select{font-size:17px}.seg button{min-height:32px;height:32px}.list td button{min-height:36px}.tabbar button{min-height:50px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -682,7 +692,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.10',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -785,7 +795,21 @@ const ICON={
   grip:'<svg viewBox="0 0 10 16" fill="currentColor"><circle cx="2.5" cy="3" r="1.5"/><circle cx="7.5" cy="3" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><circle cx="7.5" cy="8" r="1.5"/><circle cx="2.5" cy="13" r="1.5"/><circle cx="7.5" cy="13" r="1.5"/></svg>',
   strat:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v18"/><path d="M5 24h15"/><path d="M18 11h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V10l-3-3"/><path d="M10 9h5"/></svg>',
   back:'<svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 2 10l8 8"/></svg>'};
-const mark=()=>`<span class="mark" aria-hidden="true">${ICON.mark}</span>`;
+const mark=()=>{const cb=cachedBrand();return cb&&cb.logo?`<img class="brandimg" src="${esc(cb.logo)}" alt="ARION">`:`<span class="mark" aria-hidden="true">${ICON.mark}</span>`};
+// ---- Brand colour: the website's accent (Website → Appearance) also tints the app. Text uses a shade of it that
+// stays readable (at least 4.6:1) on light and dark backgrounds; buttons keep the real colour with black or white text.
+const hex2rgb=h=>{h=String(h||'').trim().replace(/^#/,'');if(h.length===3)h=h.replace(/./g,c=>c+c);if(!/^[0-9a-f]{6}$/i.test(h))return null;const n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255]};
+const relLum=c=>{const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2])};
+const cRatio=(a,b)=>{const x=relLum(a),y=relLum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const rgbHex=c=>'#'+c.map(v=>v.toString(16).padStart(2,'0')).join('');
+const readable=(c,bg,to)=>{let t=0,x=c;while(cRatio(x,bg)<4.6&&t<1){t+=.04;x=c.map((v,i)=>Math.round(v+(to[i]-v)*t))}return rgbHex(x)};
+function applyAccent(hex){let el=document.getElementById('accentcss');const c=hex2rgb(hex);if(!c){if(el)el.remove();return}
+  if(!el){el=document.createElement('style');el.id='accentcss';document.head.appendChild(el)}
+  const ink=cRatio(c,[0,0,0])>=cRatio(c,[255,255,255])?'#000':'#fff',h=rgbHex(c);
+  el.textContent=`:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[242,242,247],[0,0,0])}}@media (prefers-color-scheme:dark){:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[44,44,46],[255,255,255])}}}`}
+// The logo and colour are kept on this device so the sign-in screen and the first paint already show them.
+function cachedBrand(){try{return JSON.parse(localStorage.getItem('ec-brand')||'null')}catch{return null}}
+function cacheBrand(){try{localStorage.setItem('ec-brand',JSON.stringify({logo:BRAND&&BRAND.logo&&BRAND.in_app!==false?BRAND.logo:'',accent:ACCENT||''}))}catch{}}
 const initials=n=>String(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const stL=s=>s==='approved'?'Approved':'Pending';
 const lenBadge=r=>`<span class="len">${r.length_h}<small>h</small></span>`;
@@ -800,6 +824,7 @@ async function q(p){busy++;try{const r=await p;if(r.error){note(r.error.message)
 
 /* ---------- start / auth ---------- */
 async function boot(){
+  {const cb=cachedBrand();if(cb&&cb.accent)applyAccent(cb.accent)}
   startTr();
   const {data}=await sb.auth.getSession();me=data.session?.user||null;
   sb.auth.onAuthStateChange((e,s)=>{const u=s?.user||null;if(u?.id!==me?.id){me=u;setTimeout(start,0)}});
@@ -821,7 +846,7 @@ async function start(){
   const navs=[['my','My races'],['cal','Calendar'],['strat','Strategy'],...(isEd()?[['site','Website']]:[]),['roster','Roster']];
   $('#app').innerHTML=`<header class="bar"><div class="brand">${mark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
     <nav class="seg" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${l}</button>`).join('')}</nav>
-    <div class="me-box"><span id="live" class="live" title="Connecting"><i></i><span>Connecting</span></span>
+    <div class="me-box"><button type="button" id="live" title="Connecting" aria-label="Connecting" aria-haspopup="dialog" aria-expanded="false" onclick="connPop(event)"><i></i><span class="lcount notr"></span></button>
       <span class="me-text"><b>${esc(prof.name)}</b><span>${esc(prof.tz)}${isAdm()?' · Admin':''}</span></span>
       <span class="avatar" title="${esc(prof.name)}">${esc(initials(prof.name))}</span><button class="ghost signout-top" onclick="sb.auth.signOut()">Sign out</button></div></header>
     <main><div id="tzb"></div><div id="main"></div><p class="mu appfoot">ARION Endurance Crew v${VERSION}<span aria-hidden="true"> · </span><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}" target="_blank" rel="noopener">Website ↗</a></p></main>
@@ -874,7 +899,7 @@ function pendingView(){$('#app').innerHTML=`<div class="auth">${mark()}<h1>Waiti
 function startLive(){
   startPresence();
   chan=sb.channel('ec-'+me.id).on('postgres_changes',{event:'*',schema:'public'},()=>{dirty=true;clearTimeout(rt);rt=setTimeout(refresh,700)})
-   .subscribe(s=>{const el=$('#live');if(!el)return;const on=s==='SUBSCRIBED';el.classList.toggle('on',on);el.title=on?'Live: other drivers’ changes appear by themselves':'Not live: reload the page to see other drivers’ changes';el.lastChild.textContent=on?'Live':'Offline'});
+   .subscribe(s=>connState(s==='SUBSCRIBED'));
 }
 function stopLive(){if(chan){sb.removeChannel(chan);chan=null}}
 async function refresh(){
@@ -906,12 +931,12 @@ async function render(){setTimeout(showOnline,0);
 function tzBanner(){
   const b=$('#tzb');if(!b)return;
   const show=DEV_TZ!==prof.tz&&store.get('tzkeep')!==DEV_TZ+'>'+prof.tz;
-  b.innerHTML=show?`<div class="banner"><span class="grow">This device is set to <b>${esc(DEV_TZ)}</b>, but your profile says <b>${esc(prof.tz)}</b>.</span><button onclick="setTz('${esc(DEV_TZ)}')">Use ${esc(DEV_TZ)}</button><button class="ghost" onclick="keepTz()">Keep ${esc(prof.tz)}</button></div>`:''}
+  b.innerHTML=show?`<div class="banner"><span class="grow notr">${LANG==='el'?`Η συσκευή σου είναι ρυθμισμένη σε <b>${esc(DEV_TZ)}</b>, αλλά το προφίλ σου σε <b>${esc(prof.tz)}</b>.`:`This device is set to <b>${esc(DEV_TZ)}</b>, but your profile says <b>${esc(prof.tz)}</b>.`}</span><button onclick="setTz('${esc(DEV_TZ)}')">Use ${esc(DEV_TZ)}</button><button class="ghost" onclick="keepTz()">Keep ${esc(prof.tz)}</button></div>`:''}
 async function setTz(z){await q(sb.from('profiles').update({tz:z}).eq('id',me.id));prof.tz=z;await start()}
 function keepTz(){store.set('tzkeep',DEV_TZ+'>'+prof.tz);tzBanner()}
 
 /* ---------- dialog helpers ---------- */
-function openDlg(html){const d=$('#dlg');d.classList.remove('full');d.style.transform='';d.innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';d.setAttribute('tabindex','-1');d.showModal();d.focus();wireGrab()}
+function openDlg(html){const d=$('#dlg');d.classList.remove('full');d.style.transform='';d.innerHTML=sheetGrab()+html+'<div id="dmsg" role="alert"></div>';{const f=d.querySelector('form>.row:last-child');if(f)f.prepend(d.querySelector('#dmsg'))}d.setAttribute('tabindex','-1');d.showModal();d.focus();wireGrab()}
 function closeDlg(){$('#dlg').close()}
 $('#dlg').addEventListener('close',()=>{PLAN=null;if(dirty)refresh()});
 function cardKey(e){if(e.target===e.currentTarget&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.currentTarget.click()}}
@@ -1185,7 +1210,7 @@ function drawGantt(r){
         <div class="ts2">${esc(teamCar(t))}${refLap(t)?' · ≈'+fmtLap(refLap(t)):''} · ${mem.length} driver${mem.length===1?'':'s'}</div>
         <div class="tl2">${st.map(([x,c])=>`<span class="pill ${c}">${x}</span>`).join('')}</div>
 </div>
-      ${P.items.length?(()=>{const n=teamIssues(r,t,P).length+cv.gaps.length+fairShort(t,P).length;return `<button class="chkbtn${n?' has':''}" onclick="checkPlan(${t.id})" title="Final check of this team’s plan">${n?`<b>${n}</b> to check`:'✓ Check plan'}</button>`})():''}
+      ${P.items.length?(()=>{const n=teamIssues(r,t,P).length+cv.gaps.length+fairShort(t,P).length;return `<button class="chkbtn${n?' has':''}" onclick="checkPlan(${t.id})" title="Final check of this team’s plan">${n?`<b>${n}</b> ${n===1?'plan issue':'plan issues'}`:'✓ Check plan'}</button>`})():''}
       ${canAdd?`<button class="addst" onclick="addStint(${t.id})" aria-label="Add a stint to ${esc(t.name)}"><span class="plus">+</span><span class="lbl"> Add stint</span></button>`:''}
       <button class="gdots" onclick="teamMenu(${t.id})" aria-label="${esc(t.name)} options">⋯</button></div>
       ${open?`<div class="grw ghdr tax"><div class="gname gnav"><button aria-label="Earlier" onclick="gPan(-1,${t.id})" ${from<=w.r0?'disabled':''}>‹</button><button onclick="gNow(${t.id})">Now</button><button aria-label="Later" onclick="gPan(1,${t.id})" ${to>=w.r1?'disabled':''}>›</button></div><div class="gtrack axis">${ticks}</div></div>`:''}
@@ -1845,10 +1870,24 @@ function startPresence(){if(PRES||!sb.channel)return;try{
   if(!PRES.on||!PRES.track){PRES=null;return}
   PRES.on('presence',{event:'sync'},()=>{try{ONLINE=new Set(Object.keys(PRES.presenceState()||{}))}catch{ONLINE=new Set()}showOnline()})
     .subscribe(async st=>{if(st==='SUBSCRIBED'){try{await PRES.track({name:prof?.name||'',at:new Date().toISOString()})}catch{}}})}catch{PRES=null}}
-function showOnline(){let el=$('#online');const on=isAdm()&&innerWidth>=1280;document.body.classList.toggle('has-online',on);
-  if(!on){if(el)el.hidden=true}else{if(!el){el=document.createElement('aside');el.id='online';el.setAttribute('aria-label','Online now');document.body.appendChild(el)}el.hidden=false;
-    const ids=[...ONLINE],ppl=ids.map(id=>profiles.find(p=>p.id===id)||{id,name:'Unknown'}).sort((a,b)=>a.name.localeCompare(b.name));
-    el.innerHTML=`<div class="ohead">Admins only</div><h3>Online now <span class="on">${ppl.length}</span></h3>${ppl.map(p=>`<div class="orow"><i class="odot on"></i>${esc(p.name)}</div>`).join('')||'<p class="mu">Nobody right now.</p>'}<div class="mu" style="margin-top:12px">${Math.max(0,profiles.length-ppl.length)} offline</div>`}
+// Connection: a dot in the top bar (green = other drivers' changes arrive by themselves). Tapping it shows the
+// status and, for admins, who is online now. Admins also see the number of people online next to the dot.
+let CONN=null;
+function connState(on){CONN=on;const el=$('#live');if(el){el.classList.toggle('on',!!on);el.classList.toggle('off',on===false);const t=on?'Connected':on===false?'Not connected':'Connecting';el.title=t;el.setAttribute('aria-label',t)}connFill()}
+function connClose(){const p=$('#connpop');if(p)p.remove();$('#live')?.setAttribute('aria-expanded','false');document.removeEventListener('click',connOut,true);document.removeEventListener('keydown',connKey)}
+function connOut(e){if(!e.target.closest('#connpop,#live'))connClose()}
+function connKey(e){if(e.key==='Escape'){connClose();$('#live')?.focus()}}
+function connPop(e){if(e)e.stopPropagation();if($('#connpop'))return connClose();
+  const p=document.createElement('div');p.id='connpop';p.setAttribute('role','dialog');p.setAttribute('aria-label','Connection');document.body.appendChild(p);
+  $('#live')?.setAttribute('aria-expanded','true');connFill();document.addEventListener('click',connOut,true);document.addEventListener('keydown',connKey)}
+function connFill(){const p=$('#connpop');if(!p)return;const on=CONN;
+  let h=`<div class="cphead"><i class="cpdot${on?' on':on===false?' off':''}"></i><b>${on?'Connected':on===false?'Not connected':'Connecting'}</b></div>
+    <p class="mu">${on?'Changes by other drivers appear by themselves.':on===false?'Reload the page to see changes by other drivers.':'Connecting to the server…'}</p>${on===false?'<button type="button" onclick="location.reload()">Reload</button>':''}`;
+  if(isAdm()){const ppl=[...ONLINE].map(id=>profiles.find(p=>p.id===id)||{id,name:'Unknown'}).sort((a,b)=>a.name.localeCompare(b.name));
+    h+=`<div class="cpsec"><div class="cpt"><span>Online now</span><b class="notr">${ppl.length}</b></div>${ppl.map(x=>`<div class="orow"><i class="odot on"></i><span class="notr">${esc(x.name)}</span></div>`).join('')||'<p class="mu">Nobody right now.</p>'}<p class="mu">${Math.max(0,profiles.length-ppl.length)} offline</p></div>`}
+  p.innerHTML=h}
+function showOnline(){document.body.classList.remove('has-online');$('#online')?.remove();
+  const c=$('#live .lcount');if(c)c.textContent=isAdm()&&ONLINE.size?String(ONLINE.size):'';connFill();
   document.querySelectorAll('.odot[data-uid]').forEach(d=>{const o=ONLINE.has(d.dataset.uid);d.classList.toggle('on',o);d.title=o?'Online now':'Offline'})}
 addEventListener('resize',()=>{clearTimeout(window.__rz);window.__rz=setTimeout(showOnline,200)});
 /* ---------- Calendar file for a stint ---------- */
@@ -1891,14 +1930,15 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Connected':'Συνδεδεμένο','Not connected':'Εκτός σύνδεσης','Connecting':'Σύνδεση…','Connection':'Σύνδεση','Changes by other drivers appear by themselves.':'Οι αλλαγές των άλλων οδηγών εμφανίζονται αμέσως.','Reload the page to see changes by other drivers.':'Ανανέωσε τη σελίδα για να δεις τις αλλαγές των άλλων οδηγών.','Connecting to the server…':'Σύνδεση με τον διακομιστή…','Reload':'Ανανέωση','plan issue':'θέμα στο πλάνο','plan issues':'θέματα στο πλάνο','Joined this race, not in a team yet.':'Έχει δηλώσει συμμετοχή, χωρίς αυτοκίνητο ακόμα.','No team you can add them to.':'Δεν υπάρχει αυτοκίνητο όπου μπορείς να τον προσθέσεις.','Fill in what you know; everything is optional. The Suggestion re-plans from it.':'Συμπλήρωσε ό,τι ξέρεις· όλα είναι προαιρετικά. Η πρόταση ξαναϋπολογίζεται με βάση αυτά.','Current lap':'Τρέχων γύρος','In the car':'Στο αυτοκίνητο','Their 5-lap average':'Μέσος όρος 5 γύρων του οδηγού','Laps since last stop':'Γύροι από το τελευταίο pit stop','Laps on these tyres':'Γύροι με αυτά τα ελαστικά','Tyres':'Ελαστικά','Dropping off':'Πέφτουν','Gone':'Τελείωσαν','Post update':'Καταχώρηση ενημέρωσης','Latest updates':'Τελευταίες ενημερώσεις','Nothing yet. Add the times you can drive.':'Τίποτα ακόμα. Πρόσθεσε τις ώρες που μπορείς να οδηγήσεις.','Set the team’s approximate lap time first (Edit team).':'Βάλε πρώτα τον εκτιμώμενο χρόνο γύρου του αυτοκινήτου (Επεξεργασία αυτοκινήτου).','Your team’s race has started. Post live lap times with Race update; they feed the Suggestion.':'Ο αγώνας του αυτοκινήτου σου ξεκίνησε. Καταχώρησε ζωντανούς χρόνους γύρου από την «Ενημέρωση αγώνα»· τροφοδοτούν την πρόταση.','not set':'δεν έχει οριστεί','(no date found)':'(δεν βρέθηκε ημερομηνία)','Add a driver to the team first.':'Πρόσθεσε πρώτα έναν οδηγό στο αυτοκίνητο.','Add strategy figures to get a suggestion.':'Συμπλήρωσε τα στοιχεία στρατηγικής για να πάρεις πρόταση.','Approved stints stay until the team leader removes them.':'Τα εγκεκριμένα stints μένουν μέχρι να τα αφαιρέσει ο υπεύθυνος του αυτοκινήτου.','Average lap saved. The plan’s times follow it.':'Ο μέσος χρόνος γύρου αποθηκεύτηκε. Οι ώρες του πλάνου προσαρμόστηκαν.','Banners running':'Ενεργά banners','Banners total':'Σύνολο banners','Click rate 30 days':'Ποσοστό κλικ 30 ημερών','Clicks 30 days':'Κλικ 30 ημερών','Clicks all time':'Κλικ συνολικά','Views 30 days':'Προβολές 30 ημερών','Views all time':'Προβολές συνολικά','Choose a day':'Διάλεξε μέρα','Delete this race with all its teams, stints and availability?':'Διαγραφή του αγώνα μαζί με όλα τα αυτοκίνητα, τα stints και τη διαθεσιμότητα;','Delete this team and all its stints?':'Διαγραφή του αυτοκινήτου και όλων των stints του;','Energy':'Ενέργεια','Fuel':'Καύσιμο','Fuel + tyres':'Καύσιμο + ελαστικά','Fuel only':'Μόνο καύσιμο','Enter energy per lap, or fuel per lap and tank size.':'Συμπλήρωσε ενέργεια ανά γύρο, ή καύσιμο ανά γύρο και μέγεθος ρεζερβουάρ.','Fill in at least one thing.':'Συμπλήρωσε τουλάχιστον ένα στοιχείο.','Fold':'Σύμπτυξη','Greek':'Ελληνικά','I accept':'Αποδέχομαι','LMU team events saved. Crew members can now create races from them on My races.':'Τα team events του LMU αποθηκεύτηκαν. Τα μέλη μπορούν πλέον να φτιάξουν αγώνες από αυτά στο «Οι αγώνες μου».','Leave it empty if you don’t know it yet.':'Άφησέ το κενό αν δεν το ξέρεις ακόμα.','Leave race':'Αποχώρηση από τον αγώνα','No events found under “Special Events (Team)”. Check the whole post was copied.':'Δεν βρέθηκαν events κάτω από το «Special Events (Team)». Έλεγξε ότι αντιγράφηκε όλο το post.','No lap times yet. Drivers need an average lap first.':'Δεν υπάρχουν ακόμα χρόνοι γύρου. Οι οδηγοί χρειάζονται πρώτα μέσο χρόνο γύρου.','Not saved. Run the latest database update so admins can edit drivers.':'Δεν αποθηκεύτηκε. Τρέξε την τελευταία ενημέρωση της βάσης ώστε οι διαχειριστές να μπορούν να επεξεργάζονται οδηγούς.','Only admins, team leaders or the driver can add them to a team.':'Μόνο οι διαχειριστές, οι υπεύθυνοι αυτοκινήτων ή ο ίδιος ο οδηγός μπορούν να τον βάλουν σε αυτοκίνητο.','Overlaps':'Επικαλύψεις','Pick who is in the car for that lap time.':'Διάλεξε ποιος οδηγούσε σε αυτόν τον χρόνο γύρου.','Race time':'Χρόνος αγώνα','Remove strategy':'Αφαίρεση στρατηγικής','Replace':'Αντικατάσταση','Shorten race':'Συντόμευση αγώνα','Strategy saved. Tap a lane to place stints between pit stops.':'Η στρατηγική αποθηκεύτηκε. Πάτα μια γραμμή για να βάλεις stints ανάμεσα στα pit stops.','Suggestion copied into the plan.':'Η πρόταση αντιγράφηκε στο πλάνο.','That’s less than one lap per stint. Check the figures.':'Βγαίνει λιγότερο από έναν γύρο ανά stint. Έλεγξε τα στοιχεία.','The move wasn’t allowed. Ask an admin or the leader of both teams.':'Η μετακίνηση δεν επιτράπηκε. Ζήτα από έναν διαχειριστή ή από τον υπεύθυνο και των δύο αυτοκινήτων.','The shortest driver stint can’t be longer than the longest.':'Το συντομότερο stint οδηγού δεν μπορεί να είναι μεγαλύτερο από το μεγαλύτερο.','Unknown':'Άγνωστος','Update posted. The Suggestion has been re-planned.':'Η ενημέρωση καταχωρήθηκε. Η πρόταση ξαναϋπολογίστηκε.','Your time':'Η ώρα σου',
  'My races':'Οι αγώνες μου','Calendar':'Ημερολόγιο','Strategy':'Στρατηγική','Roster':'Μέλη','Sign out':'Αποσύνδεση','Live':'Live',
  'Live: other drivers’ changes appear by themselves':'Live: οι αλλαγές των άλλων οδηγών εμφανίζονται αυτόματα','Sections':'Ενότητες',
  '+ New team':'+ Νέο αυτοκίνητο','New team':'Νέο αυτοκίνητο','Add':'Προσθήκη','Add a driver':'Προσθήκη οδηγού','Add a time':'Προσθήκη διαστήματος',
  'Add drivers to the team first.':'Πρόσθεσε πρώτα οδηγούς στο αυτοκίνητο.','Add drivers to the team to see the minimum.':'Πρόσθεσε οδηγούς στο αυτοκίνητο για να δεις το ελάχιστο.',
- 'Add race':'Προσθήκη event','Add stint':'Προσθήκη stint','Add strategy':'Προσθήκη στρατηγικής','Add to calendar':'Προσθήκη στο ημερολόγιο','Add to team':'Προσθήκη στο αυτοκίνητο',
+ 'Add race':'Προσθήκη αγώνα','Add stint':'Προσθήκη stint','Add strategy':'Προσθήκη στρατηγικής','Add to calendar':'Προσθήκη στο ημερολόγιο','Add to team':'Προσθήκη στο αυτοκίνητο',
  'Admin':'Διαχειριστής','Driver':'Οδηγός','Drivers':'Οδηγοί','Admins only':'Μόνο για διαχειριστές','Dev':'Dev','Waiting':'Σε αναμονή',
  'All pending stints approved.':'Όλα τα stints που ήταν σε αναμονή εγκρίθηκαν.','Approve':'Έγκριση','Approved':'Εγκρίθηκε','Pending':'Σε αναμονή έγκρισης',
- 'Approximate lap time for this race':'Εκτιμώμενος χρόνος γύρου για αυτό το event','Availability not set':'Χωρίς δηλωμένη διαθεσιμότητα','Availability set':'Η διαθεσιμότητα δηλώθηκε',
+ 'Approximate lap time for this race':'Εκτιμώμενος χρόνος γύρου για αυτόν τον αγώνα','Availability not set':'Χωρίς δηλωμένη διαθεσιμότητα','Availability set':'Η διαθεσιμότητα δηλώθηκε',
  'Average lap':'Μέσος χρόνος γύρου','Your average lap':'Ο μέσος χρόνος γύρου σου','Their own lap time':'Ατομικός χρόνος γύρου','Below fair share':'Κάτω από το fair share',
  'Blocks access but keeps the account; approve again to undo':'Μπλοκάρει την πρόσβαση αλλά κρατά τον λογαριασμό· εγκρίνεις ξανά για αναίρεση',
  'Can drive':'Μπορώ να οδηγήσω','Maybe':'Ίσως','Cancel':'Ακύρωση','✕ Cancel':'✕ Ακύρωση','Car':'Αυτοκίνητο','Change':'Αλλαγή','Change password':'Αλλαγή κωδικού','Change your password':'Άλλαξε τον κωδικό σου',
@@ -1906,24 +1946,24 @@ const EL={
  'Changing the first day moves every team and stint with it, by whole days.':'Αν αλλάξεις την πρώτη μέρα, όλα τα αυτοκίνητα και τα stints μετακινούνται μαζί της, κατά ολόκληρες μέρες.',
  'Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'Αν αλλάξεις την εκκίνηση, τα stints του αυτοκινήτου μετακινούνται μαζί της.',
  'Chequered flag':'Καρό σημαία','Race start':'Εκκίνηση','Choose':'Επιλογή','Class':'Κατηγορία','Close':'Κλείσιμο','Copy':'Αντιγραφή','Copy lineup for Discord':'Αντιγραφή σύνθεσης για Discord',
- 'Copy to a team':'Αντιγραφή σε αυτοκίνητο','Copy to a team…':'Αντιγραφή σε αυτοκίνητο…','Create event':'Δημιουργία event','Create team':'Δημιουργία αυτοκινήτου','Open event':'Άνοιγμα event',
- 'Day':'Μέρα','Delete race':'Διαγραφή event','Delete team':'Διαγραφή αυτοκινήτου','Delete this time':'Διαγραφή διαστήματος','Done':'Τέλος','✓ Done':'✓ Τέλος','Great':'Τέλεια',
- 'Driver stints':'Stints καυσίμου ανά οδηγό','Driver updated.':'Ο οδηγός ενημερώθηκε.','Earlier':'Νωρίτερα','Later':'Αργότερα','Edit':'Επεξεργασία','Edit race':'Επεξεργασία event','Edit team':'Επεξεργασία αυτοκινήτου',
+ 'Copy to a team':'Αντιγραφή σε αυτοκίνητο','Copy to a team…':'Αντιγραφή σε αυτοκίνητο…','Create event':'Δημιουργία αγώνα','Create team':'Δημιουργία αυτοκινήτου','Open event':'Άνοιγμα αγώνα',
+ 'Day':'Μέρα','Delete race':'Διαγραφή αγώνα','Delete team':'Διαγραφή αυτοκινήτου','Delete this time':'Διαγραφή διαστήματος','Done':'Τέλος','✓ Done':'✓ Τέλος','Great':'Τέλεια',
+ 'Driver stints':'Stints καυσίμου ανά οδηγό','Driver updated.':'Ο οδηγός ενημερώθηκε.','Earlier':'Νωρίτερα','Later':'Αργότερα','Edit':'Επεξεργασία','Edit race':'Επεξεργασία αγώνα','Edit team':'Επεξεργασία αυτοκινήτου',
  'Edit stint…':'Επεξεργασία stint…','Details…':'Λεπτομέρειες…','Email':'Email','Energy limit (%)':'Όριο ενέργειας (%)','Energy per lap (%)':'Ενέργεια ανά γύρο (%)',
- 'Event ready. Create a team and pick your day and start time, or join a team.':'Το event είναι έτοιμο. Δημιούργησε αυτοκίνητο και διάλεξε μέρα και ώρα εκκίνησης ή μπες σε ένα αυτοκίνητο.',
- 'Event updated.':'Το event ενημερώθηκε.','Event added. Teams pick their own start time inside it.':'Το event προστέθηκε. Κάθε αυτοκίνητο διαλέγει μέσα σε αυτό τη δική του ώρα εκκίνησης.',
+ 'Event ready. Create a team and pick your day and start time, or join a team.':'Ο αγώνας είναι έτοιμος. Δημιούργησε αυτοκίνητο και διάλεξε μέρα και ώρα εκκίνησης ή μπες σε ένα αυτοκίνητο.',
+ 'Event updated.':'Ο αγώνας ενημερώθηκε.','Event added. Teams pick their own start time inside it.':'Ο αγώνας προστέθηκε. Κάθε αυτοκίνητο διαλέγει μέσα σε αυτόν τη δική του ώρα εκκίνησης.',
  'Fair share applies':'Ισχύει fair share','Fair share applies (on for team events)':'Ισχύει fair share (ενεργό στα team events)','Fair share – minimum laps':'Fair share – ελάχιστοι γύροι','Fair share OK':'Fair share OK',
  'Fill this gap':'Κάλυψε αυτό το κενό','Final check of this team’s plan':'Τελικός έλεγχος του πλάνου του αυτοκινήτου','First day':'Πρώτη μέρα','Last day':'Τελευταία μέρα','Same day':'Ίδια μέρα','Fix':'Διόρθωση',
  'From':'Από','Until':'Έως','Fuel per lap (L)':'Καύσιμο ανά γύρο (L)','Full refill takes (s)':'Πλήρης ανεφοδιασμός (s)','Generate':'Δημιουργία','Covered':'Καλυμμένο',
- 'I can drive my team’s whole race':'Μπορώ να οδηγήσω σε όλο τον αγώνα του αυτοκινήτου μου','I can drive any time in this event':'Μπορώ να οδηγήσω οποιαδήποτε ώρα σε αυτό το event',
+ 'I can drive my team’s whole race':'Μπορώ να οδηγήσω σε όλο τον αγώνα του αυτοκινήτου μου','I can drive any time in this event':'Μπορώ να οδηγήσω οποιαδήποτε ώρα σε αυτόν τον αγώνα',
  'Import LMU schedule':'Εισαγωγή προγράμματος LMU','Import schedule':'Εισαγωγή προγράμματος','Join this race':'Δήλωση συμμετοχής','✓ You’ve joined this race':'✓ Έχεις δηλώσει συμμετοχή',
  'Join this team':'Μπες σε αυτό το αυτοκίνητο','Move me to this team':'Μετακίνησέ με σε αυτό το αυτοκίνητο','Laps':'Γύροι','Laps planned':'Γύροι στο πλάνο','Start':'Εκκίνηση','Start time':'Ώρα εκκίνησης',
- 'Leave fuel or energy empty if your class doesn’t use it':'Άφησε κενό το καύσιμο ή την ενέργεια αν η κατηγορία σου δεν τα χρησιμοποιεί','Leave it':'Άφησέ το','Leave team':'Αποχώρηση από το αυτοκίνητο','Leave this race':'Αποχώρηση από το event',
+ 'Leave fuel or energy empty if your class doesn’t use it':'Άφησε κενό το καύσιμο ή την ενέργεια αν η κατηγορία σου δεν τα χρησιμοποιεί','Leave it':'Άφησέ το','Leave team':'Αποχώρηση από το αυτοκίνητο','Leave this race':'Αποχώρηση από τον αγώνα',
  'Length':'Διάρκεια','Lineup copied. Paste it in Discord.':'Η σύνθεση αντιγράφηκε. Επικόλλησέ τη στο Discord.','Longest':'Μεγαλύτερο','Shortest':'Μικρότερο',
- 'Make admin':'Ορισμός ως διαχειριστή','Make driver':'Ορισμός ως οδηγού','Max stints per race':'Μέγιστα stints ανά event','Move':'Μετακίνηση','Move to another team':'Μετακίνηση σε άλλο αυτοκίνητο',
+ 'Make admin':'Ορισμός ως διαχειριστή','Make driver':'Ορισμός ως οδηγού','Max stints per race':'Μέγιστα stints ανά αγώνα','Move':'Μετακίνηση','Move to another team':'Μετακίνηση σε άλλο αυτοκίνητο',
  'My availability':'Η διαθεσιμότητά μου','Name':'Όνομα','New password':'Νέος κωδικός','Repeat new password':'Επανάληψη νέου κωδικού','Temporary password':'Προσωρινός κωδικός','Set password':'Ορισμός κωδικού','Save password':'Αποθήκευση κωδικού','Reset password':'Επαναφορά κωδικού',
  'No driver':'Χωρίς οδηγό','No drivers yet':'Δεν υπάρχουν οδηγοί ακόμα','No drivers yet. Add one from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Πρόσθεσε έναν από το μενού ⋯.','No drivers yet. Join from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Μπες από το μενού ⋯.',
- 'No limit':'Χωρίς όριο','Not limited':'Χωρίς όριο','No race, just a length':'Χωρίς event, μόνο διάρκεια','No stints yet':'Κανένα stint ακόμα','No stints yet. Tap to set your availability and request a stint.':'Κανένα stint ακόμα. Πάτα για να δηλώσεις διαθεσιμότητα και να ζητήσεις stint.',
+ 'No limit':'Χωρίς όριο','Not limited':'Χωρίς όριο','No race, just a length':'Χωρίς αγώνα, μόνο διάρκεια','No stints yet':'Κανένα stint ακόμα','No stints yet. Tap to set your availability and request a stint.':'Κανένα stint ακόμα. Πάτα για να δηλώσεις διαθεσιμότητα και να ζητήσεις stint.',
  'No teams yet. Each team picks its own day and start time: press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Κάθε αυτοκίνητο διαλέγει μέρα και ώρα εκκίνησης: πάτα','No teams yet. Press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Πάτα',
  'No track':'Χωρίς πίστα','Nobody right now.':'Κανείς αυτή τη στιγμή.','Not marked as available for all of it':'Η διαθεσιμότητα δεν καλύπτει όλο το διάστημα','Not used':'Δεν χρησιμοποιείται',
  'Nothing here stops the plan from saving; it’s a final look before race day.':'Τίποτα από αυτά δεν εμποδίζει την αποθήκευση· είναι ένας τελικός έλεγχος πριν τη μέρα του αγώνα.',
@@ -1934,32 +1974,32 @@ const EL={
  'Open':'Άνοιγμα','Other (type it)':'Άλλη (γράψ’ τη)','Overlap':'Επικάλυψη','Paste the whole post':'Επικόλλησε ολόκληρο το post','Post text':'Κείμενο του post',
  'Pit lane loss (s)':'Απώλεια στο pit lane (s)','Pit stops and tyres':'Pit stops και ελαστικά','Plan stints (fill the gaps)':'Πλάνο stints (κάλυψη κενών)','Plan stints for this gap':'Πλάνο stints για αυτό το κενό','Plan stints':'Πλάνο stints',
  'Practice first.':'Πρώτα δοκιμαστικά.','Profile saved.':'Το προφίλ αποθηκεύτηκε.','Quick what-ifs. Nothing here is saved to a team until you copy it.':'Γρήγοροι υπολογισμοί. Τίποτα δεν αποθηκεύεται σε αυτοκίνητο μέχρι να το αντιγράψεις.',
- 'Race':'Event','Race info':'Πληροφορίες event','Race name':'Όνομα event','Race options':'Επιλογές event','Race update':'Ενημέρωση αγώνα','Remove':'Αφαίρεση','Remove from team':'Αφαίρεση από το αυτοκίνητο','Remove stint':'Αφαίρεση stint',
+ 'Race':'Αγώνας','Race info':'Πληροφορίες αγώνα','Race name':'Όνομα αγώνα','Race options':'Επιλογές αγώνα','Race update':'Ενημέρωση αγώνα','Remove':'Αφαίρεση','Remove from team':'Αφαίρεση από το αυτοκίνητο','Remove stint':'Αφαίρεση stint',
  'Remove permanently':'Οριστική αφαίρεση','Rest between stints':'Ξεκούραση μεταξύ stints','Rules':'Κανονισμοί','Safety margin (laps)':'Περιθώριο ασφαλείας (γύροι)','Same start as one of your teams':'Ίδια εκκίνηση με ένα από τα αυτοκίνητά σας',
  'Save':'Αποθήκευση','Save changes':'Αποθήκευση αλλαγών','Save events':'Αποθήκευση events','Save profile':'Αποθήκευση προφίλ','Save anyway':'Αποθήκευση έτσι κι αλλιώς','Set it':'Ορισμός',
  'Show on screen':'Εμφάνιση στην οθόνη','Show when you can drive: press':'Δήλωσε πότε μπορείς να οδηγήσεις: πάτα','Stint':'Stint','Stint moved.':'Το stint μετακινήθηκε.','Stint changed.':'Το stint άλλαξε.','Stint added.':'Το stint προστέθηκε.',
  'Stint removed.':'Το stint αφαιρέθηκε.','Stint changed. It needs the leader’s approval again.':'Το stint άλλαξε. Χρειάζεται ξανά έγκριση από τον αρχηγό.','Stint requested. The team leader will approve it.':'Το stint ζητήθηκε. Ο υπεύθυνος του αυτοκινήτου θα το εγκρίνει.',
- 'Suspend':'Αναστολή','Tank (L)':'Ρεζερβουάρ (L)','Team':'Ομάδα','Team name':'Όνομα αυτοκινήτου','Teams pick their own day and start time inside the event.':'Κάθε αυτοκίνητο διαλέγει μέσα στο event τη δική του μέρα και ώρα εκκίνησης.',
- 'Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Κάθε αυτοκίνητο διαλέγει ώρα εκκίνησης μέσα σε αυτές τις μέρες, π.χ. Παρασκευή έως Κυριακή για ένα event Σαββατοκύριακου του LMU.',
+ 'Suspend':'Αναστολή','Tank (L)':'Ρεζερβουάρ (L)','Team':'Ομάδα','Team name':'Όνομα αυτοκινήτου','Teams pick their own day and start time inside the event.':'Κάθε αυτοκίνητο διαλέγει μέσα στον αγώνα τη δική του μέρα και ώρα εκκίνησης.',
+ 'Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Κάθε αυτοκίνητο διαλέγει ώρα εκκίνησης μέσα σε αυτές τις μέρες, π.χ. Παρασκευή έως Κυριακή για έναν αγώνα Σαββατοκύριακου του LMU.',
  'The team gets these car, pit and tyre figures. Its driver stint range stays as it is.':'Το αυτοκίνητο παίρνει αυτά τα στοιχεία pit και ελαστικών. Το εύρος stints ανά οδηγό μένει ως έχει.',
  'Time zone':'Ζώνη ώρας','To the finish':'Μέχρι τον τερματισμό','Track':'Πίστα','Track name':'Όνομα πίστας','Tyre change adds (s)':'Η αλλαγή ελαστικών προσθέτει (s)','Tyre life (laps)':'Διάρκεια ελαστικών (γύροι)','Tyre sets allowed':'Επιτρεπόμενα σετ ελαστικών',
- 'Undo':'Αναίρεση','Undone.':'Αναιρέθηκε.','Upcoming LMU team events':'Επερχόμενα team events του LMU','Use the split start time LMU shows for this event.':'Βάλε την ώρα εκκίνησης του split που δείχνει το LMU για αυτό το event.',
+ 'Undo':'Αναίρεση','Undone.':'Αναιρέθηκε.','Upcoming LMU team events':'Επερχόμενα team events του LMU','Use the split start time LMU shows for this event.':'Βάλε την ώρα εκκίνησης του split που δείχνει το LMU για αυτόν τον αγώνα.',
  'When does this team race?':'Πότε τρέχει αυτό το αυτοκίνητο;','Whole race':'Ολόκληρος ο αγώνας','You become the team’s leader. Other drivers join the team whose day and time suits them.':'Γίνεσαι ο υπεύθυνος του αυτοκινήτου. Οι άλλοι οδηγοί μπαίνουν στο αυτοκίνητο που τους βολεύει σε μέρα και ώρα.',
- 'You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'Δεν είσαι υπεύθυνος αυτοκινήτου σε επερχόμενο event. Οι υπεύθυνοι αυτοκινήτων και οι διαχειριστές μπορούν να αντιγράψουν στοιχεία στα αυτοκίνητά τους.',
+ 'You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'Δεν είσαι υπεύθυνος αυτοκινήτου σε επερχόμενο αγώνα. Οι υπεύθυνοι αυτοκινήτων και οι διαχειριστές μπορούν να αντιγράψουν στοιχεία στα αυτοκίνητά τους.',
  'Your next stint:':'Το επόμενο stint σου:','Your profile':'Το προφίλ μου','Your races':'Οι αγώνες σου','Your time zone is taken from your device on first login. Change it here if it’s wrong.':'Η ζώνη ώρας σου παίρνεται από τη συσκευή στην πρώτη σύνδεση. Άλλαξέ την εδώ αν είναι λάθος.',
  'always on for LMU team events':'πάντα ενεργό στα team events του LMU','each.':'ο καθένας.','to check':'για έλεγχο','✓ Check plan':'✓ Έλεγχος πλάνου','Check plan':'Έλεγχος πλάνου',
  '· each team picks its own start':'· κάθε αυτοκίνητο διαλέγει τη δική του εκκίνηση','teams pick their start':'κάθε αυτοκίνητο διαλέγει εκκίνηση','No drivers yet ':'Δεν υπάρχουν οδηγοί ακόμα ',
  '⚠ Pending: waiting for the leader':'⚠ Σε αναμονή: περιμένει τον αρχηγό','Pending: waiting for the leader':'Σε αναμονή: περιμένει τον αρχηγό','Joined, no team yet':'Συμμετοχή χωρίς αυτοκίνητο ακόμα',
  'Plan':'Πλάνο','Suggestion':'Πρόταση','Strategy figures':'Στοιχεία στρατηγικής','Fair share':'Fair share','Who’s online':'Ποιοι είναι συνδεδεμένοι','Approve all pending':'Έγκριση όλων σε αναμονή',
- 'Reach fair share':'Κάλυψη fair share','Practice first':'Πρώτα δοκιμαστικά','Race moved: recheck availability':'Το event μετακινήθηκε: έλεγξε ξανά τη διαθεσιμότητά σου','Clock change during race':'Αλλαγή ώρας κατά τον αγώνα',
- 'In':'Στην','no stint yet':'κανένα stint ακόμα','Past races':'Προηγούμενα events','Language':'Γλώσσα','English':'English','Ελληνικά':'Ελληνικά',
+ 'Reach fair share':'Κάλυψη fair share','Practice first':'Πρώτα δοκιμαστικά','Race moved: recheck availability':'Ο αγώνας μετακινήθηκε: έλεγξε ξανά τη διαθεσιμότητά σου','Clock change during race':'Αλλαγή ώρας κατά τον αγώνα',
+ 'In':'Στην','no stint yet':'κανένα stint ακόμα','Past races':'Προηγούμενοι αγώνες','Language':'Γλώσσα','English':'English','Ελληνικά':'Ελληνικά',
  'Sign in':'Σύνδεση','Create account':'Δημιουργία λογαριασμού','Password':'Κωδικός','Your name':'Το όνομά σου','Forgot password?':'Ξέχασες τον κωδικό;',
  'Pick your name':'Διάλεξε το όνομά σου','Choose your password':'Διάλεξε τον κωδικό σου','Waiting for approval':'Σε αναμονή έγκρισης',
  'Pick a day.':'Διάλεξε μέρα.','Type the start time, e.g. 1800.':'Γράψε την ώρα εκκίνησης, π.χ. 1800.','That isn’t a time. Type it like 1800 or 18:00.':'Αυτό δεν είναι ώρα. Γράψ’ την π.χ. 1800 ή 18:00.',
  'That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.':'Αυτό δεν είναι χρόνος γύρου. Γράψε τα ψηφία, π.χ. 1585 για 1:58.5.','Not a time yet':'Δεν είναι ακόμα ώρα','Not a lap time yet':'Δεν είναι ακόμα χρόνος γύρου',
- 'Enter the approximate lap time, e.g. 159 for 1:59.0.':'Γράψε τον εκτιμώμενο χρόνο γύρου, π.χ. 159 για 1:59.0.','There’s already a team with that name in this event.':'Υπάρχει ήδη αυτοκίνητο με αυτό το όνομα σε αυτό το event.',
+ 'Enter the approximate lap time, e.g. 159 for 1:59.0.':'Γράψε τον εκτιμώμενο χρόνο γύρου, π.χ. 159 για 1:59.0.','There’s already a team with that name in this event.':'Υπάρχει ήδη αυτοκίνητο με αυτό το όνομα σε αυτόν τον αγώνα.',
  'Pick the first day.':'Διάλεξε την πρώτη μέρα.','The last day can’t be before the first day.':'Η τελευταία μέρα δεν μπορεί να είναι πριν από την πρώτη.',
- 'You joined this race. Now pick a team (its ⋯ menu) or create one.':'Δήλωσες συμμετοχή. Τώρα διάλεξε αυτοκίνητο (από το μενού ⋯ του) ή δημιούργησε ένα.','You left this race.':'Αποχώρησες από το event.',
+ 'You joined this race. Now pick a team (its ⋯ menu) or create one.':'Δήλωσες συμμετοχή. Τώρα διάλεξε αυτοκίνητο (από το μενού ⋯ του) ή δημιούργησε ένα.','You left this race.':'Αποχώρησες από τον αγώνα.',
  'Click a stint to select it · double-click to edit · right-click for options · drag to move, drag its ends to resize · + in a gap to fill it.':'Κλικ σε stint για επιλογή · διπλό κλικ για επεξεργασία · δεξί κλικ για επιλογές · σύρε για μετακίνηση, σύρε τις άκρες για αλλαγή μεγέθους · + σε κενό για να το καλύψεις.',
  'Tap a stint to select it · double-tap to edit · press and hold to move · tap + in a gap to fill it.':'Πάτα ένα stint για επιλογή · διπλό πάτημα για επεξεργασία · κράτα πατημένο για μετακίνηση · πάτα + σε κενό για να το καλύψεις.',
  'No LMU team events imported for this week. Press Import schedule and paste the Discord post.':'Δεν έχουν εισαχθεί team events του LMU για αυτή την εβδομάδα. Πάτα «Εισαγωγή προγράμματος» και επικόλλησε το post του Discord.',
@@ -1980,7 +2020,7 @@ const EL={
  'Title (Greek)':'Τίτλος (Ελληνικά)','Title (English)':'Τίτλος (Αγγλικά)','Text (Greek)':'Κείμενο (Ελληνικά)','Text (English)':'Κείμενο (Αγγλικά)',
  'Use the buttons above the text, or type: empty line = new paragraph · **bold** · *italic* · # heading · ## subheading · - list · [text](https://link). Photos sit in their own paragraph. If the English is empty, the English site shows the Greek.':'Χρησιμοποίησε τα κουμπιά πάνω από το κείμενο ή γράψε: κενή γραμμή = νέα παράγραφος · **έντονα** · *πλάγια* · # επικεφαλίδα · ## υποεπικεφαλίδα · - λίστα · [κείμενο](https://σύνδεσμος). Οι φωτογραφίες μπαίνουν σε δική τους παράγραφο. Αν το αγγλικό μείνει κενό, η αγγλική σελίδα δείχνει το ελληνικό.',
  'Formatting':'Μορφοποίηση',
- 'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό, τα κανάλια σου και ο αριθμός των events. Ποτέ το email ή η διαθεσιμότητά σου.',
+ 'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό, τα κανάλια σου και ο αριθμός των αγώνων σου. Ποτέ το email ή η διαθεσιμότητά σου.',
  'Your channels':'Τα κανάλια σου','Shown on the website’s Live page, with a LIVE mark while you stream.':'Εμφανίζονται στη σελίδα Live της ιστοσελίδας, με την ένδειξη ΖΩΝΤΑΝΑ όσο μεταδίδεις.',
  'YouTube: paste your channel address, e.g. https://www.youtube.com/@name':'YouTube: βάλε τη διεύθυνση του καναλιού σου, π.χ. https://www.youtube.com/@name','Twitch: paste your channel address, e.g. https://www.twitch.tv/name':'Twitch: βάλε τη διεύθυνση του καναλιού σου, π.χ. https://www.twitch.tv/name',
  'Run migration 29 in Supabase first.':'Τρέξε πρώτα το migration 29 στο Supabase.','Only admins can see this.':'Μόνο οι διαχειριστές το βλέπουν.',
@@ -2000,7 +2040,7 @@ const EL={
  'Streaming now? Paste the link of your stream and choose how long. The website shows you as live on the Live page until then, or until you stop it. Turn on “Show me on the team page” first, or the website won’t show you.':'Μεταδίδεις τώρα; Βάλε τον σύνδεσμο της μετάδοσής σου και διάλεξε για πόσο. Η ιστοσελίδα σε δείχνει live στη σελίδα Live μέχρι τότε ή μέχρι να το σταματήσεις. Άνοιξε πρώτα το «Εμφάνισέ με στη σελίδα ομάδας», αλλιώς η ιστοσελίδα δεν θα σε δείξει.','Twitch not connected':'Το Twitch δεν έχει συνδεθεί','YouTube channel not found':'Το κανάλι YouTube δεν βρέθηκε','Address not recognised':'Η διεύθυνση δεν αναγνωρίστηκε','YouTube key missing':'Λείπει το κλειδί YouTube','Link of the stream':'Σύνδεσμος της μετάδοσης','YouTube today':'YouTube σήμερα','On until':'Ενεργό μέχρι','Stopped.':'Σταμάτησε.','The website shows the team as live.':'Η ιστοσελίδα δείχνει την ομάδα live.',
  'Paste the link of the stream on YouTube or Twitch (it starts with https://).':'Βάλε τον σύνδεσμο της μετάδοσης στο YouTube ή στο Twitch (ξεκινά με https://).','Bold':'Έντονα','Italic':'Πλάγια','Heading':'Επικεφαλίδα','Subheading':'Υποεπικεφαλίδα','List':'Λίστα','Link address':'Διεύθυνση συνδέσμου','Add link':'Προσθήκη συνδέσμου',
  'Links must start with https://.':'Οι σύνδεσμοι πρέπει να ξεκινούν με https://.','Photo added. Type a short description in place of the selected word.':'Η φωτογραφία προστέθηκε. Γράψε μια σύντομη περιγραφή στη θέση της επιλεγμένης λέξης.',
- 'Cover image':'Εικόνα εξωφύλλου','Event (optional)':'Event (προαιρετικό)','None':'Κανένα','Link name':'Όνομα συνδέσμου','made from the title':'φτιάχνεται από τον τίτλο','Preview':'Προεπισκόπηση',
+ 'Cover image':'Εικόνα εξωφύλλου','Event (optional)':'Αγώνας (προαιρετικό)','None':'Κανένα','Link name':'Όνομα συνδέσμου','made from the title':'φτιάχνεται από τον τίτλο','Preview':'Προεπισκόπηση',
  'Update':'Ενημέρωση','Unpublish':'Απόσυρση','Publish':'Δημοσίευση','Save draft':'Αποθήκευση πρόχειρου','Delete':'Διαγραφή','Delete post':'Διαγραφή ανάρτησης',
  'Delete this post for good?':'Να διαγραφεί οριστικά αυτή η ανάρτηση;','Post published.':'Η ανάρτηση δημοσιεύτηκε.','Post updated.':'Η ανάρτηση ενημερώθηκε.','Post unpublished. It’s a draft again.':'Η ανάρτηση αποσύρθηκε. Είναι ξανά πρόχειρο.',
  'Draft saved.':'Το πρόχειρο αποθηκεύτηκε.','Post deleted.':'Η ανάρτηση διαγράφηκε.','The link name can only use a–z, 0–9 and dashes.':'Το όνομα συνδέσμου μπορεί να έχει μόνο a–z, 0–9 και παύλες.',
@@ -2011,7 +2051,7 @@ const EL={
  'No liveries yet. Add your car designs; the website shows them large and sharp.':'Δεν υπάρχουν liveries ακόμα. Πρόσθεσε τα σχέδια των αυτοκινήτων σας· η ιστοσελίδα τα δείχνει μεγάλα και καθαρά.',
  'No partners yet. The partner logos section stays hidden on the website until you add one.':'Δεν υπάρχουν συνεργάτες ακόμα. Η ενότητα με τα λογότυπα μένει κρυφή στην ιστοσελίδα μέχρι να προσθέσεις έναν.',
  'Add an image of the livery.':'Πρόσθεσε μια εικόνα της livery.','The website must start with https://':'Η διεύθυνση πρέπει να ξεκινά με https://','Saved.':'Αποθηκεύτηκε.','Deleted.':'Διαγράφηκε.','Delete this for good?':'Να διαγραφεί οριστικά;',
- 'Results can be entered once a team has raced.':'Τα αποτελέσματα μπαίνουν αφού τρέξει ένα αυτοκίνητο.','Type the positions after each event. Empty = not shown on the website.':'Γράψε τις θέσεις μετά από κάθε event. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Results can be entered once a team has raced.':'Τα αποτελέσματα μπαίνουν αφού τρέξει ένα αυτοκίνητο.','Type the positions after each event. Empty = not shown on the website.':'Γράψε τις θέσεις μετά από κάθε αγώνα. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
  'Overall':'Γενική','DNF':'DNF','Note':'Σημείωση','Result saved.':'Το αποτέλεσμα αποθηκεύτηκε.','Result cleared.':'Το αποτέλεσμα διαγράφηκε.','Positions are whole numbers from 1 to 200.':'Οι θέσεις είναι ακέραιοι από 1 έως 200.',
  'Home page':'Αρχική σελίδα','Slogan (Greek)':'Σύνθημα (Ελληνικά)','Slogan (English)':'Σύνθημα (Αγγλικά)','Line under the slogan (Greek)':'Γραμμή κάτω από το σύνθημα (Ελληνικά)','Line under the slogan (English)':'Γραμμή κάτω από το σύνθημα (Αγγλικά)',
  'Team page':'Σελίδα ομάδας','Team story (Greek)':'Ιστορία ομάδας (Ελληνικά)','Team story (English)':'Ιστορία ομάδας (Αγγλικά)','Partners page':'Σελίδα συνεργατών','Partner pitch (Greek)':'Κείμενο για συνεργάτες (Ελληνικά)',
@@ -2021,7 +2061,7 @@ const EL={
  'Mark replied':'Σήμανση ως απαντημένο','Mark done':'Σήμανση ως ολοκληρωμένο','Mark new':'Σήμανση ως νέο','Delete this message for good?':'Να διαγραφεί οριστικά αυτό το μήνυμα;',
  'Nothing here yet. Messages from the website’s Join us and Partner forms arrive here.':'Τίποτα ακόμα. Εδώ έρχονται τα μηνύματα από τις φόρμες «Γίνε μέλος» και «Συνεργασία» της ιστοσελίδας.',
  'On the website':'Στην ιστοσελίδα','Show me on the team page of the website':'Εμφάνισέ με στη σελίδα ομάδας της ιστοσελίδας',
- 'Only your name, photo, country, short bio and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό και ο αριθμός των events σου. Ποτέ το email ή η διαθεσιμότητά σου.',
+ 'Only your name, photo, country, short bio and number of events are shown. Never your email or availability.':'Εμφανίζονται μόνο το όνομα, η φωτογραφία, η χώρα, το σύντομο βιογραφικό και ο αριθμός των αγώνων σου. Ποτέ το email ή η διαθεσιμότητά σου.',
  'Photo':'Φωτογραφία','Country (2 letters, e.g. GR)':'Χώρα (2 γράμματα, π.χ. GR)','Short bio (Greek)':'Σύντομο βιογραφικό (Ελληνικά)','Short bio (English)':'Σύντομο βιογραφικό (Αγγλικά)','Save website profile':'Αποθήκευση προφίλ ιστοσελίδας',
  'Website profile saved.':'Το προφίλ ιστοσελίδας αποθηκεύτηκε.','Country: two letters, e.g. GR.':'Χώρα: δύο γράμματα, π.χ. GR.','Editor':'Συντάκτης','Make editor':'Ορισμός ως συντάκτη','Remove editor':'Αφαίρεση συντάκτη',
  'Filter':'Φίλτρο','Inbox (1)':'Εισερχόμενα (1)',
@@ -2043,8 +2083,8 @@ const EL={
  'Switch a position off to keep it free of ads everywhere.':'Απενεργοποίησε μια θέση για να μην εμφανίζονται ποτέ διαφημίσεις εκεί.','No changes':'Καμία αλλαγή','Unsaved changes':'Μη αποθηκευμένες αλλαγές',
  'Show me on the team page':'Εμφάνισέ με στη σελίδα ομάδας','Country':'Χώρα','Short bio':'Σύντομο βιογραφικό','Shown on the website between its dates.':'Εμφανίζεται στην ιστοσελίδα ανάμεσα στις ημερομηνίες της.',
  'Overall position':'Γενική θέση','Position in':'Θέση στην','e.g. 12':'π.χ. 12','e.g. 3':'π.χ. 3',
- 'After each event, type where each team finished: overall, and within its own class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε πού τερμάτισε κάθε ομάδα: στη γενική κατάταξη και μέσα στην κατηγορία της. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
- 'Position':'Θέση','After each event, type where each team finished in its class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε σε ποια θέση τερμάτισε κάθε αυτοκίνητο στην κατηγορία του. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'After each event, type where each team finished: overall, and within its own class. Empty = not shown on the website.':'Μετά από κάθε αγώνα, γράψε πού τερμάτισε κάθε αυτοκίνητο: στη γενική κατάταξη και μέσα στην κατηγορία του. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Position':'Θέση','After each event, type where each team finished in its class. Empty = not shown on the website.':'Μετά από κάθε αγώνα, γράψε σε ποια θέση τερμάτισε κάθε αυτοκίνητο στην κατηγορία του. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
  'The position is a whole number from 1 to 200.':'Η θέση είναι ακέραιος από 1 έως 200.',
  'What you publish here appears on the public website a couple of minutes later.':'Ό,τι δημοσιεύεις εδώ εμφανίζεται στη δημόσια ιστοσελίδα σε λίγα λεπτά.',
  'Publishing status unavailable. Run the step 4 database patch.':'Η κατάσταση δημοσίευσης δεν είναι διαθέσιμη. Τρέξε το patch της βάσης του βήματος 4.','Automatic publishing is not set up yet: the deploy hook is missing.':'Η αυτόματη δημοσίευση δεν έχει ρυθμιστεί ακόμα: λείπει το deploy hook.',
@@ -2072,7 +2112,7 @@ const EL={
  'Pages':'Σελίδες','A page switched off disappears from the menu, and its address leads to the home page. Privacy always stays.':'Μια σελίδα που απενεργοποιείς φεύγει από το μενού και η διεύθυνσή της οδηγεί στην αρχική. Η πολιτική απορρήτου μένει πάντα.',
  'Calendar & Results':'Πρόγραμμα & Αποτελέσματα','Live':'Live','Join us':'Γίνε μέλος','Team':'Ομάδα',
  'Home page sections':'Ενότητες αρχικής σελίδας','The big image with the slogan always comes first. Then these, in this order. Sponsor banners go after the 1st and 3rd shown section.':'Η μεγάλη εικόνα με το σύνθημα είναι πάντα πρώτη. Μετά ακολουθούν αυτές, με αυτή τη σειρά. Τα banners χορηγών μπαίνουν μετά την 1η και την 3η ενότητα που εμφανίζεται.',
- 'Next event and countdown':'Επόμενο event και αντίστροφη μέτρηση','Numbers (events, hours, laps, drivers)':'Αριθμοί (events, ώρες, γύροι, οδηγοί)','Latest news':'Τελευταία νέα','Live / Sponsors / Join us boxes':'Πλαίσια Live / Χορηγοί / Γίνε μέλος',
+ 'Next event and countdown':'Επόμενος αγώνας και αντίστροφη μέτρηση','Numbers (events, hours, laps, drivers)':'Αριθμοί (αγώνες, ώρες, γύροι, οδηγοί)','Latest news':'Τελευταία νέα','Live / Sponsors / Join us boxes':'Πλαίσια Live / Χορηγοί / Γίνε μέλος',
  'Move up':'Μετακίνηση πάνω','Move down':'Μετακίνηση κάτω','Undo changes':'Αναίρεση αλλαγών','Save appearance':'Αποθήκευση εμφάνισης','Save anyway':'Αποθήκευση έτσι κι αλλιώς',
  'All pages are switched off. The website will only have its home page. Continue?':'Όλες οι σελίδες είναι απενεργοποιημένες. Η ιστοσελίδα θα έχει μόνο την αρχική. Συνέχεια;',
  'Appearance saved. The website updates in a couple of minutes.':'Η εμφάνιση αποθηκεύτηκε. Η ιστοσελίδα ενημερώνεται σε λίγα λεπτά.',
@@ -2088,12 +2128,12 @@ const EL={
  'Sponsor statistics':'Στατιστικά χορηγών','Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.':'Προβολές και κλικ των banners ανά χορηγό. Μια προβολή μετρά όταν το banner είναι τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο· οι ανανεώσεις μετρούν ξανά.',
  'Banners':'Banners','Views · 30 days':'Προβολές · 30 μέρες','Clicks · 30 days':'Κλικ · 30 μέρες','Views · all':'Προβολές · σύνολο','Clicks · all':'Κλικ · σύνολο','Banners: running now / total.':'Banners: ενεργά τώρα / σύνολο.','No sponsor':'Χωρίς χορηγό',
  'Older results':'Παλαιότερα αποτελέσματα','+ Add older result':'+ Προσθήκη παλαιότερου αποτελέσματος','Older result':'Παλαιότερο αποτέλεσμα','Edit older result':'Επεξεργασία παλαιότερου αποτελέσματος','None yet.':'Κανένα ακόμα.',
- 'Events that aren’t in the app (for example before it existed). They appear in the website’s results and count in its numbers.':'Events που δεν υπάρχουν στο app (π.χ. πριν υπάρξει). Εμφανίζονται στα αποτελέσματα της ιστοσελίδας και μετρούν στους αριθμούς της.',
- 'Event':'Event','Date':'Ημερομηνία','Position in class':'Θέση στην κατηγορία','Hours raced':'Ώρες αγώνα','e.g. 24':'π.χ. 24','e.g. 340':'π.χ. 340','e.g. 24 Hours of Le Mans':'π.χ. 24 Hours of Le Mans',
+ 'Events that aren’t in the app (for example before it existed). They appear in the website’s results and count in its numbers.':'Αγώνες που δεν υπάρχουν στο app (π.χ. πριν υπάρξει). Εμφανίζονται στα αποτελέσματα της ιστοσελίδας και μετρούν στους αριθμούς της.',
+ 'Event':'Αγώνας','Date':'Ημερομηνία','Position in class':'Θέση στην κατηγορία','Hours raced':'Ώρες αγώνα','e.g. 24':'π.χ. 24','e.g. 340':'π.χ. 340','e.g. 24 Hours of Le Mans':'π.χ. 24 Hours of Le Mans',
  'Hours and laps are added to the website’s numbers as you type them.':'Οι ώρες και οι γύροι προστίθενται στους αριθμούς της ιστοσελίδας όπως τους γράφεις.','Type the position in class (1–200), or tick DNF.':'Γράψε τη θέση στην κατηγορία (1–200) ή τσέκαρε DNF.',
  'Hours: a number from 0 to 48.':'Ώρες: αριθμός από 0 έως 48.','Laps: a whole number from 0 to 5000.':'Γύροι: ακέραιος από 0 έως 5000.','Delete this result for good?':'Να διαγραφεί οριστικά αυτό το αποτέλεσμα;',
  'Numbers':'Αριθμοί','The website’s counter. Empty = counted automatically from results; type a number to show yours instead.':'Ο μετρητής της ιστοσελίδας. Κενό = υπολογίζεται αυτόματα από τα αποτελέσματα· γράψε αριθμό για να εμφανίζεται ο δικός σου.',
- 'Events':'Events','Hours':'Ώρες','Numbers: whole numbers only.':'Αριθμοί: μόνο ακέραιοι.',
+ 'Events':'Αγώνες','Hours':'Ώρες','Numbers: whole numbers only.':'Αριθμοί: μόνο ακέραιοι.',
  'Text next to the logo':'Κείμενο δίπλα στο λογότυπο','e.g. ARION Sim Racing (empty = none)':'π.χ. ARION Sim Racing (κενό = τίποτα)','On computers':'Σε υπολογιστές',
  'At the top of the page the logo is shown at this size; when you scroll it shrinks back into the bar.':'Στην κορυφή της σελίδας το λογότυπο εμφανίζεται σε αυτό το μέγεθος· όταν κάνεις κύλιση μικραίνει μέσα στη μπάρα.',
  'Logo size':'Μέγεθος λογότυπου','Blur of the top bar':'Θόλωμα της μπάρας','Invitation':'Πρόσκληση','Invitation copied. Paste it in Discord, email or chat.':'Η πρόσκληση αντιγράφηκε. Επικόλλησέ τη στο Discord, σε email ή σε συνομιλία.',
@@ -2119,10 +2159,10 @@ const RX=[
  [/^(\d+) offline$/,'$1 εκτός σύνδεσης'],[/^Online now (\d+)$/,'Συνδεδεμένοι τώρα $1'],
  [/^in (\d+) days$/,'σε $1 ημέρες'],[/^in (\d+) h$/,'σε $1 ώρες'],[/^in (\d+) min$/,'σε $1 λεπτά'],[/^started$/,'ξεκίνησε'],[/^in (\d+)d (\d+)h$/,'σε $1 ημ. $2 ώρ.'],[/^in (\d+)h (\d+)m$/,'σε $1 ώρ. $2 λ.'],[/^in (\d+) min$/,'σε $1 λεπτά'],
  [/^(.+) · in (\d+) days$/,'$1 · σε $2 ημέρες'],[/^(.+) · started$/,'$1 · ξεκίνησε'],[/^(.+) · in (\d+) h$/,'$1 · σε $2 ώρες'],[/^(.+) · in (\d+) min$/,'$1 · σε $2 λεπτά'],
- [/^(.+) · teams pick their start$/,'$1 · κάθε ομάδα διαλέγει εκκίνηση'],
+ [/^(.+) · teams pick their start$/,'$1 · κάθε αυτοκίνητο διαλέγει εκκίνηση'],
  [/^driving now$/,'οδηγείς τώρα'],[/^racing now$/,'τρέχει τώρα'],
  [/^Times shown in (.+)$/,'Ώρες σε $1'],[/^(.+) · Admin$/,'$1 · Διαχειριστής'],[/^(.+) · Driver$/,'$1 · Οδηγός'],
- [/^Approve all pending \((\d+)\)$/,'Έγκριση όλων σε αναμονή ($1)'],[/^Past races \((\d+)\)$/,'Προηγούμενα events ($1)'],
+ [/^Approve all pending \((\d+)\)$/,'Έγκριση όλων σε αναμονή ($1)'],[/^Past races \((\d+)\)$/,'Προηγούμενοι αγώνες ($1)'],
  [/^Roster, (\d+) waiting for approval$/,'Μέλη, $1 σε αναμονή έγκρισης'],[/^(\d+) drivers? waiting for approval$/,(m,n)=>`${n} ${gr(n,'οδηγός','οδηγοί')} σε αναμονή έγκρισης`],
  [/^(\d+) drivers · (\d+) waiting for approval$/,'$1 οδηγοί · $2 σε αναμονή έγκρισης'],
  [/^Add a stint for me from (.+)$/,'Προσθήκη stint για μένα από τις $1'],[/^Add a stint for me from the start of the gap \((.+)\)$/,'Προσθήκη stint για μένα από την αρχή του κενού ($1)'],
@@ -2168,9 +2208,9 @@ const RX=[
  [/^Average lap · (.+)$/,'Μέσος χρόνος γύρου · $1'],
  [/^Drivers use it until they enter their own; fair share is worked out from it\. ≈ race laps = (\d+)h ÷ this lap\.$/,'Οι οδηγοί τον χρησιμοποιούν μέχρι να βάλουν τον δικό τους· από αυτόν υπολογίζεται το fair share. ≈ γύροι αγώνα = $1h ÷ αυτόν τον χρόνο.'],
  [/^Drivers use it until they enter their own\. ≈ race laps = (\d+)h ÷ this lap\.$/,'Οι οδηγοί τον χρησιμοποιούν μέχρι να βάλουν τον δικό τους. ≈ γύροι αγώνα = $1h ÷ αυτόν τον χρόνο.'],
- [/^(.+?)\. Use the (\d+)-lap average LMU shows after a practice run\. It sets how long each of (your|their) stints lasts\.( Until then the team’s ≈(.+) is used\.)?$/,(m,a,n,w,u,l)=>`${a}. Βάλε τον μέσο όρο ${n} γύρων που δείχνει το LMU μετά από δοκιμαστικά. Ορίζει πόσο διαρκεί κάθε ${w==='your'?'δικό σου':'δικό του'} stint.${u?` Μέχρι τότε χρησιμοποιείται ο ≈${l} της ομάδας.`:''}`],
+ [/^(.+?)\. Use the (\d+)-lap average LMU shows after a practice run\. It sets how long each of (your|their) stints lasts\.( Until then the team’s ≈(.+) is used\.)?$/,(m,a,n,w,u,l)=>`${a}. Βάλε τον μέσο όρο ${n} γύρων που δείχνει το LMU μετά από δοκιμαστικά. Ορίζει πόσο διαρκεί κάθε ${w==='your'?'δικό σου':'δικό του'} stint.${u?` Μέχρι τότε χρησιμοποιείται ο ≈${l} του αυτοκινήτου.`:''}`],
  [/^Enter an average lap time, like (.+)\.$/,'Γράψε μέσο χρόνο γύρου, π.χ. $1.'],[/^Use at least (\d+) characters\.$/,'Χρησιμοποίησε τουλάχιστον $1 χαρακτήρες.'],
- [/^Use this device’s zone \((.+)\)$/,'Χρήση της ζώνης της συσκευής ($1)'],[/^Use ([A-Za-z_]+\/[A-Za-z_\/-]+)$/,'Χρήση $1'],[/^Keep ([A-Za-z_]+\/[A-Za-z_\/-]+)$/,'Διατήρηση $1'],
+ [/^Use this device’s zone \((.+)\)$/,'Χρήση της ζώνης της συσκευής ($1)'],[/^Use (UTC|[A-Za-z_]+\/[A-Za-z_\/+-]+)$/,'Χρήση $1'],[/^Keep (UTC|[A-Za-z_]+\/[A-Za-z_\/+-]+)$/,'Διατήρηση $1'],
  [/^This device is set to (.+), but your profile says (.+)\.$/,'Η συσκευή είναι ρυθμισμένη σε $1, αλλά το προφίλ σου λέει $2.'],
  [/^Set a simple temporary password and send it to (.+?)\.? They sign in with it and must pick their own straight away\.$/,'Όρισε έναν απλό προσωρινό κωδικό και στείλ’ τον σε: $1. Θα συνδεθεί με αυτόν και θα πρέπει αμέσως να διαλέξει δικό του.'],
  [/^Edit (.+)$/,'Επεξεργασία: $1'],[/^Open (.+)$/,'Άνοιγμα: $1'],[/^Fold (.+)$/,'Σύμπτυξη: $1'],[/^(.+) options$/,'Επιλογές: $1'],
@@ -2180,7 +2220,7 @@ const RX=[
  [/^max (\d+) stints · (\d+)h rest$/,'έως $1 stints · $2h ξεκούραση'],[/^no stint limit · (\d+)h rest$/,'χωρίς όριο stints · $1h ξεκούραση'],
  [/^In (.+) \((.+)\) · (.+)$/,(m,a,b,c)=>`Στο αυτοκίνητο ${a} (${b}) · ${tr(c)}`],
  [/^(\d+) small gaps?$/,(m,n)=>`${n} ${gr(n,'μικρό κενό','μικρά κενά')}`],
- [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στο αυτοκίνητο ${a}${b?` (με τον ≈${l} του αυτοκινήτου)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
+ [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στο αυτοκίνητο ${a}${b?` (με τον ≈${l} του αυτοκινήτου)`:''}. Πάτα + Προσθήκη stint στο αυτοκίνητο για το πρώτο σου stint.`],
  [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στο αυτοκίνητο ${b}${c?` (με τον ≈${l} του αυτοκινήτου· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
  [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Only drivers of the lineup “(.+)” can join this car\.$/,'Σε αυτό το αυτοκίνητο μπαίνουν μόνο οι οδηγοί του lineup «$1».'],[/^Only drivers of the lineup "(.+)" can join this car\.$/,'Σε αυτό το αυτοκίνητο μπαίνουν μόνο οι οδηγοί του lineup «$1».'],[/^Automatic now: (.+)$/,'Αυτόματα τώρα: $1'],[/^Logo size at the top of the page: (.+)$/,'Μέγεθος λογότυπου στην κορυφή: $1'],[/^Blur of the top bar: (.+)$/,'Θόλωμα της μπάρας: $1'],[/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^The logo is hard to see on this background \(contrast (.+):1\)\. A light version of the logo, or another background, would read better\.$/,'Το λογότυπο φαίνεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1). Μια ανοιχτόχρωμη εκδοχή του λογότυπου ή άλλο φόντο θα φαίνεται καλύτερα.'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
@@ -2191,7 +2231,9 @@ const RX=[
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
  [/^Week of (.+)$/,'Εβδομάδα $1'],[/^(\d+) laps per stint$/,'$1 γύροι ανά stint'],
  [/^Please fill in “(.+)”\.$/,(m,f)=>`Συμπλήρωσε το πεδίο «${tr(f)}».`],
- [/^“(.+)” already exists for those days\. Open it and add a team instead\.$/,'Το «$1» υπάρχει ήδη για αυτές τις μέρες. Άνοιξέ το και πρόσθεσε μια ομάδα.']
+ [/^“(.+)” already exists for those days\. Open it and add a team instead\.$/,'Το «$1» υπάρχει ήδη για αυτές τις μέρες. Άνοιξέ το και πρόσθεσε ένα αυτοκίνητο.'],
+ [/^Fill the gap (.+)$/,'Κάλυψε το κενό $1'],[/^Add to (.+)$/,'Προσθήκη στο $1'],[/^Average lap · (.+)$/,'Μέσος χρόνος γύρου · $1'],
+ [/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^Hand over to (.+)$/,'Παράδοση σε $1'],[/^\? laps · (.+)$/,'? γύροι · $1']
 ];
 function tr(s){if(LANG==='en')return trEn(s);if(LANG!=='el'||s==null)return s;const raw=String(s),k=raw.replace(/\s+/g,' ').trim();if(!k||!/[A-Za-z]/.test(k))return s;
   let v=EL[k];if(v==null)for(const [r,rep] of RX){if(r.test(k)){v=k.replace(r,rep);break}}
@@ -2218,9 +2260,9 @@ async function setLang(v){LANG=v;try{localStorage.setItem('ec-lang',v)}catch{}tr
 /* ---------- Website tab: the control panel for the public site ----------
    Admins manage everything; editors manage news only. The public site reads site_public(). */
 const isEd=()=>isAdm()||!!prof?.site_editor;
-let BRAND=null;
-async function loadBrand(){try{const {data}=await sb.from('site_settings').select('data').eq('id',1).maybeSingle();BRAND=data?.data?.brand||null}catch{BRAND=null}}
-function applyBrand(){const b=BRAND,box=document.querySelector('header.bar .brand');if(!box)return;const m=box.querySelector('.mark,.brandimg');
+let BRAND=null,ACCENT='';
+async function loadBrand(){try{const {data,error}=await sb.from('site_settings').select('data').eq('id',1).maybeSingle();if(error)return;const d=data?.data||{};BRAND=d.brand||null;ACCENT=(d.colors||{}).accent||'';cacheBrand()}catch{}}
+function applyBrand(){applyAccent(ACCENT);const b=BRAND,box=document.querySelector('header.bar .brand');if(!box)return;const m=box.querySelector('.mark,.brandimg');
   if(b&&b.logo&&b.in_app!==false){const img=`<img class="brandimg" src="${esc(b.logo)}" alt="ARION">`;if(m)m.outerHTML=img;const nm=box.querySelector('.brand-name');if(nm)nm.style.display=(b.name_text??(b.show_name===false?'':'x'))?'':'none'}
   if(b&&b.icon192&&b.in_app!==false){let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.href=b.icon192}}
 const SITE_PUBLIC_URL='https://arion-webpage.pages.dev/';
@@ -2606,7 +2648,7 @@ function lookPage(k,on){LOOK.pages_off=on?LOOK.pages_off.filter(x=>x!==k):[...ne
 function lookMove(i,d){const h=LOOK.home,j=i+d;if(j<0||j>=h.length)return;[h[i],h[j]]=[h[j],h[i]];lookRender()}
 async function saveLook(){const L=LOOK||lookState();if(L.pages_off.length===SPAGES.length&&!await askO({ok:'Save anyway'})('All pages are switched off. The website will only have its home page. Continue?'))return;
   const {warn,...brand}=L.brand||{};const data={...SITE.settings,colors:{accent:L.accent,background:L.background},pages_off:L.pages_off,home_order:L.home,brand};
-  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));LOOK=null;BRAND=data.brand;applyBrand();await render();note('Appearance saved. The website updates in a couple of minutes.',1)}
+  await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));LOOK=null;BRAND=data.brand;ACCENT=L.accent;cacheBrand();applyBrand();await render();note('Appearance saved. The website updates in a couple of minutes.',1)}
 
 // ---- Logo: main logo (header/footer), square icon (browser tab, phone home screen). Stored in site settings → brand.
 // SVG is drawn into a transparent PNG in the browser (safe, and the storage accepts it). Icons get the needed sizes.
