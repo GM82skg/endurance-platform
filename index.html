@@ -583,6 +583,8 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .li .rtags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-self:start}.li .rtags .stat{grid-row:auto;grid-column:auto;justify-self:auto}
 @media (max-width:720px){.li .rtags{grid-row:1;grid-column:2;justify-self:end;justify-content:flex-end;max-width:180px}}
 .spstats{margin-bottom:16px}.sphead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}.sphead>div{flex:1;min-width:220px}.spstats .tblwrap{padding:4px 12px 0}.spstats .ssecb{padding-top:0}.spstats>p{padding:4px 20px 16px}
+.numgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.numauto{font-size:12px;font-weight:500}@media (max-width:620px){.numgrid{grid-template-columns:1fr}}
+input[type=range]{width:100%;min-height:36px;accent-color:var(--tint)}
 /* ---------- sign-in ---------- */
 .auth{max-width:380px;margin:0 auto;padding:12vh 24px 48px;text-align:center}
 .auth .mark{width:64px;height:64px;border-radius:16px;margin:0 auto 18px}.auth .mark svg{width:36px;height:36px}
@@ -660,7 +662,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.3',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.4',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1853,9 +1855,9 @@ const gr=(n,one,many)=>+n===1?one:many;
 const EL={
  'My races':'Οι αγώνες μου','Calendar':'Ημερολόγιο','Strategy':'Στρατηγική','Roster':'Μέλη','Sign out':'Αποσύνδεση','Live':'Live',
  'Live: other drivers’ changes appear by themselves':'Live: οι αλλαγές των άλλων οδηγών εμφανίζονται αυτόματα','Sections':'Ενότητες',
- '+ New team':'+ Νέα ομάδα','New team':'Νέα ομάδα','Add':'Προσθήκη','Add a driver':'Προσθήκη οδηγού','Add a time':'Προσθήκη διαστήματος',
- 'Add drivers to the team first.':'Πρόσθεσε πρώτα οδηγούς στην ομάδα.','Add drivers to the team to see the minimum.':'Πρόσθεσε οδηγούς στην ομάδα για να δεις το ελάχιστο.',
- 'Add race':'Προσθήκη event','Add stint':'Προσθήκη stint','Add strategy':'Προσθήκη στρατηγικής','Add to calendar':'Προσθήκη στο ημερολόγιο','Add to team':'Προσθήκη στην ομάδα',
+ '+ New team':'+ Νέο αυτοκίνητο','New team':'Νέο αυτοκίνητο','Add':'Προσθήκη','Add a driver':'Προσθήκη οδηγού','Add a time':'Προσθήκη διαστήματος',
+ 'Add drivers to the team first.':'Πρόσθεσε πρώτα οδηγούς στο αυτοκίνητο.','Add drivers to the team to see the minimum.':'Πρόσθεσε οδηγούς στο αυτοκίνητο για να δεις το ελάχιστο.',
+ 'Add race':'Προσθήκη event','Add stint':'Προσθήκη stint','Add strategy':'Προσθήκη στρατηγικής','Add to calendar':'Προσθήκη στο ημερολόγιο','Add to team':'Προσθήκη στο αυτοκίνητο',
  'Admin':'Διαχειριστής','Driver':'Οδηγός','Drivers':'Οδηγοί','Admins only':'Μόνο για διαχειριστές','Dev':'Dev','Waiting':'Σε αναμονή',
  'All pending stints approved.':'Όλα τα stints που ήταν σε αναμονή εγκρίθηκαν.','Approve':'Έγκριση','Approved':'Εγκρίθηκε','Pending':'Σε αναμονή έγκρισης',
  'Approximate lap time for this race':'Εκτιμώμενος χρόνος γύρου για αυτό το event','Availability not set':'Χωρίς δηλωμένη διαθεσιμότητα','Availability set':'Η διαθεσιμότητα δηλώθηκε',
@@ -1863,53 +1865,53 @@ const EL={
  'Blocks access but keeps the account; approve again to undo':'Μπλοκάρει την πρόσβαση αλλά κρατά τον λογαριασμό· εγκρίνεις ξανά για αναίρεση',
  'Can drive':'Μπορώ να οδηγήσω','Maybe':'Ίσως','Cancel':'Ακύρωση','✕ Cancel':'✕ Ακύρωση','Car':'Αυτοκίνητο','Change':'Αλλαγή','Change password':'Αλλαγή κωδικού','Change your password':'Άλλαξε τον κωδικό σου',
  'Changing it sends it back to the leader for approval.':'Αν το αλλάξεις, θα χρειαστεί ξανά έγκριση από τον αρχηγό.',
- 'Changing the first day moves every team and stint with it, by whole days.':'Αν αλλάξεις την πρώτη μέρα, όλες οι ομάδες και τα stints μετακινούνται μαζί της, κατά ολόκληρες μέρες.',
- 'Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'Αν αλλάξεις την εκκίνηση, τα stints της ομάδας μετακινούνται μαζί της. Όλοι οι οδηγοί της ομάδας οδηγούν αυτό το αυτοκίνητο.',
+ 'Changing the first day moves every team and stint with it, by whole days.':'Αν αλλάξεις την πρώτη μέρα, όλα τα αυτοκίνητα και τα stints μετακινούνται μαζί της, κατά ολόκληρες μέρες.',
+ 'Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'Αν αλλάξεις την εκκίνηση, τα stints του αυτοκινήτου μετακινούνται μαζί της.',
  'Chequered flag':'Καρό σημαία','Race start':'Εκκίνηση','Choose':'Επιλογή','Class':'Κατηγορία','Close':'Κλείσιμο','Copy':'Αντιγραφή','Copy lineup for Discord':'Αντιγραφή σύνθεσης για Discord',
- 'Copy to a team':'Αντιγραφή σε ομάδα','Copy to a team…':'Αντιγραφή σε ομάδα…','Create event':'Δημιουργία event','Create team':'Δημιουργία ομάδας','Open event':'Άνοιγμα event',
- 'Day':'Μέρα','Delete race':'Διαγραφή event','Delete team':'Διαγραφή ομάδας','Delete this time':'Διαγραφή διαστήματος','Done':'Τέλος','✓ Done':'✓ Τέλος','Great':'Τέλεια',
- 'Driver stints':'Stints καυσίμου ανά οδηγό','Driver updated.':'Ο οδηγός ενημερώθηκε.','Earlier':'Νωρίτερα','Later':'Αργότερα','Edit':'Επεξεργασία','Edit race':'Επεξεργασία event','Edit team':'Επεξεργασία ομάδας',
+ 'Copy to a team':'Αντιγραφή σε αυτοκίνητο','Copy to a team…':'Αντιγραφή σε αυτοκίνητο…','Create event':'Δημιουργία event','Create team':'Δημιουργία αυτοκινήτου','Open event':'Άνοιγμα event',
+ 'Day':'Μέρα','Delete race':'Διαγραφή event','Delete team':'Διαγραφή αυτοκινήτου','Delete this time':'Διαγραφή διαστήματος','Done':'Τέλος','✓ Done':'✓ Τέλος','Great':'Τέλεια',
+ 'Driver stints':'Stints καυσίμου ανά οδηγό','Driver updated.':'Ο οδηγός ενημερώθηκε.','Earlier':'Νωρίτερα','Later':'Αργότερα','Edit':'Επεξεργασία','Edit race':'Επεξεργασία event','Edit team':'Επεξεργασία αυτοκινήτου',
  'Edit stint…':'Επεξεργασία stint…','Details…':'Λεπτομέρειες…','Email':'Email','Energy limit (%)':'Όριο ενέργειας (%)','Energy per lap (%)':'Ενέργεια ανά γύρο (%)',
- 'Event ready. Create a team and pick your day and start time, or join a team.':'Το event είναι έτοιμο. Δημιούργησε ομάδα και διάλεξε μέρα και ώρα εκκίνησης ή μπες σε μια ομάδα.',
- 'Event updated.':'Το event ενημερώθηκε.','Event added. Teams pick their own start time inside it.':'Το event προστέθηκε. Κάθε ομάδα διαλέγει μέσα σε αυτό τη δική της ώρα εκκίνησης.',
+ 'Event ready. Create a team and pick your day and start time, or join a team.':'Το event είναι έτοιμο. Δημιούργησε αυτοκίνητο και διάλεξε μέρα και ώρα εκκίνησης ή μπες σε ένα αυτοκίνητο.',
+ 'Event updated.':'Το event ενημερώθηκε.','Event added. Teams pick their own start time inside it.':'Το event προστέθηκε. Κάθε αυτοκίνητο διαλέγει μέσα σε αυτό τη δική του ώρα εκκίνησης.',
  'Fair share applies':'Ισχύει fair share','Fair share applies (on for team events)':'Ισχύει fair share (ενεργό στα team events)','Fair share – minimum laps':'Fair share – ελάχιστοι γύροι','Fair share OK':'Fair share OK',
- 'Fill this gap':'Κάλυψε αυτό το κενό','Final check of this team’s plan':'Τελικός έλεγχος του πλάνου της ομάδας','First day':'Πρώτη μέρα','Last day':'Τελευταία μέρα','Same day':'Ίδια μέρα','Fix':'Διόρθωση',
+ 'Fill this gap':'Κάλυψε αυτό το κενό','Final check of this team’s plan':'Τελικός έλεγχος του πλάνου του αυτοκινήτου','First day':'Πρώτη μέρα','Last day':'Τελευταία μέρα','Same day':'Ίδια μέρα','Fix':'Διόρθωση',
  'From':'Από','Until':'Έως','Fuel per lap (L)':'Καύσιμο ανά γύρο (L)','Full refill takes (s)':'Πλήρης ανεφοδιασμός (s)','Generate':'Δημιουργία','Covered':'Καλυμμένο',
- 'I can drive my team’s whole race':'Μπορώ να οδηγήσω σε όλο τον αγώνα της ομάδας μου','I can drive any time in this event':'Μπορώ να οδηγήσω οποιαδήποτε ώρα σε αυτό το event',
+ 'I can drive my team’s whole race':'Μπορώ να οδηγήσω σε όλο τον αγώνα του αυτοκινήτου μου','I can drive any time in this event':'Μπορώ να οδηγήσω οποιαδήποτε ώρα σε αυτό το event',
  'Import LMU schedule':'Εισαγωγή προγράμματος LMU','Import schedule':'Εισαγωγή προγράμματος','Join this race':'Δήλωση συμμετοχής','✓ You’ve joined this race':'✓ Έχεις δηλώσει συμμετοχή',
- 'Join this team':'Μπες σε αυτή την ομάδα','Move me to this team':'Μετακίνησέ με σε αυτή την ομάδα','Laps':'Γύροι','Laps planned':'Γύροι στο πλάνο','Start':'Εκκίνηση','Start time':'Ώρα εκκίνησης',
- 'Leave fuel or energy empty if your class doesn’t use it':'Άφησε κενό το καύσιμο ή την ενέργεια αν η κατηγορία σου δεν τα χρησιμοποιεί','Leave it':'Άφησέ το','Leave team':'Αποχώρηση από την ομάδα','Leave this race':'Αποχώρηση από το event',
+ 'Join this team':'Μπες σε αυτό το αυτοκίνητο','Move me to this team':'Μετακίνησέ με σε αυτό το αυτοκίνητο','Laps':'Γύροι','Laps planned':'Γύροι στο πλάνο','Start':'Εκκίνηση','Start time':'Ώρα εκκίνησης',
+ 'Leave fuel or energy empty if your class doesn’t use it':'Άφησε κενό το καύσιμο ή την ενέργεια αν η κατηγορία σου δεν τα χρησιμοποιεί','Leave it':'Άφησέ το','Leave team':'Αποχώρηση από το αυτοκίνητο','Leave this race':'Αποχώρηση από το event',
  'Length':'Διάρκεια','Lineup copied. Paste it in Discord.':'Η σύνθεση αντιγράφηκε. Επικόλλησέ τη στο Discord.','Longest':'Μεγαλύτερο','Shortest':'Μικρότερο',
- 'Make admin':'Ορισμός ως διαχειριστή','Make driver':'Ορισμός ως οδηγού','Max stints per race':'Μέγιστα stints ανά event','Move':'Μετακίνηση','Move to another team':'Μετακίνηση σε άλλη ομάδα',
+ 'Make admin':'Ορισμός ως διαχειριστή','Make driver':'Ορισμός ως οδηγού','Max stints per race':'Μέγιστα stints ανά event','Move':'Μετακίνηση','Move to another team':'Μετακίνηση σε άλλο αυτοκίνητο',
  'My availability':'Η διαθεσιμότητά μου','Name':'Όνομα','New password':'Νέος κωδικός','Repeat new password':'Επανάληψη νέου κωδικού','Temporary password':'Προσωρινός κωδικός','Set password':'Ορισμός κωδικού','Save password':'Αποθήκευση κωδικού','Reset password':'Επαναφορά κωδικού',
  'No driver':'Χωρίς οδηγό','No drivers yet':'Δεν υπάρχουν οδηγοί ακόμα','No drivers yet. Add one from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Πρόσθεσε έναν από το μενού ⋯.','No drivers yet. Join from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Μπες από το μενού ⋯.',
  'No limit':'Χωρίς όριο','Not limited':'Χωρίς όριο','No race, just a length':'Χωρίς event, μόνο διάρκεια','No stints yet':'Κανένα stint ακόμα','No stints yet. Tap to set your availability and request a stint.':'Κανένα stint ακόμα. Πάτα για να δηλώσεις διαθεσιμότητα και να ζητήσεις stint.',
- 'No teams yet. Each team picks its own day and start time: press':'Δεν υπάρχουν ομάδες ακόμα. Κάθε ομάδα διαλέγει μέρα και ώρα εκκίνησης: πάτα','No teams yet. Press':'Δεν υπάρχουν ομάδες ακόμα. Πάτα',
+ 'No teams yet. Each team picks its own day and start time: press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Κάθε αυτοκίνητο διαλέγει μέρα και ώρα εκκίνησης: πάτα','No teams yet. Press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Πάτα',
  'No track':'Χωρίς πίστα','Nobody right now.':'Κανείς αυτή τη στιγμή.','Not marked as available for all of it':'Η διαθεσιμότητα δεν καλύπτει όλο το διάστημα','Not used':'Δεν χρησιμοποιείται',
  'Nothing here stops the plan from saving; it’s a final look before race day.':'Τίποτα από αυτά δεν εμποδίζει την αποθήκευση· είναι ένας τελικός έλεγχος πριν τη μέρα του αγώνα.',
  'Now':'Τώρα','OK':'OK','Offline':'Εκτός σύνδεσης','Online now':'Συνδεδεμένοι τώρα','Online now ':'Συνδεδεμένοι τώρα ',
  'Only admins see emails and these buttons. Suspend blocks a driver but keeps their account (approve again to undo). Remove deletes the driver for good.':'Μόνο οι διαχειριστές βλέπουν τα email και αυτά τα κουμπιά. Η «Αναστολή» μπλοκάρει έναν οδηγό αλλά κρατά τον λογαριασμό του (εγκρίνεις ξανά για αναίρεση). Η «Αφαίρεση» διαγράφει τον οδηγό οριστικά.',
- 'Only the driver or the team leader can change this stint.':'Μόνο ο οδηγός ή ο αρχηγός της ομάδας μπορεί να αλλάξει αυτό το stint.','Only the team leader can fill this gap.':'Μόνο ο αρχηγός της ομάδας μπορεί να καλύψει αυτό το κενό.',
- 'Only the drivers involved or the team leader can close it.':'Μόνο οι οδηγοί που εμπλέκονται ή ο αρχηγός της ομάδας μπορούν να το κλείσουν.','Only the team leader can change these stints.':'Μόνο ο αρχηγός της ομάδας μπορεί να αλλάξει αυτά τα stints.',
+ 'Only the driver or the team leader can change this stint.':'Μόνο ο οδηγός ή ο υπεύθυνος του αυτοκινήτου μπορεί να αλλάξει αυτό το stint.','Only the team leader can fill this gap.':'Μόνο ο υπεύθυνος του αυτοκινήτου μπορεί να καλύψει αυτό το κενό.',
+ 'Only the drivers involved or the team leader can close it.':'Μόνο οι οδηγοί που εμπλέκονται ή ο υπεύθυνος του αυτοκινήτου μπορούν να το κλείσουν.','Only the team leader can change these stints.':'Μόνο ο υπεύθυνος του αυτοκινήτου μπορεί να αλλάξει αυτά τα stints.',
  'Open':'Άνοιγμα','Other (type it)':'Άλλη (γράψ’ τη)','Overlap':'Επικάλυψη','Paste the whole post':'Επικόλλησε ολόκληρο το post','Post text':'Κείμενο του post',
  'Pit lane loss (s)':'Απώλεια στο pit lane (s)','Pit stops and tyres':'Pit stops και ελαστικά','Plan stints (fill the gaps)':'Πλάνο stints (κάλυψη κενών)','Plan stints for this gap':'Πλάνο stints για αυτό το κενό','Plan stints':'Πλάνο stints',
- 'Practice first.':'Πρώτα δοκιμαστικά.','Profile saved.':'Το προφίλ αποθηκεύτηκε.','Quick what-ifs. Nothing here is saved to a team until you copy it.':'Γρήγοροι υπολογισμοί. Τίποτα δεν αποθηκεύεται σε ομάδα μέχρι να το αντιγράψεις.',
- 'Race':'Event','Race info':'Πληροφορίες event','Race name':'Όνομα event','Race options':'Επιλογές event','Race update':'Ενημέρωση αγώνα','Remove':'Αφαίρεση','Remove from team':'Αφαίρεση από την ομάδα','Remove stint':'Αφαίρεση stint',
- 'Remove permanently':'Οριστική αφαίρεση','Rest between stints':'Ξεκούραση μεταξύ stints','Rules':'Κανονισμοί','Safety margin (laps)':'Περιθώριο ασφαλείας (γύροι)','Same start as one of your teams':'Ίδια εκκίνηση με μία από τις ομάδες σας',
+ 'Practice first.':'Πρώτα δοκιμαστικά.','Profile saved.':'Το προφίλ αποθηκεύτηκε.','Quick what-ifs. Nothing here is saved to a team until you copy it.':'Γρήγοροι υπολογισμοί. Τίποτα δεν αποθηκεύεται σε αυτοκίνητο μέχρι να το αντιγράψεις.',
+ 'Race':'Event','Race info':'Πληροφορίες event','Race name':'Όνομα event','Race options':'Επιλογές event','Race update':'Ενημέρωση αγώνα','Remove':'Αφαίρεση','Remove from team':'Αφαίρεση από το αυτοκίνητο','Remove stint':'Αφαίρεση stint',
+ 'Remove permanently':'Οριστική αφαίρεση','Rest between stints':'Ξεκούραση μεταξύ stints','Rules':'Κανονισμοί','Safety margin (laps)':'Περιθώριο ασφαλείας (γύροι)','Same start as one of your teams':'Ίδια εκκίνηση με ένα από τα αυτοκίνητά σας',
  'Save':'Αποθήκευση','Save changes':'Αποθήκευση αλλαγών','Save events':'Αποθήκευση events','Save profile':'Αποθήκευση προφίλ','Save anyway':'Αποθήκευση έτσι κι αλλιώς','Set it':'Ορισμός',
  'Show on screen':'Εμφάνιση στην οθόνη','Show when you can drive: press':'Δήλωσε πότε μπορείς να οδηγήσεις: πάτα','Stint':'Stint','Stint moved.':'Το stint μετακινήθηκε.','Stint changed.':'Το stint άλλαξε.','Stint added.':'Το stint προστέθηκε.',
- 'Stint removed.':'Το stint αφαιρέθηκε.','Stint changed. It needs the leader’s approval again.':'Το stint άλλαξε. Χρειάζεται ξανά έγκριση από τον αρχηγό.','Stint requested. The team leader will approve it.':'Το stint ζητήθηκε. Ο αρχηγός της ομάδας θα το εγκρίνει.',
- 'Suspend':'Αναστολή','Tank (L)':'Ρεζερβουάρ (L)','Team':'Ομάδα','Team name':'Όνομα ομάδας','Teams pick their own day and start time inside the event.':'Κάθε ομάδα διαλέγει μέσα στο event τη δική της μέρα και ώρα εκκίνησης.',
- 'Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Κάθε ομάδα διαλέγει ώρα εκκίνησης μέσα σε αυτές τις μέρες, π.χ. Παρασκευή έως Κυριακή για ένα event Σαββατοκύριακου του LMU.',
- 'The team gets these car, pit and tyre figures. Its driver stint range stays as it is.':'Η ομάδα παίρνει αυτά τα στοιχεία αυτοκινήτου, pit και ελαστικών. Το εύρος stints ανά οδηγό μένει ως έχει.',
+ 'Stint removed.':'Το stint αφαιρέθηκε.','Stint changed. It needs the leader’s approval again.':'Το stint άλλαξε. Χρειάζεται ξανά έγκριση από τον αρχηγό.','Stint requested. The team leader will approve it.':'Το stint ζητήθηκε. Ο υπεύθυνος του αυτοκινήτου θα το εγκρίνει.',
+ 'Suspend':'Αναστολή','Tank (L)':'Ρεζερβουάρ (L)','Team':'Ομάδα','Team name':'Όνομα αυτοκινήτου','Teams pick their own day and start time inside the event.':'Κάθε αυτοκίνητο διαλέγει μέσα στο event τη δική του μέρα και ώρα εκκίνησης.',
+ 'Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Κάθε αυτοκίνητο διαλέγει ώρα εκκίνησης μέσα σε αυτές τις μέρες, π.χ. Παρασκευή έως Κυριακή για ένα event Σαββατοκύριακου του LMU.',
+ 'The team gets these car, pit and tyre figures. Its driver stint range stays as it is.':'Το αυτοκίνητο παίρνει αυτά τα στοιχεία pit και ελαστικών. Το εύρος stints ανά οδηγό μένει ως έχει.',
  'Time zone':'Ζώνη ώρας','To the finish':'Μέχρι τον τερματισμό','Track':'Πίστα','Track name':'Όνομα πίστας','Tyre change adds (s)':'Η αλλαγή ελαστικών προσθέτει (s)','Tyre life (laps)':'Διάρκεια ελαστικών (γύροι)','Tyre sets allowed':'Επιτρεπόμενα σετ ελαστικών',
  'Undo':'Αναίρεση','Undone.':'Αναιρέθηκε.','Upcoming LMU team events':'Επερχόμενα team events του LMU','Use the split start time LMU shows for this event.':'Βάλε την ώρα εκκίνησης του split που δείχνει το LMU για αυτό το event.',
- 'When does this team race?':'Πότε τρέχει αυτή η ομάδα;','Whole race':'Ολόκληρος ο αγώνας','You become the team’s leader. Other drivers join the team whose day and time suits them.':'Γίνεσαι ο αρχηγός της ομάδας. Οι άλλοι οδηγοί μπαίνουν στην ομάδα που τους βολεύει σε μέρα και ώρα.',
- 'You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'Δεν είσαι αρχηγός ομάδας σε επερχόμενο event. Οι αρχηγοί ομάδων και οι διαχειριστές μπορούν να αντιγράψουν στοιχεία στις ομάδες τους.',
+ 'When does this team race?':'Πότε τρέχει αυτό το αυτοκίνητο;','Whole race':'Ολόκληρος ο αγώνας','You become the team’s leader. Other drivers join the team whose day and time suits them.':'Γίνεσαι ο υπεύθυνος του αυτοκινήτου. Οι άλλοι οδηγοί μπαίνουν στο αυτοκίνητο που τους βολεύει σε μέρα και ώρα.',
+ 'You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'Δεν είσαι υπεύθυνος αυτοκινήτου σε επερχόμενο event. Οι υπεύθυνοι αυτοκινήτων και οι διαχειριστές μπορούν να αντιγράψουν στοιχεία στα αυτοκίνητά τους.',
  'Your next stint:':'Το επόμενο stint σου:','Your profile':'Το προφίλ μου','Your races':'Οι αγώνες σου','Your time zone is taken from your device on first login. Change it here if it’s wrong.':'Η ζώνη ώρας σου παίρνεται από τη συσκευή στην πρώτη σύνδεση. Άλλαξέ την εδώ αν είναι λάθος.',
  'always on for LMU team events':'πάντα ενεργό στα team events του LMU','each.':'ο καθένας.','to check':'για έλεγχο','✓ Check plan':'✓ Έλεγχος πλάνου','Check plan':'Έλεγχος πλάνου',
- '· each team picks its own start':'· κάθε ομάδα διαλέγει τη δική της εκκίνηση','teams pick their start':'κάθε ομάδα διαλέγει εκκίνηση','No drivers yet ':'Δεν υπάρχουν οδηγοί ακόμα ',
- '⚠ Pending: waiting for the leader':'⚠ Σε αναμονή: περιμένει τον αρχηγό','Pending: waiting for the leader':'Σε αναμονή: περιμένει τον αρχηγό','Joined, no team yet':'Συμμετοχή χωρίς ομάδα ακόμα',
+ '· each team picks its own start':'· κάθε αυτοκίνητο διαλέγει τη δική του εκκίνηση','teams pick their start':'κάθε αυτοκίνητο διαλέγει εκκίνηση','No drivers yet ':'Δεν υπάρχουν οδηγοί ακόμα ',
+ '⚠ Pending: waiting for the leader':'⚠ Σε αναμονή: περιμένει τον αρχηγό','Pending: waiting for the leader':'Σε αναμονή: περιμένει τον αρχηγό','Joined, no team yet':'Συμμετοχή χωρίς αυτοκίνητο ακόμα',
  'Plan':'Πλάνο','Suggestion':'Πρόταση','Strategy figures':'Στοιχεία στρατηγικής','Fair share':'Fair share','Who’s online':'Ποιοι είναι συνδεδεμένοι','Approve all pending':'Έγκριση όλων σε αναμονή',
  'Reach fair share':'Κάλυψη fair share','Practice first':'Πρώτα δοκιμαστικά','Race moved: recheck availability':'Το event μετακινήθηκε: έλεγξε ξανά τη διαθεσιμότητά σου','Clock change during race':'Αλλαγή ώρας κατά τον αγώνα',
  'In':'Στην','no stint yet':'κανένα stint ακόμα','Past races':'Προηγούμενα events','Language':'Γλώσσα','English':'English','Ελληνικά':'Ελληνικά',
@@ -1917,9 +1919,9 @@ const EL={
  'Pick your name':'Διάλεξε το όνομά σου','Choose your password':'Διάλεξε τον κωδικό σου','Waiting for approval':'Σε αναμονή έγκρισης',
  'Pick a day.':'Διάλεξε μέρα.','Type the start time, e.g. 1800.':'Γράψε την ώρα εκκίνησης, π.χ. 1800.','That isn’t a time. Type it like 1800 or 18:00.':'Αυτό δεν είναι ώρα. Γράψ’ την π.χ. 1800 ή 18:00.',
  'That isn’t a lap time. Type the digits, e.g. 1585 for 1:58.5.':'Αυτό δεν είναι χρόνος γύρου. Γράψε τα ψηφία, π.χ. 1585 για 1:58.5.','Not a time yet':'Δεν είναι ακόμα ώρα','Not a lap time yet':'Δεν είναι ακόμα χρόνος γύρου',
- 'Enter the approximate lap time, e.g. 159 for 1:59.0.':'Γράψε τον εκτιμώμενο χρόνο γύρου, π.χ. 159 για 1:59.0.','There’s already a team with that name in this event.':'Υπάρχει ήδη ομάδα με αυτό το όνομα σε αυτό το event.',
+ 'Enter the approximate lap time, e.g. 159 for 1:59.0.':'Γράψε τον εκτιμώμενο χρόνο γύρου, π.χ. 159 για 1:59.0.','There’s already a team with that name in this event.':'Υπάρχει ήδη αυτοκίνητο με αυτό το όνομα σε αυτό το event.',
  'Pick the first day.':'Διάλεξε την πρώτη μέρα.','The last day can’t be before the first day.':'Η τελευταία μέρα δεν μπορεί να είναι πριν από την πρώτη.',
- 'You joined this race. Now pick a team (its ⋯ menu) or create one.':'Δήλωσες συμμετοχή. Τώρα διάλεξε ομάδα (από το μενού ⋯ της) ή δημιούργησε μία.','You left this race.':'Αποχώρησες από το event.',
+ 'You joined this race. Now pick a team (its ⋯ menu) or create one.':'Δήλωσες συμμετοχή. Τώρα διάλεξε αυτοκίνητο (από το μενού ⋯ του) ή δημιούργησε ένα.','You left this race.':'Αποχώρησες από το event.',
  'Click a stint to select it · double-click to edit · right-click for options · drag to move, drag its ends to resize · + in a gap to fill it.':'Κλικ σε stint για επιλογή · διπλό κλικ για επεξεργασία · δεξί κλικ για επιλογές · σύρε για μετακίνηση, σύρε τις άκρες για αλλαγή μεγέθους · + σε κενό για να το καλύψεις.',
  'Tap a stint to select it · double-tap to edit · press and hold to move · tap + in a gap to fill it.':'Πάτα ένα stint για επιλογή · διπλό πάτημα για επεξεργασία · κράτα πατημένο για μετακίνηση · πάτα + σε κενό για να το καλύψεις.',
  'No LMU team events imported for this week. Press Import schedule and paste the Discord post.':'Δεν έχουν εισαχθεί team events του LMU για αυτή την εβδομάδα. Πάτα «Εισαγωγή προγράμματος» και επικόλλησε το post του Discord.',
@@ -1950,7 +1952,7 @@ const EL={
  'No liveries yet. Add your car designs; the website shows them large and sharp.':'Δεν υπάρχουν liveries ακόμα. Πρόσθεσε τα σχέδια των αυτοκινήτων σας· η ιστοσελίδα τα δείχνει μεγάλα και καθαρά.',
  'No partners yet. The partner logos section stays hidden on the website until you add one.':'Δεν υπάρχουν συνεργάτες ακόμα. Η ενότητα με τα λογότυπα μένει κρυφή στην ιστοσελίδα μέχρι να προσθέσεις έναν.',
  'Add an image of the livery.':'Πρόσθεσε μια εικόνα της livery.','The website must start with https://':'Η διεύθυνση πρέπει να ξεκινά με https://','Saved.':'Αποθηκεύτηκε.','Deleted.':'Διαγράφηκε.','Delete this for good?':'Να διαγραφεί οριστικά;',
- 'Results can be entered once a team has raced.':'Τα αποτελέσματα μπαίνουν αφού τρέξει μια ομάδα.','Type the positions after each event. Empty = not shown on the website.':'Γράψε τις θέσεις μετά από κάθε event. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Results can be entered once a team has raced.':'Τα αποτελέσματα μπαίνουν αφού τρέξει ένα αυτοκίνητο.','Type the positions after each event. Empty = not shown on the website.':'Γράψε τις θέσεις μετά από κάθε event. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
  'Overall':'Γενική','DNF':'DNF','Note':'Σημείωση','Result saved.':'Το αποτέλεσμα αποθηκεύτηκε.','Result cleared.':'Το αποτέλεσμα διαγράφηκε.','Positions are whole numbers from 1 to 200.':'Οι θέσεις είναι ακέραιοι από 1 έως 200.',
  'Home page':'Αρχική σελίδα','Slogan (Greek)':'Σύνθημα (Ελληνικά)','Slogan (English)':'Σύνθημα (Αγγλικά)','Line under the slogan (Greek)':'Γραμμή κάτω από το σύνθημα (Ελληνικά)','Line under the slogan (English)':'Γραμμή κάτω από το σύνθημα (Αγγλικά)',
  'Team page':'Σελίδα ομάδας','Team story (Greek)':'Ιστορία ομάδας (Ελληνικά)','Team story (English)':'Ιστορία ομάδας (Αγγλικά)','Partners page':'Σελίδα συνεργατών','Partner pitch (Greek)':'Κείμενο για συνεργάτες (Ελληνικά)',
@@ -1983,7 +1985,7 @@ const EL={
  'Show me on the team page':'Εμφάνισέ με στη σελίδα ομάδας','Country':'Χώρα','Short bio':'Σύντομο βιογραφικό','Shown on the website between its dates.':'Εμφανίζεται στην ιστοσελίδα ανάμεσα στις ημερομηνίες της.',
  'Overall position':'Γενική θέση','Position in':'Θέση στην','e.g. 12':'π.χ. 12','e.g. 3':'π.χ. 3',
  'After each event, type where each team finished: overall, and within its own class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε πού τερμάτισε κάθε ομάδα: στη γενική κατάταξη και μέσα στην κατηγορία της. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
- 'Position':'Θέση','After each event, type where each team finished in its class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε σε ποια θέση τερμάτισε κάθε ομάδα στην κατηγορία της. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
+ 'Position':'Θέση','After each event, type where each team finished in its class. Empty = not shown on the website.':'Μετά από κάθε event, γράψε σε ποια θέση τερμάτισε κάθε αυτοκίνητο στην κατηγορία του. Κενό = δεν εμφανίζεται στην ιστοσελίδα.',
  'The position is a whole number from 1 to 200.':'Η θέση είναι ακέραιος από 1 έως 200.',
  'What you publish here appears on the public website a couple of minutes later.':'Ό,τι δημοσιεύεις εδώ εμφανίζεται στη δημόσια ιστοσελίδα σε λίγα λεπτά.',
  'Publishing status unavailable. Run the step 4 database patch.':'Η κατάσταση δημοσίευσης δεν είναι διαθέσιμη. Τρέξε το patch της βάσης του βήματος 4.','Automatic publishing is not set up yet: the deploy hook is missing.':'Η αυτόματη δημοσίευση δεν έχει ρυθμιστεί ακόμα: λείπει το deploy hook.',
@@ -2026,7 +2028,18 @@ const EL={
  'Preparing…':'Προετοιμασία…','Logo ready. Press Save appearance to put it on the website.':'Το λογότυπο είναι έτοιμο. Πάτα «Αποθήκευση εμφάνισης» για να μπει στην ιστοσελίδα.','This file can’t be read as an image.':'Αυτό το αρχείο δεν διαβάζεται ως εικόνα.',
  'Sponsor statistics':'Στατιστικά χορηγών','Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.':'Προβολές και κλικ των banners ανά χορηγό. Μια προβολή μετρά όταν το banner είναι τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο· οι ανανεώσεις μετρούν ξανά.',
  'Banners':'Banners','Views · 30 days':'Προβολές · 30 μέρες','Clicks · 30 days':'Κλικ · 30 μέρες','Views · all':'Προβολές · σύνολο','Clicks · all':'Κλικ · σύνολο','Banners: running now / total.':'Banners: ενεργά τώρα / σύνολο.','No sponsor':'Χωρίς χορηγό',
- 'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στην ομάδα','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(ομάδα)','your time':'η ώρα σου'
+ 'Older results':'Παλαιότερα αποτελέσματα','+ Add older result':'+ Προσθήκη παλαιότερου αποτελέσματος','Older result':'Παλαιότερο αποτέλεσμα','Edit older result':'Επεξεργασία παλαιότερου αποτελέσματος','None yet.':'Κανένα ακόμα.',
+ 'Events that aren’t in the app (for example before it existed). They appear in the website’s results and count in its numbers.':'Events που δεν υπάρχουν στο app (π.χ. πριν υπάρξει). Εμφανίζονται στα αποτελέσματα της ιστοσελίδας και μετρούν στους αριθμούς της.',
+ 'Event':'Event','Date':'Ημερομηνία','Position in class':'Θέση στην κατηγορία','Hours raced':'Ώρες αγώνα','e.g. 24':'π.χ. 24','e.g. 340':'π.χ. 340','e.g. 24 Hours of Le Mans':'π.χ. 24 Hours of Le Mans',
+ 'Hours and laps are added to the website’s numbers as you type them.':'Οι ώρες και οι γύροι προστίθενται στους αριθμούς της ιστοσελίδας όπως τους γράφεις.','Type the position in class (1–200), or tick DNF.':'Γράψε τη θέση στην κατηγορία (1–200) ή τσέκαρε DNF.',
+ 'Hours: a number from 0 to 48.':'Ώρες: αριθμός από 0 έως 48.','Laps: a whole number from 0 to 5000.':'Γύροι: ακέραιος από 0 έως 5000.','Delete this result for good?':'Να διαγραφεί οριστικά αυτό το αποτέλεσμα;',
+ 'Numbers':'Αριθμοί','The website’s counter. Empty = counted automatically from results; type a number to show yours instead.':'Ο μετρητής της ιστοσελίδας. Κενό = υπολογίζεται αυτόματα από τα αποτελέσματα· γράψε αριθμό για να εμφανίζεται ο δικός σου.',
+ 'Events':'Events','Hours':'Ώρες','Numbers: whole numbers only.':'Αριθμοί: μόνο ακέραιοι.',
+ 'Text next to the logo':'Κείμενο δίπλα στο λογότυπο','e.g. ARION Sim Racing (empty = none)':'π.χ. ARION Sim Racing (κενό = τίποτα)','On computers':'Σε υπολογιστές',
+ 'At the top of the page the logo is shown at this size; when you scroll it shrinks back into the bar.':'Στην κορυφή της σελίδας το λογότυπο εμφανίζεται σε αυτό το μέγεθος· όταν κάνεις κύλιση μικραίνει μέσα στη μπάρα.',
+ 'Logo size':'Μέγεθος λογότυπου','Blur of the top bar':'Θόλωμα της μπάρας','Invitation':'Πρόσκληση','Invitation copied. Paste it in Discord, email or chat.':'Η πρόσκληση αντιγράφηκε. Επικόλλησέ τη στο Discord, σε email ή σε συνομιλία.',
+ 'Logo size at the top of the page:':'Μέγεθος λογότυπου στην κορυφή:','Blur of the top bar:':'Θόλωμα της μπάρας:',
+ 'Use this suggestion':'Χρήση αυτής της πρότασης','Use from here':'Χρήση από εδώ','Join team':'Μπες στο αυτοκίνητο','Join':'Συμμετοχή','Lap time needed':'Χρειάζεται χρόνος γύρου','Covered · fair share OK':'Καλυμμένο · fair share OK','(team)':'(αυτοκίνητο)','your time':'η ώρα σου'
 };
 const RX=[
  [/^(\d+) laps?$/,(m,n)=>`${n} ${gr(n,'γύρος','γύροι')}`],
@@ -2050,7 +2063,7 @@ const RX=[
  [/^(\d+) drivers · (\d+) waiting for approval$/,'$1 οδηγοί · $2 σε αναμονή έγκρισης'],
  [/^Add a stint for me from (.+)$/,'Προσθήκη stint για μένα από τις $1'],[/^Add a stint for me from the start of the gap \((.+)\)$/,'Προσθήκη stint για μένα από την αρχή του κενού ($1)'],
  [/^Add a stint for (.+) from the start of the gap \((.+)\)$/,'Προσθήκη stint για $1 από την αρχή του κενού ($2)'],[/^Add a stint for (.+) from (.+)$/,'Προσθήκη stint για $1 από τις $2'],
- [/^Add a stint to (.+)$/,'Προσθήκη stint στην ομάδα $1'],[/^Add a stint for…$/,'Προσθήκη stint για…'],
+ [/^Add a stint to (.+)$/,'Προσθήκη stint στο αυτοκίνητο $1'],[/^Add a stint for…$/,'Προσθήκη stint για…'],
  [/^Extend (.+) to the finish \((\d+) laps, until (.+)\)$/,'Επέκταση: $1 μέχρι τον τερματισμό ($2 γύροι, έως $3)'],
  [/^Extend (.+) to fill the gap \((\d+) laps, until (.+)\)$/,'Επέκταση: $1 για να καλυφθεί το κενό ($2 γύροι, έως $3)'],
  [/^Extend (.+) to (\d+) laps so (.+) takes over$/,'Επέκταση: $1 σε $2 γύρους, ώστε να αναλάβει: $3'],
@@ -2081,13 +2094,13 @@ const RX=[
  [/^(\d+) drivers, ≈ (\d+) race laps \((\d+)h at ≈(.+)\) → at least$/,'$1 οδηγοί, ≈ $2 γύροι αγώνα ($3h με ≈$4) → τουλάχιστον'],
  [/^LMU’s Fair Share Rule: with (\d+) or more drivers, each must complete at least$/,'Κανόνας Fair Share του LMU: με $1 ή περισσότερους οδηγούς, ο καθένας πρέπει να ολοκληρώσει τουλάχιστον'],
  [/^(\d+)% ÷ the number of drivers$/,'$1% ÷ τον αριθμό των οδηγών'],[/^([\d.]+)% each$/,'$1% ο καθένας'],[/^(\d+) drivers$/,'$1 οδηγοί'],
- [/^of the team’s laps, rounded down\. If anyone falls short, the whole lineup gains no DR\/SR\.$/,'των γύρων της ομάδας, στρογγυλοποιημένο προς τα κάτω. Αν κάποιος δεν το πιάσει, όλη η σύνθεση δεν κερδίζει DR/SR.'],
- [/^each driver must drive (\d+)% ÷ drivers of the team’s laps$/,'κάθε οδηγός πρέπει να οδηγήσει τουλάχιστον το $1% ÷ αριθμό οδηγών από τους γύρους της ομάδας'],
+ [/^of the team’s laps, rounded down\. If anyone falls short, the whole lineup gains no DR\/SR\.$/,'των γύρων του αυτοκινήτου, στρογγυλοποιημένο προς τα κάτω. Αν κάποιος δεν το πιάσει, όλη η σύνθεση δεν κερδίζει DR/SR.'],
+ [/^each driver must drive (\d+)% ÷ drivers of the team’s laps$/,'κάθε οδηγός πρέπει να οδηγήσει τουλάχιστον το $1% ÷ αριθμό οδηγών από τους γύρους του αυτοκινήτου'],
  [/^· (\d+) more needed\.?$/,'· χρειάζονται άλλοι $1.'],[/^ · (\d+) more needed$/,' · χρειάζονται άλλοι $1'],[/^(\d+) more needed$/,'χρειάζονται άλλοι $1'],
  [/^(your|(.+)’s) total (\d+)\/~(\d+)( ✓)?$/,(m,a,b,x,y,z)=>`${a==='your'?'το σύνολό σου':'σύνολο '+b+':'} ${x}/~${y}${z||''}`],
  [/^= (.+) your time$/,'= $1 η ώρα σου'],[/^· your time \((.+)\)$/,'· η ώρα σου ($1)'],[/^Type it like (\d+) or (.+)$/,'Γράψ’ την π.χ. $1 ή $2'],[/^Type the digits: (\d+) = (.+)$/,'Γράψε τα ψηφία: $1 = $2'],
- [/^e\.g\. (\d+) for (.+)$/,'π.χ. $1 για $2'],[/^e\.g\. (.+)$/,'π.χ. $1'],[/^· optional, else the team’s ≈(.+)$/,'· προαιρετικό, αλλιώς ο ≈$1 της ομάδας'],[/^· optional$/,'· προαιρετικό'],
- [/^(\d{1,2}:\d{2}\.\d) \(team\)$/,'$1 (ομάδα)'],[/^(\d{1,2}:\d{2}\.\d) team$/,'$1 ομάδας'],[/^Average lap (.+?) \(team\) · (.+)$/,(m,a,b)=>`Μέσος χρόνος γύρου ${a} (ομάδα) · ${tr(b)}`],[/^Average lap (.+?) · (.+)$/,(m,a,b)=>`Μέσος χρόνος γύρου ${a} · ${tr(b)}`],
+ [/^e\.g\. (\d+) for (.+)$/,'π.χ. $1 για $2'],[/^e\.g\. (.+)$/,'π.χ. $1'],[/^· optional, else the team’s ≈(.+)$/,'· προαιρετικό, αλλιώς ο ≈$1 του αυτοκινήτου'],[/^· optional$/,'· προαιρετικό'],
+ [/^(\d{1,2}:\d{2}\.\d) \(team\)$/,'$1 (αυτοκίνητο)'],[/^(\d{1,2}:\d{2}\.\d) team$/,'$1 αυτοκινήτου'],[/^Average lap (.+?) \(team\) · (.+)$/,(m,a,b)=>`Μέσος χρόνος γύρου ${a} (αυτοκίνητο) · ${tr(b)}`],[/^Average lap (.+?) · (.+)$/,(m,a,b)=>`Μέσος χρόνος γύρου ${a} · ${tr(b)}`],
  [/^Average lap · (.+)$/,'Μέσος χρόνος γύρου · $1'],
  [/^Drivers use it until they enter their own; fair share is worked out from it\. ≈ race laps = (\d+)h ÷ this lap\.$/,'Οι οδηγοί τον χρησιμοποιούν μέχρι να βάλουν τον δικό τους· από αυτόν υπολογίζεται το fair share. ≈ γύροι αγώνα = $1h ÷ αυτόν τον χρόνο.'],
  [/^Drivers use it until they enter their own\. ≈ race laps = (\d+)h ÷ this lap\.$/,'Οι οδηγοί τον χρησιμοποιούν μέχρι να βάλουν τον δικό τους. ≈ γύροι αγώνα = $1h ÷ αυτόν τον χρόνο.'],
@@ -2098,15 +2111,15 @@ const RX=[
  [/^Set a simple temporary password and send it to (.+?)\.? They sign in with it and must pick their own straight away\.$/,'Όρισε έναν απλό προσωρινό κωδικό και στείλ’ τον σε: $1. Θα συνδεθεί με αυτόν και θα πρέπει αμέσως να διαλέξει δικό του.'],
  [/^Edit (.+)$/,'Επεξεργασία: $1'],[/^Open (.+)$/,'Άνοιγμα: $1'],[/^Fold (.+)$/,'Σύμπτυξη: $1'],[/^(.+) options$/,'Επιλογές: $1'],
  [/^Plan stints · (.+)$/,'Πλάνο stints · $1'],[/^Strategy · (.+)$/,'Στρατηγική · $1'],[/^Check plan · (.+)$/,'Έλεγχος πλάνου · $1'],[/^Race update · (.+)$/,'Ενημέρωση αγώνα · $1'],
- [/^Figures copied to (.+)\.$/,'Τα στοιχεία αντιγράφηκαν στην ομάδα $1.'],[/^(.+) · joins the race$/,'$1 · δηλώνει συμμετοχή'],
+ [/^Figures copied to (.+)\.$/,'Τα στοιχεία αντιγράφηκαν στο αυτοκίνητο $1.'],[/^(.+) · joins the race$/,'$1 · δηλώνει συμμετοχή'],
  [/^Take over from (.+)$/,'Παραλαβή από: $1'],[/^Hand over to (.+)$/,'Παράδοση σε: $1'],
  [/^max (\d+) stints · (\d+)h rest$/,'έως $1 stints · $2h ξεκούραση'],[/^no stint limit · (\d+)h rest$/,'χωρίς όριο stints · $1h ξεκούραση'],
- [/^In (.+) \((.+)\) · (.+)$/,(m,a,b,c)=>`Στην ομάδα ${a} (${b}) · ${tr(c)}`],
+ [/^In (.+) \((.+)\) · (.+)$/,(m,a,b,c)=>`Στο αυτοκίνητο ${a} (${b}) · ${tr(c)}`],
  [/^(\d+) small gaps?$/,(m,n)=>`${n} ${gr(n,'μικρό κενό','μικρά κενά')}`],
- [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στην ομάδα ${a}${b?` (με τον ≈${l} της ομάδας)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
- [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στην ομάδα ${b}${c?` (με τον ≈${l} της ομάδας· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
+ [/^You joined (.+?)( \(using the team’s ≈(.+) lap\))?\. Press \+ Add stint on the team to add your first stint\.$/,(m,a,b,l)=>`Μπήκες στο αυτοκίνητο ${a}${b?` (με τον ≈${l} του αυτοκινήτου)`:''}. Πάτα + Προσθήκη stint στην ομάδα για το πρώτο σου stint.`],
+ [/^(.+?) added to (.+?)( \(using the team’s ≈(.+) lap; tap it under the name to change\))?\.$/,(m,a,b,c,l)=>`${a}: προστέθηκε στο αυτοκίνητο ${b}${c?` (με τον ≈${l} του αυτοκινήτου· πάτα τον κάτω από το όνομα για αλλαγή)`:''}.`],
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
- [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^The logo is hard to see on this background \(contrast (.+):1\)\. A light version of the logo, or another background, would read better\.$/,'Το λογότυπο φαίνεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1). Μια ανοιχτόχρωμη εκδοχή του λογότυπου ή άλλο φόντο θα φαίνεται καλύτερα.'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
+ [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Automatic now: (.+)$/,'Αυτόματα τώρα: $1'],[/^Logo size at the top of the page: (.+)$/,'Μέγεθος λογότυπου στην κορυφή: $1'],[/^Blur of the top bar: (.+)$/,'Θόλωμα της μπάρας: $1'],[/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^The logo is hard to see on this background \(contrast (.+):1\)\. A light version of the logo, or another background, would read better\.$/,'Το λογότυπο φαίνεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1). Μια ανοιχτόχρωμη εκδοχή του λογότυπου ή άλλο φόντο θα φαίνεται καλύτερα.'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
  [/^This accent is hard to read on this background \(contrast (.+):1, at least 3:1 is recommended\)\. Choose a lighter or stronger colour\.$/,'Αυτό το χρώμα διαβάζεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1, συνιστάται τουλάχιστον 3:1). Διάλεξε πιο φωτεινό ή πιο έντονο χρώμα.'],
  [/^Show (.+)$/,(m,a)=>'Εμφάνιση: '+tr(a)],[/^Couldn’t read the list of texts from the website \((.+)\)\. Publish the latest website version first, then open this tab again\.$/,'Δεν διαβάστηκε η λίστα κειμένων από την ιστοσελίδα ($1). Ανέβασε πρώτα την τελευταία έκδοση της ιστοσελίδας και άνοιξε ξανά αυτή την καρτέλα.'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
@@ -2116,19 +2129,24 @@ const RX=[
  [/^Please fill in “(.+)”\.$/,(m,f)=>`Συμπλήρωσε το πεδίο «${tr(f)}».`],
  [/^“(.+)” already exists for those days\. Open it and add a team instead\.$/,'Το «$1» υπάρχει ήδη για αυτές τις μέρες. Άνοιξέ το και πρόσθεσε μια ομάδα.']
 ];
-function tr(s){if(LANG!=='el'||s==null)return s;const raw=String(s),k=raw.replace(/\s+/g,' ').trim();if(!k||!/[A-Za-z]/.test(k))return s;
+function tr(s){if(LANG==='en')return trEn(s);if(LANG!=='el'||s==null)return s;const raw=String(s),k=raw.replace(/\s+/g,' ').trim();if(!k||!/[A-Za-z]/.test(k))return s;
   let v=EL[k];if(v==null)for(const [r,rep] of RX){if(r.test(k)){v=k.replace(r,rep);break}}
   if(v==null&&k.includes(' · ')){const parts=k.split(' · '),t=parts.map(x=>{const y=tr(x);return y});if(t.some((y,i)=>y!==parts[i]))v=t.join(' · ')}
   if(v==null)return s;const lead=raw.match(/^\s*/)[0],trail=raw.match(/\s*$/)[0];return lead+v+trail}
 // Translate what appears on screen (text, placeholders, tooltips, labels). Names, LMU text and data are skipped.
 const NOTR='.notr,.rules p,.card.notes p,.tn,.nm .nl>button,.freechip,input,textarea,script,style,.clsb,code,select[name=uid],#ad0,.txrow .pf,.lookprev b';
-function trTree(root){if(LANG!=='el'||!root)return;const skip=n=>{const p=n.nodeType===3?n.parentElement:n;return !p||!!p.closest(NOTR)};
+function trTree(root){if(!root)return;const skip=n=>{const p=n.nodeType===3?n.parentElement:n;return !p||!!p.closest(NOTR)};
   if(root.nodeType===3){if(!skip(root)){const v=tr(root.nodeValue);if(v!==root.nodeValue)root.nodeValue=v}return}
   const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=tw.nextNode()){if(skip(n))continue;const v=tr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}
   (root.querySelectorAll?root.querySelectorAll('[placeholder],[title],[aria-label]'):[]).forEach(e=>{if(e.closest('.notr,.txrow .pf,.lookprev'))return;['placeholder','title','aria-label'].forEach(a=>{const v=e.getAttribute(a);if(v){const t=tr(v);if(t!==v)e.setAttribute(a,t)}})});
   if(root.nodeType===1)['placeholder','title','aria-label'].forEach(a=>{const v=root.getAttribute&&root.getAttribute(a);if(v){const t=tr(v);if(t!==v)root.setAttribute(a,t)}})}
+// English: the crew app calls an event entry a "car" (the code still says team).
+const ENX={'+ New team':'+ New car','New team':'New car','Add drivers to the team first.':'Add drivers to the car first.','Add drivers to the team to see the minimum.':'Add drivers to the car to see the minimum.','Add to team':'Add to car','Changing the first day moves every team and stint with it, by whole days.':'Changing the first day moves every car and stint with it, by whole days.','Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'Changing the start moves this car’s stints with it.','Copy to a team':'Copy to a car','Copy to a team…':'Copy to a car…','Create team':'Create car','Delete team':'Delete car','Edit team':'Edit car','Event ready. Create a team and pick your day and start time, or join a team.':'Event ready. Create a car and pick your day and start time, or join a car.','Event added. Teams pick their own start time inside it.':'Event added. Cars pick their own start time inside it.','Final check of this team’s plan':'Final check of this car’s plan','I can drive my team’s whole race':'I can drive my car’s whole race','Join this team':'Join this car','Move me to this team':'Move me to this car','Leave team':'Leave car','Move to another team':'Move to another car','No teams yet. Each team picks its own day and start time: press':'No cars yet. Each car picks its own day and start time: press','No teams yet. Press':'No cars yet. Press','Only the driver or the team leader can change this stint.':'Only the driver or the car leader can change this stint.','Only the team leader can fill this gap.':'Only the car leader can fill this gap.','Only the drivers involved or the team leader can close it.':'Only the drivers involved or the car leader can close it.','Only the team leader can change these stints.':'Only the car leader can change these stints.','Quick what-ifs. Nothing here is saved to a team until you copy it.':'Quick what-ifs. Nothing here is saved to a car until you copy it.','Remove from team':'Remove from car','Same start as one of your teams':'Same start as one of your cars','Stint requested. The team leader will approve it.':'Stint requested. The car leader will approve it.','Team name':'Car name','Teams pick their own day and start time inside the event.':'Cars pick their own day and start time inside the event.','Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Cars pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.','The team gets these car, pit and tyre figures. Its driver stint range stays as it is.':'The car gets these pit and tyre figures. Its driver stint range stays as it is.','When does this team race?':'When does this car race?','You become the team’s leader. Other drivers join the team whose day and time suits them.':'You become the car’s leader. Other drivers join the car whose day and time suits them.','You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'You don’t lead a car in an upcoming race. Car leaders and admins can copy figures to their cars.','· each team picks its own start':'· each car picks its own start','teams pick their start':'cars pick their start','Joined, no team yet':'Joined, no car yet','There’s already a team with that name in this event.':'There’s already a car with that name in this event.','You joined this race. Now pick a team (its ⋯ menu) or create one.':'You joined this race. Now pick a car (its ⋯ menu) or create one.','Results can be entered once a team has raced.':'Results can be entered once a car has raced.','After each event, type where each team finished in its class. Empty = not shown on the website.':'After each event, type where each car finished in its class. Empty = not shown on the website.','Join team':'Join car','(team)':'(car)'};
+const ENRX=[[/^(\d{1,2}:\d{2}\.\d) team$/,'$1 car'],[/the team’s ≈/g,'the car’s ≈'],[/Add stint on the team/g,'Add stint on the car'],[/drivers of the team’s laps/g,'drivers of the car’s laps'],[/of the team’s laps, rounded down/g,'of the car’s laps, rounded down'],[/^Average lap (.+?) \(team\)/,'Average lap $1 (car)']];
+function trEn(s){if(s==null)return s;const raw=String(s),k=raw.replace(/\s+/g,' ').trim();if(!k)return s;let v=ENX[k];
+  if(v==null){let t=k;for(const [r,rep] of ENRX)t=t.replace(r,rep);if(t!==k)v=t}if(v==null)return s;return raw.match(/^\s*/)[0]+v+raw.match(/\s*$/)[0]}
 let TROBS=null;
-function startTr(){document.documentElement.lang=LANG==='el'?'el':'en';if(LANG!=='el'||TROBS)return;trTree(document.body);
+function startTr(){document.documentElement.lang=LANG==='el'?'el':'en';if(TROBS)return;trTree(document.body);
   TROBS=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')trTree(m.target);else if(m.type==='attributes')trTree(m.target);else m.addedNodes.forEach(x=>trTree(x))}});
   TROBS.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label']})}
 async function setLang(v){LANG=v;try{localStorage.setItem('ec-lang',v)}catch{}try{if(me)await sb.from('profiles').update({lang:v}).eq('id',me.id)}catch{}location.reload()}
@@ -2139,7 +2157,7 @@ const isEd=()=>isAdm()||!!prof?.site_editor;
 let BRAND=null;
 async function loadBrand(){try{const {data}=await sb.from('site_settings').select('data').eq('id',1).maybeSingle();BRAND=data?.data?.brand||null}catch{BRAND=null}}
 function applyBrand(){const b=BRAND,box=document.querySelector('header.bar .brand');if(!box)return;const m=box.querySelector('.mark,.brandimg');
-  if(b&&b.logo&&b.in_app!==false){const img=`<img class="brandimg" src="${esc(b.logo)}" alt="ARION">`;if(m)m.outerHTML=img;const nm=box.querySelector('.brand-name');if(nm)nm.style.display=b.show_name===false?'none':''}
+  if(b&&b.logo&&b.in_app!==false){const img=`<img class="brandimg" src="${esc(b.logo)}" alt="ARION">`;if(m)m.outerHTML=img;const nm=box.querySelector('.brand-name');if(nm)nm.style.display=(b.name_text??(b.show_name===false?'':'x'))?'':'none'}
   if(b&&b.icon192&&b.in_app!==false){let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.href=b.icon192}}
 const SITE_PUBLIC_URL='https://arion-webpage.pages.dev/';
 let PUB=null;
@@ -2158,7 +2176,7 @@ async function publishNow(b){b.disabled=true;const {data,error}=await sb.rpc('pu
 let SITE=null,SITETAB='news',INBOXF='all';
 const SCLASSES=['Hypercar','LMP2','LMP3','LMGT3','GT3','GTE'];
 async function loadSite(){const adm=isAdm();
-  const [st,news,liv,par,res,inbox,tms,ads,adstats]=await Promise.all([
+  const [st,news,liv,par,res,inbox,tms,ads,adstats,older,autoStats]=await Promise.all([
     adm?q(sb.from('site_settings').select('*').eq('id',1).maybeSingle()):null,
     q(sb.from('site_news').select('*').order('created_at',{ascending:false})),
     adm?q(sb.from('site_liveries').select('*').order('sort').order('id')):[],
@@ -2166,8 +2184,9 @@ async function loadSite(){const adm=isAdm();
     adm?q(sb.from('race_results').select('*')):[],
     adm?q(sb.from('site_inbox').select('*').order('created_at',{ascending:false})):[],
     adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[],
-    adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?q(sb.from('site_ad_stats').select('*')):[]]);
-  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[]}}
+    adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?q(sb.from('site_ad_stats').select('*')):[],
+    adm?q(sb.from('site_results_manual').select('*').order('race_date',{ascending:false})):[],adm?sb.rpc('site_public').then(r=>r.data?.stats||null,()=>null):null]);
+  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[],older:older||[],autoStats:autoStats||{}}}
 // Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
 async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
@@ -2260,17 +2279,39 @@ async function galMove(kind,id,dir){const list=SITE[kind],i=list.findIndex(x=>x.
 
 // ---- Results: every team that has raced; one line each
 function siteResults(){const tz=myTz(),byRace={};SITE.teams.forEach(t=>(byRace[t.race_id]=byRace[t.race_id]||[]).push(t));const rids=Object.keys(byRace).map(Number).sort((a,b)=>+new Date(byRace[b][0].start_utc)-+new Date(byRace[a][0].start_utc));
-  if(!rids.length)return '<p class="mu">Results can be entered once a team has raced.</p>';
+  if(!rids.length)return '<p class="mu">Results can be entered once a team has raced.</p>'+olderResults();
   return `<p class="mu" style="margin-top:0">After each event, type where each team finished in its class. Empty = not shown on the website.</p>`+rids.map(rid=>{const r=races.find(x=>x.id===rid);return `<h3>${esc(r?.name||'Event')}<span class="mu" style="font-weight:500"> · ${esc(r?.track||'')}</span></h3><div class="card flush">${byRace[rid].map(t=>{const x=SITE.results.find(y=>y.team_id===t.id)||{};
     return `<form class="li resrow" onsubmit="saveResult(event,${t.id})"><div class="who2"><b>${esc(t.name)}</b><span class="mu">${esc(t.class)} · ${locDay(new Date(t.start_utc),tz)} ${locH(new Date(t.start_utc),tz)}</span></div>
       <label>Position<input name="class_position" inputmode="numeric" maxlength="3" value="${x.class_position??''}" placeholder="e.g. 3" aria-label="Position, ${esc(t.name)}"></label>
-      <label class="chk"><input type="checkbox" name="dnf" ${x.dnf?'checked':''}> DNF</label><label class="grow">Note<input name="note" maxlength="200" value="${esc(x.note||'')}"></label><button class="pri">Save</button></form>`}).join('')}</div>`}).join('')}
+      <label class="chk"><input type="checkbox" name="dnf" ${x.dnf?'checked':''}> DNF</label><label class="grow">Note<input name="note" maxlength="200" value="${esc(x.note||'')}"></label><button class="pri">Save</button></form>`}).join('')}</div>`}).join('')+olderResults()}
 async function saveResult(e,tid){e.preventDefault();const f=new FormData(e.target),n=k=>{const v=String(f.get(k)||'').trim();if(!v)return null;const x=parseInt(v,10);return x>=1&&x<=200?x:NaN};
   // One position: where the team finished within its class (the overall position is not used).
   const row={team_id:tid,position:null,class_position:n('class_position'),dnf:!!f.get('dnf'),note:String(f.get('note')||'').trim()||null};
   if(Number.isNaN(row.class_position))return note('The position is a whole number from 1 to 200.');
   if(row.class_position==null&&!row.dnf&&!row.note){await q(sb.from('race_results').delete().eq('team_id',tid));await render();return note('Result cleared.',1)}
   await q(sb.from('race_results').upsert(row,{onConflict:'team_id'}));await render();note('Result saved.',1)}
+
+// ---- Older results, typed in by hand (events that aren't in the app)
+function olderResults(){const tz=myTz();return `<div class="sech2" style="margin-top:28px"><h3>Older results</h3><button class="pri" onclick="olderDlg()">+ Add older result</button></div>
+  <p class="mu" style="margin-top:0">Events that aren’t in the app (for example before it existed). They appear in the website’s results and count in its numbers.</p>
+  ${SITE.older.length?`<div class="card flush">${SITE.older.map(o=>`<div class="li"><div class="who2"><b>${esc(o.event)}</b><span class="mu">${esc(o.car)}${o.class?' · '+esc(o.class):''} · ${new Date(o.race_date+'T12:00:00Z').toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'})}${o.track?' · '+esc(o.track):''}</span></div>
+    <span class="stat chip ${o.dnf?'pending':'approved'}">${o.dnf?'DNF':'P'+o.class_position}</span><span class="mu">${o.hours!=null?o.hours+' h':''}${o.laps!=null?' · '+o.laps+' laps':''}</span><div class="acts"><button class="ghost" onclick="olderDlg(${o.id})">Edit</button></div></div>`).join('')}</div>`:'<p class="mu">None yet.</p>'}`}
+function olderDlg(id){const o=id?SITE.older.find(x=>x.id===id):{};
+  openDlg(`<form onsubmit="saveOlder(event,${id||0})"><h3>${id?'Edit older result':'Older result'}</h3>
+    <label>Event<input name="event" maxlength="120" required value="${esc(o.event||'')}" placeholder="e.g. 24 Hours of Le Mans"></label>
+    <div class="form2"><label>Date<input name="race_date" type="date" required value="${o.race_date||''}"></label><label>Track<input name="track" maxlength="80" value="${esc(o.track||'')}"></label></div>
+    <div class="form2"><label>Car<input name="car" maxlength="80" required value="${esc(o.car||'')}" placeholder="e.g. ARION #7"></label><label>Class<select name="class">${opt('','—',!o.class)}${SCLASSES.map(c=>opt(c,c,o.class===c)).join('')}</select></label></div>
+    <div class="form2"><label>Position in class<input name="class_position" inputmode="numeric" maxlength="3" value="${o.class_position??''}" placeholder="e.g. 3"></label><label class="chk" style="align-self:end;min-height:44px"><input type="checkbox" name="dnf" ${o.dnf?'checked':''}> DNF</label></div>
+    <div class="form2"><label>Hours raced<input name="hours" inputmode="decimal" maxlength="5" value="${o.hours??''}" placeholder="e.g. 24"></label><label>Laps<input name="laps" inputmode="numeric" maxlength="5" value="${o.laps??''}" placeholder="e.g. 340"></label></div>
+    <label>Note<input name="note" maxlength="200" value="${esc(o.note||'')}"></label>
+    <p class="mu" style="margin:0">Hours and laps are added to the website’s numbers as you type them.</p>
+    <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button>${id?`<button type="button" class="danger" onclick="delOlder(${id})">Delete</button>`:''}</div></form>`)}
+async function saveOlder(e,id){e.preventDefault();const f=new FormData(e.target),g=k=>String(f.get(k)||'').trim(),pos=g('class_position')?parseInt(g('class_position'),10):null,dnf=!!f.get('dnf'),
+  hours=g('hours')?parseFloat(g('hours').replace(',','.')):null,laps=g('laps')?parseInt(g('laps'),10):null;
+  if(!dnf&&!(pos>=1&&pos<=200))return note('Type the position in class (1–200), or tick DNF.');if(hours!=null&&!(hours>=0&&hours<=48))return note('Hours: a number from 0 to 48.');if(laps!=null&&!(laps>=0&&laps<=5000))return note('Laps: a whole number from 0 to 5000.');
+  const row={event:g('event'),race_date:g('race_date'),track:g('track')||null,car:g('car'),class:g('class')||null,class_position:dnf?null:pos,dnf,hours,laps,note:g('note')||null};
+  if(id)await q(sb.from('site_results_manual').update(row).eq('id',id));else await q(sb.from('site_results_manual').insert(row));closeDlg();await render();note('Result saved.',1)}
+async function delOlder(id){if(!await askO({ok:'Delete',danger:true})('Delete this result for good?'))return;await q(sb.from('site_results_manual').delete().eq('id',id));closeDlg();await render();note('Deleted.',1)}
 
 // ---- Settings: texts and links
 // Settings, grouped as on the website. Greek and English sit side by side.
@@ -2286,8 +2327,11 @@ const swRow=(name,label,on,hint,val)=>`<label class="swrow"><span class="swtx"><
 const PAGEIMGS=[['hero_image','Home page · large background image','2400 × 1300 px, landscape. Works best with the subject on the right and a darker area on the left, behind the headline.',2400],
   ['team_image','Team page · image next to the story','1600 × 1200 px. A team photo, a car on track, or a livery.',1600],
   ['partners_image','Sponsors page · image next to the pitch','1600 × 1200 px. Ideally a car showing where a sponsor logo would go.',1600]];
+function numbersCard(d){const o=d.stats_override||{},a=SITE.autoStats||{};
+  return `<section class="ssec"><div class="ssech"><h3>Numbers</h3><p class="mu">The website’s counter. Empty = counted automatically from results; type a number to show yours instead.</p></div><div class="ssecb numgrid">
+    ${[['events','Events'],['hours','Hours'],['laps','Laps']].map(([k,l])=>`<label class="pf">${l}<input name="ov_${k}" inputmode="numeric" maxlength="7" value="${o[k]??''}" placeholder="${a[k]??'–'}"><span class="mu numauto">Automatic now: ${a[k]??'–'}</span></label>`).join('')}</div></section>`}
 function siteSettings(){const d=SITE.settings,off=d.ads_off||[];
-  return `<form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">
+  return `<form class="sform" onsubmit="saveSettings(event)" oninput="markDirty(this)" onchange="markDirty(this)">${numbersCard(d)}
     <section class="ssec"><div class="ssech"><h3>Page images</h3><p class="mu">Leave one empty and the website uses your first livery instead.</p></div><div class="ssecb pageimgs">
       ${PAGEIMGS.map(([k,l,hint,max])=>`<div class="pimg"><div class="pimgh"><b>${l}</b><span class="mu">${hint}</span></div>${imgField(k,d[k],'pages',l,max)}</div>`).join('')}</div></section>
     ${SSECT.map(([h,hint,fs])=>`<section class="ssec"><div class="ssech"><h3>${h}</h3><p class="mu">${hint}</p></div><div class="ssecb">${fs.map(f=>f[0]==='pair'?langPair(f[1],f[2],f[3],f[4],d)
@@ -2300,6 +2344,7 @@ async function saveSettings(e){e.preventDefault();const f=new FormData(e.target)
   const keys=[...SSECT.flatMap(x=>x[2]).flatMap(f=>f[0]==='pair'?[f[1]+'_el',f[1]+'_en']:f[0]==='one'?[f[1]]:[]),...SLINKS.map(x=>x[0]),'email',...PAGEIMGS.map(x=>x[0])];
   for(const k of keys){const v=String(f.get(k)||'').trim();if(v&&SLINKS.some(x=>x[0]===k)&&!/^https:\/\//.test(v))return note('Links must start with https://');data[k]=v}
   const on=f.getAll('adpos');data.ads_off=ADPOS.map(p=>p[0]).filter(k=>!on.includes(k));
+  const ov={};for(const k of ['events','hours','laps']){const v=String(f.get('ov_'+k)||'').trim();if(v){const n=parseInt(v.replace(/[.\s]/g,''),10);if(!(n>=0))return note('Numbers: whole numbers only.');ov[k]=n}}data.stats_override=ov;
   await q(sb.from('site_settings').update({data,updated_at:new Date().toISOString()}).eq('id',1));await render();note('Settings saved.',1)}
 
 // ---- Inbox: website forms
@@ -2312,8 +2357,12 @@ function inboxDlg(id){const x=SITE.inbox.find(y=>y.id===id),tz=myTz();if(!x)retu
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()"><h3>${esc(x.name)}</h3><p class="mu" style="margin:0">${x.kind==='join'?'Join us':'Sponsor'} · ${locFull(new Date(x.created_at),tz)}</p>
     <div class="blist">${row('Email',x.email)}${row('Company',x.company)}${row('Discord',x.discord)}${row('SR / DR',x.rating)}${row('Availability',x.availability)}</div>
     ${x.message?`<div class="card" style="white-space:pre-wrap;margin:0">${esc(x.message)}</div>`:''}
-    <div class="row"><a class="btn pri" href="mailto:${encodeURIComponent(x.email)}">Reply by email</a>${x.status!=='replied'?`<button type="button" onclick="inboxSet(${id},'replied')">Mark replied</button>`:''}${x.status!=='done'?`<button type="button" onclick="inboxSet(${id},'done')">Mark done</button>`:''}${x.status!=='new'?`<button type="button" onclick="inboxSet(${id},'new')">Mark new</button>`:''}
+    <div class="row"><a class="btn pri" href="mailto:${encodeURIComponent(x.email)}">Reply by email</a>${x.kind==='join'?`<button type="button" onclick="copyInvite(${id})">Invitation</button>`:''}${x.status!=='replied'?`<button type="button" onclick="inboxSet(${id},'replied')">Mark replied</button>`:''}${x.status!=='done'?`<button type="button" onclick="inboxSet(${id},'done')">Mark done</button>`:''}${x.status!=='new'?`<button type="button" onclick="inboxSet(${id},'new')">Mark new</button>`:''}
     <button type="button" onclick="closeDlg()">Close</button><button type="button" class="danger" onclick="inboxDel(${id})">Delete</button></div></form>`)}
+// A ready message with the crew app's address, to paste in Discord, email or chat.
+async function copyInvite(id){const x=SITE.inbox.find(y=>y.id===id),url=location.origin+location.pathname;
+  const msg=`Γεια σου ${x.name}! Καλώς ήρθες στην ARION Sim Racing. Φτιάξε τον λογαριασμό σου στο crew app: ${url}\nΜόλις εγγραφείς, θα σε εγκρίνουμε και θα δεις το πρόγραμμα και τα αυτοκίνητα.\n\nHi ${x.name}! Welcome to ARION Sim Racing. Create your account in the crew app: ${url}\nOnce you sign up, we'll approve you and you'll see the schedule and the cars.`;
+  try{await navigator.clipboard.writeText(msg);note('Invitation copied. Paste it in Discord, email or chat.',1)}catch{note('Copy didn’t work here. The address is: '+url)}}
 async function inboxSet(id,status){await q(sb.from('site_inbox').update({status}).eq('id',id));closeDlg();await render();note('Saved.',1)}
 async function inboxDel(id){if(!await askO({ok:'Delete',danger:true})('Delete this message for good?'))return;await q(sb.from('site_inbox').delete().eq('id',id));closeDlg();await render();note('Deleted.',1)}
 
@@ -2415,15 +2464,19 @@ async function makeIcon(file,size,bg){const im=await fileToImage(file),w=im.natu
 function logoContrast(canvas,bg){const x=canvas.getContext('2d'),d=x.getImageData(0,0,canvas.width,canvas.height).data;let s=0,n=0;for(let i=0;i<d.length;i+=16){if(d[i+3]>40){const L=lumOf('#'+[d[i],d[i+1],d[i+2]].map(v=>v.toString(16).padStart(2,'0')).join(''));s+=L;n++}}
   if(!n)return 21;const L=s/n,B=lumOf(bg);return (Math.max(L,B)+.05)/(Math.min(L,B)+.05)}
 function brandCard(){const b=LOOK.brand||{},bg=(BGOPTS.find(x=>x[0]===LOOK.background)||BGOPTS[0])[2];
-  const prev=b.logo?`<img src="${esc(b.logo)}" alt="">`:`<span class="phmark">A</span>`;
+  const prev=b.logo?`<img src="${esc(b.logo)}" alt="">`:`<span class="phmark">A</span>`,nameText=b.name_text??(b.show_name===false?'':'ARION');
   return `<section class="ssec"><div class="ssech"><h3>Logo</h3><p class="mu">Best: SVG, or PNG with a transparent background. Leave empty to keep the placeholder “A ARION”.</p></div><div class="ssecb">
-    <div class="brandrow"><div class="brandprev" style="background:${bg}">${prev}${b.show_name!==false?'<b>ARION</b>':''}</div>
+    <div class="brandrow"><div class="brandprev" style="background:${bg}">${prev}${nameText?`<b>${esc(nameText)}</b>`:''}</div>
       <div class="brandact"><label class="ghostbtn">${b.logo?'Change logo':'Choose logo'}<input type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" onchange="pickBrand(this,'logo')" hidden></label>${b.logo?'<button type="button" class="ghost" onclick="LOOK.brand={...LOOK.brand,logo:null};lookRender()">Remove logo</button>':''}<span class="ipst mu brandst" aria-live="polite"></span></div></div>
     ${b.warn?`<p class="lookwarn">${esc(b.warn)}</p>`:''}
     <div class="pairh">Icon for the browser tab and phone home screen</div>
     <div class="brandrow"><div class="iconprev">${b.icon192?`<img src="${esc(b.icon192)}" alt="" width="64" height="64"><img src="${esc(b.icon192)}" alt="" width="32" height="32"><img src="${esc(b.icon192)}" alt="" width="16" height="16">`:'<span class="mu">Made from the logo, or upload a simple square version.</span>'}</div>
       <div class="brandact"><label class="ghostbtn">${b.icon_own?'Change icon':'Choose square icon'}<input type="file" accept="image/svg+xml,image/png,image/webp,image/jpeg" onchange="pickBrand(this,'icon')" hidden></label>${b.icon_own?'<button type="button" class="ghost" onclick="LOOK.brand={...LOOK.brand,icon_own:false,icon180:null,icon192:null,icon512:null};lookRender()">Use the logo instead</button>':''}</div></div>
-    ${swRow('brand_name','Show the name ARION next to the logo',b.show_name!==false,'Switch off if your logo already contains the name.').replace('<input','<input onchange="LOOK.brand={...LOOK.brand,show_name:this.checked};lookRender()"')}
+    <label class="pf one">Text next to the logo<input value="${esc(b.name_text??(b.show_name===false?'':'ARION'))}" maxlength="40" placeholder="e.g. ARION Sim Racing (empty = none)" onchange="LOOK.brand={...LOOK.brand,name_text:this.value.trim()};lookRender()"></label>
+    <div class="pairh">On computers</div>
+    <div class="form2"><label class="pf">Logo size at the top of the page: <b>${b.size||120}%</b><input type="range" min="100" max="150" step="5" value="${b.size||120}" onchange="LOOK.brand={...LOOK.brand,size:+this.value};lookRender()" aria-label="Logo size"></label>
+      <label class="pf">Blur of the top bar: <b>${b.blur??60}%</b><input type="range" min="0" max="100" step="10" value="${b.blur??60}" onchange="LOOK.brand={...LOOK.brand,blur:+this.value};lookRender()" aria-label="Blur of the top bar"></label></div>
+    <p class="mu" style="margin:-4px 0 0">At the top of the page the logo is shown at this size; when you scroll it shrinks back into the bar.</p>
     ${swRow('brand_app','Also use the logo in the crew app',b.in_app!==false).replace('<input','<input onchange="LOOK.brand={...LOOK.brand,in_app:this.checked};lookRender()"')}
   </div></section>`}
 async function pickBrand(inp,kind){const f=inp.files[0];if(!f)return;const st=$('.brandst');if(st)st.textContent='Preparing…';const bgc=(BGOPTS.find(x=>x[0]===LOOK.background)||BGOPTS[0])[2];
