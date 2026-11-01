@@ -651,6 +651,16 @@ dialog .form{grid-template-columns:1fr 1fr}
 }
 @media (pointer:coarse){button,input,select{min-height:44px}input,select{font-size:17px}.seg button{min-height:32px;height:32px}.list td button{min-height:36px}.tabbar button{min-height:50px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.mded{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mdbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.mdbar button{min-width:36px;height:36px;min-height:36px;padding:0 8px;border-radius:8px;background:var(--fill);color:var(--label);display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.mdbar button:hover{background:var(--fill2)}.mdbar button:focus-visible{outline:2px solid var(--tint);outline-offset:1px}.mdbar svg{display:block}
+.mdbar .mdsep{width:1px;height:20px;background:var(--sep);margin:0 3px}.mdbar .mdi{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700}.mdbar small{font-size:10px;margin-left:1px}
+.mdst{font-size:12px;color:var(--label2);flex-basis:100%}.mdst:empty{display:none}.mded.busy .mdbar button{opacity:.5;pointer-events:none}
+.mdlink{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.mdlink[hidden]{display:none}.mdlink input{flex:1 1 220px;min-width:0}
+.npv figure{margin:0 0 10px}.npv img{display:block;max-width:100%;height:auto;border-radius:8px}
+@media (min-width:721px){#dlg:has(.mded){width:min(900px,calc(100vw - 48px))}} /* the post editor gets room for two texts side by side */
+@media (max-width:620px){.mdbar button{min-width:44px;height:44px;min-height:44px}.mdlink button{height:44px;min-height:44px}.mdlink input{min-height:44px}}
 </style>
 </head>
 <body>
@@ -668,7 +678,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.7.6',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.7.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1964,7 +1974,9 @@ const EL={
  '+ New post':'+ Νέα ανάρτηση','New post':'Νέα ανάρτηση','Edit post':'Επεξεργασία ανάρτησης','(untitled)':'(χωρίς τίτλο)','Published':'Δημοσιευμένο','Draft':'Πρόχειρο',
  'No posts yet. Press + New post to write the first race report.':'Δεν υπάρχουν αναρτήσεις ακόμα. Πάτα «+ Νέα ανάρτηση» για την πρώτη αναφορά αγώνα.',
  'Title (Greek)':'Τίτλος (Ελληνικά)','Title (English)':'Τίτλος (Αγγλικά)','Text (Greek)':'Κείμενο (Ελληνικά)','Text (English)':'Κείμενο (Αγγλικά)',
- 'Empty line = new paragraph · **bold** · *italic* · # heading · - list · [text](https://link). If the English is empty, the English site shows the Greek.':'Κενή γραμμή = νέα παράγραφος · **έντονα** · *πλάγια* · # επικεφαλίδα · - λίστα · [κείμενο](https://σύνδεσμος). Αν το αγγλικό μείνει κενό, η αγγλική σελίδα δείχνει το ελληνικό.',
+ 'Use the buttons above the text, or type: empty line = new paragraph · **bold** · *italic* · # heading · ## subheading · - list · [text](https://link). Photos sit in their own paragraph. If the English is empty, the English site shows the Greek.':'Χρησιμοποίησε τα κουμπιά πάνω από το κείμενο ή γράψε: κενή γραμμή = νέα παράγραφος · **έντονα** · *πλάγια* · # επικεφαλίδα · ## υποεπικεφαλίδα · - λίστα · [κείμενο](https://σύνδεσμος). Οι φωτογραφίες μπαίνουν σε δική τους παράγραφο. Αν το αγγλικό μείνει κενό, η αγγλική σελίδα δείχνει το ελληνικό.',
+ 'Formatting':'Μορφοποίηση','Bold':'Έντονα','Italic':'Πλάγια','Heading':'Επικεφαλίδα','Subheading':'Υποεπικεφαλίδα','List':'Λίστα','Link address':'Διεύθυνση συνδέσμου','Add link':'Προσθήκη συνδέσμου',
+ 'Links must start with https://.':'Οι σύνδεσμοι πρέπει να ξεκινούν με https://.','Photo added. Type a short description in place of the selected word.':'Η φωτογραφία προστέθηκε. Γράψε μια σύντομη περιγραφή στη θέση της επιλεγμένης λέξης.',
  'Cover image':'Εικόνα εξωφύλλου','Event (optional)':'Event (προαιρετικό)','None':'Κανένα','Link name':'Όνομα συνδέσμου','made from the title':'φτιάχνεται από τον τίτλο','Preview':'Προεπισκόπηση',
  'Update':'Ενημέρωση','Unpublish':'Απόσυρση','Publish':'Δημοσίευση','Save draft':'Αποθήκευση πρόχειρου','Delete':'Διαγραφή','Delete post':'Διαγραφή ανάρτησης',
  'Delete this post for good?':'Να διαγραφεί οριστικά αυτή η ανάρτηση;','Post published.':'Η ανάρτηση δημοσιεύτηκε.','Post updated.':'Η ανάρτηση ενημερώθηκε.','Post unpublished. It’s a draft again.':'Η ανάρτηση αποσύρθηκε. Είναι ξανά πρόχειρο.',
@@ -2227,10 +2239,64 @@ async function pickImg(inp){const box=inp.closest('.imgpick'),st=box.querySelect
   try{const url=await uploadImage(f,box.dataset.folder,+box.dataset.max||1600);box.querySelector('input[type=hidden]').value=url;box.querySelector('.ipbox').innerHTML=`<img src="${esc(url)}" alt="">`;st.textContent='Uploaded.';box.closest('form')?.dispatchEvent(new Event('input',{bubbles:true}))}
   catch(e){st.textContent='';note(e.message||'Upload failed.')}}
 function clearImg(b){const box=b.closest('.imgpick');box.querySelector('input[type=hidden]').value='';box.querySelector('.ipbox').innerHTML='<span class="mu">No image yet</span>';b.remove()}
-// Very small markdown for news: # headings, **bold**, *italic*, [links](https://…), - lists, paragraphs.
-function mdLite(t){const inl=x=>esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-  return String(t||'').split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return '';if(/^## /.test(b))return `<h4>${inl(b.slice(3))}</h4>`;if(/^# /.test(b))return `<h3>${inl(b.slice(2))}</h3>`;
+// Very small markdown for news: # headings, **bold**, *italic*, [links](https://…), - lists, paragraphs,
+// and photos ![description](url) in their own paragraph (only from the team's own image storage).
+const MDIMG=/^!\[([^\]]*)\]\((https:\/\/[^)\s]+)\)$/,mdImgOk=u=>u.startsWith(CFG.url+'/storage/v1/object/public/site/');
+function mdLite(t){const inl=x=>esc(x.replace(/!\[([^\]]*)\]\((https:\/\/[^)\s]+)\)/g,'[$1]($2)')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return String(t||'').split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return '';const ls=b.split('\n').map(l=>l.trim());
+    if(ls.every(l=>MDIMG.test(l)))return ls.map(l=>{const [,a,u]=l.match(MDIMG);return mdImgOk(u)?`<figure><img src="${esc(u)}" alt="${esc(a)}" loading="lazy"></figure>`:''}).join('');if(/^## /.test(b))return `<h4>${inl(b.slice(3))}</h4>`;if(/^# /.test(b))return `<h3>${inl(b.slice(2))}</h3>`;
     if(b.split('\n').every(l=>/^- /.test(l)))return `<ul>${b.split('\n').map(l=>`<li>${inl(l.slice(2))}</li>`).join('')}</ul>`;return `<p>${inl(b).replace(/\n/g,'<br>')}</p>`}).join('')}
+// ---- Post editor: the buttons write the same Markdown the website reads, so older posts keep working.
+const MDICO={ul:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/></svg>',
+  link:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg>',
+  photo:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-4.5-4.5L7 20"/></svg>'};
+const mdEd=(name,lab,val,lang)=>`<div class="mded" data-lang="${lang}"><label for="nb_${lang}">${lab}</label>
+  <div class="mdbar" role="toolbar" aria-label="Formatting" onmousedown="if(event.target.closest('button'))event.preventDefault()">
+    <button type="button" onclick="mdDo(this,'b')" title="Bold" aria-label="Bold"><span class="notr" aria-hidden="true">B</span></button><button type="button" onclick="mdDo(this,'i')" title="Italic" aria-label="Italic"><span class="notr mdi" aria-hidden="true">I</span></button><span class="mdsep" aria-hidden="true"></span>
+    <button type="button" onclick="mdDo(this,'h1')" title="Heading" aria-label="Heading"><span class="notr" aria-hidden="true">H</span></button><button type="button" onclick="mdDo(this,'h2')" title="Subheading" aria-label="Subheading"><span class="notr" aria-hidden="true">H<small>2</small></span></button><button type="button" onclick="mdDo(this,'ul')" title="List" aria-label="List">${MDICO.ul}</button><span class="mdsep" aria-hidden="true"></span>
+    <button type="button" onclick="mdDo(this,'link')" title="Link" aria-label="Link">${MDICO.link}</button><button type="button" onclick="mdDo(this,'photo')" title="Photo" aria-label="Photo">${MDICO.photo}</button><input class="mdfile" type="file" accept="image/*" hidden onchange="mdPhoto(this)">
+    <span class="mdst" aria-live="polite"></span></div>
+  <div class="mdlink" hidden><input type="url" inputmode="url" placeholder="https://…" aria-label="Link address" onkeydown="if(event.key==='Enter'){event.preventDefault();mdLinkOk(this)}else if(event.key==='Escape'){event.preventDefault();mdLinkHide(this)}"><button type="button" class="pri" onclick="mdLinkOk(this)">Add link</button><button type="button" class="ghost" onclick="mdLinkHide(this)">Cancel</button></div>
+  <textarea id="nb_${lang}" name="${name}" rows="10" maxlength="20000" onfocus="this.dataset.f=1" onkeydown="mdKey(event)">${esc(val||'')}</textarea></div>`;
+const mdTa=el=>el.closest('.mded').querySelector('textarea');
+// Where the cursor is; a text never clicked into gets additions at the end.
+function mdSel(ta){if(!ta.dataset.f){const l=ta.value.length;ta.setSelectionRange(l,l);ta.dataset.f=1}return [ta.selectionStart,ta.selectionEnd]}
+// Replace ta.value[a,b) with text and select a+sa..a+sb. Uses the browser's insert so Undo (Ctrl+Z) still works.
+function mdPut(ta,a,b,text,sa,sb){ta.focus();ta.setSelectionRange(a,b);let ok=false;try{ok=document.execCommand('insertText',false,text)}catch{}
+  if(!ok||ta.value.slice(a,a+text.length)!==text){ta.setRangeText(text,a,b,'end')}
+  ta.setSelectionRange(a+sa,a+sb);ta.dispatchEvent(new Event('input',{bubbles:true}))}
+// Headings, lists and photos must be a paragraph of their own (empty line before and after).
+function mdBlock(ta,a,b,text,sa,sb){const v=ta.value,bef=v.slice(0,a),aft=v.slice(b);
+  const pre=!bef.trim()?'':/\n\n$/.test(bef)?'':/\n$/.test(bef)?'\n':'\n\n',post=!aft.trim()?'':/^\n\n/.test(aft)?'':/^\n/.test(aft)?'\n':'\n\n';
+  mdPut(ta,a,b,pre+text+post,pre.length+sa,pre.length+sb)}
+const mdLines=(v,a,b)=>{const s=v.lastIndexOf('\n',a-1)+1;let e=v.indexOf('\n',b>a&&v[b-1]==='\n'?b-1:b);if(e<0)e=v.length;return [s,e]};
+function mdDo(btn,k){const ed=btn.closest('.mded'),ta=mdTa(btn),[a,b]=mdSel(ta),v=ta.value;
+  if(k==='b'||k==='i'){const m=k==='b'?'**':'*',sel=v.slice(a,b);
+    if(!sel.trim())return mdPut(ta,a,b,m+m,m.length,m.length);
+    const un=sel.split('\n').every(l=>!l.trim()||(l.trim().startsWith(m)&&l.trim().endsWith(m)&&l.trim().length>2*m.length&&(m==='**'||!l.trim().startsWith('**'))));
+    const t=sel.split('\n').map(l=>{if(!l.trim())return l;const lead=l.match(/^\s*/)[0],trail=l.match(/\s*$/)[0],core=l.slice(lead.length,l.length-trail.length);
+      return lead+(un?core.slice(m.length,core.length-m.length):m+core+m)+trail}).join('\n');
+    return mdPut(ta,a,b,t,0,t.length)}
+  if(k==='h1'||k==='h2'){const [s,e]=mdLines(v,a,b),raw=v.slice(s,e),mk=k==='h1'?'# ':'## ',had=raw.startsWith(mk);
+    const line=raw.replace(/\s*\n+\s*/g,' ').replace(/^#{1,6} ?/,''),t=had?line:mk+line;return mdBlock(ta,s,e,t,t.length,t.length)}
+  if(k==='ul'){const [s,e]=mdLines(v,a,b),ls=v.slice(s,e).split('\n'),keep=ls.length>1?ls.filter(l=>l.trim()):ls,all=keep.every(l=>/^- /.test(l));
+    const t=keep.map(l=>all?l.slice(2):'- '+l.replace(/^- ?/,'')).join('\n');return mdBlock(ta,s,e,t,t.length,t.length)}
+  if(k==='link'){const box=ed.querySelector('.mdlink'),i=box.querySelector('input'),sel=v.slice(a,b).trim();ed._sel=[a,b];
+    box.hidden=false;i.value=/^https:\/\/\S+$/.test(sel)?sel:'';i.focus();return}
+  if(k==='photo'){ed._sel=[a,b];ed.querySelector('.mdfile').click()}}
+function mdLinkHide(el){const ed=el.closest('.mded'),box=ed.querySelector('.mdlink');box.hidden=true;box.querySelector('input').value='';mdTa(el).focus()}
+function mdLinkOk(el){const ed=el.closest('.mded'),ta=mdTa(el),i=ed.querySelector('.mdlink input'),u=i.value.trim();
+  if(!/^https:\/\/[^\s()]+$/.test(u)){note('Links must start with https://.');i.focus();return}
+  const [a,b]=ed._sel||[ta.value.length,ta.value.length];let txt=ta.value.slice(a,b).replace(/\s+/g,' ').replace(/[\[\]]/g,'').trim();if(txt===u)txt='';
+  const label=txt||(ed.dataset.lang==='en'?'link text':'κείμενο συνδέσμου'),t=`[${label}](${u})`;
+  ed.querySelector('.mdlink').hidden=true;i.value='';mdPut(ta,a,b,t,1,1+label.length)}
+async function mdPhoto(inp){const ed=inp.closest('.mded'),ta=mdTa(inp),st=ed.querySelector('.mdst'),f=inp.files[0];inp.value='';if(!f)return;
+  const [,b]=ed._sel||[ta.value.length,ta.value.length];st.textContent='Uploading…';ed.classList.add('busy');
+  try{const url=await uploadImage(f,'news',1600),alt=ed.dataset.lang==='en'?'Photo':'Φωτογραφία';
+    mdBlock(ta,b,b,`![${alt}](${url})`,2,2+alt.length);st.textContent='Photo added. Type a short description in place of the selected word.'}
+  catch(e){st.textContent='';note(e.message||'Upload failed.')}finally{ed.classList.remove('busy')}}
+function mdKey(e){if(!(e.ctrlKey||e.metaKey)||e.altKey||e.shiftKey)return;const k={b:'b',i:'i',k:'link'}[e.key.toLowerCase()];if(!k)return;
+  e.preventDefault();const btn=e.target.closest('.mded').querySelector(`.mdbar button[onclick*="'${k}'"]`);if(btn)mdDo(btn,k)}
 const GRL={α:'a',ά:'a',β:'v',γ:'g',δ:'d',ε:'e',έ:'e',ζ:'z',η:'i',ή:'i',θ:'th',ι:'i',ί:'i',ϊ:'i',ΐ:'i',κ:'k',λ:'l',μ:'m',ν:'n',ξ:'x',ο:'o',ό:'o',π:'p',ρ:'r',σ:'s',ς:'s',τ:'t',υ:'y',ύ:'y',ϋ:'y',ΰ:'y',φ:'f',χ:'ch',ψ:'ps',ω:'o',ώ:'o'};
 const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join('').normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70);
 
@@ -2250,15 +2316,15 @@ function siteNews(){const tz=myTz();
 function newsDlg(id){const n=id?SITE.news.find(x=>x.id===id):null,rs=[...races].sort((a,b)=>+new Date(b.start_utc)-+new Date(a.start_utc)).slice(0,40);
   openDlg(`<form class="wide" onsubmit="saveNews(event,${id||0},'draft')" oninput="newsPrev(this)"><h3>${n?'Edit post':'New post'}</h3>
     <div class="form2"><label>Title (Greek)<input name="title_el" maxlength="140" value="${esc(n?.title_el||'')}" required></label><label>Title (English)<input name="title_en" maxlength="140" value="${esc(n?.title_en||'')}"></label></div>
-    <div class="form2"><label>Text (Greek)<textarea name="body_el" rows="10" maxlength="20000">${esc(n?.body_el||'')}</textarea></label><label>Text (English)<textarea name="body_en" rows="10" maxlength="20000">${esc(n?.body_en||'')}</textarea></label></div>
-    <p class="mu" style="margin:-4px 0 0">Empty line = new paragraph · **bold** · *italic* · # heading · - list · [text](https://link). If the English is empty, the English site shows the Greek.</p>
+    <div class="form2">${mdEd('body_el','Text (Greek)',n?.body_el,'el')}${mdEd('body_en','Text (English)',n?.body_en,'en')}</div>
+    <p class="mu" style="margin:-4px 0 0">Use the buttons above the text, or type: empty line = new paragraph · **bold** · *italic* · # heading · ## subheading · - list · [text](https://link). Photos sit in their own paragraph. If the English is empty, the English site shows the Greek.</p>
     ${imgField('cover',n?.cover_url,'news','Cover image')}
     <label>Event (optional)<select name="race_id">${opt('','None',!n?.race_id)}${rs.map(r=>opt(String(r.id),r.name+' · '+locDay(new Date(r.start_utc),myTz())+' '+new Date(r.start_utc).toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'}),n?.race_id===r.id)).join('')}</select></label>
     <label>Link name<input name="slug" maxlength="80" value="${esc(n?.slug||'')}" placeholder="made from the title" pattern="[a-z0-9]+(-[a-z0-9]+)*"></label>
     <details class="nprev"><summary>Preview</summary><div class="npv"></div></details>
     <div class="row">${n?.status==='published'?`<button type="button" class="pri" onclick="saveNews(event,${id},'published')">Update</button><button type="button" onclick="saveNews(event,${id},'draft')">Unpublish</button>`:`<button type="button" class="pri" onclick="saveNews(event,${id||0},'published')">Publish</button><button type="submit">Save draft</button>`}<button type="button" onclick="closeDlg()">Cancel</button>${n?`<button type="button" class="danger" onclick="delNews(${id})">Delete</button>`:''}</div></form>`);
   newsPrev($('#dlg form'))}
-function newsPrev(f){const v=f.querySelector('.npv');if(!v)return;const g=k=>f.querySelector(`[name=${k}]`).value;v.innerHTML=`<div class="npcol"><div class="mu">ΕΛ</div><h3>${esc(g('title_el'))}</h3>${mdLite(g('body_el'))}</div><div class="npcol"><div class="mu">EN</div><h3>${esc(g('title_en')||g('title_el'))}</h3>${mdLite(g('body_en')||g('body_el'))}</div>`}
+function newsPrev(f){const v=f.querySelector('.npv');if(!v)return;const g=k=>f.querySelector(`[name=${k}]`).value;v.innerHTML=`<div class="npcol"><div class="mu">ΕΛ</div><div class="notr"><h3>${esc(g('title_el'))}</h3>${mdLite(g('body_el'))}</div></div><div class="npcol"><div class="mu">EN</div><div class="notr"><h3>${esc(g('title_en')||g('title_el'))}</h3>${mdLite(g('body_en')||g('body_el'))}</div></div>`}
 async function saveNews(e,id,status){e.preventDefault();const f=e.target.closest('form'),g=k=>String(f.querySelector(`[name=${k}]`).value||'').trim();
   if(!g('title_el'))return note('Please fill in “Title (Greek)”.');let slug=g('slug')||slugify(g('title_en')||g('title_el'))||('post-'+Date.now());
   if(!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug))return note('The link name can only use a–z, 0–9 and dashes.');
