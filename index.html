@@ -494,7 +494,7 @@ dialog .askbar{margin:0 0 4px}
 @media (max-width:720px){.acct1,.acct2{grid-template-columns:1fr 1fr}.acct1>:first-child,.acct2>:first-child{grid-column:1/-1}}
 .namerow{cursor:default;color:var(--label2)}
 .dline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dok{width:24px;height:24px;border-radius:12px;display:grid;place-items:center;background:var(--green);color:#000;font-weight:800;font-size:13px;flex:none}
-.dlinkbox{display:flex;flex-direction:column;gap:10px}.dnews{margin-top:6px;padding-top:12px;border-top:.5px solid var(--sep);display:flex;flex-direction:column;gap:10px}.dnews code{font-size:13px;padding:1px 5px;border-radius:5px;background:var(--fill)}.dcbig{font-size:34px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums}
+.dlinkbox{display:flex;flex-direction:column;gap:10px}.dnews{margin-top:6px;padding-top:12px;border-top:.5px solid var(--sep);display:flex;flex-direction:column;gap:10px}.dnews code{font-size:13px;padding:1px 5px;border-radius:5px;background:var(--fill);white-space:nowrap}.dcbig{font-size:34px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums}
 .dlinkbox code{font-size:14px;padding:2px 6px;border-radius:6px;background:var(--fill)}.dwait{font-size:13px}.namerow .seg{flex:none;max-width:60%}
 .segopt{position:relative;margin:0;display:flex}.segopt input{position:absolute;opacity:0;pointer-events:none}
 .segopt>span{display:flex;align-items:center;min-height:30px;padding:0 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
@@ -762,6 +762,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 /* v0.8.14: roster shows the nickname in square brackets: George Makridis [GM82] */
 /* v0.8.15: Discord step 2: admins see the race-posts channel in Me → Discord, with Stop (migration 37) */
+/* v0.8.16: Discord step 4: LMU weekly schedule imported automatically; admins see the channel and last import in Me → Discord (migration 38) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -788,7 +789,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.15',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.16',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2077,6 +2078,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'LMU schedule':'Πρόγραμμα LMU',
  'Race posts':'Αναρτήσεις αγώνων',
  'Stint reminders and the ARION bot’s answers arrive as private messages on Discord.':'Οι υπενθυμίσεις για τα stints και οι απαντήσεις του bot του ARION έρχονται σε προσωπικά μηνύματα στο Discord.','Connect Discord':'Σύνδεση Discord','Connected. Reminders arrive as private messages.':'Συνδεδεμένο. Οι υπενθυμίσεις έρχονται σε προσωπικά μηνύματα.','Disconnect':'Αποσύνδεση','Discord couldn’t deliver your last message. In Discord, open the ARION server’s menu → Privacy settings and allow direct messages.':'Το Discord δεν μπόρεσε να παραδώσει το τελευταίο μήνυμα. Στο Discord, άνοιξε το μενού του server ARION → Ρυθμίσεις απορρήτου και επίτρεψε τα προσωπικά μηνύματα.',
  'Your nickname, unless you choose your real name.':'Το nickname σου, εκτός αν διαλέξεις το πραγματικό σου όνομα.','Your teammates see this name; your 3-letter code replaces it where space is tight. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα· ο κωδικός σου (3 γράμματα) το αντικαθιστά όπου ο χώρος είναι λίγος. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.',
@@ -3093,11 +3095,22 @@ function discordSec(p){const on=!!p.discord_id,live=DCODE&&DCODE.until>Date.now(
     :live?`<div class="dlinkbox"><div class="dcbig notr" aria-label="${DCODE.code.split('').join(' ')}">${DCODE.code}</div>
       <p style="margin:0">${L2('Στο Discord, γράψε','In Discord, type')} <code class="notr">/link ${DCODE.code}</code> ${L2('σε οποιοδήποτε κανάλι του ARION. Ισχύει για 10 λεπτά.','in any ARION channel. Valid for 10 minutes.')}</p>
       <div class="row"><button type="button" onclick="discordCopy()">Copy</button><span class="mu dwait">${L2('Περιμένω τη σύνδεση…','Waiting for the link…')}</span></div></div>`
-    :`<div class="row"><button type="button" class="pri" onclick="discordConnect()">Connect Discord</button></div>`}${isAdm()&&DSET?newsLine():''}</div></section>`}
+    :`<div class="row"><button type="button" class="pri" onclick="discordConnect()">Connect Discord</button></div>`}${isAdm()&&DSET?newsLine()+lmuLine():''}</div></section>`}
 // Admins: which channel gets the race posts (set with /channel news in Discord), with Stop.
 function newsLine(){const d=DSET,where=d.news_channel_id?`${d.news_guild_name?esc(d.news_guild_name)+' › ':''}#${esc(d.news_channel_name||d.news_channel_id)}`:'';
   return `<div class="dnews"><div class="dline"><span class="grow"><b>Race posts</b><br><span class="mu">${where?`<span class="notr">${where}</span>`:L2('Δεν έχει οριστεί κανάλι. Στο Discord, γράψε <code class="notr">/channel news</code> μέσα στο κανάλι που θέλεις.','No channel set. In Discord, type <code class="notr">/channel news</code> in the channel you want.')}</span></span>${where?`<button type="button" onclick="newsStop()">Stop</button>`:''}</div>
     ${d.news_error==='no_access'?`<div class="banner warn"><span>${L2('Το bot δεν μπορεί να δημοσιεύσει σε αυτό το κανάλι. Στο Discord, δώσε στο ARION πρόσβαση «Προβολή καναλιού» και «Αποστολή μηνυμάτων» εκεί.','The bot can’t post in that channel. In Discord, give ARION “View Channel” and “Send Messages” there.')}</span></div>`:''}</div>`}
+// Admins: the channel the LMU weekly schedule is read from (/channel lmu), the last import, and any problem.
+function lmuLine(){const d=DSET,where=d.lmu_channel_id?`${d.lmu_guild_name?esc(d.lmu_guild_name)+' › ':''}#${esc(d.lmu_channel_name||d.lmu_channel_id)}`:'';
+  const last=d.lmu_last_import_at?L2(`Τελευταία εισαγωγή: ${fmtWhen(d.lmu_last_import_at)} · ${d.lmu_last_count} ${d.lmu_last_count===1?'event':'events'}${d.lmu_last_week?` (εβδομάδα ${dayLab(d.lmu_last_week,{day:'numeric',month:'short'})})`:''}`,`Last import: ${fmtWhen(d.lmu_last_import_at)} · ${d.lmu_last_count} event${d.lmu_last_count===1?'':'s'}${d.lmu_last_week?` (week of ${dayLab(d.lmu_last_week,{day:'numeric',month:'short'})})`:''}`):(where?L2('Δεν έχει γίνει εισαγωγή ακόμα. Ελέγχει κάθε 15 λεπτά.','Nothing imported yet. It checks every 15 minutes.'):'');
+  const err={no_access:L2('Το bot δεν μπορεί να διαβάσει αυτό το κανάλι. Στο Discord, δώσε στο ARION «Προβολή καναλιού» και «Ανάγνωση ιστορικού μηνυμάτων» εκεί.','The bot can’t read that channel. In Discord, give ARION “View Channel” and “Read Message History” there.'),
+    no_content:L2('Το Discord δίνει στο bot άδεια μηνύματα. Στο Discord Developer Portal → ARION → Bot, άνοιξε το «Message Content Intent» και αποθήκευσε.','Discord gives the bot empty messages. In the Discord Developer Portal → ARION → Bot, switch on “Message Content Intent” and save.'),
+    other:L2('Η ανάγνωση απέτυχε. Θα ξαναδοκιμάσει σε 15 λεπτά.','Reading failed. It tries again in 15 minutes.')}[d.lmu_error];
+  return `<div class="dnews"><div class="dline"><span class="grow"><b>LMU schedule</b><br><span class="mu">${where?`<span class="notr">${where}</span>${last?`<br><span class="notr">${last}</span>`:''}`:L2('Δεν έχει οριστεί κανάλι. Στο Discord, γράψε <code class="notr">/channel lmu</code> στο κανάλι που λαμβάνει τις ανακοινώσεις του LMU.','No channel set. In Discord, type <code class="notr">/channel lmu</code> in the channel that receives LMU’s announcements.')}</span></span>${where?`<button type="button" onclick="lmuStop()">Stop</button>`:''}</div>
+    ${err?`<div class="banner warn"><span>${err}</span></div>`:''}</div>`}
+const fmtWhen=t=>new Date(t).toLocaleString(LOC(),{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+async function lmuStop(){if(!await askO({ok:'Stop'})(L2('Να σταματήσει η αυτόματη εισαγωγή του προγράμματος LMU; Όσα events υπάρχουν μένουν, και η επικόλληση με το χέρι δουλεύει κανονικά.','Stop the automatic LMU schedule import? Imported events stay, and pasting by hand still works.')))return;
+  await q(sb.rpc('discord_lmu_clear'));DSET={...DSET,lmu_channel_id:null,lmu_channel_name:null,lmu_guild_name:null,lmu_error:null};discordPaint();note(L2('Η αυτόματη εισαγωγή σταμάτησε.','Automatic import stopped.'),1)}
 async function newsStop(){if(!await askO({ok:'Stop'})(L2('Να σταματήσουν οι αναρτήσεις αγώνων; Όσες υπάρχουν μένουν στο Discord αλλά δεν θα ενημερώνονται.','Stop the race posts? Existing posts stay in Discord but won’t be updated.')))return;
   await q(sb.rpc('discord_channel_clear'));DSET={...DSET,news_channel_id:null,news_channel_name:null,news_guild_name:null,news_error:null};discordPaint();note(L2('Οι αναρτήσεις σταμάτησαν.','Race posts stopped.'),1)}
 function discordPaint(){const el=$('#dsec');if(el)el.outerHTML=discordSec(prof)}
