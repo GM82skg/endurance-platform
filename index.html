@@ -492,7 +492,10 @@ dialog .askbar{margin:0 0 4px}
 .acct{display:flex;flex-direction:column;gap:14px}
 .acct1,.acct2{grid-template-columns:minmax(0,1.4fr) minmax(0,1.4fr) minmax(110px,.6fr)}
 @media (max-width:720px){.acct1,.acct2{grid-template-columns:1fr 1fr}.acct1>:first-child,.acct2>:first-child{grid-column:1/-1}}
-.namerow{cursor:default;color:var(--label2)}.namerow .seg{flex:none;max-width:60%}
+.namerow{cursor:default;color:var(--label2)}
+.dline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dok{width:24px;height:24px;border-radius:12px;display:grid;place-items:center;background:var(--green);color:#000;font-weight:800;font-size:13px;flex:none}
+.dlinkbox{display:flex;flex-direction:column;gap:10px}.dcbig{font-size:34px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums}
+.dlinkbox code{font-size:14px;padding:2px 6px;border-radius:6px;background:var(--fill)}.dwait{font-size:13px}.namerow .seg{flex:none;max-width:60%}
 .segopt{position:relative;margin:0;display:flex}.segopt input{position:absolute;opacity:0;pointer-events:none}
 .segopt>span{display:flex;align-items:center;min-height:30px;padding:0 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
 .segopt input:checked+span{background:var(--seg-on);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04);font-weight:600}
@@ -756,6 +759,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.10: profile layout: Account in two aligned rows, "Name on the website" as a standard row; layout check in the tests */
 /* v0.8.11: layout fixes: strategy fields line up, phone home-section rows, switch-row titles, card list padding, names ending in a dot */
 /* v0.8.12: placeholders that fit their fields: strategy "Δεν ισχύει", channel examples youtube.com/@name and twitch.tv/name */
+/* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -782,7 +786,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.12',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.13',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2071,6 +2075,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Stint reminders and the ARION bot’s answers arrive as private messages on Discord.':'Οι υπενθυμίσεις για τα stints και οι απαντήσεις του bot του ARION έρχονται σε προσωπικά μηνύματα στο Discord.','Connect Discord':'Σύνδεση Discord','Connected. Reminders arrive as private messages.':'Συνδεδεμένο. Οι υπενθυμίσεις έρχονται σε προσωπικά μηνύματα.','Disconnect':'Αποσύνδεση','Discord couldn’t deliver your last message. In Discord, open the ARION server’s menu → Privacy settings and allow direct messages.':'Το Discord δεν μπόρεσε να παραδώσει το τελευταίο μήνυμα. Στο Discord, άνοιξε το μενού του server ARION → Ρυθμίσεις απορρήτου και επίτρεψε τα προσωπικά μηνύματα.',
  'Your nickname, unless you choose your real name.':'Το nickname σου, εκτός αν διαλέξεις το πραγματικό σου όνομα.','Your teammates see this name; your 3-letter code replaces it where space is tight. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα· ο κωδικός σου (3 γράμματα) το αντικαθιστά όπου ο χώρος είναι λίγος. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.',
  'Code (3 letters)':'Κωδικός (3 γράμματα)','Name on the website':'Όνομα στην ιστοσελίδα','Real name':'Πραγματικό όνομα','This code is already used by another driver.':'Αυτός ο κωδικός χρησιμοποιείται ήδη από άλλον οδηγό.',
  'Statistics':'Στατιστικά','Posts':'Άρθρα','Statistics →':'Στατιστικά →','Status':'Κατάσταση','Banner':'Banner','Page':'Σελίδα','Post':'Άρθρο','Deleted post':'Διαγραμμένο άρθρο',
@@ -3071,10 +3076,32 @@ async function meView(){const p=prof,lc=await myLiveCard();
       <div class="ssecb"><div class="acct">${profFields(p)}</div>${DEV_TZ!==p.tz?`<div><button type="button" onclick="const f=this.form;f.querySelector('[name=tz]').value='${esc(DEV_TZ)}';f.dispatchEvent(new Event('input',{bubbles:true}))">Use this device’s zone (${esc(DEV_TZ)})</button></div>`:''}</div></section>
     <section class="ssec"><div class="ssech"><h3>Language</h3><p class="mu">Changes right away, on all your devices.</p></div>
       <div class="ssecb"><div class="seg langseg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div></section>
+    ${discordSec(p)}
     <section class="ssec profsite"><div class="ssech sech2"><h3>On the website</h3><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}team/" target="_blank" rel="noopener">See the team page ↗</a></div>${siteProfFields(p)}<div style="height:18px"></div></section>
     <div class="savebar"><span class="savest mu" aria-live="polite">No changes</span><button class="pri">Save changes</button></div></form>
   ${lc}
   <section class="ssec mesec"><div class="ssech"><h3>Password and sign-out</h3></div><div class="ssecb"><div class="row"><button type="button" onclick="pwDlg()">Change password</button><button type="button" class="danger" onclick="sb.auth.signOut()">Sign out</button></div></div></section>`}
+// ---- Discord (step 1): link your account with a 6-digit code (/link 123456 in Discord), or disconnect.
+let DCODE=null,DPOLL=null;
+function discordSec(p){const on=!!p.discord_id,live=DCODE&&DCODE.until>Date.now();
+  return `<section class="ssec" id="dsec"><div class="ssech"><h3>Discord</h3><p class="mu">Stint reminders and the ARION bot’s answers arrive as private messages on Discord.</p></div><div class="ssecb">
+    ${on?`<div class="dline"><span class="dok" aria-hidden="true">✓</span><span class="grow">Connected. Reminders arrive as private messages.</span><button type="button" onclick="discordUnlink()">Disconnect</button></div>
+      ${p.discord_error==='dm_closed'?`<div class="banner warn"><span>Discord couldn’t deliver your last message. In Discord, open the ARION server’s menu → Privacy settings and allow direct messages.</span></div>`:''}`
+    :live?`<div class="dlinkbox"><div class="dcbig notr" aria-label="${DCODE.code.split('').join(' ')}">${DCODE.code}</div>
+      <p style="margin:0">${L2('Στο Discord, γράψε','In Discord, type')} <code class="notr">/link ${DCODE.code}</code> ${L2('σε οποιοδήποτε κανάλι του ARION. Ισχύει για 10 λεπτά.','in any ARION channel. Valid for 10 minutes.')}</p>
+      <div class="row"><button type="button" onclick="discordCopy()">Copy</button><span class="mu dwait">${L2('Περιμένω τη σύνδεση…','Waiting for the link…')}</span></div></div>`
+    :`<div class="row"><button type="button" class="pri" onclick="discordConnect()">Connect Discord</button></div>`}</div></section>`}
+function discordPaint(){const el=$('#dsec');if(el)el.outerHTML=discordSec(prof)}
+async function discordConnect(){const r=await q(sb.rpc('discord_code'));if(!r)return;DCODE={code:r.code,until:+new Date(r.expires_at)};discordPaint();
+  clearInterval(DPOLL);DPOLL=setInterval(async()=>{if(!$('#dsec')||!DCODE||DCODE.until<Date.now()){clearInterval(DPOLL);DCODE=null;discordPaint();return}
+    const {data}=await sb.from('profiles').select('discord_id,discord_error').eq('id',me.id).maybeSingle();
+    if(data?.discord_id){clearInterval(DPOLL);DCODE=null;Object.assign(prof,data);const pp=profiles.find(x=>x.id===me.id);if(pp)Object.assign(pp,data);discordPaint();note(L2('Το Discord συνδέθηκε.','Discord connected.'),1)}},4000)}
+async function discordCopy(){try{await navigator.clipboard.writeText('/link '+DCODE.code);note(L2('Αντιγράφηκε.','Copied.'),1)}catch{note('/link '+DCODE.code)}}
+async function discordUnlink(id){const self=!id||id===me.id;
+  if(!await askO({ok:'Disconnect'})(L2(self?'Να αποσυνδεθεί το Discord; Δεν θα παίρνεις πια υπενθυμίσεις εκεί.':'Να αποσυνδεθεί το Discord αυτού του οδηγού;',self?'Disconnect Discord? You’ll stop getting reminders there.':'Disconnect this driver’s Discord?')))return;
+  await q(sb.rpc('discord_unlink',self?{}:{p_user:id}));
+  const clear=o=>{if(o)Object.assign(o,{discord_id:null,discord_error:null})};clear(profiles.find(x=>x.id===(id||me.id)));
+  if(self){clear(prof);discordPaint()}else{clear(ROSTER.find(x=>x.id===id));closeDlg();profDlg(id)}note(L2('Το Discord αποσυνδέθηκε.','Discord disconnected.'),1)}
 async function saveCode(code){if($('#pf')?.dataset.changed)return note(L2('Αποθήκευσε πρώτα τις αλλαγές σου.','Save your other changes first.'));
   const ci=codeIssue(code,me.id);if(ci)return note(ci);await q(sb.from('profiles').update({code}).eq('id',me.id));await start();note(L2(`Ο κωδικός σου είναι ${code}.`,`Your code is ${code}.`),1)}
 async function saveMe(e){e.preventDefault();const f=new FormData(e.target),c=String(f.get('site_country')||'').trim().toUpperCase();
@@ -3092,6 +3119,7 @@ async function saveProf(e){e.preventDefault();const row=profRow(new FormData(e.t
 function profDlg(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const self=id===me.id;
   openDlg(`<form onsubmit="saveProfOf(event,'${p.id}')"><h3>Edit ${esc(p.name)}</h3>${profFields(p)}
     <label>Email<input name="email" type="email" required value="${esc(EMAILS[p.id]||'')}" autocomplete="off"></label>
+    <div class="dline"><span class="grow mu">${p.discord_id?L2('Discord: συνδεδεμένο','Discord: connected'):L2('Discord: δεν έχει συνδεθεί','Discord: not connected')}</span>${p.discord_id&&!self?`<button type="button" onclick="discordUnlink('${p.id}')">Disconnect</button>`:''}</div>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>
     ${self?'':`<div class="pwbox"><h3 style="font-size:17px">Reset password</h3>
     <p class="mu" style="margin:0">Set a simple temporary password and send it to ${esc(noDot(p.name))}. They sign in with it and must pick their own straight away.</p>
