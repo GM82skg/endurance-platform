@@ -186,6 +186,8 @@ button.cell.A:hover{background:var(--cA)}button.cell.M:hover{background:var(--cM
 .strip-lab{font-size:10px;color:var(--label2);font-variant-numeric:tabular-nums;margin:4px 0 0}
 @container av (max-width:1000px){.av th:not(.k2) .t{visibility:hidden}}
 .li{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 80px minmax(0,250px);gap:4px 16px;align-items:center;padding:12px 18px;border-bottom:.5px solid var(--sep)}
+/* list rows inside a card start where the card title starts (20 px), on every screen size */
+.ssec .li{padding-left:20px!important;padding-right:20px!important}
 .li:last-child{border-bottom:0}.li .stat{justify-self:start}.li .who2 b{display:block;font-size:15px;font-weight:600}.li .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
 .li .acts button{min-height:30px;padding:0 10px;font-size:14px}
 .car{font-size:15px;font-weight:500;color:var(--label2)}
@@ -238,7 +240,7 @@ body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .pitstep{display:flex;gap:10px;align-items:center;margin-top:6px}.pitstep>span:first-child{width:46px;color:var(--label2)}
 .warnline{color:var(--warn-ink);margin-top:8px}
 .sgroup{display:flex;flex-direction:column;gap:10px}.sgroup+.sgroup{margin-top:16px}.sg-h{font-size:17px;font-weight:600}.sg-h .mu{font-weight:400;margin-left:6px}
-.form2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:end}
 .sp-grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
 .sp-in{flex:1 1 320px;max-width:400px;display:flex;flex-direction:column;gap:12px}.sp-in>button{min-height:44px}
 .sp-out{flex:999 1 480px;min-width:0;display:flex;flex-direction:column;gap:12px}
@@ -571,7 +573,7 @@ label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk inp
 .pf.one{max-width:420px}
 .linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
 .swlist{gap:0;padding-top:4px;padding-bottom:4px}.swlist .swrow{border-bottom:.5px solid var(--sep)}.swlist .swrow:last-child{border-bottom:0}
-.swrow{display:flex!important;flex-direction:row!important;align-items:center;gap:16px;min-height:52px;cursor:pointer;padding:6px 0}.swtx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}.swtx b{font-weight:600;font-size:15px}.swtx .mu{font-size:13px;font-weight:400}
+.swrow{display:flex!important;flex-direction:row!important;align-items:center;gap:16px;min-height:52px;cursor:pointer;padding:6px 0}.swtx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}.swtx b{font-weight:600;font-size:15px;color:var(--label)}.swtx .mu{font-size:13px;font-weight:400}
 input.switch{appearance:none;-webkit-appearance:none;flex:none;width:51px;height:31px;min-height:0;margin:0;padding:0;border:0;border-radius:16px;background:var(--fill);position:relative;cursor:pointer;transition:background .2s}
 input.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .2s}
 input.switch:checked{background:var(--green)}input.switch:checked::after{transform:translateX(20px)}input.switch:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
@@ -599,7 +601,9 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .lookprev{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:18px 20px;border-radius:14px;color:#F5F5F7}.lpk{font-weight:800;letter-spacing:.08em}.lookprev b{flex:1;min-width:160px}.lpb{padding:8px 16px;border-radius:10px;font-weight:700}.lpl{font-weight:600}
 .lookwarn{margin:0;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-ink);font-size:14px}
 .homeord{gap:0}.hrow{display:flex;align-items:center;gap:10px;min-height:54px;border-bottom:.5px solid var(--sep)}.hrow:last-child{border-bottom:0}.hrow.off .grow{color:var(--label3);text-decoration:line-through}
-.hnum{width:26px;height:26px;border-radius:13px;background:var(--fill);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}.hrow .ghost{min-width:40px}
+.hnum{width:26px;height:26px;border-radius:13px;background:var(--fill);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}.hrow .ghost{min-width:40px}.harr{display:flex;gap:10px;flex:none}
+@media (max-width:720px){.hrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;grid-template-areas:"n t s" ". a .";column-gap:12px;row-gap:2px;padding:10px 0}
+  .hrow .hnum{grid-area:n}.hrow .grow{grid-area:t}.hrow .switch{grid-area:s}.hrow .harr{grid-area:a;gap:4px;margin-left:-10px}}
 .txtop{display:flex;flex-direction:column;gap:6px}.txsearch{max-width:520px}.txrow{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:.5px solid var(--sep)}.txrow:last-child{border-bottom:0;padding-bottom:0}.txkey{font-size:11px;font-family:ui-monospace,Menlo,monospace}
 .savebar button:not(.pri){min-width:0}
 .brandrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.brandprev{display:flex;align-items:center;gap:12px;min-width:260px;min-height:76px;padding:14px 20px;border-radius:12px;color:#F5F5F7}
@@ -750,6 +754,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.8: banner/sponsor numbers totalled in the database (migration 34; no 1,000-row limit); timeline "!" badge inside its bar */
 /* v0.8.9: nickname (roster, profile, website) and 3-letter driver code (app only), migration 35 */
 /* v0.8.10: profile layout: Account in two aligned rows, "Name on the website" as a standard row; layout check in the tests */
+/* v0.8.11: layout fixes: strategy fields line up, phone home-section rows, switch-row titles, card list padding, names ending in a dot */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -776,7 +781,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.10',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.11',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -872,6 +877,8 @@ let busy=0,chan=null,dirty=false,rt=null,tt,lastKey='';
 const isAdm=()=>prof?.role==='admin',curRace=()=>races.find(x=>x.id===raceId);
 const cl=c=>c==='-'?'u':c,name=id=>profiles.find(p=>p.id===id)?.name||'Unknown';
 // A driver's short name in the app: their 3-letter code (e.g. GMA), or their first name until they set one.
+// A name followed by a full stop in a sentence: drop the name's own trailing dot ("Nikos P." + "." → "Nikos P.").
+const noDot=n=>String(n||'').replace(/\.+$/,'');
 const short=id=>{const p=profiles.find(x=>x.id===id);return p?.code||first(p?.name||'Unknown')};
 // Code suggested from the name: first letter of the first name + first two of the surname, Greek turned into Latin
 // (Γιώργος Μακρίδης → GMA). If that one is taken, other letters of the surname are tried.
@@ -2905,7 +2912,7 @@ function siteLook(){if(!LOOK)LOOK=lookState();const L=LOOK,bg=(BGOPTS.find(b=>b[
     ${SPAGES.map(([k,l])=>swRow('pg_'+k,l,!L.pages_off.includes(k),'',k).replace('<input',`<input onchange="lookPage('${k}',this.checked)"`)).join('')}</div></section>
   <section class="ssec"><div class="ssech"><h3>Home page sections</h3><p class="mu">The big image with the slogan always comes first. Then these, in this order. Sponsor banners go after the 1st and 3rd shown section.</p></div><div class="ssecb homeord">
     ${L.home.map((h,i)=>`<div class="hrow${h.on?'':' off'}"><span class="hnum">${i+1}</span><span class="grow">${(SHOME.find(x=>x[0]===h.id)||['',h.id])[1]}</span>
-      <button type="button" class="ghost" aria-label="Move up" onclick="lookMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button type="button" class="ghost" aria-label="Move down" onclick="lookMove(${i},1)" ${i===L.home.length-1?'disabled':''}>↓</button>
+      <span class="harr"><button type="button" class="ghost" aria-label="Move up" onclick="lookMove(${i},-1)" ${i===0?'disabled':''}>↑</button><button type="button" class="ghost" aria-label="Move down" onclick="lookMove(${i},1)" ${i===L.home.length-1?'disabled':''}>↓</button></span>
       <input type="checkbox" role="switch" class="switch" ${h.on?'checked':''} onchange="LOOK.home[${i}].on=this.checked;lookRender()" aria-label="Show ${(SHOME.find(x=>x[0]===h.id)||['',h.id])[1]}"></div>`).join('')}</div></section>
   <div class="savebar"><span class="savest mu ${lookDirty()?'chg':''}" aria-live="polite">${lookDirty()?'Unsaved changes':'No changes'}</span><button type="button" onclick="LOOK=null;lookRender()" ${lookDirty()?'':'disabled'}>Undo changes</button><button type="button" class="pri" onclick="saveLook()">Save appearance</button></div></div>`}
 function lookDirty(){if(!LOOK)return false;const strip=o=>({...o,brand:{...o.brand,warn:undefined}});return JSON.stringify(strip(LOOK))!==JSON.stringify(strip(lookState()))}
@@ -3086,7 +3093,7 @@ function profDlg(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const self=i
     <label>Email<input name="email" type="email" required value="${esc(EMAILS[p.id]||'')}" autocomplete="off"></label>
     <div class="row"><button class="pri">Save</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>
     ${self?'':`<div class="pwbox"><h3 style="font-size:17px">Reset password</h3>
-    <p class="mu" style="margin:0">Set a simple temporary password and send it to ${esc(p.name)}. They sign in with it and must pick their own straight away.</p>
+    <p class="mu" style="margin:0">Set a simple temporary password and send it to ${esc(noDot(p.name))}. They sign in with it and must pick their own straight away.</p>
     <div class="add-row" style="grid-template-columns:1fr 1fr;margin-top:10px"><label style="grid-column:1 / -1">Temporary password<input id="tmppw" minlength="6" autocomplete="off" spellcheck="false"></label>
     <button type="button" onclick="$('#tmppw').value=tempPw()">Generate</button><button type="button" class="pri" onclick="setTempPw('${p.id}')">Set password</button></div></div>`}`)}
 // Easy to read out or type: word-word-4 digits, no look-alike characters.
@@ -3095,7 +3102,7 @@ function tempPw(){const w=['spa','monza','fuji','sebring','imola','lemans','qata
 async function setTempPw(id){const pw=$('#tmppw').value.trim(),p=ROSTER.find(x=>x.id===id);
   if(pw.length<6)return note('Use at least 6 characters.');
   const {error}=await sb.rpc('admin_set_password',{uid:id,pw});if(error)return note(error.message);
-  closeDlg();note(`Temporary password set for ${p.name}. Send it to them; they’ll choose their own at next sign-in.`,1)}
+  closeDlg();note(`Temporary password set for ${noDot(p.name)}. Send it to them; they’ll choose their own at next sign-in.`,1)}
 async function saveProfOf(e,id){e.preventDefault();const f=new FormData(e.target),row=profRow(f),em=String(f.get('email')||'').trim().toLowerCase();{const ci=codeIssue(row.code,id);if(ci)return note(ci)}
   if(em&&em!==(EMAILS[id]||'').toLowerCase()){const {error}=await sb.rpc('admin_set_email',{uid:id,new_email:em});if(error)return note(error.message)}
   const r=await q(sb.from('profiles').update(row).eq('id',id).select());
