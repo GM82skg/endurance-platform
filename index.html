@@ -482,6 +482,11 @@ dialog .askbar{margin:0 0 4px}
 .gbar .bang{position:absolute;top:-7px;right:-7px;z-index:5;margin:0;width:16px;height:16px;border:2px solid var(--surface);font-size:10px}
 .gbar.fs .bang{background:#fff;color:#7d2fa8}
 .gbar.tiny:not(.sel){padding:0;min-width:6px}
+/* The "!" badge sits inside the bar at its right end (it used to stick out past the corner and get cut off);
+   the label gets that much less room. Bars too narrow for a label show it outside, with the badge in front. */
+.gtrack .gbar:has(>.bang){padding-right:27px}.gtrack .gbar.tiny:not(.sel){padding:0}
+.gtrack .gbar>.bang{top:50%;right:5px;transform:translateY(-50%)}.gtrack .gbar.tiny>.bang{display:none}
+.gout .bang{position:static;display:inline-flex;margin:0 5px 0 0;vertical-align:-3px;border:0}
 .gout{position:absolute;top:50%;transform:translateY(-50%);z-index:2;font-size:12px;font-weight:600;color:var(--label2);white-space:nowrap;pointer-events:none}
 .gcard{position:absolute;bottom:calc(100% - 2px);z-index:9;min-width:180px;max-width:300px;padding:8px 11px;border-radius:10px;background:var(--raised);border:.5px solid var(--sep);box-shadow:0 10px 28px rgba(0,0,0,.45);font-size:12px;line-height:1.4;pointer-events:none;animation:askin .14s ease-out}
 .gcard b{font-size:12.5px}.gcn{color:var(--label2);font-weight:600;margin-top:2px}
@@ -728,6 +733,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.5: live form and list, live bar, website groups */
 /* v0.8.6: Statistics group (website, posts, sponsors, banners), shared statistics table, banner statistics */
 /* v0.8.7: yellow dot on Website and on Inbox while website messages are still New; inbox arrives live (migration 33) */
+/* v0.8.8: banner/sponsor numbers totalled in the database (migration 34; no 1,000-row limit); timeline "!" badge inside its bar */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -754,7 +760,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.8',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1411,7 +1417,7 @@ function fitLabels(){document.querySelectorAll('.gtrack .gout').forEach(x=>x.rem
   document.querySelectorAll('.gbar[data-l1]').forEach(b=>{const lab=b.querySelector('.blab');if(!lab||!b.parentElement.clientWidth)return;b.classList.remove('tiny');
     const room=b.clientWidth-(parseFloat(getComputedStyle(b).paddingLeft)||0)-(parseFloat(getComputedStyle(b).paddingRight)||0);
     for(const k of ['l1','l2','l3']){lab.textContent=tr(b.dataset[k]);if(room>4&&lab.scrollWidth<=room+1)return}
-    lab.textContent='';b.classList.add('tiny');const trk=b.parentElement,o=document.createElement('span');o.className='gout';o.textContent=tr(b.dataset.l1);trk.appendChild(o);
+    lab.textContent='';b.classList.add('tiny');const trk=b.parentElement,o=document.createElement('span');o.className='gout';o.textContent=tr(b.dataset.l1);if(b.querySelector(':scope>.bang'))o.insertAdjacentHTML('afterbegin','<span class="bang" aria-hidden="true">!</span>');trk.appendChild(o);
     const right=b.offsetLeft+b.offsetWidth+8;if(right+o.offsetWidth>trk.clientWidth-4){o.style.right=(trk.clientWidth-b.offsetLeft+8)+'px'}else o.style.left=right+'px';
     const ro=o.getBoundingClientRect(),hit=[...trk.querySelectorAll('.gbar,.gplus:not(.hov),.gout')].some(x=>{if(x===o||x===b)return false;const q=x.getBoundingClientRect();return q.width&&q.left<ro.right+4&&q.right>ro.left-4});
     if(hit){o.textContent=tr(b.dataset.l3);const r2=o.getBoundingClientRect(),hit2=[...trk.querySelectorAll('.gbar,.gplus:not(.hov),.gout')].some(x=>{if(x===o||x===b)return false;const q=x.getBoundingClientRect();return q.width&&q.left<r2.right+4&&q.right>r2.left-4});if(hit2)o.remove()}});
@@ -2413,7 +2419,7 @@ async function publishNow(b){b.disabled=true;const {data,error}=await sb.rpc('pu
 let SITE=null,SITETAB='news',INBOXF='all';
 const SCLASSES=['Hypercar','LMP2','LMP3','LMGT3','GT3','GTE'];
 async function loadSite(){const adm=isAdm();
-  const [st,news,liv,par,res,inbox,tms,ads,adstats,older,autoStats,stats]=await Promise.all([
+  const [st,news,liv,par,res,inbox,tms,ads,adtot,older,autoStats,stats]=await Promise.all([
     adm?q(sb.from('site_settings').select('*').eq('id',1).maybeSingle()):null,
     q(sb.from('site_news').select('*').order('created_at',{ascending:false})),
     adm?q(sb.from('site_liveries').select('*').order('sort').order('id')):[],
@@ -2421,9 +2427,9 @@ async function loadSite(){const adm=isAdm();
     adm?q(sb.from('race_results').select('*')):[],
     adm?q(sb.from('site_inbox').select('*').order('created_at',{ascending:false})):[],
     adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[],
-    adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?q(sb.from('site_ad_stats').select('*')):[],
+    adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?sb.rpc('site_ad_totals').then(r=>r.error?null:r.data,()=>null):null,
     adm?q(sb.from('site_results_manual').select('*').order('race_date',{ascending:false})):[],adm?sb.rpc('site_public').then(r=>r.data?.stats||null,()=>null):null,adm?sb.rpc('site_stats').then(r=>r.error?null:r.data,()=>null):null]);
-  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[],older:older||[],autoStats:autoStats||{},stats:stats||null}}
+  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adt:adm?(adtot||adTotals(await q(sb.from('site_ad_stats').select('*'))||[])):{},older:older||[],autoStats:autoStats||{},stats:stats||null}}
 // Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
 async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
@@ -2798,7 +2804,13 @@ const ADPOS=[['home_top','Home · under the hero','1200 × 200','640 × 320'],['
   ['article','Inside a race report','800 × 250','640 × 320'],['results','Results · above the table','1200 × 200','640 × 320'],['team','Team · after the drivers','1200 × 200','640 × 320'],
   ['liveries','Liveries · between rows','1200 × 200','640 × 320'],['live','Live · under the stream','800 × 250','640 × 320'],['footer','Footer of every page','970 × 90','640 × 160']];
 const posLabel=k=>(ADPOS.find(p=>p[0]===k)||[k,k])[1];
-const adStat=(id,days)=>{const from=days?new Date(Date.now()-days*864e5).toISOString().slice(0,10):'0000';return SITE.adstats.filter(x=>x.ad_id===id&&x.day>=from).reduce((a,x)=>({v:a.v+x.views,c:a.c+x.clicks}),{v:0,c:0})};
+// Banner numbers per banner: last 30 days, all time and per month, totalled in the database by site_ad_totals()
+// (migration 34). Before that migration, the same totals are worked out here from the daily rows.
+function adTotals(rows){const from=new Date(Date.now()-30*864e5).toISOString().slice(0,10),o={};
+  rows.forEach(x=>{const t=o[x.ad_id]=o[x.ad_id]||{v30:0,c30:0,v:0,c:0,months:{}},m=x.day.slice(0,7);t.v+=x.views;t.c+=x.clicks;if(x.day>=from){t.v30+=x.views;t.c30+=x.clicks}
+    const mm=t.months[m]=t.months[m]||{v:0,c:0};mm.v+=x.views;mm.c+=x.clicks});return o}
+const adStat=(id,days)=>{const t=SITE.adt[id];if(!t)return {v:0,c:0};return days?{v:+t.v30,c:+t.c30}:{v:+t.v,c:+t.c}};
+const adMonths=id=>{const m=SITE.adt[id]?.months||{},o={};Object.keys(m).forEach(k=>o[k]={v:+m[k].v,c:+m[k].c});return o};
 const ctr=s=>s.v?(s.c/s.v*100).toFixed(1)+'%':'–';
 const adRunning=a=>{const t=new Date().toISOString().slice(0,10);return a.active&&(!a.starts_on||a.starts_on<=t)&&(!a.ends_on||a.ends_on>=t)};
 function siteAds(){const off=SITE.settings.ads_off||[],list=SITE.ads;
@@ -2827,7 +2839,7 @@ async function saveAd(e,id){e.preventDefault();const f=new FormData(e.target),g=
 async function delAd(id){if(!await askO({ok:'Delete banner',danger:true})('Delete this banner and its numbers for good?'))return;await q(sb.from('site_ads').delete().eq('id',id));closeDlg();await render();note('Banner deleted.',1)}
 // The sponsor report: per ad and per month, ready to copy or download.
 function adReportDlg(pid){const ps=SITE.partners,p=ps.find(x=>x.id===pid)||ps[0];if(!p)return;const ads=SITE.ads.filter(a=>a.partner_id===p.id),rows=[];
-  ads.forEach(a=>{const by={};SITE.adstats.filter(x=>x.ad_id===a.id).forEach(x=>{const m=x.day.slice(0,7);by[m]=by[m]||{v:0,c:0};by[m].v+=x.views;by[m].c+=x.clicks});Object.keys(by).sort().forEach(m=>rows.push([posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])]))});
+  ads.forEach(a=>{const by=adMonths(a.id);Object.keys(by).sort().forEach(m=>rows.push([posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])]))});
   const tot=rows.reduce((a,r)=>({v:a.v+r[2],c:a.c+r[3]}),{v:0,c:0});
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="wide"><h3>Sponsor report</h3>
     <label>Sponsor<select onchange="closeDlg();adReportDlg(+this.value)">${ps.map(x=>opt(String(x.id),x.name,x.id===p.id)).join('')}</select></label>
@@ -2836,7 +2848,7 @@ function adReportDlg(pid){const ps=SITE.partners,p=ps.find(x=>x.id===pid)||ps[0]
       <p class="mu" style="margin:0">Views: the banner was at least half on screen for a second. Reloads count again. No cookies or visitor data are used.</p>`:'<p class="mu">No numbers for this sponsor yet.</p>'}
     <div class="row">${rows.length?`<button type="button" class="pri" onclick="adReportCsv(${p.id})">Download (CSV)</button>`:''}<button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 function adReportCsv(pid){const p=SITE.partners.find(x=>x.id===pid),lines=[['Sponsor','Position','Month','Views','Clicks','Click rate'].join(',')];
-  SITE.ads.filter(a=>a.partner_id===pid).forEach(a=>{const by={};SITE.adstats.filter(x=>x.ad_id===a.id).forEach(x=>{const m=x.day.slice(0,7);by[m]=by[m]||{v:0,c:0};by[m].v+=x.views;by[m].c+=x.clicks});
+  SITE.ads.filter(a=>a.partner_id===pid).forEach(a=>{const by=adMonths(a.id);
     Object.keys(by).sort().forEach(m=>lines.push([p.name,posLabel(a.placement),m,by[m].v,by[m].c,ctr(by[m])].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')))});
   const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'})),aEl=document.createElement('a');aEl.href=url;aEl.download=`ARION-report-${slugify(p.name)||'sponsor'}.csv`;document.body.appendChild(aEl);aEl.click();aEl.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 
