@@ -494,7 +494,7 @@ dialog .askbar{margin:0 0 4px}
 @media (max-width:720px){.acct1,.acct2{grid-template-columns:1fr 1fr}.acct1>:first-child,.acct2>:first-child{grid-column:1/-1}}
 .namerow{cursor:default;color:var(--label2)}
 .dline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dok{width:24px;height:24px;border-radius:12px;display:grid;place-items:center;background:var(--green);color:#000;font-weight:800;font-size:13px;flex:none}
-.dlinkbox{display:flex;flex-direction:column;gap:10px}.dcbig{font-size:34px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums}
+.dlinkbox{display:flex;flex-direction:column;gap:10px}.dnews{margin-top:6px;padding-top:12px;border-top:.5px solid var(--sep);display:flex;flex-direction:column;gap:10px}.dnews code{font-size:13px;padding:1px 5px;border-radius:5px;background:var(--fill)}.dcbig{font-size:34px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums}
 .dlinkbox code{font-size:14px;padding:2px 6px;border-radius:6px;background:var(--fill)}.dwait{font-size:13px}.namerow .seg{flex:none;max-width:60%}
 .segopt{position:relative;margin:0;display:flex}.segopt input{position:absolute;opacity:0;pointer-events:none}
 .segopt>span{display:flex;align-items:center;min-height:30px;padding:0 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
@@ -761,6 +761,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.12: placeholders that fit their fields: strategy "Δεν ισχύει", channel examples youtube.com/@name and twitch.tv/name */
 /* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 /* v0.8.14: roster shows the nickname in square brackets: George Makridis [GM82] */
+/* v0.8.15: Discord step 2: admins see the race-posts channel in Me → Discord, with Stop (migration 37) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -787,7 +788,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.14',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.15',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2076,6 +2077,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Race posts':'Αναρτήσεις αγώνων',
  'Stint reminders and the ARION bot’s answers arrive as private messages on Discord.':'Οι υπενθυμίσεις για τα stints και οι απαντήσεις του bot του ARION έρχονται σε προσωπικά μηνύματα στο Discord.','Connect Discord':'Σύνδεση Discord','Connected. Reminders arrive as private messages.':'Συνδεδεμένο. Οι υπενθυμίσεις έρχονται σε προσωπικά μηνύματα.','Disconnect':'Αποσύνδεση','Discord couldn’t deliver your last message. In Discord, open the ARION server’s menu → Privacy settings and allow direct messages.':'Το Discord δεν μπόρεσε να παραδώσει το τελευταίο μήνυμα. Στο Discord, άνοιξε το μενού του server ARION → Ρυθμίσεις απορρήτου και επίτρεψε τα προσωπικά μηνύματα.',
  'Your nickname, unless you choose your real name.':'Το nickname σου, εκτός αν διαλέξεις το πραγματικό σου όνομα.','Your teammates see this name; your 3-letter code replaces it where space is tight. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα· ο κωδικός σου (3 γράμματα) το αντικαθιστά όπου ο χώρος είναι λίγος. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.',
  'Code (3 letters)':'Κωδικός (3 γράμματα)','Name on the website':'Όνομα στην ιστοσελίδα','Real name':'Πραγματικό όνομα','This code is already used by another driver.':'Αυτός ο κωδικός χρησιμοποιείται ήδη από άλλον οδηγό.',
@@ -3068,7 +3070,7 @@ function memberMenu(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const sel
     ${self?'':`<div class="menudanger">${p.approved?`<button type="button" onclick="closeDlg();setUser('${id}',false,'driver')">Suspend</button><p class="mu">Blocks access but keeps the account. Approve again to undo.</p>`:''}<button type="button" class="danger" onclick="closeDlg();delUser('${id}')">Remove permanently</button><p class="mu">Deletes the login, availability, car places and stints. Can’t be undone.</p></div>`}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 // ---- My profile: account, language, website profile and live box in one place; one save for the form.
-async function meView(){const p=prof,lc=await myLiveCard();
+async function meView(){const p=prof,lc=await myLiveCard();DSET=isAdm()?((await sb.from('discord_settings').select('*').eq('id',1).maybeSingle())?.data||null):null;
   const sug=p.code?'':codeSuggest(p.name,p.id);
   $('#main').innerHTML=`<h1 class="lt">My profile</h1><p class="lt-sub notr">${esc(me.email||'')}</p>
   ${p.code?'':`<div class="banner codeban"><span class="grow">${L2('Διάλεξε τον κωδικό σου (3 γράμματα). Η εφαρμογή τον δείχνει αντί για το όνομά σου όπου ο χώρος είναι λίγος.','Pick your 3-letter code. The app shows it instead of your name where space is tight.')}</span>${sug?`<button type="button" class="pri" onclick="saveCode('${sug}')"><span class="notr">${L2('Αποθήκευση','Save')} ${sug}</span></button>`:''}<button type="button" onclick="const i=document.querySelector('#pf [name=code]');i.focus();i.select()">${L2('Άλλος κωδικός','Another code')}</button></div>`}
@@ -3083,7 +3085,7 @@ async function meView(){const p=prof,lc=await myLiveCard();
   ${lc}
   <section class="ssec mesec"><div class="ssech"><h3>Password and sign-out</h3></div><div class="ssecb"><div class="row"><button type="button" onclick="pwDlg()">Change password</button><button type="button" class="danger" onclick="sb.auth.signOut()">Sign out</button></div></div></section>`}
 // ---- Discord (step 1): link your account with a 6-digit code (/link 123456 in Discord), or disconnect.
-let DCODE=null,DPOLL=null;
+let DCODE=null,DPOLL=null,DSET=null;
 function discordSec(p){const on=!!p.discord_id,live=DCODE&&DCODE.until>Date.now();
   return `<section class="ssec" id="dsec"><div class="ssech"><h3>Discord</h3><p class="mu">Stint reminders and the ARION bot’s answers arrive as private messages on Discord.</p></div><div class="ssecb">
     ${on?`<div class="dline"><span class="dok" aria-hidden="true">✓</span><span class="grow">Connected. Reminders arrive as private messages.</span><button type="button" onclick="discordUnlink()">Disconnect</button></div>
@@ -3091,7 +3093,13 @@ function discordSec(p){const on=!!p.discord_id,live=DCODE&&DCODE.until>Date.now(
     :live?`<div class="dlinkbox"><div class="dcbig notr" aria-label="${DCODE.code.split('').join(' ')}">${DCODE.code}</div>
       <p style="margin:0">${L2('Στο Discord, γράψε','In Discord, type')} <code class="notr">/link ${DCODE.code}</code> ${L2('σε οποιοδήποτε κανάλι του ARION. Ισχύει για 10 λεπτά.','in any ARION channel. Valid for 10 minutes.')}</p>
       <div class="row"><button type="button" onclick="discordCopy()">Copy</button><span class="mu dwait">${L2('Περιμένω τη σύνδεση…','Waiting for the link…')}</span></div></div>`
-    :`<div class="row"><button type="button" class="pri" onclick="discordConnect()">Connect Discord</button></div>`}</div></section>`}
+    :`<div class="row"><button type="button" class="pri" onclick="discordConnect()">Connect Discord</button></div>`}${isAdm()&&DSET?newsLine():''}</div></section>`}
+// Admins: which channel gets the race posts (set with /channel news in Discord), with Stop.
+function newsLine(){const d=DSET,where=d.news_channel_id?`${d.news_guild_name?esc(d.news_guild_name)+' › ':''}#${esc(d.news_channel_name||d.news_channel_id)}`:'';
+  return `<div class="dnews"><div class="dline"><span class="grow"><b>Race posts</b><br><span class="mu">${where?`<span class="notr">${where}</span>`:L2('Δεν έχει οριστεί κανάλι. Στο Discord, γράψε <code class="notr">/channel news</code> μέσα στο κανάλι που θέλεις.','No channel set. In Discord, type <code class="notr">/channel news</code> in the channel you want.')}</span></span>${where?`<button type="button" onclick="newsStop()">Stop</button>`:''}</div>
+    ${d.news_error==='no_access'?`<div class="banner warn"><span>${L2('Το bot δεν μπορεί να δημοσιεύσει σε αυτό το κανάλι. Στο Discord, δώσε στο ARION πρόσβαση «Προβολή καναλιού» και «Αποστολή μηνυμάτων» εκεί.','The bot can’t post in that channel. In Discord, give ARION “View Channel” and “Send Messages” there.')}</span></div>`:''}</div>`}
+async function newsStop(){if(!await askO({ok:'Stop'})(L2('Να σταματήσουν οι αναρτήσεις αγώνων; Όσες υπάρχουν μένουν στο Discord αλλά δεν θα ενημερώνονται.','Stop the race posts? Existing posts stay in Discord but won’t be updated.')))return;
+  await q(sb.rpc('discord_channel_clear'));DSET={...DSET,news_channel_id:null,news_channel_name:null,news_guild_name:null,news_error:null};discordPaint();note(L2('Οι αναρτήσεις σταμάτησαν.','Race posts stopped.'),1)}
 function discordPaint(){const el=$('#dsec');if(el)el.outerHTML=discordSec(prof)}
 async function discordConnect(){const r=await q(sb.rpc('discord_code'));if(!r)return;DCODE={code:r.code,until:+new Date(r.expires_at)};discordPaint();
   clearInterval(DPOLL);DPOLL=setInterval(async()=>{if(!$('#dsec')||!DCODE||DCODE.until<Date.now()){clearInterval(DPOLL);DCODE=null;discordPaint();return}
