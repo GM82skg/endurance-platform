@@ -755,6 +755,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.9: nickname (roster, profile, website) and 3-letter driver code (app only), migration 35 */
 /* v0.8.10: profile layout: Account in two aligned rows, "Name on the website" as a standard row; layout check in the tests */
 /* v0.8.11: layout fixes: strategy fields line up, phone home-section rows, switch-row titles, card list padding, names ending in a dot */
+/* v0.8.12: placeholders that fit their fields: strategy "Δεν ισχύει", channel examples youtube.com/@name and twitch.tv/name */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -781,7 +782,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.11',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.12',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2130,7 +2131,7 @@ const EL={
  'No driver':'Χωρίς οδηγό','No drivers yet':'Δεν υπάρχουν οδηγοί ακόμα','No drivers yet. Add one from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Πρόσθεσε έναν από το μενού ⋯.','No drivers yet. Join from the ⋯ menu.':'Δεν υπάρχουν οδηγοί ακόμα. Μπες από το μενού ⋯.',
  'No limit':'Χωρίς όριο','Not limited':'Χωρίς όριο','No race, just a length':'Χωρίς αγώνα, μόνο διάρκεια','No stints yet':'Κανένα stint ακόμα','No stints yet. Tap to set your availability and request a stint.':'Κανένα stint ακόμα. Πάτα για να δηλώσεις διαθεσιμότητα και να ζητήσεις stint.',
  'No teams yet. Each team picks its own day and start time: press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Κάθε αυτοκίνητο διαλέγει μέρα και ώρα εκκίνησης: πάτα','No teams yet. Press':'Δεν υπάρχουν αυτοκίνητα ακόμα. Πάτα',
- 'No track':'Χωρίς πίστα','Nobody right now.':'Κανείς αυτή τη στιγμή.','Not marked as available for all of it':'Η διαθεσιμότητα δεν καλύπτει όλο το διάστημα','Not used':'Δεν χρησιμοποιείται',
+ 'No track':'Χωρίς πίστα','Nobody right now.':'Κανείς αυτή τη στιγμή.','Not marked as available for all of it':'Η διαθεσιμότητα δεν καλύπτει όλο το διάστημα','Not used':'Δεν ισχύει',
  'Nothing here stops the plan from saving; it’s a final look before race day.':'Τίποτα από αυτά δεν εμποδίζει την αποθήκευση· είναι ένας τελικός έλεγχος πριν τη μέρα του αγώνα.',
  'Now':'Τώρα','OK':'OK','Offline':'Εκτός σύνδεσης','Online now':'Συνδεδεμένοι τώρα','Online now ':'Συνδεδεμένοι τώρα ',
  'Only admins see emails and these buttons. Suspend blocks a driver but keeps their account (approve again to undo). Remove deletes the driver for good.':'Μόνο οι διαχειριστές βλέπουν τα email και αυτά τα κουμπιά. Η «Αναστολή» μπλοκάρει έναν οδηγό αλλά κρατά τον λογαριασμό του (εγκρίνεις ξανά για αναίρεση). Η «Αφαίρεση» διαγράφει τον οδηγό οριστικά.',
@@ -2768,7 +2769,7 @@ function liveUrl(v){v=String(v||'').trim();if(!v)return null;if(!/^https?:\/\//i
 function liveFormHtml(o){const tz=myTz(),inCar=o.races.find(r=>r.in_car),def=inCar?'r:'+inCar.race_id:'h:2';
   const opts=[...o.races.map(r=>['r:'+r.race_id,`End of ${r.name} (≈ ${new Date(r.ends_at)-Date.now()>20*H?locFull(new Date(r.ends_at),tz):locH(new Date(r.ends_at),tz)})`]),...[1,2,4,8].map(h=>['h:'+h,hoursLab(h)])];
   return `<div class="liveform2" data-uid="${esc(o.uid||'')}" data-team="${o.team?1:0}">
-    <label class="pf">Link of the stream<input class="liveurl" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(o.url||'')}" placeholder="https://www.twitch.tv/name"><span class="mu lfhint">A Twitch channel works as it is. For YouTube, paste the link of today’s stream.</span></label>
+    <label class="pf">Link of the stream<input class="liveurl" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(o.url||'')}" placeholder="twitch.tv/name"><span class="mu lfhint">A Twitch channel works as it is. For YouTube, paste the link of today’s stream.</span></label>
     <label class="pf">Show as live until<select class="liveend">${opts.map(([v,l])=>`<option value="${v}"${v===def?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
     <div><button type="button" class="pri" onclick="goLive2(this)">${o.team?'We’re live now':o.uid&&o.uid!==me.id?'Set live':'I’m live'}</button></div></div>`}
 // A running switch: time left, end, link, and (if you may change it) +1 hour / change link / stop.
@@ -2802,7 +2803,7 @@ function siteLive(){const adm=isAdm(),d=SITE.settings||{};
   return `<div class="sform"><section class="ssec"><div class="ssech"><h3>Who’s streaming</h3><p class="mu">${adm?'The team first, then every driver. You can set anyone live, extend them, change their link or stop them.':'You can set the team live. Drivers do their own from their profile.'}</p></div>
     <div class="card flush lvlist">${rows.filter(r=>adm||r.key==='team'||LIVEMARKS.some(x=>x.key===r.key)).map(row).join('')}</div></section>
   ${adm?`<form class="ssec" onsubmit="saveTeamChannels(event)"><div class="ssech"><h3>Team channels</h3><p class="mu">Shown on the Live page and in the footer of every page.</p></div><div class="ssecb">
-    <div class="pair"><label class="pf">YouTube<input name="youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(d.youtube||'')}" placeholder="https://www.youtube.com/@name"></label><label class="pf">Twitch<input name="twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(d.twitch||'')}" placeholder="https://www.twitch.tv/name"></label></div>
+    <div class="pair"><label class="pf">YouTube<input name="youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(d.youtube||'')}" placeholder="youtube.com/@name"></label><label class="pf">Twitch<input name="twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(d.twitch||'')}" placeholder="twitch.tv/name"></label></div>
     <div class="row"><button class="pri">Save channels</button></div></div></form>`:''}</div>`}
 async function saveTeamChannels(e){e.preventDefault();const f=new FormData(e.target),yt=ytUrl(f.get('youtube')),tw=twUrl(f.get('twitch'));
   if(yt===null)return note('YouTube: paste the channel address, e.g. https://www.youtube.com/@name');if(tw===null)return note('Twitch: paste the channel address, e.g. https://www.twitch.tv/name');
@@ -2988,7 +2989,7 @@ const siteProfFields=p=>`${swRow('site_public','Show me on the team page',p.site
     <div class="profgrid"><div>${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}</div>
       <div class="profdet"><label class="pf one">Country<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" placeholder="GR" autocomplete="off" style="text-transform:uppercase;max-width:90px"></label>
         <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div>
-        <div class="pairh">Your channels</div><div class="pair"><label class="pf">YouTube<input name="site_youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_youtube||'')}" placeholder="https://www.youtube.com/@name" autocomplete="off"></label><label class="pf">Twitch<input name="site_twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_twitch||'')}" placeholder="https://www.twitch.tv/name" autocomplete="off"></label></div>
+        <div class="pairh">Your channels</div><div class="pair"><label class="pf">YouTube<input name="site_youtube" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_youtube||'')}" placeholder="youtube.com/@name" autocomplete="off"></label><label class="pf">Twitch<input name="site_twitch" type="text" inputmode="url" spellcheck="false" maxlength="200" value="${esc(p.site_twitch||'')}" placeholder="twitch.tv/name" autocomplete="off"></label></div>
         <p class="mu" style="margin:0;font-size:12px">Shown on the website’s Live page.</p></div></div>`;
 async function myLiveCard(){const p=prof,m=LIVEMARKS.find(x=>x.key===me.id),races=m?[]:await liveRaces(me.id,false);
   return `<section class="ssec mylive"><div class="ssech"><h3>I’m live</h3><p class="mu">${p.site_public?'Streaming now? The website shows you on its Live page until the time you choose.':'Streaming now? The website shows you on its Live page until the time you choose. Turn on “Show me on the team page” first, or the website won’t show you.'}</p></div>
