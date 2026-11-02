@@ -487,11 +487,15 @@ dialog .askbar{margin:0 0 4px}
 .dcode{display:inline-block;margin-left:2px;padding:1px 6px;border-radius:5px;background:var(--fill);color:var(--label);font-size:11px;font-weight:700;letter-spacing:.06em;vertical-align:1px}
 .ncode{display:none}
 @media (max-width:720px){.nl button:has(.ncode) .nfull{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.nl button .ncode{display:inline;letter-spacing:.04em}}
-.namepick{margin:12px 0 4px}.namepick .seg{display:inline-flex;flex-wrap:wrap;margin-top:6px}
-.segopt{position:relative;margin:0}.segopt input{position:absolute;opacity:0;pointer-events:none}
-.segopt>span{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:6px 14px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:600;color:var(--label)}
-.segopt small{font-size:11px;font-weight:500;color:var(--label2)}.segopt input:checked+span{background:var(--seg-on);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04)}
+.acct{display:flex;flex-direction:column;gap:14px}
+.acct1,.acct2{grid-template-columns:minmax(0,1.4fr) minmax(0,1.4fr) minmax(110px,.6fr)}
+@media (max-width:720px){.acct1,.acct2{grid-template-columns:1fr 1fr}.acct1>:first-child,.acct2>:first-child{grid-column:1/-1}}
+.namerow{cursor:default;color:var(--label2)}.namerow .seg{flex:none;max-width:60%}
+.segopt{position:relative;margin:0;display:flex}.segopt input{position:absolute;opacity:0;pointer-events:none}
+.segopt>span{display:flex;align-items:center;min-height:30px;padding:0 16px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.segopt input:checked+span{background:var(--seg-on);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04);font-weight:600}
 .segopt input:focus-visible+span{outline:2px solid var(--tint);outline-offset:1px}
+@media (max-width:720px){.namerow{flex-wrap:wrap!important;row-gap:10px!important}.namerow .swtx{flex:1 1 100%}.namerow .seg{max-width:100%}}
 /* The "!" badge sits inside the bar at its right end (it used to stick out past the corner and get cut off);
    the label gets that much less room. Bars too narrow for a label show it outside, with the badge in front. */
 .gtrack .gbar:has(>.bang){padding-right:27px}.gtrack .gbar.tiny:not(.sel){padding:0}
@@ -745,6 +749,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.7: yellow dot on Website and on Inbox while website messages are still New; inbox arrives live (migration 33) */
 /* v0.8.8: banner/sponsor numbers totalled in the database (migration 34; no 1,000-row limit); timeline "!" badge inside its bar */
 /* v0.8.9: nickname (roster, profile, website) and 3-letter driver code (app only), migration 35 */
+/* v0.8.10: profile layout: Account in two aligned rows, "Name on the website" as a standard row; layout check in the tests */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -771,7 +776,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.9',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.10',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2058,6 +2063,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Your nickname, unless you choose your real name.':'Το nickname σου, εκτός αν διαλέξεις το πραγματικό σου όνομα.','Your teammates see this name; your 3-letter code replaces it where space is tight. The app shows times in your time zone.':'Οι συμπαίκτες σου βλέπουν αυτό το όνομα· ο κωδικός σου (3 γράμματα) το αντικαθιστά όπου ο χώρος είναι λίγος. Το app δείχνει τις ώρες στη δική σου ζώνη ώρας.',
  'Code (3 letters)':'Κωδικός (3 γράμματα)','Name on the website':'Όνομα στην ιστοσελίδα','Real name':'Πραγματικό όνομα','This code is already used by another driver.':'Αυτός ο κωδικός χρησιμοποιείται ήδη από άλλον οδηγό.',
  'Statistics':'Στατιστικά','Posts':'Άρθρα','Statistics →':'Στατιστικά →','Status':'Κατάσταση','Banner':'Banner','Page':'Σελίδα','Post':'Άρθρο','Deleted post':'Διαγραμμένο άρθρο',
  'Banner statistics':'Στατιστικά banners','Views and clicks per banner. Views count when a banner is at least half on screen for a second; reloads count again.':'Προβολές και κλικ ανά banner. Μια προβολή μετρά όταν το banner είναι τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο· οι ανανεώσεις μετρούν ξανά.',
@@ -2971,7 +2977,7 @@ async function saveTexts(){const clean={el:{},en:{}};for(const l of ['el','en'])
 // ---- My website profile (every driver) and editors (admins)
 // ---- My profile page parts: the website fields (saved with the rest of the profile) and the "I'm live" box.
 const siteProfFields=p=>`${swRow('site_public','Show me on the team page',p.site_public,'Only your name, photo, country, short bio, channels and number of events are shown. Never your email or availability.')}
-    ${p.nickname?`<div class="namepick"><span class="pairh">Name on the website</span><div class="seg" role="radiogroup" aria-label="Name on the website">${[[0,`<span class="notr">${esc(p.nickname)}</span>`,'Nickname'],[1,`<span class="notr">${esc(p.name)}</span>`,'Real name']].map(([v,t,l])=>`<label class="segopt"><input type="radio" name="site_real_name" value="${v}" ${(!!p.site_real_name)===!!v?'checked':''}><span>${t}<small>${l}</small></span></label>`).join('')}</div></div>`:''}
+    ${p.nickname?`<div class="swrow namerow"><span class="swtx"><b>Name on the website</b><span class="mu">Your nickname, unless you choose your real name.</span></span><div class="seg" role="radiogroup" aria-label="Name on the website">${[[0,p.nickname],[1,p.name]].map(([v,t])=>`<label class="segopt"><input type="radio" name="site_real_name" value="${v}" ${(!!p.site_real_name)===!!v?'checked':''}><span class="notr">${esc(t)}</span></label>`).join('')}</div></div>`:''}
     <div class="profgrid"><div>${imgField('site_photo',p.site_photo,'drivers/'+me.id,'Photo')}</div>
       <div class="profdet"><label class="pf one">Country<input name="site_country" maxlength="2" value="${esc(p.site_country||'')}" placeholder="GR" autocomplete="off" style="text-transform:uppercase;max-width:90px"></label>
         <div class="pairh">Short bio</div><div class="pair">${['el','en'].map(l=>`<label class="pf"><span class="lt2">${l==='el'?'ΕΛ':'EN'}</span><textarea name="site_bio_${l}" rows="3" maxlength="400" aria-label="Short bio (${l==='el'?'Greek':'English'})">${esc(p['site_bio_'+l]||'')}</textarea></label>`).join('')}</div>
@@ -3012,12 +3018,14 @@ async function setEditor(uid,on){const {error}=await sb.rpc('set_editor',{uid,on
 /* ---------- Roster ---------- */
 function tzList(cur){let z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];if(cur&&!z.includes(cur))z=[cur,...z];if(!z.includes('UTC'))z=['UTC',...z];return z}
 // The editable driver settings, shared by "Your profile" and the admin's edit window.
-const profFields=p=>{const sug=p.code?'':codeSuggest(p.name,p.id);return `<label>Name<input name="name" required maxlength="40" value="${esc(p.name)}"></label>
+// Two rows that always line up: who you are (name, nickname, code), then race settings (time zone, stints, rest).
+const profFields=p=>{const sug=p.code?'':codeSuggest(p.name,p.id);return `<div class="form acct1"><label>Name<input name="name" required maxlength="40" value="${esc(p.name)}"></label>
     <label>Nickname<input name="nickname" maxlength="24" value="${esc(p.nickname||'')}" autocomplete="off" spellcheck="false" placeholder="—"></label>
-    <label>Code (3 letters)<input name="code" maxlength="3" value="${esc(p.code||sug)}" autocomplete="off" spellcheck="false" autocapitalize="characters" style="text-transform:uppercase" placeholder="GMA"><small class="mu notr">${L2('Μόνο στην εφαρμογή, όπου ο χώρος είναι λίγος, π.χ. στο κινητό.','Only in the app, where space is tight, e.g. on phones.')}</small></label>
+    <label>Code (3 letters)<input name="code" maxlength="3" value="${esc(p.code||sug)}" autocomplete="off" spellcheck="false" autocapitalize="characters" style="text-transform:uppercase" placeholder="GMA"></label></div>
+    <div class="form acct2">
     <label>Time zone<select name="tz">${tzList(p.tz).map(z=>opt(z,z,z===p.tz)).join('')}</select></label>
     <label>Max stints per race<select name="cnt">${opt('','No limit',p.max_stints==null)}${[1,2,3,4,5,6,7,8].map(n=>opt(n,n,n===p.max_stints)).join('')}</select></label>
-    <label>Rest between stints<select name="rest">${[0,1,2,3,4,5,6,8].map(n=>opt(n,n+'h',n===(p.min_rest_h??0))).join('')}</select></label>`};
+    <label>Rest between stints<select name="rest">${[0,1,2,3,4,5,6,8].map(n=>opt(n,n+'h',n===(p.min_rest_h??0))).join('')}</select></label></div>`};
 const profRow=f=>({name:f.get('name').trim(),nickname:String(f.get('nickname')||'').trim().replace(/\s+/g,' ')||null,code:String(f.get('code')||'').trim().toUpperCase()||null,tz:f.get('tz'),max_stints:f.get('cnt')===''?null:+f.get('cnt'),min_rest_h:+f.get('rest')});
 // Checks the code before saving; returns a message for the driver, or '' when it's fine.
 function codeIssue(code,uid){if(!code)return '';if(!/^[A-Z]{3}$/.test(code))return L2('Κωδικός: ακριβώς 3 λατινικά γράμματα, π.χ. GMA.','Code: exactly 3 Latin letters, e.g. GMA.');
@@ -3051,8 +3059,8 @@ async function meView(){const p=prof,lc=await myLiveCard();
   $('#main').innerHTML=`<h1 class="lt">My profile</h1><p class="lt-sub notr">${esc(me.email||'')}</p>
   ${p.code?'':`<div class="banner codeban"><span class="grow">${L2('Διάλεξε τον κωδικό σου (3 γράμματα). Η εφαρμογή τον δείχνει αντί για το όνομά σου όπου ο χώρος είναι λίγος.','Pick your 3-letter code. The app shows it instead of your name where space is tight.')}</span>${sug?`<button type="button" class="pri" onclick="saveCode('${sug}')"><span class="notr">${L2('Αποθήκευση','Save')} ${sug}</span></button>`:''}<button type="button" onclick="const i=document.querySelector('#pf [name=code]');i.focus();i.select()">${L2('Άλλος κωδικός','Another code')}</button></div>`}
   <form id="pf" class="meform" onsubmit="saveMe(event)" oninput="this.dataset.changed=1;markDirty(this)" onchange="this.dataset.changed=1;markDirty(this)">
-    <section class="ssec"><div class="ssech"><h3>Account</h3><p class="mu">Your teammates see this name. The app shows times in your time zone.</p></div>
-      <div class="ssecb"><div class="form">${profFields(p)}</div>${DEV_TZ!==p.tz?`<div><button type="button" onclick="const f=this.form;f.querySelector('[name=tz]').value='${esc(DEV_TZ)}';f.dispatchEvent(new Event('input',{bubbles:true}))">Use this device’s zone (${esc(DEV_TZ)})</button></div>`:''}</div></section>
+    <section class="ssec"><div class="ssech"><h3>Account</h3><p class="mu">Your teammates see this name; your 3-letter code replaces it where space is tight. The app shows times in your time zone.</p></div>
+      <div class="ssecb"><div class="acct">${profFields(p)}</div>${DEV_TZ!==p.tz?`<div><button type="button" onclick="const f=this.form;f.querySelector('[name=tz]').value='${esc(DEV_TZ)}';f.dispatchEvent(new Event('input',{bubbles:true}))">Use this device’s zone (${esc(DEV_TZ)})</button></div>`:''}</div></section>
     <section class="ssec"><div class="ssech"><h3>Language</h3><p class="mu">Changes right away, on all your devices.</p></div>
       <div class="ssecb"><div class="seg langseg" role="group" aria-label="Language"><button type="button" class="${LANG==='en'?'on':''}" onclick="setLang('en')">English</button><button type="button" class="${LANG==='el'?'on':''}" onclick="setLang('el')">Ελληνικά</button></div></div></section>
     <section class="ssec profsite"><div class="ssech sech2"><h3>On the website</h3><a class="ghostlink" href="${SITE_PUBLIC_URL}${LANG==='en'?'en/':''}team/" target="_blank" rel="noopener">See the team page ↗</a></div>${siteProfFields(p)}<div style="height:18px"></div></section>
