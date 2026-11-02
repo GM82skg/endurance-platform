@@ -535,7 +535,7 @@ form.wide{max-width:none}.form2{display:grid;grid-template-columns:1fr 1fr;gap:1
 .stat.chip.ed{background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue)}
 a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:12px;font-weight:600;text-decoration:none}a.btn.pri{background:var(--tint);color:var(--tint-ink)}
 label.chk{display:flex;align-items:center;gap:10px;font-weight:500}label.chk input{width:20px;height:20px;min-height:0}
-.adrow{flex-wrap:wrap}.adthumb{width:120px;height:40px;border-radius:6px;background:var(--fill);overflow:hidden;flex:none}.adthumb img{width:100%;height:100%;object-fit:cover}
+.adrow{flex-wrap:wrap}.adrow .stat{white-space:normal;text-align:center;min-width:0;max-width:100%}.adthumb{width:120px;height:40px;border-radius:6px;background:var(--fill);overflow:hidden;flex:none}.adthumb img{width:100%;height:100%;object-fit:cover}
 .adnum{display:flex;gap:10px;font-size:13px;align-items:baseline;flex-wrap:wrap}.adposlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 16px}
 .tblwrap{overflow-x:auto}.rtab{width:100%;border-collapse:collapse;font-size:14px}.rtab th,.rtab td{padding:8px 10px;border-bottom:.5px solid var(--sep);text-align:left}.rtab .num{text-align:right;font-variant-numeric:tabular-nums}.rtab tr.tot td{font-weight:700}
 /* ---------- v0.6.8 professional forms ---------- */
@@ -589,6 +589,16 @@ input.switch:checked{background:var(--green)}input.switch:checked::after{transfo
 .brandimg{height:32px;width:auto;max-width:160px;object-fit:contain}.auth .brandimg{display:block;height:64px;max-width:240px;margin:0 auto 18px}
 .li .rtags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-self:start}.li .rtags .stat{grid-row:auto;grid-column:auto;justify-self:auto}
 @media (max-width:720px){.li .rtags{grid-row:1;grid-column:2;justify-self:end;justify-content:flex-end;max-width:180px}}
+.sbtns{gap:8px;margin:0;flex-wrap:wrap}.nowrap{white-space:nowrap}
+.bcell{display:flex;align-items:center;gap:10px;min-width:190px}.pcell{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:170px}.spstats th.num{white-space:nowrap}.adthumb.sm{width:72px;height:24px;border-radius:4px}
+.sttiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:16px 20px 14px}
+.sttile{background:var(--fill);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}.sttile b{font-size:24px;line-height:1.15;font-variant-numeric:tabular-nums}.sttile span{font-size:13px;color:var(--label2)}
+.stchartw{position:relative;padding:0 20px 4px}.stmax{position:absolute;top:-2px;left:20px;font-size:12px;color:var(--label2)}
+.stchart{display:flex;align-items:flex-end;gap:2px;height:132px;padding-top:18px;border-bottom:.5px solid var(--sep)}
+.stbar{flex:1;height:100%;display:flex;align-items:flex-end;min-width:0}.stbar i{display:block;width:100%;min-height:1px;border-radius:3px 3px 0 0;background:var(--tint)}.stbar.pre i{background:var(--fill)}.stbar:hover i{opacity:.75}
+.stax{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:12px;color:var(--label2)}
+@media (max-width:720px){.sttiles{grid-template-columns:1fr 1fr}.sttile b{font-size:20px}.stbar{gap:1px}
+  .sitetabs.g5{grid-template-columns:repeat(6,minmax(0,1fr))}.sitetabs.g5 button{grid-column:span 2;padding:0 4px}.sitetabs.g5 button:nth-child(n+4){grid-column:span 3}}
 .spstats{margin-bottom:16px}.sphead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}.sphead>div{flex:1;min-width:220px}.spstats .tblwrap{padding:4px 12px 0}.spstats .ssecb{padding-top:0}.spstats>p{padding:4px 20px 16px}
 .numgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.numauto{font-size:12px;font-weight:500}@media (max-width:620px){.numgrid{grid-template-columns:1fr}}
 input[type=range]{width:100%;min-height:36px;accent-color:var(--tint)}
@@ -716,6 +726,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 .rmst{align-self:flex-start;min-height:36px;padding:0 4px;background:none}
 .presets button{white-space:normal;line-height:1.2}
 /* v0.8.5: live form and list, live bar, website groups */
+/* v0.8.6: Statistics group (website, posts, sponsors, banners), shared statistics table, banner statistics */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -742,7 +753,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.5',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.6',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2010,6 +2021,24 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+ 'Statistics':'Στατιστικά','Posts':'Άρθρα','Statistics →':'Στατιστικά →','Status':'Κατάσταση','Banner':'Banner','Page':'Σελίδα','Post':'Άρθρο','Deleted post':'Διαγραμμένο άρθρο',
+ 'Banner statistics':'Στατιστικά banners','Views and clicks per banner. Views count when a banner is at least half on screen for a second; reloads count again.':'Προβολές και κλικ ανά banner. Μια προβολή μετρά όταν το banner είναι τουλάχιστον κατά το ήμισυ στην οθόνη για ένα δευτερόλεπτο· οι ανανεώσεις μετρούν ξανά.',
+ 'No sponsors yet. Add them under Sponsors.':'Δεν υπάρχουν ακόμα χορηγοί. Πρόσθεσέ τους στους Χορηγούς.','No banners yet. Add them under Sponsors → Sponsor banners.':'Δεν υπάρχουν ακόμα banners. Πρόσθεσέ τα στους Χορηγούς → Banners χορηγών.',
+ 'Visitors':'Επισκέπτες','Visitors per day (average)':'Επισκέπτες ανά μέρα (μέσος όρος)','Visitor-days · 30 days':'Ημέρες-επισκέπτη · 30 μέρες','Page views · 30 days':'Προβολές σελίδων · 30 μέρες','Greek / English page views':'Προβολές στα ελληνικά / αγγλικά',
+ 'Each visitor counts once per day, without cookies. A page view counts after 5 seconds on screen. Days follow Greek time.':'Κάθε επισκέπτης μετρά μία φορά τη μέρα, χωρίς cookies. Μια προβολή σελίδας μετρά μετά από 5 δευτερόλεπτα στην οθόνη. Οι μέρες είναι σε ώρα Ελλάδας.',
+ 'Visitor-days: someone who visits on 3 different days counts 3 times, because without cookies the same person can’t be recognised on another day.':'Ημέρες-επισκέπτη: όποιος έρχεται 3 διαφορετικές μέρες μετρά 3 φορές, γιατί χωρίς cookies ο ίδιος άνθρωπος δεν αναγνωρίζεται άλλη μέρα.',
+ 'Nothing counted yet. Counting starts as soon as the new website is online; the first numbers appear here the same day.':'Δεν έχει μετρηθεί τίποτα ακόμα. Η μέτρηση ξεκινά μόλις ανέβει η νέα ιστοσελίδα· τα πρώτα νούμερα εμφανίζονται εδώ την ίδια μέρα.',
+ 'The statistics aren’t available yet. Run migration 32 in Supabase, then reload the app.':'Τα στατιστικά δεν είναι ακόμα διαθέσιμα. Τρέξε το migration 32 στο Supabase και ξαναφόρτωσε την εφαρμογή.',
+ 'Page views':'Προβολές σελίδων','Views per page of the website. Each post’s own numbers are under Posts.':'Προβολές ανά σελίδα της ιστοσελίδας. Τα νούμερα κάθε άρθρου είναι στα Άρθρα.',
+ 'Greek · 30 days':'Ελληνικά · 30 μέρες','English · 30 days':'Αγγλικά · 30 μέρες','No page views yet.':'Δεν υπάρχουν ακόμα προβολές.',
+ 'Visitors by country':'Επισκέπτες ανά χώρα','Where visitors are, as reported by Cloudflare. Only the totals per country are kept.':'Από πού είναι οι επισκέπτες, όπως το δίνει το Cloudflare. Κρατάμε μόνο το σύνολο ανά χώρα.',
+ 'Visitors · 30 days':'Επισκέπτες · 30 μέρες','Share · 30 days':'Ποσοστό · 30 μέρες','Visitors · all':'Επισκέπτες · σύνολο','No visitors yet.':'Δεν υπάρχουν ακόμα επισκέπτες.',
+ 'Post statistics':'Στατιστικά άρθρων','Views: the post was on screen for 5 seconds. Reads: the reader reached the end of the post (a short post that fits on the screen counts as read). Shares: presses of the share buttons under the post.':'Προβολές: το άρθρο έμεινε 5 δευτερόλεπτα στην οθόνη. Αναγνώσεις: ο αναγνώστης έφτασε στο τέλος του άρθρου (ένα σύντομο άρθρο που χωρά στην οθόνη μετρά ως ανάγνωση). Κοινοποιήσεις: πατήματα στα κουμπιά κοινοποίησης κάτω από το άρθρο.',
+ 'Reads · 30 days':'Αναγνώσεις · 30 μέρες','Read rate':'Ποσοστό ανάγνωσης','Shares · 30 days':'Κοινοποιήσεις · 30 μέρες','Reads · all':'Αναγνώσεις · σύνολο','Shares · all':'Κοινοποιήσεις · σύνολο',
+ 'Read rate = reads ÷ views, last 30 days.':'Ποσοστό ανάγνωσης = αναγνώσεις ÷ προβολές, τελευταίες 30 μέρες.','No published posts yet.':'Δεν υπάρχουν ακόμα δημοσιευμένα άρθρα.',
+ 
+ 'Greek page views':'Προβολές στα ελληνικά','English page views':'Προβολές στα αγγλικά','Greek 30 days':'Ελληνικά 30 ημερών','English 30 days':'Αγγλικά 30 ημερών',
+ 'Code':'Κωδικός','Visitors 30 days':'Επισκέπτες 30 ημερών','Visitors all time':'Επισκέπτες συνολικά','Reads 30 days':'Αναγνώσεις 30 ημερών','Read rate 30 days':'Ποσοστό ανάγνωσης 30 ημερών','Shares 30 days':'Κοινοποιήσεις 30 ημερών','Reads all time':'Αναγνώσεις συνολικά','Shares all time':'Κοινοποιήσεις συνολικά','Copy link':'Αντιγραφή συνδέσμου','Phone share menu':'Μενού κοινοποίησης κινητού',
  'Show as live until':'Εμφάνιση ως live έως','A Twitch channel works as it is. For YouTube, paste the link of today’s stream.':'Ένα κανάλι Twitch αρκεί ως έχει. Για YouTube, επικόλλησε τον σύνδεσμο της σημερινής μετάδοσης.','Set live':'Βάλ’ τον live','+1 hour':'+1 ώρα','Change link':'Αλλαγή συνδέσμου','until':'έως','Extended by an hour.':'Δόθηκε παράταση μίας ώρας.','Link changed.':'Ο σύνδεσμος άλλαξε.','The website shows them as live.':'Η ιστοσελίδα τον δείχνει live.','Set live on the website':'Live στην ιστοσελίδα','Streaming now? The website shows you on its Live page until the time you choose.':'Μεταδίδεις τώρα; Η ιστοσελίδα σε δείχνει στη σελίδα Live μέχρι την ώρα που θα διαλέξεις.','Streaming now? The website shows you on its Live page until the time you choose. Turn on “Show me on the team page” first, or the website won’t show you.':'Μεταδίδεις τώρα; Η ιστοσελίδα σε δείχνει στη σελίδα Live μέχρι την ώρα που θα διαλέξεις. Άνοιξε πρώτα το «Εμφάνισέ με στη σελίδα ομάδας», αλλιώς η ιστοσελίδα δεν θα σε δείξει.','Who’s streaming':'Ποιος μεταδίδει','The team first, then every driver. You can set anyone live, extend them, change their link or stop them.':'Πρώτα η ομάδα, μετά κάθε οδηγός. Μπορείς να βάλεις οποιονδήποτε live, να δώσεις παράταση, να αλλάξεις τον σύνδεσμο ή να τον σταματήσεις.','You can set the team live. Drivers do their own from their profile.':'Μπορείς να βάλεις την ομάδα live. Οι οδηγοί το κάνουν μόνοι τους από το προφίλ τους.','No channel saved':'Δεν έχει αποθηκευμένο κανάλι','Not shown on the website (their profile is hidden)':'Δεν εμφανίζεται στην ιστοσελίδα (το προφίλ του είναι κρυφό)','You’re shown as live on the website':'Εμφανίζεσαι live στην ιστοσελίδα','Content':'Περιεχόμενο','Design':'Εμφάνιση','Colours and logo':'Χρώματα και λογότυπο',
  'After lap':'Μετά τον γύρο','Race at a glance':'Ο αγώνας με μια ματιά','Service':'Σέρβις','Time lost':'Χαμένος χρόνος','Tyres don’t last a full stint with these figures.':'Με αυτά τα στοιχεία τα ελαστικά δεν αντέχουν ολόκληρο stint.','incl. the lap after time runs out':'μαζί με τον γύρο μετά τη λήξη του χρόνου','per stint on track':'ανά stint στην πίστα','spent in the pits':'στα pit','tyre sets used':'σετ ελαστικών','tyre life not set':'χωρίς όριο ελαστικών','Energy runs out first.':'Πρώτα τελειώνει η ενέργεια.','Fuel runs out first.':'Πρώτα τελειώνει το καύσιμο.','per stint':'ανά stint','energy runs out first':'πρώτα τελειώνει η ενέργεια','fuel runs out first':'πρώτα τελειώνει το καύσιμο','Show fewer':'Λιγότερες','Suggested':'Προτεινόμενο','Strategy saved. Existing stints weren’t moved; check they still start and end at pit stops.':'Η στρατηγική αποθηκεύτηκε. Τα υπάρχοντα stints δεν μετακινήθηκαν· έλεγξε ότι ξεκινούν και τελειώνουν σε pit stop.',
  'Like 1:58.5. On a phone, 1585 works too.':'π.χ. 1:58.5 · στο κινητό αρκεί και 1585','e.g. 1:58.5':'π.χ. 1:58.5','That isn’t a lap time. Write it like 1:58.5 (or 1585).':'Αυτό δεν είναι χρόνος γύρου. Γράψ’ τον όπως 1:58.5 (ή 1585).','That isn’t a lap time. Write it like 1:58.5 (or 1585), or leave it empty.':'Αυτό δεν είναι χρόνος γύρου. Γράψ’ τον όπως 1:58.5 (ή 1585), ή άφησέ το κενό.','Where the figures come from':'Από πού βγαίνουν τα στοιχεία','On track':'Στην πίστα','Use per lap':'Κατανάλωση ανά γύρο',
@@ -2375,7 +2404,7 @@ async function publishNow(b){b.disabled=true;const {data,error}=await sb.rpc('pu
 let SITE=null,SITETAB='news',INBOXF='all';
 const SCLASSES=['Hypercar','LMP2','LMP3','LMGT3','GT3','GTE'];
 async function loadSite(){const adm=isAdm();
-  const [st,news,liv,par,res,inbox,tms,ads,adstats,older,autoStats]=await Promise.all([
+  const [st,news,liv,par,res,inbox,tms,ads,adstats,older,autoStats,stats]=await Promise.all([
     adm?q(sb.from('site_settings').select('*').eq('id',1).maybeSingle()):null,
     q(sb.from('site_news').select('*').order('created_at',{ascending:false})),
     adm?q(sb.from('site_liveries').select('*').order('sort').order('id')):[],
@@ -2384,8 +2413,8 @@ async function loadSite(){const adm=isAdm();
     adm?q(sb.from('site_inbox').select('*').order('created_at',{ascending:false})):[],
     adm?q(sb.from('teams').select('id,race_id,name,class,start_utc').order('start_utc',{ascending:false})):[],
     adm?q(sb.from('site_ads').select('*').order('placement').order('id')):[],adm?q(sb.from('site_ad_stats').select('*')):[],
-    adm?q(sb.from('site_results_manual').select('*').order('race_date',{ascending:false})):[],adm?sb.rpc('site_public').then(r=>r.data?.stats||null,()=>null):null]);
-  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[],older:older||[],autoStats:autoStats||{}}}
+    adm?q(sb.from('site_results_manual').select('*').order('race_date',{ascending:false})):[],adm?sb.rpc('site_public').then(r=>r.data?.stats||null,()=>null):null,adm?sb.rpc('site_stats').then(r=>r.error?null:r.data,()=>null):null]);
+  SITE={settings:st?.data||{},news:news||[],liveries:liv||[],partners:par||[],results:res||[],inbox:inbox||[],teams:(tms||[]).filter(t=>+new Date(t.start_utc)<=Date.now()),ads:ads||[],adstats:adstats||[],older:older||[],autoStats:autoStats||{},stats:stats||null}}
 // Images are made smaller (max 1600 px) and lighter (WebP, or JPEG where the browser can't) before upload.
 async function shrinkImage(file,max=1600){const bmp=await createImageBitmap(file),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   let b=await new Promise(r=>c.toBlob(r,'image/webp',.84));if(!b||b.type!=='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));return b}
@@ -2460,11 +2489,11 @@ const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join(''
 
 async function siteView(){if(!isEd()){view='my';return render()}await Promise.all([loadSite(),loadPub(),loadLive()]);const adm=isAdm();if(!adm&&!['news','live'].includes(SITETAB))SITETAB='news';
   const newIn=SITE.inbox.filter(x=>x.status==='new').length;
-  const G=adm?[['Content',[['news','News'],['liveries','Liveries'],['results','Results'],['live','Live']]],['Sponsors',[['partners','Sponsors'],['ads','Sponsor banners']]],['Design',[['look','Colours and logo'],['texts','Texts'],['settings','Settings']]],[`Inbox${newIn?` (${newIn})`:''}`,[['inbox','Inbox']]]]:[['Content',[['news','News'],['live','Live']]]];
+  const G=adm?[['Content',[['news','News'],['liveries','Liveries'],['results','Results'],['live','Live']]],['Sponsors',[['partners','Sponsors'],['ads','Sponsor banners']]],['Statistics',[['stweb','Website'],['stposts','Posts'],['stspons','Sponsors'],['stads','Banners']]],['Design',[['look','Colours and logo'],['texts','Texts'],['settings','Settings']]],[`Inbox${newIn?` (${newIn})`:''}`,[['inbox','Inbox']]]]:[['Content',[['news','News'],['live','Live']]]];
   const gi=Math.max(0,G.findIndex(g=>g[1].some(t=>t[0]===SITETAB))),grp=G[gi];
-  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():SITETAB==='look'?siteLook():SITETAB==='texts'?siteTexts():SITETAB==='live'?siteLive():siteInbox();
+  const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():SITETAB==='look'?siteLook():SITETAB==='texts'?siteTexts():SITETAB==='live'?siteLive():SITETAB==='stweb'?siteStatsWeb():SITETAB==='stposts'?siteStatsPosts():SITETAB==='stspons'?sponsorStats():SITETAB==='stads'?bannerStats():siteInbox();
   $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub"><span>What you publish here appears on the public website a couple of minutes later.</span> <a class="ghostlink" href="${SITE_PUBLIC_URL}" target="_blank" rel="noopener">Open website ↗</a></p>${pubBar()}
-    ${G.length>1?`<div class="seg sitetabs" role="tablist" aria-label="Website sections">${G.map((g,i)=>`<button role="tab" aria-selected="${i===gi}" class="${i===gi?'on':''}" onclick="SITETAB='${g[1][0][0]}';render()">${g[0]}</button>`).join('')}</div>`:''}${grp[1].length>1?`<div class="subtabs" role="tablist" aria-label="${grp[0]}">${grp[1].map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
+    ${G.length>1?`<div class="seg sitetabs${G.length===5?' g5':''}" role="tablist" aria-label="Website sections">${G.map((g,i)=>`<button role="tab" aria-selected="${i===gi}" class="${i===gi?'on':''}" onclick="SITETAB='${g[1][0][0]}';render()">${g[0]}</button>`).join('')}</div>`:''}${grp[1].length>1?`<div class="subtabs" role="tablist" aria-label="${grp[0]}">${grp[1].map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
     <div class="sitebody">${body}</div>`}
 
 // ---- News
@@ -2473,7 +2502,8 @@ function siteNews(){const tz=myTz();
   ${SITE.news.length?`<div class="card flush">${SITE.news.map(n=>`<div class="li"><div class="who2"><b>${esc(n.title_el||n.title_en||'(untitled)')}</b><span class="mu">${n.status==='published'&&n.published_at?locFull(new Date(n.published_at),tz):'Draft · '+locFull(new Date(n.updated_at),tz)}</span></div>
     <span class="stat chip ${n.status==='published'?'approved':'pending'}">${n.status==='published'?'Published':'Draft'}</span><div class="acts"><button class="ghost" onclick="newsDlg(${n.id})">Edit</button></div></div>`).join('')}</div>`:'<p class="mu">No posts yet. Press + New post to write the first race report.</p>'}`}
 function newsDlg(id){const n=id?SITE.news.find(x=>x.id===id):null,rs=[...races].sort((a,b)=>+new Date(b.start_utc)-+new Date(a.start_utc)).slice(0,40);
-  openDlg(`<form class="wide" onsubmit="saveNews(event,${id||0},'draft')" oninput="newsPrev(this)"><h3>${n?'Edit post':'New post'}</h3>
+  const ps=n&&SITE.stats?(SITE.stats.pages||[]).find(p=>p.page==='post:'+n.id):null;
+  openDlg(`<form class="wide" onsubmit="saveNews(event,${id||0},'draft')" oninput="newsPrev(this)"><h3>${n?'Edit post':'New post'}</h3>${ps?`<p class="mu notr" style="margin:-6px 0 0">${L2('Στην ιστοσελίδα (σύνολο):','On the website (all time):')} ${STATN(ps.vall)} ${L2('προβολές','views')} · ${STATN(ps.rall)} ${L2('αναγνώσεις','reads')} (${pct(+ps.rall,+ps.vall)}) · ${STATN(ps.sall)} ${L2('κοινοποιήσεις','shares')}</p>`:''}
     <div class="form2"><label>Title (Greek)<input name="title_el" maxlength="140" value="${esc(n?.title_el||'')}" required></label><label>Title (English)<input name="title_en" maxlength="140" value="${esc(n?.title_en||'')}"></label></div>
     <div class="form2">${mdEd('body_el','Text (Greek)',n?.body_el,'el')}${mdEd('body_en','Text (English)',n?.body_en,'en')}</div>
     <p class="mu" style="margin:-4px 0 0">Use the buttons above the text, or type: empty line = new paragraph · **bold** · *italic* · # heading · ## subheading · - list · [text](https://link). Photos sit in their own paragraph. If the English is empty, the English site shows the Greek.</p>
@@ -2499,17 +2529,87 @@ async function delNews(id){if(!await askO({ok:'Delete post',danger:true})('Delet
 // All sponsors at a glance (admins): banners, views, clicks and click rate, last 30 days and all time.
 function sponsorRows(){const rows=SITE.partners.map(p=>({name:p.name,ads:SITE.ads.filter(a=>a.partner_id===p.id)}));const none=SITE.ads.filter(a=>!a.partner_id||!SITE.partners.some(p=>p.id===a.partner_id));if(none.length)rows.push({name:'No sponsor',ads:none,none:true});
   return rows.map(r=>{const sum=d=>r.ads.reduce((a,x)=>{const s=adStat(x.id,d);return {v:a.v+s.v,c:a.c+s.c}},{v:0,c:0});return {...r,running:r.ads.filter(adRunning).length,m:sum(30),all:sum(0)}})}
-function sponsorStats(){const rows=sponsorRows();if(!rows.length)return '';const tot=rows.reduce((a,r)=>({v30:a.v30+r.m.v,c30:a.c30+r.m.c,v:a.v+r.all.v,c:a.c+r.all.c,b:a.b+r.ads.length,run:a.run+r.running}),{v30:0,c30:0,v:0,c:0,b:0,run:0});
-  return `<section class="ssec spstats"><div class="ssech sphead"><div><h3>Sponsor statistics</h3><p class="mu">Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.</p></div><button type="button" onclick="sponsorStatsCsv()">Download (CSV)</button></div>
-    <div class="tblwrap"><table class="rtab"><thead><tr><th>Sponsor</th><th class="num">Banners</th><th class="num">Views · 30 days</th><th class="num">Clicks · 30 days</th><th class="num">Click rate</th><th class="num">Views · all</th><th class="num">Clicks · all</th></tr></thead><tbody>
-    ${rows.map(r=>`<tr><td>${r.none?'<i>No sponsor</i>':esc(r.name)}</td><td class="num">${r.running} / ${r.ads.length}</td><td class="num">${r.m.v}</td><td class="num">${r.m.c}</td><td class="num">${ctr(r.m)}</td><td class="num">${r.all.v}</td><td class="num">${r.all.c}</td></tr>`).join('')}
-    <tr class="tot"><td>Total</td><td class="num">${tot.run} / ${tot.b}</td><td class="num">${tot.v30}</td><td class="num">${tot.c30}</td><td class="num">${ctr({v:tot.v30,c:tot.c30})}</td><td class="num">${tot.v}</td><td class="num">${tot.c}</td></tr></tbody></table></div>
-    <p class="mu" style="margin:0">Banners: running now / total.</p></section>`}
-function sponsorStatsCsv(){const q=v=>`"${String(v).replace(/"/g,'""')}"`,lines=[['Sponsor','Banners running','Banners total','Views 30 days','Clicks 30 days','Click rate 30 days','Views all time','Clicks all time'].join(',')];
-  sponsorRows().forEach(r=>lines.push([r.name,r.running,r.ads.length,r.m.v,r.m.c,ctr(r.m),r.all.v,r.all.c].map(q).join(',')));
-  const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'})),a=document.createElement('a');a.href=url;a.download=`ARION-sponsors-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+// ---- Statistics (admins). Every statistics table uses one card: title, explanation, buttons, table with a Total row, note.
+const STATN=v=>(+v||0).toLocaleString(LOC());
+const pct=(a,b)=>b?(a/b*100).toLocaleString(LOC(),{minimumFractionDigits:1,maximumFractionDigits:1})+'%':'–';
+const L2=(el,en)=>LANG==='el'?el:en;
+function statCard({title,sub,btns,cols,rows,total,note,empty,pre}){const td=(v,i)=>`<td${cols[i][1]?` class="${cols[i][1]}"`:''}>${v}</td>`;
+  return `<section class="ssec spstats"><div class="ssech sphead"><div><h3>${title}</h3>${sub?`<p class="mu">${sub}</p>`:''}</div>${btns||''}</div>${pre||''}
+    ${rows.length?`<div class="tblwrap"><table class="rtab"><thead><tr>${cols.map(([l,c])=>`<th${c?` class="${c}"`:''}>${l}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(td).join('')}</tr>`).join('')}${total?`<tr class="tot">${total.map(td).join('')}</tr>`:''}</tbody></table></div>${note?`<p class="mu" style="margin:0">${note}</p>`:''}`:`<p class="mu">${empty}</p>`}</section>`}
+const csvBtn=fn=>`<button type="button" onclick="${fn}">Download (CSV)</button>`;
+// CSV in the app's language, UTF-8 with BOM so Excel shows Greek; numbers stay plain.
+function csvSave(name,head,rows){const q=v=>`"${String(v??'').replace(/"/g,'""')}"`,txt='\ufeff'+[head.map(tr),...rows].map(r=>r.map(q).join(',')).join('\n');
+  const url=URL.createObjectURL(new Blob([txt],{type:'text/csv'})),a=document.createElement('a');a.href=url;a.download=`ARION-${name}-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+const csvRate=(a,b)=>b?(a/b*100).toFixed(1)+'%':'';
+function sponsorStats(){const rows=sponsorRows(),tot=rows.reduce((a,r)=>({v30:a.v30+r.m.v,c30:a.c30+r.m.c,v:a.v+r.all.v,c:a.c+r.all.c,b:a.b+r.ads.length,run:a.run+r.running}),{v30:0,c30:0,v:0,c:0,b:0,run:0});
+  return statCard({title:'Sponsor statistics',sub:'Banner views and clicks per sponsor. Views count when a banner is at least half on screen for a second; reloads count again.',btns:csvBtn('sponsorStatsCsv()'),
+    cols:[['Sponsor'],['Banners','num'],['Views · 30 days','num'],['Clicks · 30 days','num'],['Click rate','num'],['Views · all','num'],['Clicks · all','num']],
+    rows:rows.map(r=>[r.none?'<i>No sponsor</i>':`<span class="notr">${esc(r.name)}</span>`,`${r.running} / ${r.ads.length}`,STATN(r.m.v),STATN(r.m.c),pct(r.m.c,r.m.v),STATN(r.all.v),STATN(r.all.c)]),
+    total:['Total',`${tot.run} / ${tot.b}`,STATN(tot.v30),STATN(tot.c30),pct(tot.c30,tot.v30),STATN(tot.v),STATN(tot.c)],note:'Banners: running now / total.',empty:'No sponsors yet. Add them under Sponsors.'})}
+function sponsorStatsCsv(){csvSave('sponsors',['Sponsor','Banners running','Banners total','Views 30 days','Clicks 30 days','Click rate 30 days','Views all time','Clicks all time'],
+  sponsorRows().map(r=>[r.none?tr('No sponsor'):r.name,r.running,r.ads.length,r.m.v,r.m.c,csvRate(r.m.c,r.m.v),r.all.v,r.all.c]))}
+// Banners: one row per banner, in position order, then by sponsor.
+const adStatus=a=>adRunning(a)?'Running':a.active?'Scheduled / ended':'Off';
+function bannerRows(){const pn=a=>SITE.partners.find(p=>p.id===a.partner_id)?.name||'',o=k=>{const i=ADPOS.findIndex(p=>p[0]===k);return i<0?99:i};
+  return [...SITE.ads].sort((a,b)=>o(a.placement)-o(b.placement)||pn(a).localeCompare(pn(b))||a.id-b.id).map(a=>({a,name:pn(a),m:adStat(a.id,30),all:adStat(a.id)}))}
+function bannerStats(){const rs=bannerRows(),sum=k=>rs.reduce((s,r)=>({v:s.v+r[k].v,c:s.c+r[k].c}),{v:0,c:0}),m=sum('m'),all=sum('all');
+  return statCard({title:'Banner statistics',sub:'Views and clicks per banner. Views count when a banner is at least half on screen for a second; reloads count again.',
+    btns:`<div class="row sbtns">${SITE.partners.length?`<button type="button" onclick="adReportDlg()">Sponsor report</button>`:''}${csvBtn('bannerStatsCsv()')}</div>`,
+    cols:[['Banner'],['Position'],['Views · 30 days','num'],['Clicks · 30 days','num'],['Click rate','num'],['Views · all','num'],['Clicks · all','num']],
+    rows:rs.map(({a,name,m,all})=>[`<span class="bcell"><span class="adthumb sm">${a.image_desktop?`<img src="${esc(a.image_desktop)}" alt="">`:''}</span>${name?`<span class="notr">${esc(name)}</span>`:'<i>No sponsor</i>'}</span>`,`<span class="pcell"><span>${posLabel(a.placement)}</span><span class="stat chip ${adRunning(a)?'approved':'pending'}">${adStatus(a)}</span></span>`,STATN(m.v),STATN(m.c),pct(m.c,m.v),STATN(all.v),STATN(all.c)]),
+    total:['Total','',STATN(m.v),STATN(m.c),pct(m.c,m.v),STATN(all.v),STATN(all.c)],empty:'No banners yet. Add them under Sponsors → Sponsor banners.'})}
+function bannerStatsCsv(){csvSave('banners',['Sponsor','Position','Status','From','Until','Views 30 days','Clicks 30 days','Click rate 30 days','Views all time','Clicks all time'],
+  bannerRows().map(({a,name,m,all})=>[name||tr('No sponsor'),tr(posLabel(a.placement)),tr(adStatus(a)),a.starts_on||'',a.ends_on||'',m.v,m.c,csvRate(m.c,m.v),all.v,all.c]))}
+// Website and posts: totals from site_stats() (migration 32). Days follow Greek time; "30 days" = today and the 29 before.
+const dayAdd=(d,n)=>{const t=new Date(d+'T00:00:00Z');t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10)};
+const dayLab=(d,o={day:'numeric',month:'short'})=>new Date(d+'T12:00:00Z').toLocaleDateString(LOC(),{...o,timeZone:'UTC'});
+const STPAGES={home:['Αρχική','Home'],team:['Ομάδα','Team'],results:['Πρόγραμμα','Calendar'],news:['Νέα (λίστα άρθρων)','News (list of posts)'],liveries:['Liveries','Liveries'],live:['Live','Live'],sponsors:['Χορηγοί','Sponsors'],join:['Γίνε μέλος','Join us'],privacy:['Απόρρητο','Privacy']};
+const statsMissing=()=>`<section class="ssec spstats"><div class="ssech"><h3>Statistics</h3><p class="mu">The statistics aren’t available yet. Run migration 32 in Supabase, then reload the app.</p></div></section>`;
+function last30(){const S=SITE.stats,by=Object.fromEntries((S.days||[]).map(d=>[d.day,d]));return Array.from({length:30},(_,i)=>{const d=dayAdd(S.today,i-29);return by[d]||{day:d,visitors:0,views:0,views_el:0,views_en:0}})}
+const sinceNote=first=>`<span class="notr">${L2('Η μέτρηση ξεκίνησε στις','Counting started on')} ${dayLab(first,{day:'numeric',month:'long',year:'numeric'})}.</span>`;
+function siteStatsWeb(){const S=SITE.stats;if(!S)return statsMissing();const first=(S.days||[])[0]?.day;
+  if(!first)return `<section class="ssec spstats"><div class="ssech"><h3>Visitors</h3><p class="mu">Nothing counted yet. Counting starts as soon as the new website is online; the first numbers appear here the same day.</p></div></section>`;
+  const D=last30(),from=first>D[0].day?first:D[0].day,n=D.filter(d=>d.day>=from).length,vis=D.reduce((a,d)=>a+d.visitors,0),views=D.reduce((a,d)=>a+d.views,0),el=D.reduce((a,d)=>a+d.views_el,0),mx=Math.max(1,...D.map(d=>d.visitors)),elp=views?Math.round(el/views*100):0;
+  const tiles=[[(vis/n).toLocaleString(LOC(),{maximumFractionDigits:1}),'Visitors per day (average)'],[STATN(vis),'Visitor-days · 30 days'],[STATN(views),'Page views · 30 days'],[views?`${elp}% / ${100-elp}%`:'–','Greek / English page views']];
+  const chart=`<div class="sttiles">${tiles.map(([v,l])=>`<div class="sttile"><b class="notr">${v}</b><span>${l}</span></div>`).join('')}</div>
+    <div class="stchartw"><span class="stmax notr">${STATN(mx)}</span><div class="stchart" role="img" aria-label="${L2('Επισκέπτες ανά μέρα, τελευταίες 30 μέρες','Visitors per day, last 30 days')}">${D.map(d=>`<div class="stbar${d.day<from?' pre':''}" title="${dayLab(d.day,{weekday:'short',day:'numeric',month:'short'})}: ${STATN(d.visitors)} ${L2('επισκέπτες','visitors')} · ${STATN(d.views)} ${L2('προβολές','views')}"><i style="height:${d.visitors/mx*100}%"></i></div>`).join('')}</div>
+    <div class="stax notr"><span>${dayLab(D[0].day)}</span><span>${L2('Επισκέπτες ανά μέρα','Visitors per day')}</span><span>${dayLab(S.today)}</span></div></div>`;
+  const card1=`<section class="ssec spstats"><div class="ssech sphead"><div><h3>Visitors</h3><p class="mu">Each visitor counts once per day, without cookies. A page view counts after 5 seconds on screen. Days follow Greek time.</p></div>${csvBtn('webDaysCsv()')}</div>${chart}
+    <p class="mu" style="margin:0">Visitor-days: someone who visits on 3 different days counts 3 times, because without cookies the same person can’t be recognised on another day. ${sinceNote(first)}</p></section>`;
+  const pg=(S.pages||[]).filter(p=>!p.page.startsWith('post:')).map(p=>({...p,name:L2(...(STPAGES[p.page]||[p.page,p.page]))})),posts=(S.pages||[]).filter(p=>p.page.startsWith('post:'));
+  if(posts.length)pg.push({name:L2('Άρθρα (όλα μαζί)','Posts (all together)'),v30:posts.reduce((a,p)=>a+(+p.v30),0),el30:posts.reduce((a,p)=>a+(+p.el30),0),en30:posts.reduce((a,p)=>a+(+p.en30),0),vall:posts.reduce((a,p)=>a+(+p.vall),0)});
+  pg.sort((a,b)=>b.v30-a.v30||b.vall-a.vall);const t=k=>pg.reduce((a,p)=>a+(+p[k]),0);
+  const card2=statCard({title:'Page views',sub:'Views per page of the website. Each post’s own numbers are under Posts.',btns:csvBtn('webPagesCsv()'),
+    cols:[['Page'],['Views · 30 days','num'],['Greek · 30 days','num'],['English · 30 days','num'],['Views · all','num']],
+    rows:pg.map(p=>[`<span class="notr">${esc(p.name)}</span>`,STATN(p.v30),STATN(p.el30),STATN(p.en30),STATN(p.vall)]),total:['Total',STATN(t('v30')),STATN(t('el30')),STATN(t('en30')),STATN(t('vall'))],empty:'No page views yet.'});
+  const cs=ctryRows(),c30=cs.reduce((a,c)=>a+(+c.v30),0);
+  const card3=statCard({title:'Visitors by country',sub:'Where visitors are, as reported by Cloudflare. Only the totals per country are kept.',btns:csvBtn('webCountriesCsv()'),
+    cols:[['Country'],['Visitors · 30 days','num'],['Share · 30 days','num'],['Visitors · all','num']],
+    rows:cs.map(c=>[`<span class="notr">${esc(c.name)}</span>`,STATN(c.v30),pct(+c.v30,c30),STATN(c.vall)]),total:['Total',STATN(c30),c30?pct(c30,c30):'–',STATN(cs.reduce((a,c)=>a+(+c.vall),0))],empty:'No visitors yet.'});
+  return card1+card2+card3}
+function ctryName(cc){if(cc==='XX')return L2('Άγνωστη','Unknown');if(cc==='T1')return 'Tor';try{return new Intl.DisplayNames([LANG==='el'?'el':'en'],{type:'region'}).of(cc)||cc}catch{return cc}}
+function ctryRows(){return (SITE.stats?.countries||[]).map(c=>({...c,name:ctryName(c.country)})).sort((a,b)=>b.v30-a.v30||b.vall-a.vall||a.name.localeCompare(b.name))}
+function webDaysCsv(){csvSave('website-days',['Date','Visitors','Page views','Greek page views','English page views'],(SITE.stats?.days||[]).map(d=>[d.day,d.visitors,d.views,d.views_el,d.views_en]))}
+function webPagesCsv(){csvSave('website-pages',['Page','Views 30 days','Greek 30 days','English 30 days','Views all time'],(SITE.stats?.pages||[]).map(p=>{const po=p.page.startsWith('post:'),n=po?SITE.news.find(x=>x.id===+p.page.slice(5)):null;
+  return [po?`${L2('Άρθρο','Post')}: ${n?(n.title_el||n.title_en):L2('διαγραμμένο άρθρο','deleted post')}`:L2(...(STPAGES[p.page]||[p.page,p.page])),p.v30,p.el30,p.en30,p.vall]}))}
+function webCountriesCsv(){csvSave('website-countries',['Country','Code','Visitors 30 days','Visitors all time'],ctryRows().map(c=>[c.name,c.country,c.v30,c.vall]))}
+// Posts: published posts (and any with numbers), newest first.
+function postRows(){const S=SITE.stats,pg={},sh={};(S?.pages||[]).forEach(p=>{if(p.page.startsWith('post:'))pg[+p.page.slice(5)]=p});(S?.shares||[]).forEach(x=>{if(x.page.startsWith('post:')){const id=+x.page.slice(5);(sh[id]=sh[id]||{})[x.net]=+x.nall}});
+  const ids=new Set([...SITE.news.filter(n=>n.status==='published').map(n=>n.id),...Object.keys(pg).map(Number)]),z=k=>p=>+(p[k]||0);
+  return [...ids].map(id=>{const n=SITE.news.find(x=>x.id===id),p=pg[id]||{};return {id,n,sh:sh[id]||{},v30:z('v30')(p),r30:z('r30')(p),s30:z('s30')(p),vall:z('vall')(p),rall:z('rall')(p),sall:z('sall')(p)}})
+    .sort((a,b)=>(b.n?.published_at||'').localeCompare(a.n?.published_at||'')||b.id-a.id)}
+const postTitle=n=>n?(LANG==='en'?(n.title_en||n.title_el):(n.title_el||n.title_en))||'(untitled)':null;
+function siteStatsPosts(){const S=SITE.stats;if(!S)return statsMissing();const rs=postRows(),t=k=>rs.reduce((a,r)=>a+r[k],0),first=(S.days||[])[0]?.day;
+  return statCard({title:'Post statistics',sub:'Views: the post was on screen for 5 seconds. Reads: the reader reached the end of the post (a short post that fits on the screen counts as read). Shares: presses of the share buttons under the post.',btns:csvBtn('postStatsCsv()'),
+    cols:[['Post'],['Published'],['Views · 30 days','num'],['Reads · 30 days','num'],['Read rate','num'],['Shares · 30 days','num'],['Views · all','num'],['Reads · all','num'],['Shares · all','num']],
+    rows:rs.map(r=>[r.n?`<span class="notr">${esc(postTitle(r.n))}</span>`:'<i>Deleted post</i>',r.n?.status==='published'&&r.n.published_at?`<span class="notr nowrap">${new Date(r.n.published_at).toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'})}</span>`:r.n?'Draft':'–',STATN(r.v30),STATN(r.r30),pct(r.r30,r.v30),STATN(r.s30),STATN(r.vall),STATN(r.rall),STATN(r.sall)]),
+    total:['Total','',STATN(t('v30')),STATN(t('r30')),pct(t('r30'),t('v30')),STATN(t('s30')),STATN(t('vall')),STATN(t('rall')),STATN(t('sall'))],
+    note:`Read rate = reads ÷ views, last 30 days. ${first?sinceNote(first):''}`,empty:'No published posts yet.'})}
+function postStatsCsv(){csvSave('posts',['Post','Published','Views 30 days','Reads 30 days','Read rate 30 days','Shares 30 days','Views all time','Reads all time','Shares all time','WhatsApp','Facebook','X','Copy link','Phone share menu'],
+  postRows().map(r=>[r.n?postTitle(r.n):tr('Deleted post'),r.n?.published_at?.slice(0,10)||'',r.v30,r.r30,csvRate(r.r30,r.v30),r.s30,r.vall,r.rall,r.sall,...['whatsapp','facebook','x','copy','native'].map(k=>r.sh[k]||0)]))}
+const statsLink=tab=>`<button type="button" class="ghost" onclick="SITETAB='${tab}';render()">Statistics →</button>`;
 function siteGallery(kind){const L=kind==='liveries',list=SITE[kind];
-  return `${!L&&isAdm()?sponsorStats():''}<div class="row" style="margin-bottom:12px"><button class="pri" onclick="galDlg('${kind}')">${L?'+ Add livery':'+ Add sponsor'}</button></div>
+  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="galDlg('${kind}')">${L?'+ Add livery':'+ Add sponsor'}</button>${!L&&isAdm()?statsLink('stspons'):''}</div>
   ${list.length?`<div class="galgrid">${list.map((x,i)=>`<div class="galcard${x.visible?'':' hid'}"><div class="galimg${L?'':' logo'}">${(L?x.image_url:x.logo_url)?`<img src="${esc(L?x.image_url:x.logo_url)}" alt="">`:''}</div>
     <div class="galtx"><b>${esc(L?x.title:x.name)}</b><span class="mu">${L?esc([x.car,x.class].filter(Boolean).join(' · ')):esc(x.link||'')}</span>${x.visible?'':'<span class="stat chip pending">Hidden</span>'}</div>
     <div class="acts"><button class="ghost" aria-label="Move earlier" onclick="galMove('${kind}',${x.id},-1)" ${i===0?'disabled':''}>↑</button><button class="ghost" aria-label="Move later" onclick="galMove('${kind}',${x.id},1)" ${i===list.length-1?'disabled':''}>↓</button><button class="ghost" onclick="galDlg('${kind}',${x.id})">Edit</button></div></div>`).join('')}</div>`
@@ -2693,12 +2793,11 @@ const adStat=(id,days)=>{const from=days?new Date(Date.now()-days*864e5).toISOSt
 const ctr=s=>s.v?(s.c/s.v*100).toFixed(1)+'%':'–';
 const adRunning=a=>{const t=new Date().toISOString().slice(0,10);return a.active&&(!a.starts_on||a.starts_on<=t)&&(!a.ends_on||a.ends_on>=t)};
 function siteAds(){const off=SITE.settings.ads_off||[],list=SITE.ads;
-  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="adDlg()">+ New banner</button>${SITE.partners.length?`<button onclick="adReportDlg()">Sponsor report</button>`:''}</div>
+  return `<div class="row" style="margin-bottom:12px"><button class="pri" onclick="adDlg()">+ New banner</button>${statsLink('stads')}</div>
   <p class="mu" style="margin-top:0">At most one banner per position and two per page are shown; several banners in one position take turns. Views and clicks are daily totals, with no cookies and nothing stored about visitors. A reload counts as a new view.</p>
-  ${ADPOS.map(([k])=>{const ads=list.filter(a=>a.placement===k);if(!ads.length)return '';return `<h3>${posLabel(k)}${off.includes(k)?' <span class="stat chip pending">Position off</span>':''}</h3><div class="card flush">${ads.map(a=>{const s30=adStat(a.id,30),all=adStat(a.id);
+  ${ADPOS.map(([k])=>{const ads=list.filter(a=>a.placement===k);if(!ads.length)return '';return `<h3>${posLabel(k)}${off.includes(k)?' <span class="stat chip pending">Position off</span>':''}</h3><div class="card flush">${ads.map(a=>{
     return `<div class="li adrow"><div class="adthumb">${a.image_desktop?`<img src="${esc(a.image_desktop)}" alt="">`:''}</div><div class="who2"><b>${esc(SITE.partners.find(p=>p.id===a.partner_id)?.name||'No sponsor')}</b><span class="mu">${a.starts_on||'…'} → ${a.ends_on||'…'}</span></div>
-      <div class="adnum"><span><b>${s30.v}</b> views</span><span><b>${s30.c}</b> clicks</span><span>${ctr(s30)}</span><span class="mu">last 30 days</span></div><div class="adnum mu"><span>${all.v} / ${all.c}</span><span>all time</span></div>
-      <span class="stat chip ${adRunning(a)?'approved':'pending'}">${adRunning(a)?'Running':a.active?'Scheduled / ended':'Off'}</span><div class="acts"><button class="ghost" onclick="adDlg(${a.id})">Edit</button></div></div>`}).join('')}</div>`}).join('')||'<p class="mu">No banners yet. Add a sponsor first (Sponsors), then press + New banner.</p>'}`}
+      <span class="stat chip ${adRunning(a)?'approved':'pending'}">${adStatus(a)}</span><div class="acts"><button class="ghost" onclick="adDlg(${a.id})">Edit</button></div></div>`}).join('')}</div>`}).join('')||'<p class="mu">No banners yet. Add a sponsor first (Sponsors), then press + New banner.</p>'}`}
 function adDlg(id){const a=id?SITE.ads.find(x=>x.id===id):null,pos=a?.placement||'home_top';
   openDlg(`<form onsubmit="saveAd(event,${id||0})"><h3>${a?'Edit sponsor banner':'New sponsor banner'}</h3>
     <label>Sponsor<select name="partner_id">${opt('','No sponsor',!a?.partner_id)}${SITE.partners.map(p=>opt(String(p.id),p.name,a?.partner_id===p.id)).join('')}</select></label>
