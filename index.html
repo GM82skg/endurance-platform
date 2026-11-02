@@ -72,9 +72,9 @@ header.bar{position:sticky;top:0;z-index:20;height:56px;display:grid;grid-templa
 
 /* bottom tab bar (phones) */
 .tabbar{display:none}
-[data-v="roster"]{position:relative}
-[data-v="roster"].has-dot::after{content:"";position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--tint)}
-.tabbar [data-v="roster"].has-dot::after{top:5px;right:calc(50% - 17px);width:9px;height:9px;box-shadow:0 0 0 2px var(--bar)}
+[data-v="roster"],[data-v="site"]{position:relative}
+[data-v].has-dot::after{content:"";position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--tint)}
+.tabbar [data-v].has-dot::after{top:5px;right:calc(50% - 17px);width:9px;height:9px;box-shadow:0 0 0 2px var(--bar)}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:50px;padding:4px 0 0;background:none;color:var(--label2);font-size:10px;font-weight:500;letter-spacing:.01em;border-radius:0}
 .tabbar button:hover{background:none}.tabbar button.on{color:var(--tint-t)}.tabbar svg{width:25px;height:25px;display:block}
 
@@ -519,7 +519,7 @@ dialog .askbar{margin:0 0 4px}
 .langsw{position:absolute;top:16px;right:16px;display:flex;gap:4px;padding:2px;border-radius:9px;background:var(--fill)}.langsw button{min-height:30px;padding:0 10px;border-radius:7px;background:none;color:var(--label);font-size:13px;font-weight:600}.langsw button.on{background:var(--seg-on)}
 .auth{position:relative}
 /* ---------- v0.6.7 website tab ---------- */
-.sitetabs{display:flex;flex-wrap:wrap;margin:6px 0 18px;max-width:100%;overflow-x:auto}.sitetabs button{padding:0 14px}
+.sitetabs{display:flex;flex-wrap:wrap;margin:6px 0 18px;max-width:100%;overflow-x:auto}.sitetabs button{padding:0 14px;position:relative}.sitetabs button.has-dot::after{content:"";position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--tint)}
 .sitebody h3{margin-top:22px}
 .imgpick{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center}.imgpick .iplab{grid-column:1/-1;font-size:13px;font-weight:600;color:var(--label2)}
 .imgpick .ipbox{grid-row:span 3;width:150px;height:96px;border-radius:10px;background:var(--fill);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px}
@@ -727,6 +727,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 .presets button{white-space:normal;line-height:1.2}
 /* v0.8.5: live form and list, live bar, website groups */
 /* v0.8.6: Statistics group (website, posts, sponsors, banners), shared statistics table, banner statistics */
+/* v0.8.7: yellow dot on Website and on Inbox while website messages are still New; inbox arrives live (migration 33) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
 .lvrow{grid-template-columns:minmax(0,1fr) auto!important}.lvrow .who2{display:flex;flex-direction:column;gap:3px}.lvrow .acts{grid-column:2!important;grid-row:1!important;margin:0!important;justify-content:flex-end;flex-wrap:wrap}
@@ -753,7 +754,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.6',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.8.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -918,7 +919,7 @@ async function start(){
   if(view==='race'&&!curRace())view='my';
   render();
 }
-let WAITING=0;
+let WAITING=0,INBOXN=0;
 async function loadBase(){
   [profiles,races]=await Promise.all([q(sb.from('profiles').select('*').eq('approved',true).order('name')),q(sb.from('races').select('*').order('start_utc'))]);
   const p=profiles.find(x=>x.id===me.id);if(p)prof=p;
@@ -926,6 +927,14 @@ async function loadBase(){
   LINEUPS=(lu.data||[]).map(l=>({...l,members:(lm.data||[]).filter(m=>m.lineup_id===l.id).map(m=>m.user_id)}));
   // Admins: how many sign-ups are waiting for approval (shown as a dot on Roster).
   WAITING=isAdm()?(await sb.from('profiles').select('id').eq('approved',false)).data?.length||0:0;
+  // Admins: website messages still marked New (shown as a dot on Website and on its Inbox group).
+  INBOXN=isAdm()?(await sb.from('site_inbox').select('id').eq('status','new')).data?.length||0:0;
+}
+// The dots on the main tabs (top bar and phone tab bar).
+function navDots(){
+  $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Team, ${WAITING} waiting for approval`:'Team');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
+  $$('[data-v="site"]').forEach(b=>{b.classList.toggle('has-dot',INBOXN>0);const t=INBOXN?(LANG==='el'?`${INBOXN} ${INBOXN>1?'νέα μηνύματα':'νέο μήνυμα'} στα Εισερχόμενα`:`${INBOXN} new message${INBOXN>1?'s':''} in the Inbox`):'';
+    if(t)b.setAttribute('aria-label',(LANG==='el'?'Ιστοσελίδα, ':'Website, ')+t);else b.removeAttribute('aria-label');b.title=t});
 }
 // Code of conduct: accepted once by every member (again only if the text changes → raise COC_VERSION).
 const COC_VERSION=1;
@@ -994,7 +1003,7 @@ async function render(){setTimeout(showOnline,0);
   if(same&&mainEl)mainEl.style.minHeight=mainEl.offsetHeight+'px';
   try{
   $$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===(view==='race'?backTo:view)));
-  $$('[data-v="roster"]').forEach(b=>{b.classList.toggle('has-dot',WAITING>0);b.setAttribute('aria-label',WAITING?`Team, ${WAITING} waiting for approval`:'Team');b.title=WAITING?`${WAITING} driver${WAITING>1?'s':''} waiting for approval`:''});
+  navDots();
   tzBanner();liveBar();
   if(view==='my')await myView();else if(view==='cal')calView();else if(view==='strat')stratView();else if(view==='race')await raceView();else if(view==='site')await siteView();else if(view==='me')await meView();else await rosterView();
   $$('.scroll').forEach((e,i)=>{if(sx[i])e.scrollLeft=sx[i]});
@@ -2488,12 +2497,12 @@ const GRL={α:'a',ά:'a',β:'v',γ:'g',δ:'d',ε:'e',έ:'e',ζ:'z',η:'i',ή:'i'
 const slugify=t=>String(t||'').toLowerCase().split('').map(c=>GRL[c]??c).join('').normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70);
 
 async function siteView(){if(!isEd()){view='my';return render()}await Promise.all([loadSite(),loadPub(),loadLive()]);const adm=isAdm();if(!adm&&!['news','live'].includes(SITETAB))SITETAB='news';
-  const newIn=SITE.inbox.filter(x=>x.status==='new').length;
+  const newIn=SITE.inbox.filter(x=>x.status==='new').length;if(isAdm()&&newIn!==INBOXN){INBOXN=newIn;navDots()}
   const G=adm?[['Content',[['news','News'],['liveries','Liveries'],['results','Results'],['live','Live']]],['Sponsors',[['partners','Sponsors'],['ads','Sponsor banners']]],['Statistics',[['stweb','Website'],['stposts','Posts'],['stspons','Sponsors'],['stads','Banners']]],['Design',[['look','Colours and logo'],['texts','Texts'],['settings','Settings']]],[`Inbox${newIn?` (${newIn})`:''}`,[['inbox','Inbox']]]]:[['Content',[['news','News'],['live','Live']]]];
   const gi=Math.max(0,G.findIndex(g=>g[1].some(t=>t[0]===SITETAB))),grp=G[gi];
   const body=SITETAB==='news'?siteNews():SITETAB==='liveries'?siteGallery('liveries'):SITETAB==='partners'?siteGallery('partners'):SITETAB==='ads'?siteAds():SITETAB==='results'?siteResults():SITETAB==='settings'?siteSettings():SITETAB==='look'?siteLook():SITETAB==='texts'?siteTexts():SITETAB==='live'?siteLive():SITETAB==='stweb'?siteStatsWeb():SITETAB==='stposts'?siteStatsPosts():SITETAB==='stspons'?sponsorStats():SITETAB==='stads'?bannerStats():siteInbox();
   $('#main').innerHTML=`<h1 class="lt">Website</h1><p class="lt-sub"><span>What you publish here appears on the public website a couple of minutes later.</span> <a class="ghostlink" href="${SITE_PUBLIC_URL}" target="_blank" rel="noopener">Open website ↗</a></p>${pubBar()}
-    ${G.length>1?`<div class="seg sitetabs${G.length===5?' g5':''}" role="tablist" aria-label="Website sections">${G.map((g,i)=>`<button role="tab" aria-selected="${i===gi}" class="${i===gi?'on':''}" onclick="SITETAB='${g[1][0][0]}';render()">${g[0]}</button>`).join('')}</div>`:''}${grp[1].length>1?`<div class="subtabs" role="tablist" aria-label="${grp[0]}">${grp[1].map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
+    ${G.length>1?`<div class="seg sitetabs${G.length===5?' g5':''}" role="tablist" aria-label="Website sections">${G.map((g,i)=>`<button role="tab" aria-selected="${i===gi}" class="${i===gi?'on':''}${g[1][0][0]==='inbox'&&newIn?' has-dot':''}" onclick="SITETAB='${g[1][0][0]}';render()">${g[0]}</button>`).join('')}</div>`:''}${grp[1].length>1?`<div class="subtabs" role="tablist" aria-label="${grp[0]}">${grp[1].map(([k,l])=>`<button role="tab" aria-selected="${SITETAB===k}" class="${SITETAB===k?'on':''}" onclick="SITETAB='${k}';render()">${l}</button>`).join('')}</div>`:''}
     <div class="sitebody">${body}</div>`}
 
 // ---- News
