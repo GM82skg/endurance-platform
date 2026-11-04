@@ -762,6 +762,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 /* v0.8.14: roster shows the nickname in square brackets: George Makridis [GM82] */
 /* v0.8.15: Discord step 2: admins see the race-posts channel in Me → Discord, with Stop (migration 37) */
+/* v0.9.2: roster Admin chip uses the Dev chip's purple */
 /* v0.9.1: race permission: admins tick drivers in Team → ⋯ who can add races; ticked drivers edit/delete only races they added; admins get a Discord message when a driver adds or deletes a race (migration 40) */
 /* v0.8.16: Discord step 4: LMU weekly schedule imported automatically; admins see the channel and last import in Me → Discord (migration 38) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
@@ -790,7 +791,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.2',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -3064,7 +3065,7 @@ async function rosterView(){
   const on=p=>ONLINE.has(p.id),dot=p=>adm?`<i class="odot${on(p)?' on':''}" data-uid="${p.id}" role="img" aria-label="${on(p)?'Online now':'Offline'}" title="${on(p)?'Online now':'Offline'}"></i>`:'';
   const who=p=>`<div class="who2"><b>${dot(p)}<span class="notr">${esc(p.name)}</span>${p.nickname?` <span class="nick notr">[${esc(p.nickname)}]</span>`:''}${p.code?` <span class="dcode notr">${esc(p.code)}</span>`:''}</b>${adm&&EMAILS[p.id]?`<span class="mu notr">${esc(EMAILS[p.id])}</span>`:''}</div>`;
   const more=p=>`<button type="button" class="gdots" onclick="memberMenu('${p.id}')" aria-label="More for ${esc(p.name)}" title="More">⋯</button>`;
-  const tags=p=>`<span class="rtags">${adm?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip approved">${p.role==='admin'?'Admin':'Driver'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}${p.can_add_races&&p.role!=='admin'?'<span class="stat chip ed">Adds races</span>':''}</span>`;
+  const tags=p=>`<span class="rtags">${adm?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip ${p.role==='admin'?'dev':'approved'}">${p.role==='admin'?'Admin':'Driver'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}${p.can_add_races&&p.role!=='admin'?'<span class="stat chip ed">Adds races</span>':''}</span>`;
   const drv=ROSTER.filter(p=>p.approved),wait=ROSTER.filter(p=>!p.approved);
   const rows=drv.map(p=>`<div class="li drv">${who(p)}<div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${tags(p)}${adm?`<div class="acts">${more(p)}</div>`:''}</div>`).join('');
   const wrows=wait.map(p=>`<div class="li wait">${who(p)}<div class="acts"><button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>${more(p)}</div></div>`).join('');
