@@ -762,6 +762,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 /* v0.8.14: roster shows the nickname in square brackets: George Makridis [GM82] */
 /* v0.8.15: Discord step 2: admins see the race-posts channel in Me → Discord, with Stop (migration 37) */
+/* v0.9.1: race permission: admins tick drivers in Team → ⋯ who can add races; ticked drivers edit/delete only races they added; admins get a Discord message when a driver adds or deletes a race (migration 40) */
 /* v0.8.16: Discord step 4: LMU weekly schedule imported automatically; admins see the channel and last import in Me → Discord (migration 38) */
 .liveform2{display:flex;flex-direction:column;gap:12px}.liveform2 .pf{display:flex;flex-direction:column;gap:6px}.lfhint{font-size:12px;font-weight:400}
 .liveon2{display:flex;flex-direction:column;gap:8px}.lvst{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lvst b{font-size:17px}.lvurl{overflow-wrap:anywhere}.lvacts{gap:8px}
@@ -789,7 +790,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.8.16',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.1',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -883,6 +884,8 @@ function calcStrategy(f,lenH){
 let me=null,prof=null,profiles=[],races=[],view='my',raceId=null,T={ts:[],ms:[],ss:[]},PLAN=null;
 let busy=0,chan=null,dirty=false,rt=null,tt,lastKey='';
 const isAdm=()=>prof?.role==='admin',curRace=()=>races.find(x=>x.id===raceId);
+// Race permission (migration 40): admins, or ticked drivers. Ticked drivers change only the races they added.
+const canAddRace=()=>isAdm()||!!(prof?.approved&&prof?.can_add_races),canEditRace=r=>!!r&&(isAdm()||(canAddRace()&&r.created_by===me?.id));
 const cl=c=>c==='-'?'u':c,name=id=>profiles.find(p=>p.id===id)?.name||'Unknown';
 // A driver's short name in the app: their 3-letter code (e.g. GMA), or their first name until they set one.
 // A name followed by a full stop in a sentence: drop the name's own trailing dot ("Nikos P." + "." → "Nikos P.").
@@ -1115,7 +1118,7 @@ function calView(){
   const up=races.filter(r=>evEndR(r)>now),past=races.filter(r=>evEndR(r)<=now).reverse();
   const mon=r=>new Date(r.start_utc).toLocaleDateString(LOC(),{timeZone:tz,month:'long',year:'numeric'});
   let list='',last='';for(const r of up){const m=mon(r);if(m!==last){list+=`<h3 class="monh notr">${esc(m.charAt(0).toUpperCase()+m.slice(1))}</h3>`;last=m}list+=card(r)}
-  $('#main').innerHTML=`<div class="head"><h1 class="lt">Races</h1>${adm?'<button class="ghost" onclick="importDlg()">Import LMU schedule</button><button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
+  $('#main').innerHTML=`<div class="head"><h1 class="lt">Races</h1>${adm?'<button class="ghost" onclick="importDlg()">Import LMU schedule</button>':''}${canAddRace()?'<button class="pri" onclick="raceDlg()">Add race</button>':''}</div><p class="lt-sub">Times shown in ${esc(tz)}</p>
     ${list||`<div class="card"><p class="empty" style="margin:0">No upcoming races.${adm?' Use Add race to create one.':''}</p></div>`}${past.length?`<details class="pastr"><summary>Past races (${past.length})</summary>${past.map(card).join('')}</details>`:''}`;
 }
 function raceDlg(id){
@@ -1139,10 +1142,10 @@ async function saveRace(e,id){e.preventDefault();const f=new FormData(e.target),
   {const fb=e.target.querySelector('[name=fair]');if(fb)row.fair_share=fb.checked}
   const clash=races.find(x=>x.id!==id&&x.name.trim().toLowerCase()===row.name.toLowerCase()&&+new Date(x.start_utc)<=+new Date(row.window_end)&&+new Date(x.window_end||x.start_utc)>=+new Date(row.start_utc));
   if(clash)return note(`“${clash.name}” already exists for those days. Open it and add a team instead.`);
-  if(id){const r=races.find(x=>x.id===id);if(row.length_h<r.length_h&&!await askO({ok:'Shorten race'})(`Shorten to ${row.length_h}H? Stints after hour ${row.length_h} will no longer show.`))return;await q(sb.from('races').update(row).eq('id',id))}
+  if(id){const r=races.find(x=>x.id===id);if(row.length_h<r.length_h&&!await askO({ok:'Shorten race'})(`Shorten to ${row.length_h}H? Stints after hour ${row.length_h} will no longer show.`))return;const ok=await q(sb.from('races').update(row).eq('id',id).select('id'));if(!ok?.length)return note('You can no longer change this race. Ask an admin.')}
   else await q(sb.from('races').insert(row));
   closeDlg();races=await q(sb.from('races').select('*').order('start_utc'));render();note(id?'Event updated.':'Event added. Teams pick their own start time inside it.',1)}
-async function delRace(id){if(!await askO({danger:true,ok:'Delete race'})('Delete this race with all its teams, stints and availability?'))return;await q(sb.from('races').delete().eq('id',id));closeDlg();races=races.filter(r=>r.id!==id);go('cal')}
+async function delRace(id){if(!await askO({danger:true,ok:'Delete race'})('Delete this race with all its teams, stints and availability?'))return;const gone=await q(sb.from('races').delete().eq('id',id).select('id'));if(!gone?.length)return note('You can no longer change this race. Ask an admin.');closeDlg();races=races.filter(r=>r.id!==id);go('cal')}
 
 /* ---------- Race ---------- */
 async function loadRace(r){
@@ -1379,7 +1382,7 @@ function freeDlg(uid){const ts=T.ts.filter(t=>canMove(uid,0,t.id));
 function raceMenu(){const r=curRace(),L=r.length_h,sp=gWin(r,T.ts[0]).span/H;
   openDlg(`<form onsubmit="event.preventDefault();closeDlg()" class="menu"><h3>${esc(r.name)}</h3>
     <div class="mu">Show on screen</div><div class="seg" style="display:flex">${[...[[6,'6 hours'],[12,'12 hours']].filter(([h])=>h<L),[L,'Whole race']].map(([h,l])=>`<button type="button" class="${Math.round(sp)===Math.min(h,L)?'on':''}" onclick="gZoom(${h})">${l}</button>`).join('')}</div>
-    ${isAdm()?`<button type="button" onclick="closeDlg();raceDlg(${r.id})">Edit race</button>`:''}
+    ${canEditRace(r)?`<button type="button" onclick="closeDlg();raceDlg(${r.id})">Edit race</button>`:''}
     <button type="button" onclick="closeDlg();teamDlg()">+ New team</button>
     ${joined(me.id)?`<button type="button" class="danger" onclick="closeDlg();leaveRace()">Leave this race</button>`:''}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
@@ -2078,6 +2081,7 @@ let LANG=(()=>{try{const v=localStorage.getItem('ec-lang');if(v==='el'||v==='en'
 const LOC=()=>LANG==='el'?'el-GR':'en-GB';
 const gr=(n,one,many)=>+n===1?one:many;
 const EL={
+'Can add races':'Μπορεί να προσθέτει αγώνες','Adds races, and edits or deletes only the races they added.':'Προσθέτει αγώνες και αλλάζει ή διαγράφει μόνο όσους πρόσθεσε ο ίδιος.','Adds races':'Προσθέτει αγώνες','You can no longer change this race. Ask an admin.':'Δεν μπορείς πλέον να αλλάξεις αυτόν τον αγώνα. Ρώτησε έναν διαχειριστή.',
  'LMU schedule':'Πρόγραμμα LMU',
  'Race posts':'Αναρτήσεις αγώνων',
  'Stint reminders and the ARION bot’s answers arrive as private messages on Discord.':'Οι υπενθυμίσεις για τα stints και οι απαντήσεις του bot του ARION έρχονται σε προσωπικά μηνύματα στο Discord.','Connect Discord':'Σύνδεση Discord','Connected. Reminders arrive as private messages.':'Συνδεδεμένο. Οι υπενθυμίσεις έρχονται σε προσωπικά μηνύματα.','Disconnect':'Αποσύνδεση','Discord couldn’t deliver your last message. In Discord, open the ARION server’s menu → Privacy settings and allow direct messages.':'Το Discord δεν μπόρεσε να παραδώσει το τελευταίο μήνυμα. Στο Discord, άνοιξε το μενού του server ARION → Ρυθμίσεις απορρήτου και επίτρεψε τα προσωπικά μηνύματα.',
@@ -2407,7 +2411,7 @@ const RX=[
  [/^(.+?) Fair share: (you have|(.+) has) (\d+)\/(\d+) laps in total, (\d+) more needed\.$/,(m,a,b,c,x,y,z)=>`${tr(a)} Fair share: ${b==='you have'?'έχεις':c+' έχει'} ${x}/${y} γύρους συνολικά, χρειάζονται άλλοι ${z}.`],
  [/^Join (.+)$/,'Συμμετοχή: $1'],[/^Inbox \((\d+)\)$/,'Εισερχόμενα ($1)'],[/^Only drivers of the lineup “(.+)” can join this car\.$/,'Σε αυτό το αυτοκίνητο μπαίνουν μόνο οι οδηγοί του lineup «$1».'],[/^Only drivers of the lineup "(.+)" can join this car\.$/,'Σε αυτό το αυτοκίνητο μπαίνουν μόνο οι οδηγοί του lineup «$1».'],[/^Automatic now: (.+)$/,'Αυτόματα τώρα: $1'],[/^Logo size at the top of the page: (.+)$/,'Μέγεθος λογότυπου στην κορυφή: $1'],[/^Blur of the top bar: (.+)$/,'Θόλωμα της μπάρας: $1'],[/^Copy didn’t work here\. The address is: (.+)$/,'Η αντιγραφή δεν δούλεψε εδώ. Η διεύθυνση είναι: $1'],[/^The logo is hard to see on this background \(contrast (.+):1\)\. A light version of the logo, or another background, would read better\.$/,'Το λογότυπο φαίνεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1). Μια ανοιχτόχρωμη εκδοχή του λογότυπου ή άλλο φόντο θα φαίνεται καλύτερα.'],[/^(.+) \((Greek|English)\)$/,(m,x,l)=>`${tr(x)} (${l==='Greek'?'Ελληνικά':'Αγγλικά'})`],[/^(\d+) of (\d+) changed · empty = the website’s default \(shown in grey\)$/,'Αλλαγμένα: $1 από $2 · κενό = το αρχικό κείμενο της ιστοσελίδας (σε γκρι)'],
  [/^This accent is hard to read on this background \(contrast (.+):1, at least 3:1 is recommended\)\. Choose a lighter or stronger colour\.$/,'Αυτό το χρώμα διαβάζεται δύσκολα σε αυτό το φόντο (αντίθεση $1:1, συνιστάται τουλάχιστον 3:1). Διάλεξε πιο φωτεινό ή πιο έντονο χρώμα.'],
- [/^Show (.+)$/,(m,a)=>'Εμφάνιση: '+tr(a)],[/^Couldn’t read the list of texts from the website \((.+)\)\. Publish the latest website version first, then open this tab again\.$/,'Δεν διαβάστηκε η λίστα κειμένων από την ιστοσελίδα ($1). Ανέβασε πρώτα την τελευταία έκδοση της ιστοσελίδας και άνοιξε ξανά αυτή την καρτέλα.'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
+ [/^Show (.+)$/,(m,a)=>'Εμφάνιση: '+tr(a)],[/^Couldn’t read the list of texts from the website \((.+)\)\. Publish the latest website version first, then open this tab again\.$/,'Δεν διαβάστηκε η λίστα κειμένων από την ιστοσελίδα ($1). Ανέβασε πρώτα την τελευταία έκδοση της ιστοσελίδας και άνοιξε ξανά αυτή την καρτέλα.'],[/^Website up to date\. Last update sent (.+)\.$/,'Η ιστοσελίδα είναι ενημερωμένη. Τελευταία ενημέρωση: $1.'],[/^The last update failed \(HTTP (\d+)\)\. Try Publish now; if it keeps failing, check the deploy hook in Cloudflare\.$/,'Η τελευταία ενημέρωση απέτυχε (HTTP $1). Πάτα «Δημοσίευση τώρα»· αν συνεχίσει, έλεγξε το deploy hook στο Cloudflare.'],[/^Position, (.+)$/,'Θέση, $1'],[/^Best size: (.+) px on computers, (.+) px on phones\.$/,'Ιδανικό μέγεθος: $1 px σε υπολογιστές, $2 px σε κινητά.'],[/^(.+) can now add races\.$/,'$1: μπορεί πλέον να προσθέτει αγώνες.'],[/^(.+) can no longer add races\.$/,'$1: δεν μπορεί πλέον να προσθέτει αγώνες.'],[/^(.+) can now write news\.$/,'$1: μπορεί πλέον να γράφει νέα.'],[/^(.+) is no longer an editor\.$/,'$1: δεν είναι πλέον συντάκτης.'],[/^Draft · (.+)$/,'Πρόχειρο · $1'],[/^(Join us|Partner|Sponsor) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(Can drive|Maybe) · (.+)$/,(m,a,b)=>`${EL[a]} · ${b}`],[/^(.+) · leader (.+?) · ≈(.+) lap$/,'$1 · αρχηγός: $2 · ≈$3 χρόνος γύρου'],[/^(.+) · leader (.+)$/,'$1 · αρχηγός: $2'],[/^(.+) · your time$/,'$1 · η ώρα σου'],[/^e\.g\. (.+)$/,'π.χ. $1'],
  [/^In Discord, long-press the weekly schedule post, choose$/,'Στο Discord, κράτα πατημένο το εβδομαδιαίο post του προγράμματος, διάλεξε'],
  [/^, and paste it here\. The team events under “Special Events \(Team\)” are picked out\.$/,', και επικόλλησέ το εδώ. Θα βρεθούν τα team events κάτω από «Special Events (Team)».'],
  [/^These figures decide every stint, so get them from your own running before the race: do a practice session of at least (\d+) clean laps in race trim and note your$/,'Αυτά τα στοιχεία καθορίζουν κάθε stint, οπότε βγάλ’ τα από το δικό σου τρέξιμο πριν τον αγώνα: κάνε δοκιμαστικά με τουλάχιστον $1 καθαρούς γύρους σε στήσιμο αγώνα και σημείωσε'],
@@ -3031,6 +3035,11 @@ async function saveLineup(e,id){e.preventDefault();const f=new FormData(e.target
   closeDlg();await loadBase();await render();note('Lineup saved.',1)}
 async function delLineup(id){if(!await askO({ok:'Delete lineup',danger:true})('Delete this lineup? Its cars become open to every driver; nobody is removed from a car.'))return;
   await q(sb.from('lineups').delete().eq('id',id));closeDlg();await loadBase();await render();note('Lineup deleted.',1)}
+// Race permission (migration 40): admins only; the menu stays open and the roster behind it updates.
+async function setRaceAdder(uid,on,box){if(box)box.disabled=true;const {error}=await sb.rpc('set_race_adder',{uid,on_off:on});if(box)box.disabled=false;
+  if(error){if(box)box.checked=!on;return note(error.message)}
+  for(const l of [ROSTER,profiles]){const x=l.find(y=>y.id===uid);if(x)x.can_add_races=on}
+  await render();note(on?`${name(uid)} can now add races.`:`${name(uid)} can no longer add races.`,1)}
 async function setEditor(uid,on){const {error}=await sb.rpc('set_editor',{uid,on_off:on});if(error)return note(error.message);await render();note(on?`${name(uid)} can now write news.`:`${name(uid)} is no longer an editor.`,1)}
 
 /* ---------- Roster ---------- */
@@ -3055,7 +3064,7 @@ async function rosterView(){
   const on=p=>ONLINE.has(p.id),dot=p=>adm?`<i class="odot${on(p)?' on':''}" data-uid="${p.id}" role="img" aria-label="${on(p)?'Online now':'Offline'}" title="${on(p)?'Online now':'Offline'}"></i>`:'';
   const who=p=>`<div class="who2"><b>${dot(p)}<span class="notr">${esc(p.name)}</span>${p.nickname?` <span class="nick notr">[${esc(p.nickname)}]</span>`:''}${p.code?` <span class="dcode notr">${esc(p.code)}</span>`:''}</b>${adm&&EMAILS[p.id]?`<span class="mu notr">${esc(EMAILS[p.id])}</span>`:''}</div>`;
   const more=p=>`<button type="button" class="gdots" onclick="memberMenu('${p.id}')" aria-label="More for ${esc(p.name)}" title="More">⋯</button>`;
-  const tags=p=>`<span class="rtags">${adm?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip approved">${p.role==='admin'?'Admin':'Driver'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}</span>`;
+  const tags=p=>`<span class="rtags">${adm?((p.coc_version||0)>=COC_VERSION?`<span class="stat chip coc" title="${p.coc_accepted_at?new Date(p.coc_accepted_at).toLocaleDateString(LOC()):''}">Agreed</span>`:'<span class="stat chip nococ">Disagreed</span>'):''}${p.badge?`<span class="stat chip dev">${esc(p.badge)}</span>`:`<span class="stat chip approved">${p.role==='admin'?'Admin':'Driver'}</span>`}${p.site_editor&&p.role!=='admin'?'<span class="stat chip ed">Editor</span>':''}${p.can_add_races&&p.role!=='admin'?'<span class="stat chip ed">Adds races</span>':''}</span>`;
   const drv=ROSTER.filter(p=>p.approved),wait=ROSTER.filter(p=>!p.approved);
   const rows=drv.map(p=>`<div class="li drv">${who(p)}<div class="meta mu">${esc(p.tz)}<br>${lim(p)}</div>${tags(p)}${adm?`<div class="acts">${more(p)}</div>`:''}</div>`).join('');
   const wrows=wait.map(p=>`<div class="li wait">${who(p)}<div class="acts"><button class="pri" onclick="setUser('${p.id}',true,'driver')">Approve</button>${more(p)}</div></div>`).join('');
@@ -3069,6 +3078,7 @@ function memberMenu(id){const p=ROSTER.find(x=>x.id===id);if(!p)return;const sel
     ${p.approved?'':`<button type="button" class="pri" onclick="closeDlg();setUser('${id}',true,'driver')">Approve</button>`}
     <button type="button" onclick="closeDlg();profDlg('${id}')">Edit profile</button>
     ${!self&&p.approved?`<button type="button" onclick="closeDlg();setUser('${id}',true,'${adm?'driver':'admin'}')">${adm?'Make driver':'Make admin'}</button>${adm?'':`<button type="button" onclick="closeDlg();setEditor('${id}',${!p.site_editor})">${p.site_editor?'Remove editor':'Make editor'}</button>`}`:''}
+    ${!self&&p.approved&&!adm?`<label class="swrow"><span class="swtx"><b>Can add races</b><span class="mu">Adds races, and edits or deletes only the races they added.</span></span><input type="checkbox" role="switch" class="switch" ${p.can_add_races?'checked':''} onchange="setRaceAdder('${id}',this.checked,this)"></label>`:''}
     ${self?'':`<div class="menudanger">${p.approved?`<button type="button" onclick="closeDlg();setUser('${id}',false,'driver')">Suspend</button><p class="mu">Blocks access but keeps the account. Approve again to undo.</p>`:''}<button type="button" class="danger" onclick="closeDlg();delUser('${id}')">Remove permanently</button><p class="mu">Deletes the login, availability, car places and stints. Can’t be undone.</p></div>`}
     <div class="row"><button type="button" onclick="closeDlg()">Close</button></div></form>`)}
 // ---- My profile: account, language, website profile and live box in one place; one save for the form.
