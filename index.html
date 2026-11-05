@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- v0.9.6: what this page may load and where it may send data. Scripts only from here and the one pinned library file;
+     data only to our database and our website; no frames, plugins or form posts elsewhere. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https://isuiksufkyishdowejob.supabase.co; connect-src 'self' https://isuiksufkyishdowejob.supabase.co wss://isuiksufkyishdowejob.supabase.co https://arion-webpage.pages.dev https://arionsimracing.com https://www.arionsimracing.com; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>ARION Endurance Crew</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.min.js"></script>
+<!-- v0.9.6: the database library is the package's own file (jsDelivr's ".min.js" is generated on the fly and can change),
+     locked with an integrity hash: if the file ever differs by one byte, the browser refuses to run it. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 <style>
 /* ARION Endurance Crew — design tokens (light + dark follow the system setting) */
 :root{color-scheme:dark;
@@ -131,7 +136,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
-.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}img.demo{width:1.35em;height:1.35em;vertical-align:-.3em;margin:0 1px;object-fit:contain}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
 .card.notes{padding:12px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
 textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
 .empty{color:var(--label2);font-size:14px;margin:12px 0 0}
@@ -832,7 +837,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.5',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.7',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1293,7 +1298,7 @@ async function raceView(){
   {const cs=clockSummary(d,r.length_h);if(cs)ban+=`<div class="banner"><span>${cs}</span></div>`}
   $('#main').innerHTML=`<button class="back" onclick="go(backTo)">${ICON.back}${backTo==='my'?'Home':'Races'}</button>
     <div class="head"><h1 class="lt" style="margin-top:6px">${esc(r.name)}</h1><button class="gdots big" onclick="raceMenu()" aria-label="Race options">⋯</button></div>
-    <p class="lt-sub">${r.length_h} hours${r.track?' · '+esc(r.track):''} · ${multiDay(r)?`<b class="wk">${dayRange(r,tz)}</b> · each team picks its own start`:`<b class="wk">${d.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(d,tz)} → <b class="wk">${e.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(e,tz)}`}</p>${r.fair_share?`<p class="mu" style="margin:-12px 0 12px"><span class="chip warn">Fair share applies</span> each driver must drive 50% ÷ drivers of the team’s laps</p>`:''}${r.notes?`<div class="card notes"><div class="rh">Race info</div><p class="mu">${esc(r.notes)}</p></div>`:''}${ban}
+    <p class="lt-sub">${r.length_h} hours${r.track?' · '+esc(r.track):''} · ${multiDay(r)?`<b class="wk">${dayRange(r,tz)}</b> · each team picks its own start`:`<b class="wk">${d.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(d,tz)} → <b class="wk">${e.toLocaleDateString(LOC(),{timeZone:tz,weekday:'long',day:'numeric',month:'short'})}</b> ${locH(e,tz)}`}</p>${r.fair_share?`<p class="mu" style="margin:-12px 0 12px"><span class="chip warn">Fair share applies</span> each driver must drive 50% ÷ drivers of the team’s laps</p>`:''}${r.notes?`<div class="card notes"><div class="rh">Race info</div><p class="mu">${emoHtml(esc(r.notes))}</p></div>`:''}${ban}
     <div id="sub"></div>`;
   drawGantt(r);
 }
@@ -2049,7 +2054,7 @@ async function doCopy(e){e.preventDefault();const id=+new FormData(e.target).get
    "Special Events (Team)": name, entry tags, track, classes, length (360m → 6h) and the rest as rules. */
 const MONTHS={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 function parseLmuPost(txt){
-  const clean=s=>String(s).replace(/<a?:\w+:\d+>/g,'').replace(/:[a-z0-9_]+:/gi,'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D|[\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/^\s*#+\s*/,'').replace(/[*_~`|>]/g,'').replace(/\s+/g,' ').trim();
+  const clean=s=>String(s).replace(/<(a?):(\w{2,32}):(\d{5,25})>/g,'\uE000$1\uE001$2\uE001$3\uE002').replace(/<a?:\w+:\d+>/g,'').replace(/:[a-z0-9_]+:/gi,'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D|[\u{1F1E6}-\u{1F1FF}]/gu,'').replace(/^\s*#+\s*/,'').replace(/\s\|\s/g,' · ').replace(/[*_~`|>]/g,'').replace(/\s+/g,' ').trim();
   const lines=String(txt||'').split(/\r?\n/).map(clean).filter(Boolean);
   let week=null;
   for(const l of lines){const m=l.match(/from:?\s*(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/i);if(m&&MONTHS[m[2].slice(0,3).toLowerCase()]!=null){week=new Date(Date.UTC(+m[3],MONTHS[m[2].slice(0,3).toLowerCase()],+m[1])).toISOString().slice(0,10);break}}
@@ -2059,17 +2064,19 @@ function parseLmuPost(txt){
     if(!inTeam)continue;
     if(/^important\b/i.test(l)||/^(beginner|intermediate|advanced|weekly races|daily race)/i.test(l)){inTeam=false;continue}
     const ev=events[events.length-1];
-    if(/^(race start in-game time|utc days|start times?|in-game)/i.test(l)){if(ev)ev.extra.push(l);continue}
+    if(/^(race start in-game time|utc days|start times?|in-game|weather\b|temp\b)/i.test(l)||/\bin-game\b/i.test(l.split(':')[0])){if(ev)ev.extra.push(l);continue}
     const m=l.match(/^(.+?)\s*:\s*(.+)$/);if(!m){if(ev)ev.extra.push(l);continue}
     const head=m[1],rest=m[2],tags=(head.match(/\[(.*?)\]/)||[])[1]||'',name=head.replace(/\[.*?\]/g,'').replace(/\s+/g,' ').trim();
     const parts=rest.split(',').map(s=>s.trim()).filter(Boolean),track=parts[0]||'';
     const classes=parts.find(p=>/class/i.test(p))||'';
     const lm=rest.match(/(\d+(?:\.\d+)?)\s*(m|min|mins|minutes|h|hr|hrs|hours)\s+races?/i);
     const minutes=lm?Math.round(/^h/i.test(lm[2])?+lm[1]*60:+lm[1]):(name.match(/(\d+)\s*hours?/i)?+name.match(/(\d+)\s*hours?/i)[1]*60:null);
+    if(!classes&&!lm){if(ev)ev.extra.push(l);continue}  // a real event line always has a class or a race length
     const rules=parts.slice(1).filter(p=>p!==classes&&!/\braces?$/i.test(p)).join(', ');
     events.push({name,tags,track,classes,minutes,rules,extra:[]});
   }
-  return {week,events:events.map(e=>({...e,rules:[e.tags,e.rules,...e.extra].filter(Boolean).join('\n'),key:`${week||'?'}|${e.name}`}))}}
+  const emo=s=>String(s).replace(/\uE000(a?)\uE001(\w+)\uE001(\d+)\uE002/g,'<$1:$2:$3>');
+  return {week,events:events.map(e=>({...e,name:emo(e.name),tags:emo(e.tags),track:emo(e.track),classes:emo(e.classes),rules:emo([e.tags,e.rules,...e.extra].filter(Boolean).join('\n')),key:`${week||'?'}|${emo(e.name)}`}))}}
 
 /* LMU events: admins import the weekly post; any crew member creates a race from an event. */
 let LMUEV=[];
@@ -2078,7 +2085,9 @@ function importDlg(){openDlg(`<form onsubmit="saveImport(event)"><h3>Import LMU 
   <label>Post text<textarea name="txt" rows="7" oninput="importPrev(this.form)" placeholder="Paste the whole post"></textarea></label><div id="iprev" class="pitsum"></div>
   <div class="row"><button class="pri" id="isave" disabled>Save events</button><button type="button" onclick="closeDlg()">Cancel</button></div></form>`)}
 let IMP=null;
-function importPrev(form){IMP=parseLmuPost(form.querySelector('[name=txt]').value);const el=$('#iprev'),b=$('#isave');
+// v0.9.7: a pasted post gets the same link cleaning as the Worker's automatic import (Discord's "Copy Text" copies raw links).
+const rawToShown=t=>String(t||'').replace(/\[([^\]]+)\]\(<?https?:\/\/[^)\s>]+>?\)/g,'$1');
+function importPrev(form){IMP=parseLmuPost(rawToShown(form.querySelector('[name=txt]').value));const el=$('#iprev'),b=$('#isave');
   if(!IMP.events.length){el.innerHTML=`<span class="mu">${form.querySelector('[name=txt]').value.trim()?'No events found under “Special Events (Team)”. Check the whole post was copied.':''}</span>`;b.disabled=true;return}
   el.innerHTML=`<b>Week of ${IMP.week?new Date(IMP.week+'T12:00:00Z').toLocaleDateString(LOC(),{day:'numeric',month:'short',year:'numeric'}):'(no date found)'}</b>`+IMP.events.map(e=>`<div class="pitstep" style="align-items:flex-start"><span style="width:auto">•</span><span><b>${esc(e.name)}</b> · ${esc(e.track)} · ${e.minutes?dur(e.minutes*60):'length unknown'}<br><span class="mu">${esc(e.classes)}</span></span></div>`).join('');
   b.disabled=false;b.textContent=`Save ${IMP.events.length} event${IMP.events.length>1?'s':''}`}
@@ -2096,7 +2105,7 @@ function eventsHtml(tz){const up=LMUEV.filter(e=>evWeekEnd(e)>Date.now());
       ${mine.length?`<button class="pri" onclick="go('race',${mine[0].id})">Open event</button>`:`<button class="pri" onclick="evOpen(${e.id})">Create event</button>`}</div>
       <div class="mu" style="margin-top:8px">${esc(e.classes||'')}</div>
       ${mine.length?`<div class="mu" style="margin-top:6px">Teams pick their own day and start time inside the event.</div>`:''}
-      ${e.rules?`<div class="rules"><div class="rh">Rules</div><p>${esc(e.rules)}</p></div>`:''}</div>`}).join('');
+      ${e.rules?`<div class="rules"><div class="rh">Rules</div><p>${emoHtml(esc(e.rules))}</p></div>`:''}</div>`}).join('');
   return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">Upcoming LMU team events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
     ${cards||'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
 function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz(),days=evDays(e);
@@ -3251,11 +3260,18 @@ function newsLine(){const d=DSET,where=d.news_channel_id?`${d.news_guild_name?es
 // Admins: the channel the LMU weekly schedule is read from (/channel lmu), the last import, and any problem.
 function lmuLine(){const d=DSET,where=d.lmu_channel_id?`${d.lmu_guild_name?esc(d.lmu_guild_name)+' › ':''}#${esc(d.lmu_channel_name||d.lmu_channel_id)}`:'';
   const last=d.lmu_last_import_at?L2(`Τελευταία εισαγωγή: ${fmtWhen(d.lmu_last_import_at)} · ${d.lmu_last_count} ${d.lmu_last_count===1?'event':'events'}${d.lmu_last_week?` (εβδομάδα ${dayLab(d.lmu_last_week,{day:'numeric',month:'short'})})`:''}`,`Last import: ${fmtWhen(d.lmu_last_import_at)} · ${d.lmu_last_count} event${d.lmu_last_count===1?'':'s'}${d.lmu_last_week?` (week of ${dayLab(d.lmu_last_week,{day:'numeric',month:'short'})})`:''}`):(where?L2('Δεν έχει γίνει εισαγωγή ακόμα. Ελέγχει κάθε 15 λεπτά.','Nothing imported yet. It checks every 15 minutes.'):'');
+  // v0.9.7 (migration 43): every check is recorded, so a silent failure can't hide behind "nothing imported yet".
+  const f=d.lmu_found,checked=where&&d.lmu_checked_at?L2(`Τελευταίος έλεγχος: ${fmtWhen(d.lmu_checked_at)} · ${f?`${f===1?'βρέθηκε 1 ανάρτηση':`βρέθηκαν ${f} αναρτήσεις`} του LMU με ομαδικά events`:`καμία ανάρτηση του LMU με ομαδικά events στα τελευταία ${d.lmu_read??50} μηνύματα`}`,
+    `Last check: ${fmtWhen(d.lmu_checked_at)} · ${f?`${f} LMU post${f===1?'':'s'} with team events found`:`no LMU post with team events in the latest ${d.lmu_read??50} messages`}`):'';
   const err={no_access:L2('Το bot δεν μπορεί να διαβάσει αυτό το κανάλι. Στο Discord, δώσε στο ARION «Προβολή καναλιού» και «Ανάγνωση ιστορικού μηνυμάτων» εκεί.','The bot can’t read that channel. In Discord, give ARION “View Channel” and “Read Message History” there.'),
     no_content:L2('Το Discord δίνει στο bot άδεια μηνύματα. Στο Discord Developer Portal → ARION → Bot, άνοιξε το «Message Content Intent» και αποθήκευσε.','Discord gives the bot empty messages. In the Discord Developer Portal → ARION → Bot, switch on “Message Content Intent” and save.'),
     other:L2('Η ανάγνωση απέτυχε. Θα ξαναδοκιμάσει σε 15 λεπτά.','Reading failed. It tries again in 15 minutes.')}[d.lmu_error];
-  return `<div class="dnews"><div class="dline"><span class="grow"><b>LMU schedule</b><br><span class="mu">${where?`<span class="notr">${where}</span>${last?`<br><span class="notr">${last}</span>`:''}`:L2('Δεν έχει οριστεί κανάλι. Στο Discord, γράψε <code class="notr">/channel lmu</code> στο κανάλι που λαμβάνει τις ανακοινώσεις του LMU.','No channel set. In Discord, type <code class="notr">/channel lmu</code> in the channel that receives LMU’s announcements.')}</span></span>${where?`<button type="button" onclick="lmuStop()">Stop</button>`:''}</div>
+  return `<div class="dnews"><div class="dline"><span class="grow"><b>LMU schedule</b><br><span class="mu">${where?`<span class="notr">${where}</span>${last?`<br><span class="notr">${last}</span>`:''}${checked?`<br><span class="notr">${checked}</span>`:''}`:L2('Δεν έχει οριστεί κανάλι. Στο Discord, γράψε <code class="notr">/channel lmu</code> στο κανάλι που λαμβάνει τις ανακοινώσεις του LMU.','No channel set. In Discord, type <code class="notr">/channel lmu</code> in the channel that receives LMU’s announcements.')}</span></span>${where?`<button type="button" onclick="lmuStop()">Stop</button>`:''}</div>
     ${err?`<div class="banner warn"><span>${err}</span></div>`:''}</div>`}
+// v0.9.7: LMU's badge icons (Discord custom emoji kept by the reader as <:Name:id>) shown as their pictures from Discord;
+// if a picture can't load, its name is shown instead ("RookieDriver" → "Rookie Driver"). Works on already-escaped text.
+const emoName=n=>n.replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').trim();
+const emoHtml=h=>String(h).replace(/&lt;(a?):(\w{2,32}):(\d{5,25})&gt;/g,(_,an,n,id)=>`<img class="demo" src="https://cdn.discordapp.com/emojis/${id}.${an?'gif':'webp'}?size=48" alt="${emoName(n)}" title="${emoName(n)}" onerror="this.replaceWith(this.alt)">`);
 const fmtWhen=t=>new Date(t).toLocaleString(LOC(),{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 async function lmuStop(){if(!await askO({ok:'Stop'})(L2('Να σταματήσει η αυτόματη εισαγωγή του προγράμματος LMU; Όσα events υπάρχουν μένουν, και η επικόλληση με το χέρι δουλεύει κανονικά.','Stop the automatic LMU schedule import? Imported events stay, and pasting by hand still works.')))return;
   await q(sb.rpc('discord_lmu_clear'));DSET={...DSET,lmu_channel_id:null,lmu_channel_name:null,lmu_guild_name:null,lmu_error:null};discordPaint();note(L2('Η αυτόματη εισαγωγή σταμάτησε.','Automatic import stopped.'),1)}
