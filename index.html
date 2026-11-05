@@ -544,7 +544,8 @@ dialog .askbar{margin:0 0 4px}
 .grw.ghdr.tax{border-radius:0;margin:0;box-shadow:none;background:color-mix(in srgb,var(--cls) 7%,var(--surface));border-bottom:.5px solid var(--sep)}
 .freelist{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px}.freechip{min-height:34px;padding:0 12px;border-radius:17px;background:var(--fill);color:var(--label);font-weight:600;font-size:14px}.freechip.me{color:var(--tint-t)}
 .presets2{display:flex;flex-wrap:wrap;gap:8px}.presetbtn{display:flex;flex-direction:column;align-items:flex-start;min-height:48px;padding:6px 12px;border-radius:12px;background:var(--fill);color:var(--label);line-height:1.25}
-.presetbtn small{font-size:12px;color:var(--label2);font-weight:500}.presetbtn.on{background:color-mix(in srgb,var(--tint) 18%,transparent);box-shadow:inset 0 0 0 2px var(--tint)}
+.presetbtn small{font-size:12px;color:var(--label2);font-weight:500}.lmuslots{display:flex;flex-direction:column;gap:8px}.lmuday{display:block;margin:0 0 6px;font-size:13px;font-weight:600;color:var(--label2)}.slotbtn{min-height:44px;min-width:56px;padding:6px 10px;align-items:center;justify-content:center}
+.presetbtn.on{background:color-mix(in srgb,var(--tint) 18%,transparent);box-shadow:inset 0 0 0 2px var(--tint)}
 .langcard{display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:12px}.langcard .seg button{min-width:90px}
 .langsw{position:absolute;top:16px;right:16px;display:flex;gap:4px;padding:2px;border-radius:9px;background:var(--fill)}.langsw button{min-height:30px;padding:0 10px;border-radius:7px;background:none;color:var(--label);font-size:13px;font-weight:600}.langsw button.on{background:var(--seg-on)}
 .auth{position:relative}
@@ -837,7 +838,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.8',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.9',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -1967,7 +1968,7 @@ function teamDlg(id){
     <label>Approximate lap time for this race${lapInput('name="ref" required',t?.ref_lap?fmtLap(+t.ref_lap):'')}</label>
     <p class="mu" style="margin:-6px 0 0">Drivers use it until they enter their own${curRace().fair_share?'; fair share is worked out from it':''}. ≈ race laps = ${curRace().length_h}h ÷ this lap.</p>
     <div class="sg-h" style="margin:4px 0 -2px;font-size:15px;font-weight:700">When does this team race?</div>
-    ${dtPicker(eventDays(curRace()),t?tStart(curRace(),t):null,myTz(),T.ts.filter(x=>!t||x.id!==t.id).map(x=>({ms:tStart(curRace(),x),label:x.name})).filter((p,i,a)=>a.findIndex(q=>q.ms===p.ms)===i))}
+    ${dtPicker(eventDays(curRace()),t?tStart(curRace(),t):null,myTz(),T.ts.filter(x=>!t||x.id!==t.id).map(x=>({ms:tStart(curRace(),x),label:x.name})).filter((p,i,a)=>a.findIndex(q=>q.ms===p.ms)===i),lmuSlots(curRace()))}
     <p class="mu" style="margin:0">${t?'Changing the start moves this team’s stints with it. Every driver in the team drives this car.':'You become the team’s leader. Other drivers join the team whose day and time suits them.'}</p>
     <div class="row"><button class="pri">${t?'Save changes':'Create team'}</button><button type="button" onclick="closeDlg()">Cancel</button><span class="grow"></span>${t?`<button type="button" class="danger" onclick="delTeam(${t.id})">Delete team</button>`:''}</div></form>`)}
 function carOpts(sel){const c=sel.form.querySelector('[name=car]');c.innerHTML=CARS[sel.value].map(x=>opt(x,x)).join('')}
@@ -2126,11 +2127,24 @@ async function evCreate(ev,id){ev.preventDefault();const pk=readPicker(ev.target
 const parseClock=v=>{const t=String(v||'').trim().replace(/\s+/g,'');let m=t.match(/^(\d{1,2})[:.,h]?(\d{2})$/)||t.match(/^(\d{1,2})$/);if(!m)return null;const h=+m[1],mi=m[2]!=null?+m[2]:0;return h<24&&mi<60?String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0'):null};
 function clockEcho(el){const o=el.parentElement.querySelector('.lapecho');if(!o)return;if(!el.value.trim()){o.textContent='Type it like 1800 or 18:00';o.classList.remove('bad');return}const c=parseClock(el.value);o.textContent=c?`= ${c} your time`:'Not a time yet';o.classList.toggle('bad',!c)}
 function pickPreset(btn,day,time){const f=btn.form;f.querySelectorAll('[name=pday]').forEach(x=>{if(x.type==='radio')x.checked=x.value===day;else x.value=day});const t=f.querySelector('[name=pother]');t.value=time;clockEcho(t);f.querySelectorAll('.presetbtn').forEach(x=>x.classList.toggle('on',x===btn))}
-function dtPicker(days,sel,tz,presets){const sd=sel?toInput(new Date(sel),tz).slice(0,10):null,st=sel?toInput(new Date(sel),tz).slice(11,16):'',lab=d=>new Date(d+'T12:00:00Z').toLocaleDateString(LOC(),{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+// v0.9.9: LMU's official split start times ("UTC Days & Times: Fri, Sat, Sun @ 0200 0900 …" in the LMU card's Rules,
+// or in the race notes copied from it) as tap buttons, in the driver's own time, grouped by the driver's own day.
+const DOW3=['sun','mon','tue','wed','thu','fri','sat'];
+function lmuSlots(r){if(!r||!r.source)return [];const e=LMUEV.find(x=>x.key===r.source);
+  const m=String((e&&e.rules)||r.notes||'').match(/UTC Days\s*&\s*Times:\s*([^@\n]*)@\s*([^\n]*)/i);if(!m||/every/i.test(m[2]))return [];
+  const dn=m[1].toLowerCase().match(/\b(mon|tue|wed|thu|fri|sat|sun)/g)||[],tm=[...m[2].matchAll(/\b([01]\d|2[0-3]):?([0-5]\d)\b/g)].map(x=>(+x[1])*H+(+x[2])*60000);
+  if(!dn.length||!tm.length)return [];const a=evFirst(r),b=evLast(r),out=new Set();
+  for(let d=Date.UTC(new Date(a).getUTCFullYear(),new Date(a).getUTCMonth(),new Date(a).getUTCDate()),k=0;d<=b&&k<10;d+=86400000,k++)
+    if(dn.includes(DOW3[new Date(d).getUTCDay()]))tm.forEach(t=>{const ms=d+t;if(ms>=a&&ms<=b&&ms>Date.now())out.add(ms)});
+  return [...out].sort((x,y)=>x-y)}
+function dtPicker(days,sel,tz,presets,slots){const sl=(slots||[]).map(ms=>({ms,d:toInput(new Date(ms),tz)}));if(sl.length)days=[...new Set([...days,...sl.map(s=>s.d.slice(0,10))])].sort();
+  const sd=sel?toInput(new Date(sel),tz).slice(0,10):null,st=sel?toInput(new Date(sel),tz).slice(11,16):'',lab=d=>new Date(d+'T12:00:00Z').toLocaleDateString(LOC(),{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
   const dayPart=days.length<=7?`<div class="daylist">${days.map(d=>`<label class="dayopt"><input type="radio" name="pday" value="${d}" ${d===sd?'checked':''} required><span><b>${lab(d).split(' ')[0]}</b> ${lab(d).split(' ').slice(1).join(' ')}</span></label>`).join('')}</div>`
     :`<select name="pday" required>${sd&&!days.includes(sd)?opt(sd,lab(sd),true):''}${opt('','Choose a day',!sd)}${days.map(d=>opt(d,lab(d),d===sd)).join('')}</select>`;
   const pre=(presets||[]).filter(p=>days.includes(toInput(new Date(p.ms),tz).slice(0,10)));
-  return `${pre.length?`<div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Same start as one of your teams</div><div class="presets2">${pre.map(p=>{const d=toInput(new Date(p.ms),tz);return `<button type="button" class="presetbtn" onclick="pickPreset(this,'${d.slice(0,10)}','${d.slice(11,16)}')"><b>${locDay(new Date(p.ms),tz)} ${d.slice(11,16)}</b><small>${esc(p.label)}</small></button>`}).join('')}</div>`:''}
+  const byDay={};sl.forEach(s=>(byDay[s.d.slice(0,10)]=byDay[s.d.slice(0,10)]||[]).push(s));
+  const slotPart=sl.length?`<div class="sg-h notr" style="font-size:13px;font-weight:500;color:var(--label2)">${L2('Ώρες εκκίνησης του LMU · δική σου ώρα','LMU start times · your time')}</div><div class="lmuslots">${Object.keys(byDay).sort().map(d=>`<div class="lmurow"><span class="lmuday notr">${new Intl.DateTimeFormat(LOC(),{timeZone:tz,weekday:'short',day:'numeric',month:'short'}).format(new Date(byDay[d][0].ms))}</span><div class="presets2">${byDay[d].map(s=>`<button type="button" class="presetbtn slotbtn${s.ms===sel?' on':''}" onclick="pickPreset(this,'${d}','${s.d.slice(11,16)}')"><b>${s.d.slice(11,16)}</b></button>`).join('')}</div></div>`).join('')}</div>`:'';
+  return `${slotPart}${pre.length?`<div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Same start as one of your teams</div><div class="presets2">${pre.map(p=>{const d=toInput(new Date(p.ms),tz);return `<button type="button" class="presetbtn" onclick="pickPreset(this,'${d.slice(0,10)}','${d.slice(11,16)}')"><b>${locDay(new Date(p.ms),tz)} ${d.slice(11,16)}</b><small>${esc(p.label)}</small></button>`}).join('')}</div>`:''}
     <div class="sg-h" style="font-size:13px;font-weight:500;color:var(--label2)">Day</div>${dayPart}
     <label><span>Start time <span class="mu">· your time (${esc(tz)})</span></span><input name="pother" required value="${st}" placeholder="e.g. 1800" inputmode="numeric" autocomplete="off" oninput="clockEcho(this);this.form.querySelectorAll('.presetbtn').forEach(x=>x.classList.remove('on'))"><span class="lapecho mu">${st?'= '+st+' your time':'Type it like 1800 or 18:00'}</span></label>
     <p class="mu" style="margin:-4px 0 0">Use the split start time LMU shows for this event.</p>`}
