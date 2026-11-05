@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>ARION Endurance Crew</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.min.js"></script>
 <style>
 /* ARION Endurance Crew — design tokens (light + dark follow the system setting) */
-:root{color-scheme:light dark;
+:root{color-scheme:dark;
   --tint:#FF9500;--tint-ink:#000;--tint-t:#995900;
   --bg:#F2F2F7;--surface:#fff;--raised:#fff;--seg-on:#fff;
   --fill:rgba(120,120,128,.12);--fill2:rgba(120,120,128,.2);
@@ -25,7 +25,8 @@
   --pop:0 24px 64px rgba(0,0,0,.22),0 0 0 .5px rgba(0,0,0,.06);
   --r:16px;--rs:10px;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-@media (prefers-color-scheme:dark){:root{
+/* v0.9.5: the crew app is always dark, whatever the device setting (the light values above are the base the dark ones override) */
+@media all{:root{
   --tint:#FF9F0A;--tint-ink:#000;--tint-t:#FF9F0A;
   --bg:#000;--surface:#1C1C1E;--raised:#2C2C2E;--seg-on:#636366;
   --fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.34);
@@ -764,6 +765,7 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 /* v0.8.13: Discord step 1: connect your Discord account (Me → Discord), admins can disconnect a driver (migration 36) */
 /* v0.8.14: roster shows the nickname in square brackets: George Makridis [GM82] */
 /* v0.8.15: Discord step 2: admins see the race-posts channel in Me → Discord, with Stop (migration 37) */
+/* v0.9.5: the app is always dark on every device; the top bar shows only the ARION letters of the logo, in white (in the text colour); the website keeps the full logo */
 /* v0.9.4: availability prompt buttons in race cards wrap on narrow screens (they widened the page on phones); admins set every logo-light option in Website → Design → Colours and logo → Crew app (colour, lap, light length, glow, resting line, haze, star flare, stars, streak, SIM RACING, logo height on Home) */
 /* v0.9.3: Home opens on the ARION logo with a gold light running round it (dark stage, stars, star flare), a 'Needs your attention' strip under it, and the race card above it during a race; small logo with the light on the sign-in screen; admins pick the light colour in Website → Design → Colours and logo */
 /* v0.9.2: roster Admin chip uses the Dev chip's purple */
@@ -808,6 +810,11 @@ input.startn{width:auto;min-width:130px;min-height:44px;text-align:center;font-s
 .needrow b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .needrow .chev{font-size:22px;color:var(--label2);line-height:1}
 .needmore{margin-top:4px;background:none;border:0;padding:6px 2px;font:inherit;color:var(--tint-t);cursor:pointer}
+
+/* v0.9.5: ARION letters in the top bar; the name next to it drops its own "ARION" */
+.brand .wordmark{display:block;height:26px;width:auto;aspect-ratio:1202/238;color:var(--label);flex:none}
+.brand .wordmark+.brand-name b{display:none}
+@media (max-width:720px){.brand .wordmark{height:22px}.brand .wordmark+.brand-name{display:none}}
 </style>
 </head>
 <body>
@@ -825,7 +832,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.4',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.5',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -956,7 +963,7 @@ const readable=(c,bg,to)=>{let t=0,x=c;while(cRatio(x,bg)<4.6&&t<1){t+=.04;x=c.m
 function applyAccent(hex){let el=document.getElementById('accentcss');const c=hex2rgb(hex);if(!c){if(el)el.remove();return}
   if(!el){el=document.createElement('style');el.id='accentcss';document.head.appendChild(el)}
   const ink=cRatio(c,[0,0,0])>=cRatio(c,[255,255,255])?'#000':'#fff',h=rgbHex(c);
-  el.textContent=`:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[242,242,247],[0,0,0])}}@media (prefers-color-scheme:dark){:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[44,44,46],[255,255,255])}}}`}
+  el.textContent=`:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[242,242,247],[0,0,0])}}@media all{:root{--tint:${h};--tint-ink:${ink};--tint-t:${readable(c,[44,44,46],[255,255,255])}}}`}
 // The logo and colour are kept on this device so the sign-in screen and the first paint already show them.
 function cachedBrand(){try{return JSON.parse(localStorage.getItem('ec-brand')||'null')}catch{return null}}
 function cacheBrand(){try{localStorage.setItem('ec-brand',JSON.stringify({logo:BRAND&&BRAND.logo&&BRAND.in_app!==false?BRAND.logo:'',accent:ACCENT||'',light:LCFG||null}))}catch{}}
@@ -994,7 +1001,7 @@ async function start(){
   if((prof.coc_version||0)<COC_VERSION)return cocView();
   await loadBase();
   const navs=[['my','Home'],['cal','Races'],['strat','Strategy'],['roster','Team'],...(isEd()?[['site','Website']]:[])];
-  $('#app').innerHTML=`<header class="bar"><div class="brand">${mark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
+  $('#app').innerHTML=`<header class="bar"><div class="brand">${wordmark()}<span class="brand-name"><b>ARION</b>Endurance Crew</span></div>
     <nav class="seg" aria-label="Sections">${navs.map(([v,l])=>`<button data-v="${v}" onclick="go('${v}')">${l}</button>`).join('')}</nav>
     <div class="me-box"><button type="button" id="live" title="Connecting" aria-label="Connecting" aria-haspopup="dialog" aria-expanded="false" onclick="connPop(event)"><i></i><span class="lcount notr"></span></button>
       <button type="button" class="mebtn" data-v="me" onclick="go('me')" aria-label="My profile" title="My profile"><span class="me-text"><b class="notr">${esc(prof.name)}</b><span><span class="notr">${esc(prof.tz)}</span>${isAdm()?' · <span>Admin</span>':''}</span></span><span class="avatar notr">${esc(initials(prof.name))}</span></button></div></header>
@@ -1180,6 +1187,11 @@ function heroFit(){const h=document.querySelector('#main .hero');if(!h)return;co
   const full=innerHeight-top-tbH-16,want=full*ltCfg().h/100;
   h.style.height=Math.round(Math.max(160,Math.min(want,Math.max(full-ndH,innerHeight/3))))+'px'}
 addEventListener('resize',heroFit);
+// Top bar (v0.9.5): only the ARION letters of the logo, in the text colour (white in dark mode, black in light mode).
+// Drawn from the logo's own letter shapes; the holes of A, R and O are cut out with a mask.
+let WMK='';
+function wordmark(){if(WMK)return WMK;const P=ARION_ART.match(/<path[^>]*\/>/g)||[],pick=(ids,f)=>ids.map(i=>(P[i]||'').replace(/fill="[^"]*"/,`fill="${f}"`)).join(''),V='x="95" y="1072" width="1202" height="238"';
+  return WMK=`<svg class="wordmark" viewBox="95 1072 1202 238" role="img" aria-label="ARION"><defs><mask id="wmk" maskUnits="userSpaceOnUse" ${V}><rect ${V} fill="#000"/>${pick([5,4,17,3,6],'#fff')}${pick([22,55,9],'#000')}</mask></defs><rect ${V} fill="currentColor" mask="url(#wmk)"/></svg>`}
 
 /* ---------- Home ---------- */
 async function myView(){
@@ -2564,7 +2576,7 @@ const isEd=()=>isAdm()||!!prof?.site_editor;
 let BRAND=null,ACCENT='';
 async function loadBrand(){try{const {data,error}=await sb.from('site_settings').select('data').eq('id',1).maybeSingle();if(error)return;const d=data?.data||{};BRAND=d.brand||null;ACCENT=(d.colors||{}).accent||'';LCFG=ldFrom(d);cacheBrand()}catch{}}
 function applyBrand(){applyAccent(ACCENT);const b=BRAND,box=document.querySelector('header.bar .brand');if(!box)return;const m=box.querySelector('.mark,.brandimg');
-  if(b&&b.logo&&b.in_app!==false){const img=`<img class="brandimg" src="${esc(b.logo)}" alt="ARION">`;if(m)m.outerHTML=img;const nm=box.querySelector('.brand-name');if(nm)nm.style.display=(b.name_text??(b.show_name===false?'':'x'))?'':'none'}
+  if(b&&b.logo&&b.in_app!==false){const nm=box.querySelector('.brand-name');if(nm)nm.style.display=(b.name_text??(b.show_name===false?'':'x'))?'':'none'}
   if(b&&b.icon192&&b.in_app!==false){let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.href=b.icon192}}
 const SITE_PUBLIC_URL='https://arion-webpage.pages.dev/';
 let PUB=null;
