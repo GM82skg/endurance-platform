@@ -136,7 +136,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
-.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}/* v0.9.11: LMU official events two per row from 760 px; every part of a card lines up with the same part of the card beside it
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}/* v0.9.13: length wheels */.lenw{display:flex;flex-direction:column;gap:8px}.lenl{font-size:13px;font-weight:500;color:var(--label2)}.wheels{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 0;border-radius:14px;background:var(--fill)}.wheels::before{content:'';position:absolute;left:10px;right:10px;top:50%;height:36px;margin-top:-18px;border-radius:10px;background:color-mix(in srgb,var(--tint) 16%,transparent);pointer-events:none}.wcol{display:flex;align-items:center;gap:6px}.wheel{position:relative;height:180px;width:72px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain;touch-action:pan-y;cursor:grab;outline:none;-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}.wheel::-webkit-scrollbar{display:none}.wheel ul{list-style:none;margin:0;padding:72px 0}.wheel li{height:36px;line-height:36px;text-align:center;scroll-snap-align:center;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--label2);user-select:none}.wheel li.on{color:var(--label);font-weight:700}.wheel:focus-visible{box-shadow:0 0 0 2px var(--tint-t);border-radius:10px}.wheel.locked{overflow:hidden;cursor:default;opacity:.55}.wsep{font-size:22px;font-weight:700;color:var(--label2);padding-bottom:2px}.wunit{font-size:13px;color:var(--label2);min-width:30px}/* v0.9.11: LMU official events two per row from 760 px; every part of a card lines up with the same part of the card beside it
    (header, classes, note, rules: one shared row each via subgrid), rules boxes equal height, buttons equal width. */.evgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}.evgrid>.card.ev{margin:0}.evnone{display:none}@media(min-width:760px){.evgrid{grid-template-columns:1fr 1fr;column-gap:12px;row-gap:12px}.evgrid>.card.ev{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;align-content:start}.evgrid>.card.ev:only-child{grid-column:1/-1}.evgrid .card.ev>.rules{display:block}.evgrid .card.ev>.evnone{visibility:hidden;margin:0}.evgrid .race-top>.pri{min-width:11.5em;justify-content:center;text-align:center}}/* v0.9.8: event dates in the theme yellow */.evdate{color:var(--tint-t)}img.demo{width:1.35em;height:1.35em;vertical-align:-.3em;margin:0 1px;object-fit:contain}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
 .card.notes{padding:12px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
 textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
@@ -839,7 +839,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.12',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.13',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -910,7 +910,7 @@ function calcStrategy(f,lenH){
   lim.sort((a,b)=>a.laps-b.laps);
   const lps=Math.floor(lim[0].laps-margin+1e-9);
   if(lps<1)return {err:'That’s less than one lap per stint. Check the figures.'};
-  const lane=num(f.lane)||0,refill=num(f.refill)||0,tyreAdd=num(f.tyreAdd)||0,life=num(f.tyreLife)||0,setsMax=num(f.tyreSets)||0,race=lenH*3600;
+  const lane=num(f.lane)||0,refill=num(f.refill)||0,tyreAdd=num(f.tyreAdd)||0,life=num(f.tyreLife)||0,setsMax=num(f.tyreSets)||0,race=Math.round(lenH*3600);
   let t=0,laps=0,inSt=0,tyreL=0;const stints=[{start:0}],stops=[];
   for(let guard=0;guard<100000;guard++){
     t+=lap;laps++;inSt++;tyreL++;
@@ -2008,20 +2008,45 @@ async function leaveTeam(tid,uid){
 /* ---------- Strategy page (standalone what-ifs; saved on this device only) ---------- */
 let SP=null,SPALL=false;
 function spLoad(){if(SP)return SP;let s=null;try{s=JSON.parse(store.get('strat')||'null')}catch{}SP={len:24,race:'',...SDEF,...(s||{})};return SP}
+// v0.9.13: Strategy length as two scroll wheels, like a phone's time picker: hours 0–24 | minutes 0–59 (1-minute steps).
+// Shortest 0:01, longest 24:00 (24 h sets the minutes to 00). Roll with a finger, the mouse wheel or a drag; tap a number;
+// arrow keys / Page keys / Home / End. Locked (showing the race's length) when a race is picked.
+const WH=36;
+function wheelHtml(k,max,label,unit){return `<div class="wcol"><div class="wheel" data-w="${k}" role="spinbutton" tabindex="0" aria-label="${label}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="0"><ul>${[...Array(max+1).keys()].map(i=>`<li data-v="${i}" onclick="wheelPick(this)">${k==='m'?String(i).padStart(2,'0'):i}</li>`).join('')}</ul></div><span class="wunit">${unit}</span></div>`}
+const wheelEl=k=>document.querySelector(`.wheel[data-w="${k}"]`);
+const wheelVal=k=>{const w=wheelEl(k);return w?Math.max(0,Math.min(+w.getAttribute('aria-valuemax'),Math.round(w.scrollTop/WH))):0};
+function wheelSet(k,v,smooth){const w=wheelEl(k);if(!w)return;w._lock=!smooth;w.scrollTo({top:v*WH,behavior:smooth?'smooth':'auto'});wheelMark(w,v);if(!smooth)setTimeout(()=>{w._lock=false},60)}
+function wheelMark(w,v){w.setAttribute('aria-valuenow',v);w.setAttribute('aria-valuetext',w.dataset.w==='h'?v+' h':v+' min');w.querySelectorAll('li').forEach(li=>li.classList.toggle('on',+li.dataset.v===v))}
+function lenSet(hours){const t=Math.max(1,Math.min(1440,Math.round(hours*60))),h=Math.floor(t/60),m=t%60;wheelSet('h',h);wheelSet('m',m);const i=document.querySelector('#spf [name=len]');if(i)i.value=t/60}
+function wheelCommit(){let h=wheelVal('h'),m=wheelVal('m');
+  if(h===24&&m!==0){m=0;wheelSet('m',0)}else if(h===0&&m===0){m=1;wheelSet('m',1)}
+  wheelMark(wheelEl('h'),h);wheelMark(wheelEl('m'),m);const i=document.querySelector('#spf [name=len]');if(i)i.value=(h*60+m)/60;spCalc()}
+function wheelPick(li){const w=li.closest('.wheel');if(w.classList.contains('locked'))return;wheelSet(w.dataset.w,+li.dataset.v,true);clearTimeout(w._t);w._t=setTimeout(wheelCommit,320)}
+function wheelLock(on){document.querySelectorAll('.wheel').forEach(w=>{w.classList.toggle('locked',on);w.setAttribute('aria-disabled',on);w.tabIndex=on?-1:0})}
+function wheelWire(){document.querySelectorAll('.wheel').forEach(w=>{if(w._wired)return;w._wired=1;
+  w.addEventListener('scroll',()=>{if(w._lock)return;clearTimeout(w._t);w._t=setTimeout(wheelCommit,110)},{passive:true});
+  w.addEventListener('keydown',e=>{const max=+w.getAttribute('aria-valuemax'),v=+w.getAttribute('aria-valuenow'),
+    d={ArrowUp:-1,ArrowDown:1,PageUp:-5,PageDown:5}[e.key];let n=null;
+    if(d!=null)n=Math.max(0,Math.min(max,v+d));else if(e.key==='Home')n=0;else if(e.key==='End')n=max;
+    if(n!=null){e.preventDefault();wheelSet(w.dataset.w,n);wheelCommit()}});
+  // drag with a mouse (fingers scroll natively)
+  w.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||w.classList.contains('locked'))return;const y0=e.clientY,s0=w.scrollTop;w._drag=1;w.setPointerCapture(e.pointerId);
+    const mv=ev=>{w.scrollTop=s0-(ev.clientY-y0)},up=()=>{w.removeEventListener('pointermove',mv);w.removeEventListener('pointerup',up);w._drag=0;wheelSet(w.dataset.w,wheelVal(w.dataset.w),true);clearTimeout(w._t);w._t=setTimeout(wheelCommit,320)};
+    w.addEventListener('pointermove',mv);w.addEventListener('pointerup',up)})})}
 function stratView(){
   const f=spLoad(),up=races.filter(r=>evEndR(r)>Date.now());
   $('#main').innerHTML=`<h1 class="lt">Strategy</h1><p class="lt-sub">Quick what-ifs. Nothing here is saved to a team until you copy it.</p><details class="practice"><summary>Where the figures come from</summary><p>These figures decide every stint, so get them from your own running before the race: do a practice session of at least 10 clean laps in race trim and note your average lap, fuel or energy used per lap, and how many laps the tyres last before they drop off. Update the figures if conditions change.</p></details>
     <div class="sp-grid"><form id="spf" class="sp-in" oninput="spCalc()" onchange="spCalc()" onsubmit="event.preventDefault()">
       <div class="sgroup card"><div class="sg-h">Race</div><div class="form2">
         <label style="grid-column:1 / -1">Race<select name="race">${opt('','No race, just a length',!f.race)}${up.map(r=>opt(r.id,`${r.name} · ${r.length_h}h`,String(r.id)===String(f.race))).join('')}</select></label>
-        <label style="grid-column:1 / -1">Length<select name="len">${[4,6,8,12,24].map(h=>opt(h,h+' hours',+f.len===h)).join('')}</select></label></div></div>
+        <div class="lenw" style="grid-column:1 / -1"><span class="lenl">Length</span><div class="wheels">${wheelHtml('h',23+1,L2('Ώρες','Hours'),L2('ώρ.','h'))}<span class="wsep" aria-hidden="true">:</span>${wheelHtml('m',59,L2('Λεπτά','Minutes'),L2('λεπ.','min'))}</div><input type="hidden" name="len" value="${+f.len||24}"></div></div></div>
       <div class="card">${stratFields(f,false)}</div>
       <button type="button" onclick="copyDlg()">Copy to a team…</button></form>
       <div id="spout" class="sp-out"></div></div>`;
-  spCalc()}
+  wheelWire();lenSet(+f.len||24);spCalc()}
 function spCalc(){const form=$('#spf');if(!form)return;const f={...readStrat(form),race:form.querySelector('[name=race]').value,len:+form.querySelector('[name=len]').value};
-  const r=races.find(x=>String(x.id)===f.race);if(r&&+f.len!==r.length_h){f.len=r.length_h;form.querySelector('[name=len]').value=r.length_h}
-  form.querySelector('[name=len]').disabled=!!r;SP=f;store.set('strat',JSON.stringify(f));
+  const r=races.find(x=>String(x.id)===f.race);if(r&&+f.len!==r.length_h){f.len=r.length_h;lenSet(r.length_h)}
+  wheelLock(!!r);SP=f;store.set('strat',JSON.stringify(f));
   const P=calcStrategy(f,f.len),out=$('#spout'),tz=myTz(),t0=r?+new Date(r.start_utc):null;
   if(P.err){out.innerHTML=`<div class="card"><p class="empty" style="margin:0">${esc(P.err)}</p></div>`;return}
   const when=s=>t0?`${locDay(new Date(t0+s*1000),tz)} ${locH(new Date(t0+s*1000),tz)}`:`+${dur(s)}`;
@@ -2036,7 +2061,7 @@ function spCalc(){const form=$('#spf');if(!form)return;const f={...readStrat(for
       <div><b>${P.sets?P.sets+(P.setsMax?' / '+P.setsMax:''):'–'}</b><span>${P.sets?'tyre sets used':'tyre life not set'}</span></div></div>
     ${P.setsMax&&P.sets>P.setsMax?`<div class="banner warn"><span>The plan needs ${P.sets} tyre sets but only ${P.setsMax} are allowed.</span></div>`:''}${P.tyreShort?'<div class="banner warn"><span>Tyres don’t last a full stint with these figures.</span></div>':''}
     <div class="card"><div class="row glhead" style="margin-bottom:10px"><b class="grow" style="font-size:17px">Race at a glance</b><span class="mu">${P.stints.length} stints · dot = new tyres</span></div><div class="segs">${segs}</div>
-      <div class="segs-lab mu num"><span>${t0?when(0):'Start'}</span><span>${t0?when(P.race):'+'+f.len+'h'}</span></div></div>
+      <div class="segs-lab mu num"><span>${t0?when(0):'Start'}</span><span>${t0?when(P.race):'+'+dur(P.race)}</span></div></div>
     ${P.stops.length?`<div class="card flush"><div class="scroll"><table class="list stops"><thead><tr><td>Stop</td><td>${t0?'Your time':'Race time'}</td><td>After lap</td><td>Service</td><td class="r">Time lost</td></tr></thead><tbody>${stops}</tbody></table></div>
       ${P.stops.length>9?`<button class="ghost" style="width:100%" onclick="SPALL=!SPALL;spCalc()">${SPALL?'Show fewer':'Show all '+P.stops.length+' stops'}</button>`:''}</div>`:'<div class="card"><p class="empty" style="margin:0">No pit stops needed.</p></div>'}`}
 async function copyDlg(){const f=SP||spLoad(),up=races.filter(r=>evEndR(r)>Date.now());
