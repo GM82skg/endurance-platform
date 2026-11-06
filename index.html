@@ -136,7 +136,7 @@ label{display:flex;flex-direction:column;gap:6px;color:var(--label2);font-size:1
 .chip.dim{background:var(--fill);color:var(--label2)}
 .stint{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px}.stint .mu{grid-column:1}.stint .chip{grid-row:1 / span 2;grid-column:2}
 .chips+.stint,.chips+.empty{margin-top:12px}
-.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}/* v0.9.8: event dates in the theme yellow */.evdate{color:var(--tint-t)}img.demo{width:1.35em;height:1.35em;vertical-align:-.3em;margin:0 1px;object-fit:contain}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
+.card.ev details{margin-top:6px}.evrace{border:0;cursor:pointer;height:28px;font-size:12px}.rules{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--fill)}.rules p{white-space:pre-line;margin:0;font-size:14px;line-height:1.45;color:var(--label2)}/* v0.9.10: LMU official events two per row from tablet width, rules folded */.evgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}.evgrid>.card.ev{margin:0}@media(min-width:760px){.evgrid{grid-template-columns:1fr 1fr}.evgrid>.card.ev:only-child{grid-column:1/-1}}.card.ev details.rules{margin-top:10px;padding:0}details.rules>summary{display:flex;align-items:center;justify-content:flex-start;min-height:44px;margin:0;padding:0 12px;border-radius:12px;font-size:13px;font-weight:700}details.rules>p{padding:0 12px 12px}details.rules>summary:focus-visible{outline:2px solid var(--tint-t);outline-offset:2px}/* v0.9.8: event dates in the theme yellow */.evdate{color:var(--tint-t)}img.demo{width:1.35em;height:1.35em;vertical-align:-.3em;margin:0 1px;object-fit:contain}.rh{font-size:13px;font-weight:700;color:var(--tint-t);margin-bottom:4px}
 .card.notes{padding:12px 16px}.card.notes p{white-space:pre-line;margin:0 0 10px}
 textarea{font:inherit;color:var(--label);background:var(--fill);border:0;border-radius:var(--rs);padding:10px 12px;width:100%;resize:vertical;font-size:14px}
 .empty{color:var(--label2);font-size:14px;margin:12px 0 0}
@@ -838,7 +838,7 @@ GTE:['Aston Martin Vantage AMR','Corvette C8.R','Ferrari 488 GTE Evo','Porsche 9
 const TRACKS=['Bahrain','Barcelona','COTA','Daytona','Fuji','Imola','Interlagos','Laguna Seca','Le Mans','Long Beach','Monza','Paul Ricard','Portimao','Qatar','Road Atlanta','Sebring','Silverstone','Spa'];
 // Version scheme: 0.MINOR.PATCH, one step per change. PATCH runs 1→10, then MINOR goes up and PATCH restarts at 1
 // (0.3.2 → 0.3.3 … 0.3.10 → 0.4.1).
-const VERSION='0.9.9',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const VERSION='0.9.10',H=3600000,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const WORD={A:'available',M:'maybe',N:'no','-':'not set'},COVW={ok:'covered',p:'covered (pending)',gap:'no driver',x:'two stints overlap'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -2107,9 +2107,9 @@ function eventsHtml(tz){const up=LMUEV.filter(e=>evWeekEnd(e)>Date.now()).sort((
       ${mine.length?`<button class="pri" onclick="go('race',${mine[0].id})">Open event</button>`:`<button class="pri" onclick="evOpen(${e.id})">Create event</button>`}</div>
       <div class="mu" style="margin-top:8px">${esc(e.classes||'')}</div>
       ${mine.length?`<div class="mu" style="margin-top:6px">Teams pick their own day and start time inside the event.</div>`:''}
-      ${e.rules?`<div class="rules"><div class="rh">Rules</div><p>${emoHtml(esc(e.rules))}</p></div>`:''}</div>`}).join('');
-  return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">Upcoming LMU team events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
-    ${cards||'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
+      ${e.rules?`<details class="rules"><summary class="rh">Rules</summary><p>${emoHtml(esc(e.rules))}</p></details>`:''}</div>`}).join('');
+  return `<div class="head" style="margin-top:6px"><h3 class="grow" style="margin:18px 0 10px">LMU official events</h3>${isAdm()?'<button class="ghost" onclick="importDlg()">Import schedule</button>':''}</div>
+    ${cards?`<div class="evgrid">${cards}</div>`:'<div class="card"><p class="empty" style="margin:0">No LMU team events imported for this week. Press Import schedule and paste the Discord post.</p></div>'}`}
 function evCreateDlg(id){const e=LMUEV.find(x=>x.id===id),tz=myTz(),days=evDays(e);
   openDlg(`<form onsubmit="evCreate(event,${id})"><h3>Create race · ${esc(e.name)}</h3>
     <p class="mu" style="margin:0">${esc(e.track||'')} · ${e.minutes?dur(e.minutes*60):''}. The event runs in several splits over Friday, Saturday and Sunday. Pick the one you’ll race.</p>
@@ -2312,7 +2312,7 @@ const EL={
  'Teams pick their own start time on these days, e.g. Friday to Sunday for an LMU weekend event.':'Κάθε αυτοκίνητο διαλέγει ώρα εκκίνησης μέσα σε αυτές τις μέρες, π.χ. Παρασκευή έως Κυριακή για έναν αγώνα Σαββατοκύριακου του LMU.',
  'The team gets these car, pit and tyre figures. Its driver stint range stays as it is.':'Το αυτοκίνητο παίρνει αυτά τα στοιχεία pit και ελαστικών. Το εύρος stints ανά οδηγό μένει ως έχει.',
  'Time zone':'Ζώνη ώρας','To the finish':'Μέχρι τον τερματισμό','Track':'Πίστα','Track name':'Όνομα πίστας','Tyre change adds (s)':'Η αλλαγή ελαστικών προσθέτει (s)','Tyre life (laps)':'Διάρκεια ελαστικών (γύροι)','Tyre sets allowed':'Επιτρεπόμενα σετ ελαστικών',
- 'Undo':'Αναίρεση','Undone.':'Αναιρέθηκε.','Upcoming LMU team events':'Επερχόμενα team events του LMU','Use the split start time LMU shows for this event.':'Βάλε την ώρα εκκίνησης του split που δείχνει το LMU για αυτόν τον αγώνα.',
+ 'Undo':'Αναίρεση','Undone.':'Αναιρέθηκε.','LMU official events':'Επίσημα events του LMU','Use the split start time LMU shows for this event.':'Βάλε την ώρα εκκίνησης του split που δείχνει το LMU για αυτόν τον αγώνα.',
  'When does this team race?':'Πότε τρέχει αυτό το αυτοκίνητο;','Whole race':'Ολόκληρος ο αγώνας','You become the team’s leader. Other drivers join the team whose day and time suits them.':'Γίνεσαι ο υπεύθυνος του αυτοκινήτου. Οι άλλοι οδηγοί μπαίνουν στο αυτοκίνητο που τους βολεύει σε μέρα και ώρα.',
  'You don’t lead a team in an upcoming race. Team leaders and admins can copy figures to their teams.':'Δεν είσαι υπεύθυνος αυτοκινήτου σε επερχόμενο αγώνα. Οι υπεύθυνοι αυτοκινήτων και οι διαχειριστές μπορούν να αντιγράψουν στοιχεία στα αυτοκίνητά τους.',
  'Your next stint:':'Το επόμενο stint σου:','Your profile':'Το προφίλ μου','Your races':'Οι αγώνες σου','Your time zone is taken from your device on first login. Change it here if it’s wrong.':'Η ζώνη ώρας σου παίρνεται από τη συσκευή στην πρώτη σύνδεση. Άλλαξέ την εδώ αν είναι λάθος.',
